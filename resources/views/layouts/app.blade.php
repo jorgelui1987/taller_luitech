@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CRM') — Tienda Celulares</title>
 
@@ -49,8 +49,8 @@
             background: var(--sidebar-bg);
             display: flex;
             flex-direction: column;
-            z-index: 1000;
-            transition: width .3s ease;
+            z-index: 1050;
+            transition: transform .3s ease;
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -154,6 +154,19 @@
         .sidebar-footer {
             padding: 16px 20px;
             border-top: 1px solid rgba(255,255,255,.08);
+        }
+
+        /* ── SIDEBAR OVERLAY (mobile) ──────────────────────────────── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 1049;
+        }
+        .sidebar-overlay.show {
+            display: block;
         }
 
         /* ── MAIN CONTENT ────────────────────────────────────────── */
@@ -372,22 +385,176 @@
             border-color: transparent;
         }
 
-        /* ── RESPONSIVE ──────────────────────────────────────────── */
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .main-wrapper { margin-left: 0; }
-        }
-
         /* ── SCROLLBAR ───────────────────────────────────────────── */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE — Mobile First
+           ═══════════════════════════════════════════════════════════════ */
+
+        /* Tablets y menores */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .topbar {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+            .page-content {
+                padding: 16px 12px;
+            }
+            .topbar .search-box {
+                max-width: 200px;
+            }
+            .topbar .search-box input {
+                padding: 6px 12px 6px 32px;
+                font-size: 12px;
+            }
+            .topbar .search-box .search-icon {
+                left: 10px;
+                font-size: 11px;
+            }
+            /* Tablas scroll horizontal en móvil */
+            .table-responsive-custom {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table-responsive-custom table {
+                min-width: 600px;
+            }
+            /* Botones más grandes para touch */
+            .btn, .btn-sm {
+                padding: 8px 16px !important;
+                font-size: 14px !important;
+            }
+            .topbar-btn {
+                width: 42px;
+                height: 42px;
+            }
+            /* Stats cards más compactas */
+            .kpi-card {
+                padding: 14px;
+            }
+            .kpi-card .kpi-value {
+                font-size: 20px;
+            }
+            /* Ocultar búsqueda en móvil muy pequeño */
+            .topbar .search-box {
+                display: none;
+            }
+        }
+
+        /* Teléfonos (< 576px) */
+        @media (max-width: 575.98px) {
+            .topbar {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+            .page-content {
+                padding: 12px 8px;
+            }
+            .topbar .page-title {
+                font-size: 14px;
+            }
+            .topbar-actions .btn-primary span {
+                display: none;
+            }
+            /* Cards full width */
+            .card-body {
+                padding: 14px !important;
+            }
+            /* KPIs en grid 2x2 más compacto */
+            .kpi-card {
+                padding: 12px;
+            }
+            .kpi-card .kpi-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            .kpi-card .kpi-value {
+                font-size: 18px;
+            }
+            .kpi-card .kpi-label {
+                font-size: 11px;
+            }
+            /* Formularios: etiquetas arriba, inputs abajo */
+            .row.g-3 > .col-md-3,
+            .row.g-3 > .col-md-4,
+            .row.g-3 > .col-md-6 {
+                width: 100%;
+            }
+            /* Alertas más compactas */
+            .alert {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+            /* Breadcrumb más pequeño */
+            .breadcrumb {
+                font-size: 12px !important;
+            }
+            /* Títulos de página más pequeños */
+            h4.fw-bold {
+                font-size: 16px !important;
+            }
+            /* Botones de acción en tabla: más pequeños y compactos */
+            .table .btn-sm {
+                padding: 4px 8px !important;
+                font-size: 12px !important;
+            }
+            /* Paginación compacta */
+            .pagination .page-link {
+                padding: 4px 10px;
+                font-size: 12px;
+            }
+            /* Tarjetas de estadísticas en 2 columnas */
+            .col-6.col-md-3 {
+                width: 50%;
+            }
+        }
+
+        /* Sidebar overlay visible en móvil */
+        @media (max-width: 991.98px) {
+            .sidebar-overlay {
+                display: none;
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* Utilidad para ocultar en móvil */
+        @media (max-width: 575.98px) {
+            .hide-mobile {
+                display: none !important;
+            }
+        }
+
+        /* Utilidad para mostrar solo en móvil */
+        @media (min-width: 576px) {
+            .show-mobile-only {
+                display: none !important;
+            }
+        }
     </style>
 
     @stack('styles')
 </head>
 <body>
+
+<!-- ══════════ SIDEBAR OVERLAY (mobile) ══════════ -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <!-- ══════════ SIDEBAR ══════════ -->
 <aside class="sidebar" id="sidebar">
@@ -418,7 +585,7 @@
         <div class="nav-section-title">Principal</div>
 
         <a href="{{ route('dashboard') }}"
-           class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-th-large"></i></span>
             Dashboard
         </a>
@@ -426,34 +593,34 @@
         <div class="nav-section-title">Gestión</div>
 
         <a href="{{ route('clientes.index') }}"
-           class="nav-link {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('clientes.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-users"></i></span>
             Clientes
         </a>
 
         <a href="{{ route('proveedores.index') }}"
-           class="nav-link {{ request()->routeIs('proveedores.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('proveedores.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-truck"></i></span>
             Proveedores
         </a>
 
         @if(Auth::user()->esAdmin())
         <a href="{{ route('compras.index') }}"
-           class="nav-link {{ request()->routeIs('compras.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('compras.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-clipboard-list"></i></span>
             Órdenes de Compra
         </a>
         @endif
 
         <a href="{{ route('productos.index') }}"
-           class="nav-link {{ request()->routeIs('productos.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('productos.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-box"></i></span>
             Inventario
         </a>
 
         @if(Auth::user()->esAdmin())
         <a href="{{ route('stock.bajo') }}"
-           class="nav-link {{ request()->routeIs('stock.bajo') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('stock.bajo') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-exclamation-triangle"></i></span>
             Alertas de Stock
             @php $stockBajoCount = \App\Models\Producto::whereColumn('stock','<=','stock_minimo')->count(); @endphp
@@ -463,7 +630,7 @@
         </a>
 
         <a href="{{ route('stock.movimientos') }}"
-           class="nav-link {{ request()->routeIs('stock.movimientos') || request()->routeIs('stock.ajuste') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('stock.movimientos') || request()->routeIs('stock.ajuste') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-exchange-alt"></i></span>
             Movimientos Stock
         </a>
@@ -471,7 +638,7 @@
 
         @if(in_array(Auth::user()->rol, ['admin', 'vendedor']))
         <a href="{{ route('ventas.index') }}"
-           class="nav-link {{ request()->routeIs('ventas.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('ventas.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>
             Ventas
         </a>
@@ -479,7 +646,7 @@
 
         @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
         <a href="{{ route('reparaciones.index') }}"
-           class="nav-link {{ request()->routeIs('reparaciones.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('reparaciones.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-tools"></i></span>
             Reparaciones
             @php $pendRep = \App\Models\Reparacion::where('estado','listo')->count(); @endphp
@@ -493,13 +660,13 @@
         <div class="nav-section-title">Reportes</div>
 
         <a href="{{ route('reportes.index') }}"
-           class="nav-link {{ request()->routeIs('reportes.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('reportes.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-chart-bar"></i></span>
             Reportes
         </a>
 
         <a href="{{ route('financiero.index') }}"
-           class="nav-link {{ request()->routeIs('financiero.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('financiero.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
             Estado Financiero
         </a>
@@ -509,13 +676,13 @@
 
         @if(Auth::user()->esAdmin())
         <a href="{{ route('configuracion.index') }}"
-           class="nav-link {{ request()->routeIs('configuracion.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('configuracion.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-cog"></i></span>
             Configuración
         </a>
 
         <a href="{{ route('backup.index') }}"
-           class="nav-link {{ request()->routeIs('backup.*') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('backup.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-database"></i></span>
             Backup & Restore
         </a>
@@ -541,18 +708,18 @@
 
     <!-- Topbar -->
     <header class="topbar">
-        <button class="topbar-btn d-md-none" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <button class="topbar-btn d-md-none" onclick="toggleSidebar()">
             <i class="fas fa-bars"></i>
         </button>
 
-        <div class="search-box">
+        <div class="search-box d-none d-md-block">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" placeholder="Buscar clientes, productos, ventas...">
+            <input type="text" placeholder="Buscar...">
         </div>
 
         <div class="topbar-actions">
             <a href="{{ route('ventas.create') }}" class="btn btn-sm btn-primary px-3" style="border-radius:20px;">
-                <i class="fas fa-plus me-1"></i> Nueva Venta
+                <i class="fas fa-plus me-1"></i><span> Nueva Venta</span>
             </a>
 
             <button class="topbar-btn">
@@ -597,7 +764,7 @@
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
                 <i class="fas fa-check-circle"></i>
-                {{ session('success') }}
+                <span class="flex-fill">{{ session('success') }}</span>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
             </div>
         @endif
@@ -605,11 +772,11 @@
         @if(session('whatsapp_url'))
             <div class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
                 <i class="fab fa-whatsapp" style="font-size:20px; color:#25D366;"></i>
-                <span>Notificación generada para enviar por WhatsApp al cliente.</span>
+                <span class="flex-fill">Notificación generada para enviar por WhatsApp al cliente.</span>
                 <a href="{{ session('whatsapp_url') }}" target="_blank"
                    class="btn btn-sm ms-auto"
                    style="background:#25D366; color:#fff; border-radius:20px; white-space:nowrap;">
-                    <i class="fab fa-whatsapp me-1"></i> Enviar WhatsApp
+                    <i class="fab fa-whatsapp me-1"></i> Enviar
                 </a>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -618,7 +785,7 @@
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
                 <i class="fas fa-exclamation-circle"></i>
-                {{ session('error') }}
+                <span class="flex-fill">{{ session('error') }}</span>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
             </div>
         @endif
@@ -631,6 +798,32 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // ── Sidebar toggle para móvil ──────────────────────────────────
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+
+    function closeSidebarMobile() {
+        if (window.innerWidth < 992) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        }
+    }
+
+    // Cerrar sidebar al hacer click fuera (en desktop también)
+    document.addEventListener('click', function(e) {
+        var sidebar = document.getElementById('sidebar');
+        var toggleBtn = document.querySelector('.topbar-btn.d-md-none');
+        if (window.innerWidth < 992 && sidebar.classList.contains('open')) {
+            if (!sidebar.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target)) {
+                closeSidebarMobile();
+            }
+        }
+    });
+</script>
 
 @stack('scripts')
 
