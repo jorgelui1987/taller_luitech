@@ -22,6 +22,7 @@ class Reparacion extends Model
         'estado', 'prioridad',
         'fecha_recepcion', 'fecha_estimada', 'fecha_entrega',
         'garantia', 'dias_garantia', 'notas',
+        'firma_recepcion', 'firma_entrega',
         'tenant_id',
     ];
 
@@ -62,6 +63,21 @@ class Reparacion extends Model
     public function tecnico()
     {
         return $this->belongsTo(User::class, 'tecnico_id');
+    }
+
+    public function fotos()
+    {
+        return $this->hasMany(ReparacionFoto::class);
+    }
+
+    public function getFirmaRecepcionUrlAttribute(): ?string
+    {
+        return $this->firma_recepcion ? asset('storage/' . $this->firma_recepcion) : null;
+    }
+
+    public function getFirmaEntregaUrlAttribute(): ?string
+    {
+        return $this->firma_entrega ? asset('storage/' . $this->firma_entrega) : null;
     }
 
     public static function generarNumero(): string

@@ -290,6 +290,35 @@
                         </div>
                     </div>
                     @endif
+
+                    {{-- ✍️ FIRMA DE ENTREGA (solo si se marca como entregado) --}}
+                    <div class="mb-3" id="firmaEntregaSection" style="display:none;">
+                        <label class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
+                            <i class="fas fa-pen me-1" style="color:#a855f7;"></i>Firma de Entrega
+                        </label>
+                        <p class="text-muted" style="font-size:12px;">Haz que el cliente firme al entregar el equipo.</p>
+                        @if($reparacion->firma_entrega)
+                            <div class="text-center mb-2" id="firmaEntregaExistente">
+                                <img src="{{ asset('storage/'.$reparacion->firma_entrega) }}" alt="Firma de entrega"
+                                     style="max-width:100%; max-height:100px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;">
+                                <p class="text-muted mt-1" style="font-size:11px;">✓ Firma de entrega ya registrada</p>
+                            </div>
+                        @endif
+                        <div class="signature-pad-wrapper" id="sigPadEntregaWrapperEdit" style="border:2px dashed #d1d5db; border-radius:12px; background:#fff; position:relative; cursor:crosshair;">
+                            <canvas id="sigCanvasEntregaEdit" style="display:block; width:100%; height:160px; border-radius:12px; touch-action:none;"></canvas>
+                            <div class="placeholder" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#9ca3af; font-size:14px; pointer-events:none;">Firma aquí</div>
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="limpiarFirmaEdit()">
+                                <i class="fas fa-eraser me-1"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="guardarFirmaEdit()">
+                                <i class="fas fa-check me-1"></i>Guardar Firma
+                            </button>
+                        </div>
+                        <input type="hidden" name="firma_entrega_data" id="firmaEntregaData" value="">
+                    </div>
+
                     <div class="d-flex gap-2 justify-content-end">
                         <a href="{{ route('reparaciones.show', $reparacion) }}" class="btn btn-outline-secondary px-4">Cancelar</a>
                         <button type="submit" class="btn btn-primary px-4">
@@ -304,7 +333,82 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 <script>
+// ── FIRMA DE ENTREGA ──
+let sigPadEntregaEdit = null;
+
+function initFirmaEntregaEdit() {
+    const canvas = document.getElementById('sigCanvasEntregaEdit');
+    if (!canvas) return;
+    const wrapper = document.getElementById('sigPadEntregaWrapperEdit');
+    canvas.width = wrapper.clientWidth || 300;
+    canvas.height = 160;
+    sigPadEntregaEdit = new SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+    sigPadEntregaEdit.addEventListener('beginStroke', () => {
+        const placeholder = wrapper.querySelector('.placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+    });
+}
+
+function mostrarFirmaEntrega() {
+    const section = document.getElementById('firmaEntregaSection');
+    if (section) section.style.display = 'block';
+    setTimeout(() => initFirmaEntregaEdit(), 100);
+}
+
+function ocultarFirmaEntrega() {
+    const section = document.getElementById('firmaEntregaSection');
+    if (section) section.style.display = 'none';
+}
+
+function limpiarFirmaEdit() {
+    if (sigPadEntregaEdit) {
+        sigPadEntregaEdit.clear();
+        const wrapper = document.getElementById('sigPadEntregaWrapperEdit');
+        const placeholder = wrapper?.querySelector('.placeholder');
+        if (placeholder) placeholder.style.display = '';
+    }
+    document.getElementById('firmaEntregaData').value = '';
+}
+
+function guardarFirmaEdit() {
+    if (!sigPadEntregaEdit) return;
+    if (sigPadEntregaEdit.isEmpty()) {
+        alert('Por favor, dibuja la firma antes de guardar.');
+        return;
+    }
+    const dataUrl = sigPadEntregaEdit.toDataURL('image/png');
+    document.getElementById('firmaEntregaData').value = dataUrl;
+    // Ocultar el pad y mostrar mensaje de éxito
+    const wrapper = document.getElementById('sigPadEntregaWrapperEdit');
+    const existing = document.getElementById('firmaEntregaExistente');
+    if (existing) {
+        existing.querySelector('img').src = dataUrl;
+        existing.querySelector('p').textContent = '✓ Nueva firma registrada';
+    }
+    wrapper.style.display = 'none';
+    alert('Firma capturada correctamente. Guarda los cambios para confirmar.');
+}
+
+// Mostrar/ocultar firma según el estado seleccionado
+document.addEventListener('DOMContentLoaded', function() {
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    if (estadoSelect) {
+        estadoSelect.addEventListener('change', function() {
+            if (this.value === 'entregado') {
+                mostrarFirmaEntrega();
+            } else {
+                ocultarFirmaEntrega();
+            }
+        });
+        // Si ya está en entregado, mostrar inmediatamente
+        if (estadoSelect.value === 'entregado') {
+            mostrarFirmaEntrega();
+        }
+    }
+});
+
 // ── Toggle Marca (precargada / otra) ──
 function toggleMarcaInputEdit(select) {
     const input = select.closest('.col-md-4').querySelector('.marca-input');

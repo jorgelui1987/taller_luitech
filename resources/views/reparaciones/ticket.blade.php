@@ -93,6 +93,24 @@ hr{border:none;border-top:2px solid #000;margin:1px 0}
 <div class="section">GARANTÍA</div>
 <div style="font-size:11px;font-weight:700;text-align:justify;">{{ $empresa->terminos_garantia }}</div>
 @endif
+@if($reparacion->firma_recepcion)
+<hr>
+<div class="section">FIRMA RECEPCIÓN</div>
+<div style="text-align:center; margin:2px 0;">
+    <img src="{{ asset('storage/'.$reparacion->firma_recepcion) }}" alt="Firma recepción"
+         style="max-width:100%; max-height:50px; background:#fff;">
+    <div style="font-size:9px;color:#666;">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
+</div>
+@endif
+@if($reparacion->firma_entrega)
+<hr>
+<div class="section">FIRMA ENTREGA</div>
+<div style="text-align:center; margin:2px 0;">
+    <img src="{{ asset('storage/'.$reparacion->firma_entrega) }}" alt="Firma entrega"
+         style="max-width:100%; max-height:50px; background:#fff;">
+    <div style="font-size:9px;color:#666;">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
+</div>
+@endif
 <div class="ftr">
 @php
     // Usar la ruta generada por Laravel para el QR público

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reparacion;
+use App\Models\ReparacionFoto;
 use App\Models\Cliente;
 use App\Models\User;
 use App\Models\Configuracion;
 use App\Helpers\WhatsAppHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ReparacionController extends Controller
 {
@@ -110,7 +113,7 @@ class ReparacionController extends Controller
 
     public function show(Reparacion $reparacion)
     {
-        $reparacion->load(['cliente', 'tecnico']);
+        $reparacion->load(['cliente', 'tecnico', 'fotos']);
         return view('reparaciones.show', compact('reparacion'));
     }
 
@@ -177,6 +180,28 @@ class ReparacionController extends Controller
         // Guardar el estado anterior antes de actualizar
         $estadoAnterior = $reparacion->estado;
 
+        // Procesar firma de entrega si viene desde el formulario
+        if ($request->filled('firma_entrega_data')) {
+            $firmaData = $request->firma_entrega_data;
+            $firmaData = str_replace('data:image/png;base64,', '', $firmaData);
+            $firmaData = str_replace(' ', '+', $firmaData);
+            $firmaData = base64_decode($firmaData);
+
+            if ($firmaData !== false) {
+                $nombreArchivo = 'firma_entrega_' . $reparacion->id . '_' . Str::random(8) . '.png';
+                $ruta = 'firmas/' . $nombreArchivo;
+
+                Storage::disk('public')->put($ruta, $firmaData);
+
+                // Eliminar firma anterior si existe
+                if ($reparacion->firma_entrega) {
+                    Storage::disk('public')->delete($reparacion->firma_entrega);
+                }
+
+                $reparacion->firma_entrega = $ruta;
+            }
+        }
+
         $reparacion->update($validated);
 
         // Notificar por WhatsApp si cambió a "listo" o "entregado"
@@ -221,5 +246,94 @@ class ReparacionController extends Controller
         }
 
         return $redirect;
+    }
+
+    /**
+     * Subir firma del cliente (vía AJAX)
+     */
+    public function subirFirma(Request $request, Reparacion $reparacion)
+    {
+        $request->validate([
+            'firma' => 'required|string',
+            'tipo'  => 'required|in:recepcion,entrega',
+        ]);
+
+        // Decodificar la imagen base64 (data:image/png;base64,...
+        $firmaData = $request->firma;
+        $firmaData = str_replace('data:image/png;base64,', '', $firmaData);
+        $firmaData = str_replace(' ', '+', $firmaData);
+        $firmaData = base64_decode($firmaData);
+
+        if ($firmaData === false) {
+            return response()->json(['success' => false, 'message' => 'Error al decodificar la firma.'], 400);
+        }
+
+        $nombreArchivo = 'firma_' . $request->tipo . '_' . $reparacion->id . '_' . Str::random(8) . '.png';
+        $ruta = 'firmas/' . $nombreArchivo;
+
+        Storage::disk('public')->put($ruta, $firmaData);
+
+        // Eliminar firma anterior si existe
+        $campo = $request->tipo === 'recepcion' ? 'firma_recepcion' : 'firma_entrega';
+        if ($reparacion->{$campo}) {
+            Storage::disk('public')->delete($reparacion->{$campo});
+        }
+
+        $reparacion->update([$campo => $ruta]);
+
+        return response()->json([
+            'success' => true,
+            'url'     => asset('storage/' . $ruta),
+            'message' => 'Firma guardada correctamente.',
+        ]);
+    }
+
+    /**
+     * Subir foto de evidencia (vía AJAX)
+     */
+    public function subirFoto(Request $request, Reparacion $reparacion)
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'tipo' => 'required|in:frontal,trasero,detalle,imei,general',
+        ]);
+
+        $archivo = $request->file('foto');
+        $nombreArchivo = 'foto_' . $reparacion->id . '_' . Str::random(12) . '.' . $archivo->extension();
+        $ruta = $archivo->storeAs('reparaciones/fotos', $nombreArchivo, 'public');
+
+        $foto = ReparacionFoto::create([
+            'reparacion_id' => $reparacion->id,
+            'ruta'          => $ruta,
+            'tipo'          => $request->tipo,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'id'      => $foto->id,
+            'url'     => asset('storage/' . $ruta),
+            'message' => 'Foto guardada correctamente.',
+        ]);
+    }
+
+    /**
+     * Eliminar foto de evidencia
+     */
+    public function eliminarFoto(ReparacionFoto $foto)
+    {
+        $reparacion = $foto->reparacion;
+
+        // Verificar permisos
+        if (Auth::user()->rol !== 'admin' && Auth::user()->id !== $reparacion->tecnico_id) {
+            return response()->json(['success' => false, 'message' => 'No tienes permiso para eliminar esta foto.'], 403);
+        }
+
+        Storage::disk('public')->delete($foto->ruta);
+        $foto->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Foto eliminada correctamente.',
+        ]);
     }
 }
