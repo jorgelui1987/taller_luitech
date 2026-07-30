@@ -1,0 +1,1 @@
+ALTER TABLE configuracion ADD COLUMN whatsapp_notificaciones VARCHAR(255) NULL AFTER whatsapp;

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # Aplicación Laravel
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: servicio-tecnico-app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://luitech.fun
+      - DB_CONNECTION=mysql
+      - DB_HOST=serviciotecnico-serviciotecnico-npunhj
+      - DB_PORT=3306
+      - DB_DATABASE=tiendacelulares_crm
+      - DB_USERNAME=tiendacelulares_crm
+      - DB_PASSWORD=${DB_PASSWORD}
+      - SESSION_DRIVER=file
+      - CACHE_DRIVER=file
+      - QUEUE_CONNECTION=sync
+    restart: unless-stopped

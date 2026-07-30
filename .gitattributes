@@ -1,0 +1,7 @@
+# Forzar saltos de línea LF para archivos shell y Docker
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.env.example text eol=lf
+.gitignore text eol=lf

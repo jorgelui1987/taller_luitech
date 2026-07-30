@@ -1,0 +1,54 @@
+CREATE TABLE IF NOT EXISTS proveedores (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    contacto VARCHAR(255) NULL,
+    telefono VARCHAR(50) NULL,
+    email VARCHAR(255) NULL,
+    direccion VARCHAR(500) NULL,
+    ruc VARCHAR(20) NULL,
+    notas TEXT NULL,
+    activo TINYINT(1) NOT NULL DEFAULT 1,
+    tenant_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS ordenes_compra (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    numero_orden VARCHAR(50) NOT NULL,
+    proveedor_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NULL,
+    fecha_orden DATE NOT NULL,
+    fecha_estimada DATE NULL,
+    fecha_recibida DATE NULL,
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+    impuesto DECIMAL(10,2) NOT NULL DEFAULT 0,
+    descuento DECIMAL(10,2) NOT NULL DEFAULT 0,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0,
+    estado ENUM('pendiente','aprobada','enviada','recibida_parcial','completada','cancelada') NOT NULL DEFAULT 'pendiente',
+    notas TEXT NULL,
+    tenant_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proveedor_id) REFERENCES proveedores(id) ON DELETE RESTRICT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS detalle_ordenes_compra (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    orden_compra_id BIGINT UNSIGNED NOT NULL,
+    producto_id BIGINT UNSIGNED NOT NULL,
+    cantidad_ordenada INT NOT NULL DEFAULT 1,
+    cantidad_recibida INT NOT NULL DEFAULT 0,
+    precio_unitario DECIMAL(10,2) NOT NULL DEFAULT 0,
+    descuento DECIMAL(10,2) NOT NULL DEFAULT 0,
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+    tenant_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (orden_compra_id) REFERENCES ordenes_compra(id) ON DELETE CASCADE,
+    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE RESTRICT,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

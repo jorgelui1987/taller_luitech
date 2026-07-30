@@ -1,0 +1,16 @@
+composer install
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan storage:link
+php artisan serve
+
+
+password
+http://tallerluitech.fun/superadmin/login
+Inicia sesión con: camila1987chile@gmail.com / Castro16@
+
+.htaccess
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
