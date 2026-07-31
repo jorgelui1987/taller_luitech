@@ -4,6 +4,18 @@
     $tipoDispositivo = ['celular'=>'Celular','tablet'=>'Tablet','portatil'=>'Portatil','otros'=>'Otros'];
     $tiposCodigo = ['patron'=>'Patron','pin'=>'PIN'];
     $tipoCodigoMostrar = $tiposCodigo[$reparacion->tipo_codigo] ?? '';
+
+    // Obtener URL correcta del logo
+    $logoSrc = null;
+    if ($empresa && $empresa->logo) {
+        $logoPath = str_replace('storage/', '', $empresa->logo);
+        $fullPath = storage_path('app/public/' . $logoPath);
+        if (file_exists($fullPath)) {
+            $logoSrc = route('storage.serve', ['path' => $logoPath]);
+        } else {
+            $logoSrc = asset($empresa->logo);
+        }
+    }
 @endphp
 <!DOCTYPE html>
 <html lang="es">
@@ -12,36 +24,40 @@
 <title>Sticker {{ $reparacion->numero_orden }}</title>
 <style>
 *{margin:0;padding:0}
-body{font-family:'Courier New','Courier',monospace;font-size:12px;line-height:1.2;color:#000;width:72mm}
+body{font-family:'Arial','Helvetica',sans-serif;font-size:13px;line-height:1.3;color:#000;width:72mm}
 @page{size:80mm auto;margin:0}
-.hdr{text-align:center}
-.hdr .tienda{font-size:14px;font-weight:700}
+.hdr{text-align:center;padding:2px 0}
+.hdr .logo{max-height:35px;max-width:120px;margin:2px auto}
+.hdr .tienda{font-size:15px;font-weight:700}
 .hdr .inf{font-size:10px}
-.hdr .nro{font-size:15px;font-weight:700;letter-spacing:1px}
-.section{font-weight:700;margin-top:1px}
-.det{font-size:12px}
+.hdr .nro{font-size:18px;font-weight:700;letter-spacing:1px;margin:2px 0}
+.section{font-weight:700;margin-top:2px;font-size:12px}
+.det{font-size:13px}
 .g2{width:100%}
 .g2 .row{display:flex;flex-wrap:wrap}
 .g2 .col{width:50%}
-.g2 .l{font-size:9px;font-weight:700}
-.g2 .v{font-size:11px;font-weight:700}
+.g2 .l{font-size:9px;font-weight:700;color:#555}
+.g2 .v{font-size:12px;font-weight:600}
 .g2 .full{width:100%}
-.bx{font-size:11px;word-break:break-word;overflow-wrap:break-word}
-.gar{font-size:10px;text-align:center}
-.cr{display:flex;gap:4px}
-.ci{text-align:center;font-size:11px;font-weight:700}
-.ci .l{font-size:9px}
-.ftr{text-align:center;margin-top:1px;font-size:10px}
-.ftr .gr{font-size:11px;font-weight:700}
-hr{border:none;border-top:2px solid #000;margin:1px 0}
+.bx{font-size:12px;word-break:break-word;overflow-wrap:break-word}
+.gar{font-size:11px;text-align:center}
+.cr{display:flex;gap:4px;justify-content:center}
+.ci{text-align:center;font-size:12px;font-weight:700}
+.ci .l{font-size:9px;font-weight:700;color:#555}
+.ftr{text-align:center;margin-top:2px;font-size:10px}
+.ftr .gr{font-size:12px;font-weight:700}
+.firma-img{max-width:100%;max-height:80px;background:#fff;border:1px solid #ddd;border-radius:2px}
+.firma-label{font-size:10px;color:#555;margin-top:1px}
+hr{border:none;border-top:2px solid #000;margin:2px 0}
 </style>
+</head>
 <body>
 <div class="hdr">
-@if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="max-height:18px;max-width:35px">@endif
+@if($logoSrc)<img src="{{ $logoSrc }}" alt="" class="logo">@endif
 <div class="tienda">{{ $empresa->nombre_tienda ?? 'CRM Celulares' }}</div>
 <div class="inf">RUC: {{ $empresa->ruc ?? '' }}@if($empresa->ruc && $empresa->direccion) | @endif{{ $empresa->direccion ?? '' }}</div>
 <div class="nro">{{ $reparacion->numero_orden }}</div>
-<div>{{ $estadoLabel }} @if($reparacion->prioridad!='baja'){{ $prioridadIcon[$reparacion->prioridad]??'' }}@endif | {{ $reparacion->tecnico->name ?? '—' }}</div>
+<div>{{ $estadoLabel }} @if($reparacion->prioridad!='baja'){{ $prioridadIcon[$reparacion->prioridad]??'' }}@endif | Téc: {{ $reparacion->tecnico->name ?? '—' }}</div>
 </div>
 <hr>
 <div class="section">CLIENTE</div>
@@ -76,8 +92,8 @@ hr{border:none;border-top:2px solid #000;margin:1px 0}
 <hr>
 <div class="section">FALLA</div>
 <div class="bx">{{ $reparacion->falla_reportada }}</div>
-@if($reparacion->diagnostico)<div class="section">DIAGNOSTICO</div><div class="bx">{{ $reparacion->diagnostico }}</div>@endif
-@if($reparacion->solucion)<div class="section">SOLUCION</div><div class="bx">{{ $reparacion->solucion }}</div>@endif
+@if($reparacion->diagnostico)<div class="section">DIAGNÓSTICO</div><div class="bx">{{ $reparacion->diagnostico }}</div>@endif
+@if($reparacion->solucion)<div class="section">SOLUCIÓN</div><div class="bx">{{ $reparacion->solucion }}</div>@endif
 @if($reparacion->presupuesto>0||$reparacion->costo_final>0||$reparacion->abono>0||$reparacion->total>0)
 <div class="cr">
 @if($reparacion->presupuesto>0)<div class="ci"><div class="l">PRESUPUESTO</div>S/{{ number_format($reparacion->presupuesto,2) }}</div>@endif
@@ -86,7 +102,7 @@ hr{border:none;border-top:2px solid #000;margin:1px 0}
 @if($reparacion->total>0)<div class="ci"><div class="l">TOTAL</div>S/{{ number_format($reparacion->total,2) }}</div>@endif
 </div>
 @endif
-@if($reparacion->garantia)<div class="gar">Garantia: {{ $reparacion->dias_garantia }} dias</div>@endif
+@if($reparacion->garantia)<div class="gar">Garantía: {{ $reparacion->dias_garantia }} días</div>@endif
 @if($reparacion->notas)<div class="section">NOTAS</div><div class="bx">{{ $reparacion->notas }}</div>@endif
 @if($empresa && $empresa->terminos_garantia)
 <hr>
@@ -98,8 +114,8 @@ hr{border:none;border-top:2px solid #000;margin:1px 0}
 <div class="section">FIRMA RECEPCIÓN</div>
 <div style="text-align:center; margin:2px 0;">
     <img src="{{ asset('storage/'.$reparacion->firma_recepcion) }}" alt="Firma recepción"
-         style="max-width:100%; max-height:50px; background:#fff;">
-    <div style="font-size:9px;color:#666;">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
+         class="firma-img">
+    <div class="firma-label">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
 </div>
 @endif
 @if($reparacion->firma_entrega)
@@ -107,21 +123,19 @@ hr{border:none;border-top:2px solid #000;margin:1px 0}
 <div class="section">FIRMA ENTREGA</div>
 <div style="text-align:center; margin:2px 0;">
     <img src="{{ asset('storage/'.$reparacion->firma_entrega) }}" alt="Firma entrega"
-         style="max-width:100%; max-height:50px; background:#fff;">
-    <div style="font-size:9px;color:#666;">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
+         class="firma-img">
+    <div class="firma-label">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
 </div>
 @endif
 <div class="ftr">
 @php
-    // Usar la ruta generada por Laravel para el QR público
-    // Así funciona correctamente sin importar el dominio configurado en APP_URL
     $qrUrl = route('reparaciones.public-status', $reparacion->numero_orden);
 @endphp
 <div style="margin:4px auto;text-align:center;">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data={{ urlencode($qrUrl) }}" alt="QR" style="width:60px;height:60px;display:inline-block;">
-    <div style="font-size:8px;color:#666;">Escanea para ver estado y garantía</div>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($qrUrl) }}" alt="QR" style="width:80px;height:80px;display:inline-block;">
+    <div style="font-size:9px;color:#666;">Escanea para ver estado y garantía</div>
 </div>
-<div class="gr">Gracias por su preferencia!</div>
+<div class="gr">¡Gracias por su preferencia!</div>
 <div>{{ $reparacion->created_at->format('d/m/Y H:i') }} | {{ $reparacion->numero_orden }}</div>
 </div>
 <script>window.onload=function(){window.print()};window.onafterprint=function(){window.close()};</script>
