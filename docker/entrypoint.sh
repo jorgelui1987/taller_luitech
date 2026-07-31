@@ -49,12 +49,12 @@ fi
     echo "FORCE_HTTPS=${FORCE_HTTPS:-true}"
     echo "SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}"
     echo ""
-    echo "DB_CONNECTION=${DB_CONNECTION:-mysql}"
-    echo "DB_HOST=${DB_HOST:-127.0.0.1}"
-    echo "DB_PORT=${DB_PORT:-3306}"
-    echo "DB_DATABASE=${DB_DATABASE:-luitech}"
-    echo "DB_USERNAME=${DB_USERNAME:-root}"
-    echo "DB_PASSWORD=${DB_PASSWORD:-}"
+    echo "DB_CONNECTION=${DB_CONNECTION:-postgresql}"
+    echo "DB_HOST=${DB_HOST:-taller-taller-oqwcrq}"
+    echo "DB_PORT=${DB_PORT:-5432}"
+    echo "DB_DATABASE=${DB_DATABASE:-tiendacelulares_crm}"
+    echo "DB_USERNAME=${DB_USERNAME:-tiendacelulares_crm}"
+    echo "DB_PASSWORD=${DB_PASSWORD:-Castro161219@}"
     echo ""
     echo "SESSION_DRIVER=${SESSION_DRIVER:-file}"
     echo "SESSION_LIFETIME=${SESSION_LIFETIME:-120}"
@@ -109,11 +109,11 @@ fi
 echo "Verificando conexión a base de datos..."
 DB_CHECK=$(php -r "
     try {
-        \$driver = '${DB_CONNECTION:-mysql}';
-        if (\$driver === 'pgsql') {
-            \$pdo = new PDO('pgsql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-5432};dbname=${DB_DATABASE:-luitech}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
+        \$driver = '${DB_CONNECTION:-postgresql}';
+        if (\$driver === 'pgsql' || \$driver === 'postgresql') {
+            \$pdo = new PDO('pgsql:host=${DB_HOST:-taller-taller-oqwcrq};port=${DB_PORT:-5432};dbname=${DB_DATABASE:-tiendacelulares_crm}', '${DB_USERNAME:-tiendacelulares_crm}', '${DB_PASSWORD:-Castro161219@}', [PDO::ATTR_TIMEOUT => 5]);
         } else {
-            \$pdo = new PDO('mysql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-3306};dbname=${DB_DATABASE:-luitech}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
+            \$pdo = new PDO('mysql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-3306};dbname=${DB_DATABASE:-tiendacelulares_crm}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
         }
         echo 'OK';
     } catch (PDOException \$e) {

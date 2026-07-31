@@ -68,6 +68,21 @@ return [
             'schema'         => 'public',
             'sslmode'        => env('DB_SSLMODE', 'prefer'),
         ],
+
+        'postgresql' => [
+            'driver'         => 'pgsql',
+            'url'            => env('DATABASE_URL'),
+            'host'           => env('DB_HOST', '127.0.0.1'),
+            'port'           => env('DB_PORT', '5432'),
+            'database'       => env('DB_DATABASE', 'tiendacelulares_crm'),
+            'username'       => env('DB_USERNAME', 'root'),
+            'password'       => env('DB_PASSWORD', ''),
+            'charset'        => 'utf8',
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'schema'         => 'public',
+            'sslmode'        => env('DB_SSLMODE', 'prefer'),
+        ],
     ],
 
     'migrations' => 'migrations',
