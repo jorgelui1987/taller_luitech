@@ -54,6 +54,14 @@ Route::get('/storage/{path}', function ($path) {
     return response()->file($fullPath);
 })->where('path', '.*')->name('storage.serve');
 
+// ── HEALTH CHECK PARA DOCKER ──────────────────────────────────────────
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
 // ── RUTAS PÚBLICAS (Landing page para registrar nuevo tenant) ──────────────
 Route::get('/', function () {
     if (auth()->check()) {

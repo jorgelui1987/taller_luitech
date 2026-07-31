@@ -547,6 +547,154 @@
                 display: none !important;
             }
         }
+
+        /* ═══════════════════════════════════════════════════════════════
+           🆕 MEJORAS RESPONSIVE ADICIONALES (Opción 5)
+           ═══════════════════════════════════════════════════════════════ */
+
+        /* ── Touch targets mejorados ── */
+        @media (max-width: 575.98px) {
+            .btn, 
+            .btn-sm,
+            .btn-xs,
+            button,
+            .form-control,
+            .form-select,
+            .nav-link,
+            a {
+                min-height: 44px;
+            }
+            input, select, textarea {
+                font-size: 16px !important; /* Evita zoom en iOS */
+            }
+            .card-body {
+                padding: 12px !important;
+            }
+            .gap-2 { gap: 8px !important; }
+            .gap-3 { gap: 10px !important; }
+            .gap-4 { gap: 12px !important; }
+        }
+
+        /* ── Filtros colapsables en móvil ── */
+        .filtros-collapse {
+            transition: max-height .3s ease;
+        }
+        @media (max-width: 575.98px) {
+            .filtros-collapse {
+                max-height: 0;
+                overflow: hidden;
+            }
+            .filtros-collapse.show {
+                max-height: 800px;
+            }
+            .filtros-toggle {
+                cursor: pointer;
+                user-select: none;
+            }
+        }
+
+        /* ── Tarjetas para vista mobile (Index) ── */
+        .mobile-card-rep {
+            border-radius: 12px;
+            padding: 12px;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,.08);
+            transition: all .2s;
+            border-left: 4px solid #e5e7eb;
+        }
+        .mobile-card-rep:active {
+            transform: scale(0.98);
+        }
+        .mobile-card-rep .card-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .mobile-card-rep .card-body-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .mobile-card-rep .card-footer-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        /* ── FAB (Floating Action Button) para móvil ── */
+        .fab-mobile {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 15px rgba(168,85,247,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 999;
+            transition: all .2s;
+            text-decoration: none;
+        }
+        .fab-mobile:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(168,85,247,0.5);
+            color: #fff;
+        }
+        @media (min-width: 576px) {
+            .fab-mobile {
+                display: none !important;
+            }
+        }
+
+        /* ── Acordeón personalizado para móvil ── */
+        .accordion-mobile .accordion-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px !important;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .accordion-mobile .accordion-header {
+            background: #f8f5ff;
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 13px;
+            user-select: none;
+        }
+        .accordion-mobile .accordion-header i {
+            transition: transform .2s;
+        }
+        .accordion-mobile .accordion-header.active i {
+            transform: rotate(180deg);
+        }
+        .accordion-mobile .accordion-body {
+            padding: 12px 14px;
+            display: none;
+        }
+        .accordion-mobile .accordion-body.show {
+            display: block;
+        }
+        @media (min-width: 576px) {
+            .accordion-mobile .accordion-body {
+                display: block !important;
+            }
+            .accordion-mobile .accordion-header i {
+                display: none !important;
+            }
+        }
     </style>
 
     @stack('styles')
@@ -794,6 +942,13 @@
     </main>
 </div>
 
+{{-- FAB (Floating Action Button) para móvil - Nueva Orden --}}
+@if(request()->routeIs('reparaciones.index'))
+<a href="{{ route('reparaciones.create') }}" class="fab-mobile">
+    <i class="fas fa-plus"></i>
+</a>
+@endif
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Chart.js -->
@@ -813,13 +968,36 @@
         }
     }
 
-    // Cerrar sidebar al hacer click fuera (en desktop también)
+    // Cerrar sidebar al hacer click fuera
     document.addEventListener('click', function(e) {
         var sidebar = document.getElementById('sidebar');
         var toggleBtn = document.querySelector('.topbar-btn.d-md-none');
         if (window.innerWidth < 992 && sidebar.classList.contains('open')) {
             if (!sidebar.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target)) {
                 closeSidebarMobile();
+            }
+        }
+    });
+
+    // ── Acordeón para móvil ──
+    document.addEventListener('click', function(e) {
+        var header = e.target.closest('.accordion-mobile .accordion-header');
+        if (header && window.innerWidth < 576) {
+            var body = header.nextElementSibling;
+            if (body) {
+                body.classList.toggle('show');
+                header.classList.toggle('active');
+            }
+        }
+    });
+
+    // ── Filtros colapsables en móvil ──
+    document.addEventListener('click', function(e) {
+        var toggle = e.target.closest('.filtros-toggle');
+        if (toggle && window.innerWidth < 576) {
+            var target = document.querySelector(toggle.dataset.target);
+            if (target) {
+                target.classList.toggle('show');
             }
         }
     });

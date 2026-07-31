@@ -8,10 +8,16 @@
 
 @push('styles')
 <style>
-.timeline-item { position:relative; padding-left:28px; margin-bottom:20px; }
-.timeline-item::before { content:''; position:absolute; left:8px; top:20px; bottom:-20px; width:2px; background:#e5e7eb; }
-.timeline-item:last-child::before { display:none; }
-.timeline-dot { position:absolute; left:0; top:6px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+/* Timeline minimal */
+.timeline-bar { display:flex; align-items:center; gap:4px; margin-top:8px; }
+.timeline-step { flex:1; height:6px; border-radius:3px; background:#e5e7eb; position:relative; }
+.timeline-step.active { background:linear-gradient(90deg, #a855f7, #7c3aed); }
+.timeline-step.current { background:#7c3aed; box-shadow:0 0 0 2px #ede9fe; }
+.timeline-step.done { background:#10b981; }
+.timeline-step .dot { position:absolute; top:-4px; right:-2px; width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid #e5e7eb; }
+.timeline-step.done .dot { background:#10b981; border-color:#10b981; }
+.timeline-step.current .dot { background:#7c3aed; border-color:#7c3aed; }
+
 @media print {
     .sidebar,.topbar,.breadcrumb,.btn-acciones { display:none!important; }
     .main-wrapper { margin-left:0!important; }
@@ -28,7 +34,7 @@
 .signature-pad-wrapper canvas {
     display: block;
     width: 100%;
-    height: 160px;
+    height: 140px;
     border-radius: 12px;
     touch-action: none;
 }
@@ -38,13 +44,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: #9ca3af;
-    font-size: 14px;
+    font-size: 13px;
     pointer-events: none;
 }
 /* Photo gallery */
 .foto-item {
     position: relative;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     aspect-ratio: 1;
     background: #f3f4f6;
@@ -56,20 +62,20 @@
 }
 .foto-item .foto-tipo {
     position: absolute;
-    top: 6px;
-    left: 6px;
+    top: 5px;
+    left: 5px;
     background: rgba(0,0,0,0.6);
     color: #fff;
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 10px;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 8px;
 }
 .foto-item .foto-delete {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 28px;
-    height: 28px;
+    top: 5px;
+    right: 5px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: rgba(239,68,68,0.9);
     color: #fff;
@@ -78,7 +84,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11px;
     transition: all .2s;
 }
 .foto-item .foto-delete:hover {
@@ -87,7 +93,7 @@
 }
 .foto-upload-box {
     border: 2px dashed #d1d5db;
-    border-radius: 12px;
+    border-radius: 10px;
     aspect-ratio: 1;
     display: flex;
     flex-direction: column;
@@ -134,6 +140,11 @@
     background: none;
     border: none;
 }
+/* Info badges */
+.info-badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:4px 10px; border-radius:20px; font-size:11px; font-weight:500;
+}
 </style>
 @endpush
 
@@ -142,8 +153,8 @@
     <div>
         <h4 class="mb-1 fw-bold">{{ $reparacion->numero_orden }}</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Recibido el {{ optional($reparacion->fecha_recepcion)->format('d/m/Y H:i') }} ·
-            Técnico: <strong>{{ $reparacion->tecnico->name ?? '—' }}</strong>
+            <i class="far fa-calendar-alt me-1"></i>Recibido {{ optional($reparacion->fecha_recepcion)->format('d/m/Y H:i') }} ·
+            <i class="fas fa-user-cog me-1"></i>Técnico: <strong>{{ $reparacion->tecnico->name ?? '—' }}</strong>
         </p>
     </div>
     <div class="d-flex gap-2">
@@ -171,320 +182,420 @@
 </div>
 
 <div class="row g-4">
-    {{-- Detalle principal --}}
+    {{-- ============================================================ --}}
+    {{-- COLUMNA PRINCIPAL (EQUIPO + DIAGNÓSTICO + FOTOS) --}}
+    {{-- ============================================================ --}}
     <div class="col-lg-8">
-        {{-- Dispositivo --}}
-        <div class="card mb-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-mobile-alt me-2" style="color:#a855f7;"></i>Datos del Equipo</h6>
-                <div class="row g-3" style="font-size:13.5px;">
-                    <div class="col-md-3">
-                        <span class="text-muted d-block" style="font-size:11px;">TIPO</span>
-                        <strong>@php
+
+        {{-- Acordeón móvil: Datos del Equipo --}}
+        <div class="accordion-mobile">
+            <div class="accordion-item mb-4">
+                <div class="accordion-header active">
+                    <span><i class="fas fa-mobile-alt me-2" style="color:#a855f7;"></i>Datos del Equipo</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body show">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        @php
                             $tipos = ['celular'=>'📱 Celular','tablet'=>'📟 Tablet','portatil'=>'💻 Portátil','otros'=>'🔧 Otros'];
                         @endphp
-                        {{ $tipos[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?: '—' }}</strong>
+                        <span class="info-badge" style="background:#f3f4f6; color:#374151;">
+                            {{ $tipos[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?: '—' }}
+                        </span>
                     </div>
-                    <div class="col-md-3">
-                        <span class="text-muted d-block" style="font-size:11px;">DISPOSITIVO</span>
-                        <strong>{{ $reparacion->dispositivo }}</strong>
-                    </div>
-                    <div class="col-md-3">
-                        <span class="text-muted d-block" style="font-size:11px;">🔐 PATRÓN / PIN</span>
-                        <strong>@php
-                            $tiposCodigo = ['patron'=>'🔓 Patrón','pin'=>'🔢 PIN'];
-                            $tipoMostrar = $tiposCodigo[$reparacion->tipo_codigo] ?? '';
-                        @endphp
-                        @if($reparacion->tipo_codigo === 'patron' && $reparacion->patron_secuencia)
-                            {{ $tipoMostrar }}
-                            <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:130px; margin-top:4px;">
-                                @for($i=1;$i<=9;$i++)
-                                    @php
-                                        $nums = explode('-', $reparacion->patron_secuencia);
-                                        $pos = array_search($i, $nums);
-                                        $esSeleccionado = $pos !== false;
-                                    @endphp
-                                    <div style="width:30px; height:30px; border-radius:50%;
-                                        {{ $esSeleccionado ? 'background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;' : 'background:#f8f5ff;color:#a855f7;border:2px solid #a855f7;' }}
-                                        display:flex; align-items:center; justify-content:center;
-                                        font-size:11px; font-weight:600;">
-                                        {{ $esSeleccionado ? $pos + 1 : $i }}
-                                    </div>
-                                @endfor
-                            </div>
-                            <div style="font-size:10px; color:#6b7280; margin-top:2px;">Secuencia: {{ $reparacion->patron_secuencia }}</div>
-                        @elseif($reparacion->tipo_codigo === 'pin')
-                            {{ $tipoMostrar }}: {{ $reparacion->codigo_equipo ?: '—' }}
-                        @else
-                            —
+                    <div class="row g-3" style="font-size:13.5px;">
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block" style="font-size:11px;">DISPOSITIVO</span>
+                            <strong>{{ $reparacion->dispositivo ?: '—' }}</strong>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block" style="font-size:11px;">MARCA / MODELO</span>
+                            <strong>{{ $reparacion->marca ?: '—' }}@if($reparacion->modelo) / {{ $reparacion->modelo }}@endif</strong>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block" style="font-size:11px;">🎨 COLOR</span>
+                            <strong>{{ $reparacion->color ?: '—' }}</strong>
+                        </div>
+                        @if($reparacion->imei)
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block" style="font-size:11px;">🔢 IMEI / SERIE</span>
+                            <strong style="font-size:12px; word-break:break-all;">{{ $reparacion->imei }}</strong>
+                        </div>
                         @endif
-                        </strong>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block" style="font-size:11px;">🔐 PATRÓN / PIN</span>
+                            <strong>
+                            @php
+                                $tiposCodigo = ['patron'=>'🔓 Patrón','pin'=>'🔢 PIN'];
+                                $tipoMostrar = $tiposCodigo[$reparacion->tipo_codigo] ?? '';
+                            @endphp
+                            @if($reparacion->tipo_codigo === 'patron' && $reparacion->patron_secuencia)
+                                {{ $tipoMostrar }}
+                                <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:110px; margin-top:3px;">
+                                    @for($i=1;$i<=9;$i++)
+                                        @php
+                                            $nums = explode('-', $reparacion->patron_secuencia);
+                                            $pos = array_search($i, $nums);
+                                            $esSeleccionado = $pos !== false;
+                                        @endphp
+                                        <div style="width:26px; height:26px; border-radius:50%;
+                                            {{ $esSeleccionado ? 'background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;' : 'background:#f8f5ff;color:#a855f7;border:2px solid #a855f7;' }}
+                                            display:flex; align-items:center; justify-content:center;
+                                            font-size:10px; font-weight:600;">
+                                            {{ $esSeleccionado ? $pos + 1 : $i }}
+                                        </div>
+                                    @endfor
+                                </div>
+                                <div style="font-size:10px; color:#6b7280; margin-top:2px;">Secuencia: {{ $reparacion->patron_secuencia }}</div>
+                            @elseif($reparacion->tipo_codigo === 'pin')
+                                {{ $tipoMostrar }}: {{ $reparacion->codigo_equipo ?: '—' }}
+                            @else
+                                —
+                            @endif
+                            </strong>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <span class="text-muted d-block" style="font-size:11px;">MARCA / MODELO</span>
-                        <strong>{{ $reparacion->marca ?: '—' }} {{ $reparacion->modelo ? '/ '.$reparacion->modelo : '' }}</strong>
+                </div>
+            </div>
+        </div>
+
+        {{-- Acordeón móvil: Diagnóstico --}}
+        <div class="accordion-mobile">
+            <div class="accordion-item mb-4">
+                <div class="accordion-header active">
+                    <span><i class="fas fa-stethoscope me-2" style="color:#a855f7;"></i>Diagnóstico</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body show">
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span style="font-size:11px; color:#9ca3af;">FALLA REPORTADA</span>
+                            <span class="info-badge" style="background:#fef3c7; color:#92400e;">Cliente</span>
+                        </div>
+                        <div class="p-3 rounded-3" style="background:#fef3c7; font-size:13.5px; border-left:3px solid #f59e0b;">
+                            {{ $reparacion->falla_reportada }}
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <span class="text-muted d-block" style="font-size:11px;">COLOR</span>
-                        <strong>{{ $reparacion->color ?: '—' }}</strong>
+
+                    @if($reparacion->diagnostico)
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span style="font-size:11px; color:#9ca3af;">DIAGNÓSTICO TÉCNICO</span>
+                            <span class="info-badge" style="background:#e0f2fe; color:#0369a1;">Técnico</span>
+                        </div>
+                        <div class="p-3 rounded-3" style="background:#e0f2fe; font-size:13.5px; border-left:3px solid #0ea5e9;">
+                            {{ $reparacion->diagnostico }}
+                        </div>
                     </div>
-                    @if($reparacion->imei)
-                    <div class="col-md-3">
-                        <span class="text-muted d-block" style="font-size:11px;">IMEI / SERIE</span>
-                        <strong>{{ $reparacion->imei }}</strong>
+                    @endif
+
+                    @if($reparacion->solucion)
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span style="font-size:11px; color:#9ca3af;">SOLUCIÓN APLICADA</span>
+                            <span class="info-badge" style="background:#d1fae5; color:#065f46;">Técnico</span>
+                        </div>
+                        <div class="p-3 rounded-3" style="background:#d1fae5; font-size:13.5px; border-left:3px solid #10b981;">
+                            {{ $reparacion->solucion }}
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($reparacion->notas)
+                    <div class="mt-3 p-3 rounded-3 d-flex align-items-start gap-2" style="background:#f9fafb; font-size:13px; color:#6b7280;">
+                        <i class="fas fa-sticky-note mt-1" style="color:#a855f7;"></i>
+                        <div>{{ $reparacion->notas }}</div>
                     </div>
                     @endif
                 </div>
             </div>
         </div>
 
-        {{-- Falla / Diagnóstico / Solución --}}
-        <div class="card mb-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-stethoscope me-2" style="color:#a855f7;"></i>Diagnóstico</h6>
-                <div class="mb-3">
-                    <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">FALLA REPORTADA POR EL CLIENTE</div>
-                    <div class="p-3 rounded-3" style="background:#fef3c7; font-size:13.5px;">
-                        {{ $reparacion->falla_reportada }}
+        {{-- Acordeón móvil: Fotos de Evidencia --}}
+        <div class="accordion-mobile">
+            <div class="accordion-item mb-4">
+                <div class="accordion-header active">
+                    <span><i class="fas fa-camera me-2" style="color:#a855f7;"></i>Fotos de Evidencia @if($reparacion->fotos->count() > 0)<span class="info-badge ms-2" style="background:#f3f4f6; color:#374151;">{{ $reparacion->fotos->count() }}</span>@endif</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body show">
+                    <div class="row g-2" id="fotosGallery">
+                        @forelse($reparacion->fotos as $foto)
+                        <div class="col-3" data-foto-id="{{ $foto->id }}">
+                            <div class="foto-item">
+                                <img src="{{ asset('storage/'.$foto->ruta) }}" alt="Foto {{ $foto->tipo }}"
+                                     onclick="abrirLightbox(this.src)" style="cursor:pointer;">
+                                <span class="foto-tipo">{{ ucfirst($foto->tipo) }}</span>
+                                <button class="foto-delete" onclick="eliminarFoto({{ $foto->id }})" title="Eliminar foto">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="col-12">
+                            <div class="text-center py-3">
+                                <i class="fas fa-image" style="font-size:28px; color:#d1d5db; display:block; margin-bottom:6px;"></i>
+                                <p class="text-muted mb-0" style="font-size:12px;">No hay fotos de evidencia aún.</p>
+                            </div>
+                        </div>
+                        @endforelse
+                        <div class="col-3">
+                            <div class="foto-upload-box" onclick="document.getElementById('fotoInput').click()">
+                                <i class="fas fa-plus" style="font-size:20px;"></i>
+                                <span style="font-size:10px; margin-top:3px;">Agregar</span>
+                            </div>
+                            <form id="fotoUploadForm" enctype="multipart/form-data" style="display:none;">
+                                @csrf
+                                <input type="file" id="fotoInput" name="foto" accept="image/*" capture="environment"
+                                       onchange="subirFoto(this)">
+                                <select id="fotoTipo" name="tipo">
+                                    <option value="frontal">Frontal</option>
+                                    <option value="trasero">Trasero</option>
+                                    <option value="detalle">Detalle</option>
+                                    <option value="imei">IMEI</option>
+                                    <option value="general">General</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="fotoUploadProgress" style="display:none; margin-top:8px;">
+                        <div class="progress" style="height:5px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%; background:#a855f7;"></div>
+                        </div>
+                        <p class="text-muted mt-1" style="font-size:11px;">Subiendo foto...</p>
                     </div>
                 </div>
-                @if($reparacion->diagnostico)
-                <div class="mb-3">
-                    <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">DIAGNÓSTICO TÉCNICO</div>
-                    <div class="p-3 rounded-3" style="background:#e0f2fe; font-size:13.5px;">
-                        {{ $reparacion->diagnostico }}
-                    </div>
-                </div>
-                @endif
-                @if($reparacion->solucion)
-                <div>
-                    <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">SOLUCIÓN APLICADA</div>
-                    <div class="p-3 rounded-3" style="background:#d1fae5; font-size:13.5px;">
-                        {{ $reparacion->solucion }}
-                    </div>
-                </div>
-                @endif
-                @if($reparacion->notas)
-                <div class="mt-3 p-3 rounded-3" style="background:#f9fafb; font-size:13px; color:#6b7280;">
-                    <i class="fas fa-sticky-note me-1"></i>{{ $reparacion->notas }}
-                </div>
-                @endif
             </div>
         </div>
 
-        {{-- Costos --}}
-        <div class="card">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-dollar-sign me-2" style="color:#a855f7;"></i>Costos</h6>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="p-3 rounded-3" style="background:#f8f5ff; text-align:center;">
-                            <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">PRESUPUESTO</div>
-                            <div style="font-size:24px; font-weight:700; color:#7c3aed;">
-                                S/ {{ $reparacion->presupuesto ? number_format($reparacion->presupuesto, 2) : '0.00' }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="p-3 rounded-3" style="background:#d1fae5; text-align:center;">
-                            <div style="font-size:11px; color:#065f46; margin-bottom:4px;">COSTO FINAL</div>
-                            <div style="font-size:24px; font-weight:700; color:#059669;">
-                                S/ {{ $reparacion->costo_final ? number_format($reparacion->costo_final, 2) : '0.00' }}
-                            </div>
-                        </div>
-                    </div>
-                    @if($reparacion->abono > 0)
-                    <div class="col-md-6">
-                        <div class="p-3 rounded-3" style="background:#fef3c7; text-align:center;">
-                            <div style="font-size:11px; color:#92400e; margin-bottom:4px;">ABONO RECIBIDO</div>
-                            <div style="font-size:20px; font-weight:700; color:#92400e;">
-                                S/ {{ number_format($reparacion->abono, 2) }}
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    @if($reparacion->total > 0)
-                    <div class="col-md-6">
-                        <div class="p-3 rounded-3" style="background:#fef3c7; text-align:center;">
-                            <div style="font-size:11px; color:#92400e; margin-bottom:4px;">TOTAL</div>
-                            <div style="font-size:20px; font-weight:700; color:#92400e;">
-                                S/ {{ number_format($reparacion->total, 2) }}
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    @if($reparacion->garantia)
-                    <div class="col-12">
-                        <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background:#e0f2fe;">
-                            <i class="fas fa-shield-alt" style="color:#0369a1; font-size:20px;"></i>
-                            <div>
-                                <div style="font-weight:600; color:#0369a1;">Garantía incluida</div>
-                                <div style="font-size:12px; color:#0369a1;">{{ $reparacion->dias_garantia }} días de garantía</div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
     </div>
 
-    {{-- Panel lateral --}}
+    {{-- ============================================================ --}}
+    {{-- COLUMNA LATERAL (ESTADO + COSTOS + FIRMAS) --}}
+    {{-- ============================================================ --}}
     <div class="col-lg-4">
-        {{-- Estado y cliente --}}
-        <div class="card mb-3">
-            <div class="card-body p-4">
-                {{-- Estado actual --}}
-                @php
-                    $stColors = ['recibido'=>['#ede9fe','#6d28d9'],'en_diagnostico'=>['#e0f2fe','#0369a1'],'esperando_repuesto'=>['#fef9c3','#92400e'],'en_reparacion'=>['#dbeafe','#1d4ed8'],'listo'=>['#d1fae5','#065f46'],'entregado'=>['#f3f4f6','#374151'],'no_reparable'=>['#fee2e2','#991b1b']];
-                    $sc = $stColors[$reparacion->estado] ?? ['#f3f4f6','#374151'];
-                    $priCol = ['urgente'=>['#fee2e2','#991b1b','🔴'],'alta'=>['#ffedd5','#9a3412','🟠'],'media'=>['#fef9c3','#713f12','🟡'],'baja'=>['#d1fae5','#065f46','🟢']];
-                    $pr = $priCol[$reparacion->prioridad] ?? ['#f3f4f6','#374151','⚪'];
-                @endphp
 
-                <div class="text-center mb-3">
-                    <span style="background:{{ $sc[0] }}; color:{{ $sc[1] }}; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:600; display:inline-block;">
-                        {{ str_replace('_',' ',ucfirst($reparacion->estado)) }}
-                    </span>
+        {{-- Acordeón móvil: Estado y Cliente --}}
+        <div class="accordion-mobile">
+            <div class="accordion-item mb-3">
+                <div class="accordion-header active">
+                    <span><i class="fas fa-info-circle me-2" style="color:#a855f7;"></i>Estado y Cliente</span>
+                    <i class="fas fa-chevron-down"></i>
                 </div>
-
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
-                    <span class="text-muted">Prioridad</span>
-                    <span style="background:{{ $pr[0] }}; color:{{ $pr[1] }}; border-radius:20px; padding:2px 10px; font-size:12px;">
-                        {{ $pr[2] }} {{ ucfirst($reparacion->prioridad) }}
-                    </span>
-                </div>
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
-                    <span class="text-muted">Recibido</span>
-                    <span>{{ optional($reparacion->fecha_recepcion)->format('d/m/Y') }}</span>
-                </div>
-                @if($reparacion->fecha_estimada)
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
-                    <span class="text-muted">Fecha estimada</span>
-                    <span>{{ $reparacion->fecha_estimada->format('d/m/Y') }}</span>
-                </div>
-                @endif
-                @if($reparacion->fecha_entrega)
-                <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
-                    <span class="text-muted">Entregado</span>
-                    <span style="color:#059669; font-weight:600;">{{ $reparacion->fecha_entrega->format('d/m/Y') }}</span>
-                </div>
-                @endif
-
-                <hr>
-                <h6 class="fw-bold mb-2" style="font-size:13px;">Cliente</h6>
-                <div style="font-weight:600; font-size:13.5px;">{{ $reparacion->cliente->nombre_completo ?? '—' }}</div>
-                <div style="font-size:12px; color:#9ca3af;">{{ $reparacion->cliente->telefono ?? '' }}</div>
-                @if($reparacion->cliente->email)
-                    <div style="font-size:12px; color:#9ca3af;">{{ $reparacion->cliente->email }}</div>
-                @endif
-
-                <div class="mt-3 d-grid gap-2">
+                <div class="accordion-body show">
                     @php
-                        use App\Helpers\WhatsAppHelper;
-                        $cliente = $reparacion->cliente;
-                        $telefonoCliente = WhatsAppHelper::limpiarNumero($cliente->telefono ?? $cliente->celular);
-                        $urlRecibido = WhatsAppHelper::generarUrl(
-                            $telefonoCliente,
-                            WhatsAppHelper::mensajeRecibido($reparacion, $empresa->nombre_tienda ?? 'CRM Celulares')
-                        );
-                        $urlListo = WhatsAppHelper::generarUrl(
-                            $telefonoCliente,
-                            WhatsAppHelper::mensajeListo($reparacion, $empresa->nombre_tienda ?? 'CRM Celulares')
-                        );
+                        $stColors = ['recibido'=>['#ede9fe','#6d28d9'],'en_diagnostico'=>['#e0f2fe','#0369a1'],'esperando_repuesto'=>['#fef9c3','#92400e'],'en_reparacion'=>['#dbeafe','#1d4ed8'],'listo'=>['#d1fae5','#065f46'],'entregado'=>['#f3f4f6','#374151'],'no_reparable'=>['#fee2e2','#991b1b']];
+                        $sc = $stColors[$reparacion->estado] ?? ['#f3f4f6','#374151'];
+                        $priCol = ['urgente'=>['#fee2e2','#991b1b','🔴'],'alta'=>['#ffedd5','#9a3412','🟠'],'media'=>['#fef9c3','#713f12','🟡'],'baja'=>['#d1fae5','#065f46','🟢']];
+                        $pr = $priCol[$reparacion->prioridad] ?? ['#f3f4f6','#374151','⚪'];
+                        $diasTranscurridos = $reparacion->fecha_recepcion ? now()->diffInDays($reparacion->fecha_recepcion) : 0;
                     @endphp
-                    @if($urlRecibido)
-                    <div class="d-grid gap-1">
-                        <a href="{{ $urlRecibido }}" target="_blank"
-                           class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
-                            <i class="fab fa-whatsapp me-1"></i>📩 Notificar Recibido
-                        </a>
-                        <a href="{{ $urlListo }}" target="_blank"
-                           class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
-                            <i class="fab fa-whatsapp me-1"></i>📩 Notificar Listo/Entregado
-                        </a>
+
+                    <div class="text-center mb-3">
+                        <span style="background:{{ $sc[0] }}; color:{{ $sc[1] }}; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:600; display:inline-block;">
+                            {{ str_replace('_',' ',ucfirst($reparacion->estado)) }}
+                        </span>
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <span class="info-badge" style="background:#f3f4f6; color:#6b7280;">
+                            <i class="far fa-clock me-1"></i>{{ $diasTranscurridos }} día(s) desde recepción
+                        </span>
+                    </div>
+
+                    @php
+                        $ordenEstados = ['recibido','en_diagnostico','esperando_repuesto','en_reparacion','listo','entregado'];
+                        $idxActual = array_search($reparacion->estado, $ordenEstados);
+                        $etiquetasCortas = ['recibido'=>'Rec','en_diagnostico'=>'Diag','esperando_repuesto'=>'Rep','en_reparacion'=>'Rep','listo'=>'Listo','entregado'=>'Ent'];
+                    @endphp
+                    <div class="d-flex justify-content-between mb-1" style="font-size:9px; color:#9ca3af; padding:0 2px;">
+                        @foreach($ordenEstados as $i => $est)
+                            <span>{{ $etiquetasCortas[$est] }}</span>
+                        @endforeach
+                    </div>
+                    <div class="timeline-bar">
+                        @foreach($ordenEstados as $i => $est)
+                            @php
+                                $clase = '';
+                                if ($i < $idxActual) $clase = 'done';
+                                elseif ($i == $idxActual) $clase = 'current';
+                                if ($i <= $idxActual) $clase .= ' active';
+                            @endphp
+                            <div class="timeline-step {{ $clase }}">
+                                @if($i <= $idxActual)
+                                    <div class="dot"></div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
+                        <span class="text-muted">Prioridad</span>
+                        <span class="info-badge" style="background:{{ $pr[0] }}; color:{{ $pr[1] }};">
+                            {{ $pr[2] }} {{ ucfirst($reparacion->prioridad) }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
+                        <span class="text-muted">Recibido</span>
+                        <span>{{ optional($reparacion->fecha_recepcion)->format('d/m/Y') }}</span>
+                    </div>
+                    @if($reparacion->fecha_estimada)
+                    <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
+                        <span class="text-muted">Fecha estimada</span>
+                        <span>{{ $reparacion->fecha_estimada->format('d/m/Y') }}</span>
                     </div>
                     @endif
-                    <a href="{{ route('reparaciones.edit', $reparacion) }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-edit me-1"></i>Actualizar Estado
-                    </a>
-                    <a href="{{ route('clientes.show', $reparacion->cliente_id) }}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-user me-1"></i>Ver Cliente
-                    </a>
+                    @if($reparacion->fecha_entrega)
+                    <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
+                        <span class="text-muted">Entregado</span>
+                        <span style="color:#059669; font-weight:600;">{{ $reparacion->fecha_entrega->format('d/m/Y') }}</span>
+                    </div>
+                    @endif
+
+                    <hr class="my-3">
+
+                    <h6 class="fw-bold mb-2" style="font-size:13px;">
+                        <i class="fas fa-user me-1" style="color:#a855f7;"></i> Cliente
+                    </h6>
+                    <div style="font-weight:600; font-size:13.5px;">{{ $reparacion->cliente->nombre_completo ?? '—' }}</div>
+                    <div style="font-size:12px; color:#9ca3af;">
+                        <i class="fas fa-phone me-1"></i>{{ $reparacion->cliente->telefono ?? '' }}
+                    </div>
+                    @if($reparacion->cliente->email)
+                        <div style="font-size:12px; color:#9ca3af;">
+                            <i class="fas fa-envelope me-1"></i>{{ $reparacion->cliente->email }}
+                        </div>
+                    @endif
+
+                    <div class="mt-3 d-grid gap-2">
+                        @php
+                            use App\Helpers\WhatsAppHelper;
+                            $cliente = $reparacion->cliente;
+                            $telefonoCliente = WhatsAppHelper::limpiarNumero($cliente->telefono ?? $cliente->celular);
+                            $urlRecibido = WhatsAppHelper::generarUrl(
+                                $telefonoCliente,
+                                WhatsAppHelper::mensajeRecibido($reparacion, $empresa->nombre_tienda ?? 'CRM Celulares')
+                            );
+                            $urlListo = WhatsAppHelper::generarUrl(
+                                $telefonoCliente,
+                                WhatsAppHelper::mensajeListo($reparacion, $empresa->nombre_tienda ?? 'CRM Celulares')
+                            );
+                        @endphp
+                        @if($urlRecibido)
+                        <div class="d-grid gap-1">
+                            <a href="{{ $urlRecibido }}" target="_blank"
+                               class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
+                                <i class="fab fa-whatsapp me-1"></i>📩 Notificar Recibido
+                            </a>
+                            <a href="{{ $urlListo }}" target="_blank"
+                               class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
+                                <i class="fab fa-whatsapp me-1"></i>📩 Notificar Listo/Entregado
+                            </a>
+                        </div>
+                        @endif
+                        <a href="{{ route('reparaciones.edit', $reparacion) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>Actualizar Estado
+                        </a>
+                        <a href="{{ route('clientes.show', $reparacion->cliente_id) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-user me-1"></i>Ver Cliente
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- 📸 FOTOS DE EVIDENCIA --}}
-        <div class="card mb-3">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-camera me-2" style="color:#a855f7;"></i>Fotos de Evidencia</h6>
-                <div class="row g-2" id="fotosGallery">
-                    @forelse($reparacion->fotos as $foto)
-                    <div class="col-4" data-foto-id="{{ $foto->id }}">
-                        <div class="foto-item">
-                            <img src="{{ asset('storage/'.$foto->ruta) }}" alt="Foto {{ $foto->tipo }}"
-                                 onclick="abrirLightbox(this.src)" style="cursor:pointer;">
-                            <span class="foto-tipo">{{ ucfirst($foto->tipo) }}</span>
-                            <button class="foto-delete" onclick="eliminarFoto({{ $foto->id }})" title="Eliminar foto">
-                                <i class="fas fa-times"></i>
+        {{-- Acordeón móvil: Costos --}}
+        <div class="accordion-mobile">
+            <div class="accordion-item mb-3">
+                <div class="accordion-header active">
+                    <span><i class="fas fa-dollar-sign me-2" style="color:#a855f7;"></i>Costos</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body show">
+                    <div class="d-flex flex-column gap-2">
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background:#f8f5ff;">
+                            <span style="font-size:11px; color:#9ca3af;">PRESUPUESTO</span>
+                            <span style="font-size:18px; font-weight:700; color:#7c3aed;">
+                                S/ {{ $reparacion->presupuesto ? number_format($reparacion->presupuesto, 2) : '0.00' }}
+                            </span>
+                        </div>
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background:#d1fae5;">
+                            <span style="font-size:11px; color:#065f46;">COSTO FINAL</span>
+                            <span style="font-size:18px; font-weight:700; color:#059669;">
+                                S/ {{ $reparacion->costo_final ? number_format($reparacion->costo_final, 2) : '0.00' }}
+                            </span>
+                        </div>
+                        @if($reparacion->abono > 0)
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background:#fef3c7;">
+                            <span style="font-size:11px; color:#92400e;">ABONO</span>
+                            <span style="font-size:16px; font-weight:700; color:#92400e;">
+                                S/ {{ number_format($reparacion->abono, 2) }}
+                            </span>
+                        </div>
+                        @endif
+                        @if($reparacion->total > 0)
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background:#fef3c7; border:2px solid #f59e0b;">
+                            <span style="font-size:11px; color:#92400e; font-weight:600;">SALDO PENDIENTE</span>
+                            <span style="font-size:18px; font-weight:700; color:#92400e;">
+                                S/ {{ number_format($reparacion->total, 2) }}
+                            </span>
+                        </div>
+                        @endif
+                        @if($reparacion->garantia)
+                        <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background:#e0f2fe;">
+                            <i class="fas fa-shield-alt" style="color:#0369a1; font-size:18px;"></i>
+                            <div>
+                                <div style="font-weight:600; color:#0369a1; font-size:13px;">Garantía incluida</div>
+                                <div style="font-size:11px; color:#0369a1;">{{ $reparacion->dias_garantia }} días de garantía</div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Acordeón móvil: Firmas --}}
+        <div class="accordion-mobile">
+            <div class="accordion-item mb-3">
+                <div class="accordion-header active">
+                    <span><i class="fas fa-pen me-2" style="color:#a855f7;"></i>Firmas</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-body show">
+                    {{-- Firma Recepción --}}
+                    <h6 class="fw-bold mb-2" style="font-size:12px;">Firma de Recepción</h6>
+                    @if($reparacion->firma_recepcion)
+                        <div class="text-center mb-3">
+                            <img src="{{ asset('storage/'.$reparacion->firma_recepcion) }}" alt="Firma de recepción"
+                                 style="max-width:100%; max-height:80px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;">
+                            <p class="text-muted mt-1 mb-1" style="font-size:11px;">✓ Firma registrada al recibir el equipo</p>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="cargarFirmaRecepcion()">
+                                <i class="fas fa-redo me-1"></i>Volver a firmar
                             </button>
                         </div>
-                    </div>
-                    @empty
-                    <div class="col-12">
-                        <p class="text-muted mb-0" style="font-size:12px;">No hay fotos de evidencia aún.</p>
-                    </div>
-                    @endforelse
-                    {{-- Botón de subir foto --}}
-                    <div class="col-4">
-                        <div class="foto-upload-box" onclick="document.getElementById('fotoInput').click()">
-                            <i class="fas fa-plus" style="font-size:24px;"></i>
-                            <span style="font-size:11px; margin-top:4px;">Agregar</span>
+                        <div id="signaturePadRecepcion" style="display:none; margin-top:10px;">
+                            <div class="signature-pad-wrapper" id="sigPadRecepcionWrapper">
+                                <canvas id="sigCanvasRecepcion"></canvas>
+                                <div class="placeholder">Firma aquí</div>
+                            </div>
+                            <div class="d-flex gap-2 mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="limpiarFirma('recepcion')">
+                                    <i class="fas fa-eraser me-1"></i>Limpiar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="guardarFirma('recepcion')">
+                                    <i class="fas fa-check me-1"></i>Guardar Firma
+                                </button>
+                            </div>
                         </div>
-                        <form id="fotoUploadForm" enctype="multipart/form-data" style="display:none;">
-                            @csrf
-                            <input type="file" id="fotoInput" name="foto" accept="image/*" capture="environment"
-                                   onchange="subirFoto(this)">
-                            <select id="fotoTipo" name="tipo">
-                                <option value="frontal">Frontal</option>
-                                <option value="trasero">Trasero</option>
-                                <option value="detalle">Detalle</option>
-                                <option value="imei">IMEI</option>
-                                <option value="general">General</option>
-                            </select>
-                        </form>
-                    </div>
-                </div>
-                <div id="fotoUploadProgress" style="display:none; margin-top:8px;">
-                    <div class="progress" style="height:6px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%; background:#a855f7;"></div>
-                    </div>
-                    <p class="text-muted mt-1" style="font-size:11px;">Subiendo foto...</p>
-                </div>
-            </div>
-        </div>
-
-        {{-- ✍️ FIRMA DE RECEPCIÓN --}}
-        <div class="card mb-3">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-pen me-2" style="color:#a855f7;"></i>Firma de Recepción</h6>
-                @if($reparacion->firma_recepcion)
-                    {{-- Ya firmado --}}
-                    <div class="text-center">
-                        <img src="{{ asset('storage/'.$reparacion->firma_recepcion) }}" alt="Firma de recepción"
-                             style="max-width:100%; max-height:120px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;">
-                        <p class="text-muted mt-2" style="font-size:11px;">✓ Firma registrada al recibir el equipo</p>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="cargarFirmaRecepcion()">
-                            <i class="fas fa-redo me-1"></i>Volver a firmar
-                        </button>
-                    </div>
-                    <div id="signaturePadRecepcion" style="display:none; margin-top:10px;">
-                        <div class="signature-pad-wrapper" id="sigPadRecepcionWrapper">
+                    @else
+                        <div class="signature-pad-wrapper mb-3" id="sigPadRecepcionWrapper">
                             <canvas id="sigCanvasRecepcion"></canvas>
                             <div class="placeholder">Firma aquí</div>
                         </div>
-                        <div class="d-flex gap-2 mt-2">
+                        <div class="d-flex gap-2 mt-2 mb-3">
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="limpiarFirma('recepcion')">
                                 <i class="fas fa-eraser me-1"></i>Limpiar
                             </button>
@@ -492,54 +603,39 @@
                                 <i class="fas fa-check me-1"></i>Guardar Firma
                             </button>
                         </div>
-                    </div>
-                @else
-                    {{-- No firmado aún --}}
-                    <div class="signature-pad-wrapper" id="sigPadRecepcionWrapper">
-                        <canvas id="sigCanvasRecepcion"></canvas>
-                        <div class="placeholder">Firma aquí</div>
-                    </div>
-                    <div class="d-flex gap-2 mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="limpiarFirma('recepcion')">
-                            <i class="fas fa-eraser me-1"></i>Limpiar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="guardarFirma('recepcion')">
-                            <i class="fas fa-check me-1"></i>Guardar Firma
-                        </button>
-                    </div>
-                @endif
+                    @endif
+
+                    <hr>
+
+                    {{-- Firma Entrega --}}
+                    @if(in_array($reparacion->estado, ['listo', 'entregado']))
+                        <h6 class="fw-bold mb-2" style="font-size:12px;">Firma de Entrega</h6>
+                        @if($reparacion->firma_entrega)
+                            <div class="text-center">
+                                <img src="{{ asset('storage/'.$reparacion->firma_entrega) }}" alt="Firma de entrega"
+                                     style="max-width:100%; max-height:80px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;">
+                                <p class="text-muted mt-1" style="font-size:11px;">✓ Firma registrada al entregar el equipo</p>
+                            </div>
+                        @else
+                            <p class="text-muted" style="font-size:12px;">Haz que el cliente firme al entregar el equipo.</p>
+                            <div class="signature-pad-wrapper" id="sigPadEntregaWrapper">
+                                <canvas id="sigCanvasEntrega"></canvas>
+                                <div class="placeholder">Firma aquí</div>
+                            </div>
+                            <div class="d-flex gap-2 mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="limpiarFirma('entrega')">
+                                    <i class="fas fa-eraser me-1"></i>Limpiar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="guardarFirma('entrega')">
+                                    <i class="fas fa-check me-1"></i>Guardar Firma
+                                </button>
+                            </div>
+                        @endif
+                    @endif
+                </div>
             </div>
         </div>
 
-        {{-- ✍️ FIRMA DE ENTREGA --}}
-        @if(in_array($reparacion->estado, ['listo', 'entregado']))
-        <div class="card mb-3">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-pen me-2" style="color:#a855f7;"></i>Firma de Entrega</h6>
-                @if($reparacion->firma_entrega)
-                    <div class="text-center">
-                        <img src="{{ asset('storage/'.$reparacion->firma_entrega) }}" alt="Firma de entrega"
-                             style="max-width:100%; max-height:120px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;">
-                        <p class="text-muted mt-2" style="font-size:11px;">✓ Firma registrada al entregar el equipo</p>
-                    </div>
-                @else
-                    <p class="text-muted" style="font-size:12px;">Haz que el cliente firme al entregar el equipo.</p>
-                    <div class="signature-pad-wrapper" id="sigPadEntregaWrapper">
-                        <canvas id="sigCanvasEntrega"></canvas>
-                        <div class="placeholder">Firma aquí</div>
-                    </div>
-                    <div class="d-flex gap-2 mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="limpiarFirma('entrega')">
-                            <i class="fas fa-eraser me-1"></i>Limpiar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="guardarFirma('entrega')">
-                            <i class="fas fa-check me-1"></i>Guardar Firma
-                        </button>
-                    </div>
-                @endif
-            </div>
-        </div>
-        @endif
     </div>
 </div>
 
@@ -565,7 +661,7 @@ function initSignaturePads() {
     if (canvasR) {
         const wrapperR = document.getElementById('sigPadRecepcionWrapper');
         canvasR.width = wrapperR.clientWidth || 300;
-        canvasR.height = 160;
+        canvasR.height = 140;
         sigPadRecepcion = new SignaturePad(canvasR, { backgroundColor: 'rgb(255,255,255)' });
         sigPadRecepcion.addEventListener('beginStroke', () => {
             wrapperR.querySelector('.placeholder')?.style?.setProperty('display', 'none');
@@ -576,7 +672,7 @@ function initSignaturePads() {
     if (canvasE) {
         const wrapperE = document.getElementById('sigPadEntregaWrapper');
         canvasE.width = wrapperE.clientWidth || 300;
-        canvasE.height = 160;
+        canvasE.height = 140;
         sigPadEntrega = new SignaturePad(canvasE, { backgroundColor: 'rgb(255,255,255)' });
         sigPadEntrega.addEventListener('beginStroke', () => {
             wrapperE.querySelector('.placeholder')?.style?.setProperty('display', 'none');
@@ -669,7 +765,7 @@ function subirFoto(input) {
             // Agregar la foto a la galería
             const gallery = document.getElementById('fotosGallery');
             const col = document.createElement('div');
-            col.className = 'col-4';
+            col.className = 'col-3';
             col.dataset.fotoId = data.id;
             col.innerHTML = `
                 <div class="foto-item">
@@ -681,7 +777,7 @@ function subirFoto(input) {
                 </div>
             `;
             // Insertar antes del botón de agregar
-            const uploadBox = gallery.querySelector('.foto-upload-box').closest('.col-4');
+            const uploadBox = gallery.querySelector('.foto-upload-box').closest('.col-3');
             gallery.insertBefore(col, uploadBox);
             input.value = '';
         } else {

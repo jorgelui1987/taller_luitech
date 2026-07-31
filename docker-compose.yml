@@ -14,14 +14,54 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_URL=https://luitech.fun
+      - APP_URL=${APP_URL:-https://luitech.fun}
+      - APP_KEY=${APP_KEY}
       - DB_CONNECTION=mysql
-      - DB_HOST=serviciotecnico-serviciotecnico-npunhj
-      - DB_PORT=3306
-      - DB_DATABASE=tiendacelulares_crm
-      - DB_USERNAME=tiendacelulares_crm
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-luitech}
+      - DB_USERNAME=${DB_USERNAME:-luitech}
       - DB_PASSWORD=${DB_PASSWORD}
       - SESSION_DRIVER=file
       - CACHE_DRIVER=file
       - QUEUE_CONNECTION=sync
+      - FORCE_HTTPS=true
+      - SESSION_SECURE_COOKIE=true
+      - TRUSTED_PROXIES=*
+      - LOG_LEVEL=warning
     restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - servicio-tecnico-network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: servicio-tecnico-mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-luitech}
+      - MYSQL_USER=${DB_USERNAME:-luitech}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - servicio-tecnico-network
+
+volumes:
+  mysql_data:
+
+networks:
+  servicio-tecnico-network:
+    driver: bridge

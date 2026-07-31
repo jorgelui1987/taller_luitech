@@ -1,25 +1,8 @@
-FROM php:8.3-apache
+FROM php:8.3-apache AS base
 
 # Variables de entorno para Laravel
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV APP_KEY=base64:QYszpHHh20nMzsI8IvPX80EBD4BhMG/xQj52l2fauYA=
-ENV APP_URL=https://luitech.fun
-ENV APP_DEBUG=false
-ENV APP_ENV=production
-ENV DB_CONNECTION=mysql
-ENV DB_HOST=luitech-luitech-rb1llz
-ENV DB_PORT=3306
-ENV DB_DATABASE=luitech
-ENV DB_USERNAME=luitech
-ENV DB_PASSWORD=Castro16@@
-ENV SESSION_DRIVER=file
-ENV SESSION_LIFETIME=120
-ENV SESSION_SECURE_COOKIE=true
-ENV CACHE_DRIVER=file
-ENV QUEUE_CONNECTION=sync
-ENV FORCE_HTTPS=true
-ENV TRUSTED_PROXIES=*
 
 # Instalar dependencias del sistema
 RUN apt-get update -qq && apt-get install -y -qq \
@@ -58,8 +41,18 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf &&
 # Configurar AllowOverride en el Directory de apache2.conf
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:80/health || exit 1
+
+# ---- Stage de Composer ----
+FROM composer:latest AS composer-stage
+
+# ---- Stage final ----
+FROM base AS final
+
 # Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 
 # Copiar archivos del proyecto
 COPY . /var/www/html
@@ -69,30 +62,12 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Crear archivo .env con configuración para producción
-RUN echo "APP_NAME=\"CRM Tienda Celulares\"" > /var/www/html/.env && \
-    echo "APP_ENV=production" >> /var/www/html/.env && \
-    echo "APP_KEY=base64:QYszpHHh20nMzsI8IvPX80EBD4BhMG/xQj52l2fauYA=" >> /var/www/html/.env && \
-    echo "APP_DEBUG=false" >> /var/www/html/.env && \
-    echo "APP_URL=https://luitech.fun" >> /var/www/html/.env && \
-    echo "FORCE_HTTPS=true" >> /var/www/html/.env && \
-    echo "SESSION_SECURE_COOKIE=true" >> /var/www/html/.env && \
-    echo "DB_CONNECTION=mysql" >> /var/www/html/.env && \
-    echo "DB_HOST=luitech-luitech-rb1llz" >> /var/www/html/.env && \
-    echo "DB_PORT=3306" >> /var/www/html/.env && \
-    echo "DB_DATABASE=luitech" >> /var/www/html/.env && \
-    echo "DB_USERNAME=luitech" >> /var/www/html/.env && \
-    echo "DB_PASSWORD=Castro16@@" >> /var/www/html/.env && \
-    echo "SESSION_DRIVER=file" >> /var/www/html/.env && \
-    echo "SESSION_LIFETIME=120" >> /var/www/html/.env && \
-    echo "SESSION_SECURE_COOKIE=true" >> /var/www/html/.env && \
-    echo "CACHE_DRIVER=file" >> /var/www/html/.env && \
-    echo "QUEUE_CONNECTION=sync" >> /var/www/html/.env && \
-    echo "TRUSTED_PROXIES=*" >> /var/www/html/.env
-
 # Instalar dependencias de Composer (solo producción)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
     && composer run-script post-autoload-dump --no-interaction 2>/dev/null || true
+
+# Limpiar caché de Composer
+RUN composer clear-cache
 
 # Copiar entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

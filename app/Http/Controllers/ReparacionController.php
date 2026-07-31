@@ -59,23 +59,26 @@ class ReparacionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'cliente_id'      => 'required|exists:clientes,id',
-            'tecnico_id'      => 'required|exists:users,id',
-            'tipo_dispositivo'=> 'required|in:celular,tablet,portatil,otros',
-            'dispositivo'     => 'nullable|string|max:150',
-            'codigo_equipo'   => 'nullable|string|max:80',
-            'tipo_codigo'     => 'nullable|in:patron,pin',
-            'patron_secuencia'=> 'nullable|string|max:50',
-            'marca'           => 'nullable|string|max:80',
-            'modelo'          => 'nullable|string|max:100',
-            'imei'            => 'nullable|string|max:20',
-            'color'           => 'nullable|string|max:50',
-            'falla_reportada' => 'required|string',
-            'presupuesto'     => 'nullable|numeric|min:0',
-            'abono'           => 'nullable|numeric|min:0',
-            'prioridad'       => 'required|in:baja,media,alta,urgente',
-            'fecha_estimada'  => 'nullable|date',
-            'notas'           => 'nullable|string',
+            'cliente_id'          => 'required|exists:clientes,id',
+            'tecnico_id'          => 'required|exists:users,id',
+            'tipo_dispositivo'    => 'required|in:celular,tablet,portatil,otros',
+            'dispositivo'         => 'nullable|string|max:150',
+            'codigo_equipo'       => 'nullable|string|max:80',
+            'tipo_codigo'         => 'nullable|in:patron,pin',
+            'patron_secuencia'    => 'nullable|string|max:50',
+            'marca'               => 'nullable|string|max:80',
+            'modelo'              => 'nullable|string|max:100',
+            'imei'                => 'nullable|string|max:20',
+            'color'               => 'nullable|string|max:50',
+            'falla_reportada'     => 'required|string',
+            'presupuesto'         => 'nullable|numeric|min:0',
+            'abono'               => 'nullable|numeric|min:0',
+            'prioridad'           => 'required|in:baja,media,alta,urgente',
+            'fecha_estimada'      => 'nullable|date',
+            'notas'               => 'nullable|string',
+            'firma_recepcion_data'=> 'nullable|string',
+            'fotos.*'             => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'fotos_tipos.*'       => 'nullable|string',
         ]);
 
         $validated['numero_orden']    = Reparacion::generarNumero();
@@ -84,7 +87,38 @@ class ReparacionController extends Controller
         $validated['total']           = max(0, ($validated['presupuesto'] ?? 0) - ($validated['abono'] ?? 0));
         $validated['tenant_id']       = Auth::user()->tenant_id;
 
+        // Guardar firma de recepción si fue dibujada
+        if (!empty($request->firma_recepcion_data)) {
+            $firmaData = str_replace('data:image/png;base64,', '', $request->firma_recepcion_data);
+            $firmaData = str_replace(' ', '+', $firmaData);
+            $firmaData = base64_decode($firmaData);
+            if ($firmaData !== false) {
+                $nombreArchivo = 'firma_recepcion_' . Str::random(12) . '.png';
+                $rutaFirma = 'firmas/' . $nombreArchivo;
+                Storage::disk('public')->put($rutaFirma, $firmaData);
+                $validated['firma_recepcion'] = $rutaFirma;
+            }
+        }
+
         $reparacion = Reparacion::create($validated);
+
+        // Guardar fotos de evidencia recibidas en la nueva orden
+        if ($request->hasFile('fotos')) {
+            $fotos = $request->file('fotos');
+            $tipos = $request->input('fotos_tipos', []);
+            foreach ($fotos as $index => $fotoFile) {
+                if ($fotoFile && $fotoFile->isValid()) {
+                    $tipo = $tipos[$index] ?? 'general';
+                    $nombreArchivo = 'foto_' . $reparacion->id . '_' . Str::random(10) . '.' . $fotoFile->extension();
+                    $rutaFoto = $fotoFile->storeAs('reparaciones/fotos', $nombreArchivo, 'public');
+                    ReparacionFoto::create([
+                        'reparacion_id' => $reparacion->id,
+                        'ruta'          => $rutaFoto,
+                        'tipo'          => $tipo,
+                    ]);
+                }
+            }
+        }
 
         // Cargar datos necesarios para la notificación
         $reparacion->load('cliente');

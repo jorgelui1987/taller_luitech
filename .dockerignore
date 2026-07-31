@@ -1,5 +1,6 @@
 .git
 .gitignore
+.gitattributes
 node_modules/
 vendor/
 storage/app/public/
@@ -11,13 +12,6 @@ storage/views/*
 bootstrap/cache/*.php
 *.sql
 *.md
-*.pdf
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.zip
-*.gz
 Dockerfile
 docker-compose.yml
 .dockerignore
