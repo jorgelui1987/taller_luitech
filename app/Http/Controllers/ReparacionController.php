@@ -87,7 +87,7 @@ class ReparacionController extends Controller
         $validated['estado']          = 'recibido';
         $validated['fecha_recepcion'] = now();
         $validated['total']           = max(0, ($validated['presupuesto'] ?? 0) - ($validated['abono'] ?? 0));
-        $validated['tenant_id']       = Auth::user()->tenant_id;
+        $validated['tenant_id']       = Auth::user()?->tenant_id;
 
         // Guardar firma de recepción si fue dibujada
         if (!empty($request->firma_recepcion_data)) {
@@ -101,6 +101,8 @@ class ReparacionController extends Controller
                 $validated['firma_recepcion'] = $rutaFirma;
             }
         }
+
+        unset($validated['firma_recepcion_data'], $validated['fotos'], $validated['fotos_tipos']);
 
         $reparacion = Reparacion::create($validated);
 
@@ -127,15 +129,21 @@ class ReparacionController extends Controller
 
         // Obtener nombre de la tienda
         $empresa = Configuracion::empresa();
-        $nombreTienda = $empresa->nombre_tienda ?? 'CRM Celulares';
+        $nombreTienda = $empresa?->nombre_tienda ?? 'CRM Celulares';
 
         // Generar URL de WhatsApp para notificar al cliente
+        $whatsappUrl = null;
         $cliente = $reparacion->cliente;
-        $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
-        $whatsappUrl = WhatsAppHelper::generarUrl(
-            $cliente->telefono ?? $cliente->celular,
-            WhatsAppHelper::mensajeRecibido($reparacion, $nombreTienda, $urlEstado)
-        );
+        if ($cliente) {
+            $telefono = $cliente->telefono ?? $cliente->celular;
+            if ($telefono) {
+                $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
+                $whatsappUrl = WhatsAppHelper::generarUrl(
+                    $telefono,
+                    WhatsAppHelper::mensajeRecibido($reparacion, $nombreTienda, $urlEstado)
+                );
+            }
+        }
 
         $redirect = redirect()->route('reparaciones.show', $reparacion)
             ->with('success', 'Orden de reparación registrada correctamente.');
@@ -248,29 +256,29 @@ class ReparacionController extends Controller
         // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN (Opción C) ──
         if ($validated['estado'] === 'entregado' && !$yaEntregada) {
             $totalReparacion = (float)($validated['costo_final'] ?? $validated['presupuesto'] ?? $reparacion->total ?? 0);
-            
+
             // ── Calcular comisión del técnico ──
             // Solo se usa el % propio del técnico
             // Si no tiene %, comisión = 0
             $tecnico = User::find($validated['tecnico_id'] ?? $reparacion->tecnico_id);
             $comisionPorcentaje = null;
-            
+
             if ($tecnico && $tecnico->comision_porcentaje !== null && $tecnico->comision_porcentaje > 0) {
                 $comisionPorcentaje = (float)$tecnico->comision_porcentaje;
             }
-            
+
             // Base de comisión = Ganancia (costo final - costo repuesto)
             // Si no hay costo de repuesto registrado, se usa el total completo
-            $costoRepuesto = isset($validated['costo_repuesto']) && $validated['costo_repuesto'] > 0 
-                ? (float)$validated['costo_repuesto'] 
+            $costoRepuesto = isset($validated['costo_repuesto']) && $validated['costo_repuesto'] > 0
+                ? (float)$validated['costo_repuesto']
                 : 0;
             $baseComision = max(0, $totalReparacion - $costoRepuesto);
-            
+
             $comisionMonto = 0;
             if ($comisionPorcentaje !== null && $baseComision > 0) {
                 $comisionMonto = round($baseComision * ($comisionPorcentaje / 100), 2);
             }
-            
+
             // Guardar comisión en la reparación
             if ($comisionPorcentaje !== null) {
                 $reparacion->update([
@@ -279,11 +287,11 @@ class ReparacionController extends Controller
                     'comision_pagada'     => false,
                 ]);
             }
-            
+
             // Crear venta si hay monto
             if ($totalReparacion > 0 || $request->filled('cobrar_sin_costo')) {
                 $metodoPago = $request->metodo_pago ?? 'efectivo';
-                
+
                 Venta::create([
                     'numero_venta' => Venta::generarNumero(),
                     'cliente_id'   => $reparacion->cliente_id,
@@ -308,7 +316,7 @@ class ReparacionController extends Controller
         if (in_array($nuevoEstado, ['listo', 'entregado']) && $nuevoEstado !== $estadoAnterior) {
             $reparacion->load('cliente');
             $empresa = Configuracion::empresa();
-            $nombreTienda = $empresa->nombre_tienda ?? 'CRM Celulares';
+            $nombreTienda = $empresa?->nombre_tienda ?? 'CRM Celulares';
             $cliente = $reparacion->cliente;
             $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
 
@@ -329,10 +337,12 @@ class ReparacionController extends Controller
                 }
             }
 
-            $whatsappUrl = WhatsAppHelper::generarUrl(
-                $cliente->telefono ?? $cliente->celular,
-                $mensaje
-            );
+            if ($cliente) {
+                $telefono = $cliente->telefono ?? $cliente->celular;
+                if ($telefono) {
+                    $whatsappUrl = WhatsAppHelper::generarUrl($telefono, $mensaje);
+                }
+            }
         }
 
         $redirect = redirect()->route('reparaciones.show', $reparacion)

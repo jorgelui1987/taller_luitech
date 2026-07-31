@@ -44,10 +44,31 @@ class OrdenCompra extends Model
     public static function generarNumero(): string
     {
         $prefix = 'OC-';
-        $last = static::where('tenant_id', auth()->user()->tenant_id ?? 0)
-            ->orderByDesc('id')->first();
-        $next = $last ? ((int) substr($last->numero_orden, 3)) + 1 : 1;
-        return $prefix . str_pad($next, 6, '0', STR_PAD_LEFT);
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+        $castType = ($driver === 'pgsql' || $driver === 'sqlite') ? 'INTEGER' : 'UNSIGNED';
+
+        $maxNumero = \Illuminate\Support\Facades\DB::table('ordenes_compra')
+            ->whereNotNull('numero_orden')
+            ->orderByRaw("CAST(SUBSTRING(numero_orden, 4) AS {$castType}) DESC")
+            ->value('numero_orden');
+
+        $numero = 1;
+        if ($maxNumero) {
+            $numExtraido = (int) preg_replace('/[^0-9]/', '', $maxNumero);
+            if ($numExtraido > 0) {
+                $numero = $numExtraido + 1;
+            }
+        }
+
+        $nuevo = $prefix . str_pad($numero, 6, '0', STR_PAD_LEFT);
+        $contador = 0;
+        while (\Illuminate\Support\Facades\DB::table('ordenes_compra')->where('numero_orden', $nuevo)->exists() && $contador < 1000) {
+            $numero++;
+            $nuevo = $prefix . str_pad($numero, 6, '0', STR_PAD_LEFT);
+            $contador++;
+        }
+
+        return $nuevo;
     }
 
     public function tenant() { return $this->belongsTo(Tenant::class); }

@@ -26,37 +26,43 @@ class DatabaseSeeder extends Seeder
         );
 
         // ── Usuarios demo (para el tenant por defecto) ────────────────────
-        User::create([
-            'name'     => 'Administrador',
-            'email'    => 'admin@tienda.com',
-            'password' => Hash::make('password'),
-            'rol'      => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@tienda.com'],
+            [
+                'name'     => 'Administrador',
+                'password' => Hash::make('password'),
+                'rol'      => 'admin',
+            ]
+        );
 
-        User::create([
-            'name'     => 'Juan Vendedor',
-            'email'    => 'vendedor@tienda.com',
-            'password' => Hash::make('password'),
-            'rol'      => 'vendedor',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'vendedor@tienda.com'],
+            [
+                'name'     => 'Juan Vendedor',
+                'password' => Hash::make('password'),
+                'rol'      => 'vendedor',
+            ]
+        );
 
-        User::create([
-            'name'     => 'Carlos Técnico',
-            'email'    => 'tecnico@tienda.com',
-            'password' => Hash::make('password'),
-            'rol'      => 'tecnico',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'tecnico@tienda.com'],
+            [
+                'name'     => 'Carlos Técnico',
+                'password' => Hash::make('password'),
+                'rol'      => 'tecnico',
+            ]
+        );
 
         // ── Categorías ───────────────────────────────────────────────────
         $cats = ['Smartphones', 'Tablets', 'Accesorios', 'Audífonos', 'Cargadores', 'Cases y Fundas', 'Repuestos'];
         foreach ($cats as $cat) {
-            Categoria::create(['nombre' => $cat]);
+            Categoria::firstOrCreate(['nombre' => $cat]);
         }
 
         // ── Marcas ───────────────────────────────────────────────────────
         $marcas = ['Samsung', 'Apple', 'Xiaomi', 'Motorola', 'Huawei', 'OPPO', 'Realme', 'OnePlus'];
         foreach ($marcas as $marca) {
-            Marca::create(['nombre' => $marca]);
+            Marca::firstOrCreate(['nombre' => $marca]);
         }
 
         // ── Productos de ejemplo ─────────────────────────────────────────
@@ -72,20 +78,22 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($productos as $p) {
-            Producto::create([
-                'codigo'        => $p['codigo'],
-                'nombre'        => $p['nombre'],
-                'categoria_id'  => $p['categoria'] ?? 3,
-                'marca_id'      => $p['marca'],
-                'modelo'        => $p['modelo'] ?? null,
-                'almacenamiento'=> $p['almacenamiento'] ?? null,
-                'ram'           => $p['ram'] ?? null,
-                'precio_compra' => $p['precio_compra'],
-                'precio_venta'  => $p['precio_venta'],
-                'stock'         => $p['stock'],
-                'stock_minimo'  => 3,
-                'condicion'     => 'nuevo',
-            ]);
+            Producto::firstOrCreate(
+                ['codigo' => $p['codigo']],
+                [
+                    'nombre'        => $p['nombre'],
+                    'categoria_id'  => $p['categoria'] ?? 3,
+                    'marca_id'      => $p['marca'],
+                    'modelo'        => $p['modelo'] ?? null,
+                    'almacenamiento'=> $p['almacenamiento'] ?? null,
+                    'ram'           => $p['ram'] ?? null,
+                    'precio_compra' => $p['precio_compra'],
+                    'precio_venta'  => $p['precio_venta'],
+                    'stock'         => $p['stock'],
+                    'stock_minimo'  => 3,
+                    'condicion'     => 'nuevo',
+                ]
+            );
         }
 
         // ── Clientes de ejemplo ──────────────────────────────────────────
@@ -98,7 +106,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($clientes as $c) {
-            Cliente::create(array_merge($c, ['tipo'=>'particular', 'ciudad'=>'Lima']));
+            Cliente::firstOrCreate(
+                ['dni' => $c['dni']],
+                array_merge($c, ['tipo'=>'particular', 'ciudad'=>'Lima'])
+            );
         }
 
         // Datos demo: ventas, reparaciones
