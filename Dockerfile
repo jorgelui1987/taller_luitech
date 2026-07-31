@@ -69,6 +69,27 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
+# Crear archivo .env con configuración para producción
+RUN echo "APP_NAME=\"CRM Tienda Celulares\"" > /var/www/html/.env && \
+    echo "APP_ENV=production" >> /var/www/html/.env && \
+    echo "APP_KEY=base64:QYszpHHh20nMzsI8IvPX80EBD4BhMG/xQj52l2fauYA=" >> /var/www/html/.env && \
+    echo "APP_DEBUG=false" >> /var/www/html/.env && \
+    echo "APP_URL=https://luitech.fun" >> /var/www/html/.env && \
+    echo "FORCE_HTTPS=true" >> /var/www/html/.env && \
+    echo "SESSION_SECURE_COOKIE=true" >> /var/www/html/.env && \
+    echo "DB_CONNECTION=mysql" >> /var/www/html/.env && \
+    echo "DB_HOST=luitech-luitech-rb1llz" >> /var/www/html/.env && \
+    echo "DB_PORT=3306" >> /var/www/html/.env && \
+    echo "DB_DATABASE=luitech" >> /var/www/html/.env && \
+    echo "DB_USERNAME=luitech" >> /var/www/html/.env && \
+    echo "DB_PASSWORD=Castro16@@" >> /var/www/html/.env && \
+    echo "SESSION_DRIVER=file" >> /var/www/html/.env && \
+    echo "SESSION_LIFETIME=120" >> /var/www/html/.env && \
+    echo "SESSION_SECURE_COOKIE=true" >> /var/www/html/.env && \
+    echo "CACHE_DRIVER=file" >> /var/www/html/.env && \
+    echo "QUEUE_CONNECTION=sync" >> /var/www/html/.env && \
+    echo "TRUSTED_PROXIES=*" >> /var/www/html/.env
+
 # Instalar dependencias de Composer (solo producción)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
     && composer run-script post-autoload-dump --no-interaction 2>/dev/null || true
