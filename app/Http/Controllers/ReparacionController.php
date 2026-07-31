@@ -74,6 +74,7 @@ class ReparacionController extends Controller
             'falla_reportada'     => 'required|string',
             'presupuesto'         => 'nullable|numeric|min:0',
             'abono'               => 'nullable|numeric|min:0',
+            'costo_repuesto'      => 'nullable|numeric|min:0',
             'prioridad'           => 'required|in:baja,media,alta,urgente',
             'fecha_estimada'      => 'nullable|date',
             'notas'               => 'nullable|string',
@@ -198,6 +199,7 @@ class ReparacionController extends Controller
             'presupuesto'     => 'nullable|numeric|min:0',
             'abono'           => 'nullable|numeric|min:0',
             'costo_final'     => 'nullable|numeric|min:0',
+            'costo_repuesto'  => 'nullable|numeric|min:0',
             'estado'          => 'required|in:recibido,en_diagnostico,esperando_repuesto,en_reparacion,listo,entregado,no_reparable',
             'prioridad'       => 'required|in:baja,media,alta,urgente',
             'fecha_estimada'  => 'nullable|date',
@@ -267,9 +269,16 @@ class ReparacionController extends Controller
                 }
             }
             
+            // Base de comisión = Ganancia (costo final - costo repuesto)
+            // Si no hay costo de repuesto registrado, se usa el total completo
+            $costoRepuesto = isset($validated['costo_repuesto']) && $validated['costo_repuesto'] > 0 
+                ? (float)$validated['costo_repuesto'] 
+                : 0;
+            $baseComision = max(0, $totalReparacion - $costoRepuesto);
+            
             $comisionMonto = 0;
-            if ($comisionPorcentaje !== null && $totalReparacion > 0) {
-                $comisionMonto = round($totalReparacion * ($comisionPorcentaje / 100), 2);
+            if ($comisionPorcentaje !== null && $baseComision > 0) {
+                $comisionMonto = round($baseComision * ($comisionPorcentaje / 100), 2);
             }
             
             // Guardar comisión en la reparación

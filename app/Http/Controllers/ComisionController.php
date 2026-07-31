@@ -57,6 +57,11 @@ class ComisionController extends Controller
                 ? (float)$rep->costo_final 
                 : ((float)$rep->presupuesto ?? 0);
             
+            // Restar costo de repuesto si existe → base de comisión (ganancia)
+            if ($rep->costo_repuesto && $rep->costo_repuesto > 0) {
+                $montoReparado = max(0, $montoReparado - (float)$rep->costo_repuesto);
+            }
+            
             $totalesPorTecnico[$tid]['total_reparado'] += $montoReparado;
             $totalesPorTecnico[$tid]['comision_total'] += (float)$rep->comision_monto;
             $totalesPorTecnico[$tid]['cantidad']++;

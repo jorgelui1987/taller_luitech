@@ -527,6 +527,14 @@
                                 S/ {{ $reparacion->costo_final ? number_format($reparacion->costo_final, 2) : '0.00' }}
                             </span>
                         </div>
+                        @if($reparacion->costo_repuesto > 0)
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background:#f3f4f6;">
+                            <span style="font-size:11px; color:#6b7280;">COSTO DE REPUESTO(S)</span>
+                            <span style="font-size:16px; font-weight:700; color:#6b7280;">
+                                S/ {{ number_format($reparacion->costo_repuesto, 2) }}
+                            </span>
+                        </div>
+                        @endif
                         @if($reparacion->abono > 0)
                         <div class="p-3 rounded-3 d-flex justify-content-between align-items-center" style="background:#fef3c7;">
                             <span style="font-size:11px; color:#92400e;">ABONO</span>

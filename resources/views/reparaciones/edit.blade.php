@@ -236,6 +236,12 @@
                                            value="{{ old('costo_final',$reparacion->costo_final) }}" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-3">
+                                    <label class="form-label">Costo de Repuesto(s) (S/)</label>
+                                    <input type="number" class="form-control" name="costo_repuesto"
+                                           value="{{ old('costo_repuesto',$reparacion->costo_repuesto) }}" min="0" step="0.01" placeholder="0.00">
+                                    <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia</div>
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label">Abono (S/)</label>
                                     <input type="number" class="form-control" name="abono"
                                            value="{{ old('abono',$reparacion->abono) }}" min="0" step="0.01">

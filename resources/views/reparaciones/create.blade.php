@@ -294,6 +294,12 @@
                                                        value="{{ old('abono', 0) }}" min="0" step="0.01">
                                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Monto pagado por adelantado</div>
                                             </div>
+                                            <div>
+                                                <label class="form-label" style="font-size:12px;">Costo de Repuesto(s) (S/)</label>
+                                                <input type="number" class="form-control" name="costo_repuesto"
+                                                       value="{{ old('costo_repuesto', 0) }}" min="0" step="0.01">
+                                                <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia del técnico</div>
+                                            </div>
                                             <div class="p-3 rounded-3" style="background:#fef3c7; border:2px solid #f59e0b;">
                                                 <div style="font-size:11px; color:#92400e; font-weight:600;">SALDO PENDIENTE</div>
                                                 <input type="number" class="form-control total-auto mt-1" name="total"

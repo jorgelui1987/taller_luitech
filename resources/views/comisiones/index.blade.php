@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-between mb-1" style="font-size:12px;">
-                    <span class="text-muted">Total reparado</span>
+                    <span class="text-muted">Base comisión (ganancia)</span>
                     <span>S/ {{ number_format($total['total_reparado'], 2) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1" style="font-size:12px;">
@@ -124,7 +124,13 @@
                         <td>{{ $rep->tecnico->name ?? '—' }}</td>
                         <td style="font-size:12px;">{{ $rep->marca }} {{ $rep->modelo }}</td>
                         <td style="font-size:12px;">{{ optional($rep->fecha_entrega)->format('d/m/Y') }}</td>
-                        <td>S/ {{ number_format($rep->costo_final ?: $rep->presupuesto ?: 0, 2) }}</td>
+                        <td>
+                            @php $baseComision = max(0, ($rep->costo_final ?: $rep->presupuesto ?: 0) - ($rep->costo_repuesto ?? 0)); @endphp
+                            S/ {{ number_format($rep->costo_final ?: $rep->presupuesto ?: 0, 2) }}
+                            @if($rep->costo_repuesto > 0)
+                                <div style="font-size:10px; color:#9ca3af;">Base (ganancia): S/ {{ number_format($baseComision, 2) }}</div>
+                            @endif
+                        </td>
                         <td>{{ $rep->comision_porcentaje }}%</td>
                         <td style="font-weight:700;color:#f59e0b;">S/ {{ number_format($rep->comision_monto, 2) }}</td>
                         <td>
