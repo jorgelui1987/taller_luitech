@@ -66,14 +66,19 @@ class ReporteController extends Controller
         $gananciaPotencial     = $valorInventarioVenta - $valorInventarioCompra;
 
         // ── Ventas por día ────────────────────────────────────────────────
+        $driver = DB::connection()->getDriverName();
+        $fechaExpr = $driver === 'pgsql'
+            ? "TO_CHAR(fecha_venta, 'YYYY-MM-DD')"
+            : 'DATE(fecha_venta)';
+
         $ventasPorDia = Venta::select(
-                DB::raw('DATE(fecha_venta) as fecha'),
+                DB::raw("$fechaExpr as fecha"),
                 DB::raw('SUM(total) as total'),
                 DB::raw('COUNT(*) as cantidad')
             )
             ->whereBetween('fecha_venta', [$desde, $hasta])
             ->where('estado', 'completada')
-            ->groupBy('fecha')
+            ->groupBy(DB::raw($fechaExpr))
             ->orderBy('fecha')
             ->get();
 
@@ -102,13 +107,17 @@ class ReporteController extends Controller
             ->get();
 
         // ── Top 10 clientes ───────────────────────────────────────────────
+        $concatExpr = $driver === 'pgsql'
+            ? "CONCAT_WS(' ', clientes.nombre, clientes.apellido)"
+            : "CONCAT(clientes.nombre,' ',clientes.apellido)";
+
         $topClientes = DB::table('ventas')
             ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')
             ->where('ventas.estado', 'completada')
             ->whereBetween('ventas.fecha_venta', [$desde, $hasta])
             ->select(
                 'clientes.id',
-                DB::raw("CONCAT(clientes.nombre,' ',clientes.apellido) as nombre"),
+                DB::raw("$concatExpr as nombre"),
                 DB::raw('COUNT(ventas.id) as compras'),
                 DB::raw('SUM(ventas.total) as total')
             )
