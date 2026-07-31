@@ -16,12 +16,19 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── Limpiar tablas transaccionales (orden: FK hijos primero) ─────
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        DB::table('detalle_ventas')->truncate();
-        DB::table('ventas')->truncate();
-        DB::table('reparaciones')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        // ── Limpiar tablas transaccionales (compatible MySQL y PostgreSQL) ──
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'pgsql') {
+            DB::table('reparaciones')->delete();
+            DB::table('detalle_ventas')->delete();
+            DB::table('ventas')->delete();
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            DB::table('detalle_ventas')->truncate();
+            DB::table('ventas')->truncate();
+            DB::table('reparaciones')->truncate();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
 
         $admin    = User::where('rol', 'admin')->first();
         $vendedor = User::where('rol', 'vendedor')->first();

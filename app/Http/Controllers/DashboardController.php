@@ -34,14 +34,19 @@ class DashboardController extends Controller
         $reparacionesListas    = Reparacion::where('estado', 'listo')->count();
 
         // ── Gráfica de ventas por día (últimos 7 días) ────────────────────
+        $driver = DB::connection()->getDriverName();
+        $fechaExpr = $driver === 'pgsql'
+            ? "TO_CHAR(fecha_venta, 'YYYY-MM-DD')"
+            : "DATE(fecha_venta)";
+
         $ventasSemana = Venta::select(
-                DB::raw('DATE(fecha_venta) as fecha'),
+                DB::raw("$fechaExpr as fecha"),
                 DB::raw('SUM(total) as total'),
                 DB::raw('COUNT(*) as cantidad')
             )
             ->where('fecha_venta', '>=', Carbon::now()->subDays(6)->startOfDay())
             ->where('estado', 'completada')
-            ->groupBy('fecha')
+            ->groupBy(DB::raw($fechaExpr))
             ->orderBy('fecha')
             ->get();
 
@@ -57,16 +62,19 @@ class DashboardController extends Controller
         }
 
         // ── Ventas por mes (últimos 6 meses) ─────────────────────────────
+        $yearExpr = $driver === 'pgsql' ? "EXTRACT(YEAR FROM fecha_venta)" : "YEAR(fecha_venta)";
+        $monthExpr = $driver === 'pgsql' ? "EXTRACT(MONTH FROM fecha_venta)" : "MONTH(fecha_venta)";
+
         $ventasPorMes = Venta::select(
-                DB::raw('YEAR(fecha_venta) as año'),
-                DB::raw('MONTH(fecha_venta) as mes'),
+                DB::raw("$yearExpr as año"),
+                DB::raw("$monthExpr as mes"),
                 DB::raw('SUM(total) as total')
             )
             ->where('fecha_venta', '>=', Carbon::now()->subMonths(5)->startOfMonth())
             ->where('estado', 'completada')
-            ->groupBy('año', 'mes')
-            ->orderBy('año')
-            ->orderBy('mes')
+            ->groupBy(DB::raw($yearExpr), DB::raw($monthExpr))
+            ->orderBy(DB::raw($yearExpr))
+            ->orderBy(DB::raw($monthExpr))
             ->get()
             ->map(fn($v) => [
                 'mes'   => Carbon::createFromDate($v->año, $v->mes, 1)->isoFormat('MMM YY'),

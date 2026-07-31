@@ -214,13 +214,18 @@ Route::middleware(['tenant'])->group(function () {
 
         // API interna para datos del dashboard (AJAX)
         Route::get('/api/dashboard/ventas-semana', function () {
+            $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+            $fechaExpr = $driver === 'pgsql'
+                ? "TO_CHAR(fecha_venta, 'YYYY-MM-DD')"
+                : 'DATE(fecha_venta)';
+
             $datos = \App\Models\Venta::select(
-                    \Illuminate\Support\Facades\DB::raw('DATE(fecha_venta) as fecha'),
+                    \Illuminate\Support\Facades\DB::raw("$fechaExpr as fecha"),
                     \Illuminate\Support\Facades\DB::raw('SUM(total) as total')
                 )
                 ->where('estado', 'completada')
                 ->where('fecha_venta', '>=', \Carbon\Carbon::now()->subDays(6)->startOfDay())
-                ->groupBy('fecha')
+                ->groupBy(\Illuminate\Support\Facades\DB::raw($fechaExpr))
                 ->orderBy('fecha')
                 ->get();
 
