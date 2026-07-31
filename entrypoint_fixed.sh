@@ -55,6 +55,11 @@ echo "=== .env generado ==="
 head -12 /var/www/html/.env
 echo "======================"
 
+# Limpiar caché de configuración para que Laravel lea el .env fresco
+cd /var/www/html && php artisan config:clear 2>/dev/null || true
+cd /var/www/html && php artisan cache:clear 2>/dev/null || true
+cd /var/www/html && php artisan view:clear 2>/dev/null || true
+
 # Crear .htaccess si no existe (necesario para routing de Laravel)
 if [ ! -f /var/www/html/public/.htaccess ]; then
     echo "Creando .htaccess..."

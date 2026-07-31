@@ -3,6 +3,23 @@ FROM php:8.3-apache
 # Variables de entorno para Laravel
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV APP_KEY=base64:QYszpHHh20nMzsI8IvPX80EBD4BhMG/xQj52l2fauYA=
+ENV APP_URL=https://luitech.fun
+ENV APP_DEBUG=false
+ENV APP_ENV=production
+ENV DB_CONNECTION=mysql
+ENV DB_HOST=luitech-luitech-rb1llz
+ENV DB_PORT=3306
+ENV DB_DATABASE=luitech
+ENV DB_USERNAME=luitech
+ENV DB_PASSWORD=Castro16@@
+ENV SESSION_DRIVER=file
+ENV SESSION_LIFETIME=120
+ENV SESSION_SECURE_COOKIE=true
+ENV CACHE_DRIVER=file
+ENV QUEUE_CONNECTION=sync
+ENV FORCE_HTTPS=true
+ENV TRUSTED_PROXIES=*
 
 # Instalar dependencias del sistema
 RUN apt-get update -qq && apt-get install -y -qq \
