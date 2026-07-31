@@ -9,13 +9,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Usar DB::statement para compatibilidad con MariaDB
-        // (el método ->change() puede fallar en MariaDB con columnas foreign key)
-        DB::statement('ALTER TABLE ventas MODIFY cliente_id BIGINT UNSIGNED NULL');
+        // Compatible con MySQL/MariaDB y PostgreSQL
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'pgsql') {
+            DB::statement('ALTER TABLE ventas ALTER COLUMN cliente_id DROP NOT NULL');
+        } else {
+            // MySQL / MariaDB
+            DB::statement('ALTER TABLE ventas MODIFY cliente_id BIGINT UNSIGNED NULL');
+        }
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE ventas MODIFY cliente_id BIGINT UNSIGNED NOT NULL');
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'pgsql') {
+            DB::statement('ALTER TABLE ventas ALTER COLUMN cliente_id SET NOT NULL');
+        } else {
+            // MySQL / MariaDB
+            DB::statement('ALTER TABLE ventas MODIFY cliente_id BIGINT UNSIGNED NOT NULL');
+        }
     }
 };

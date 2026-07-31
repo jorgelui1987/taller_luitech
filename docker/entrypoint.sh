@@ -49,7 +49,7 @@ fi
     echo "FORCE_HTTPS=${FORCE_HTTPS:-true}"
     echo "SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}"
     echo ""
-    echo "DB_CONNECTION=mysql"
+    echo "DB_CONNECTION=${DB_CONNECTION:-mysql}"
     echo "DB_HOST=${DB_HOST:-127.0.0.1}"
     echo "DB_PORT=${DB_PORT:-3306}"
     echo "DB_DATABASE=${DB_DATABASE:-luitech}"
@@ -109,7 +109,12 @@ fi
 echo "Verificando conexión a base de datos..."
 DB_CHECK=$(php -r "
     try {
-        \$pdo = new PDO('mysql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-3306}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
+        \$driver = '${DB_CONNECTION:-mysql}';
+        if (\$driver === 'pgsql') {
+            \$pdo = new PDO('pgsql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-5432};dbname=${DB_DATABASE:-luitech}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
+        } else {
+            \$pdo = new PDO('mysql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-3306};dbname=${DB_DATABASE:-luitech}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
+        }
         echo 'OK';
     } catch (PDOException \$e) {
         echo 'FAIL:' . \$e->getMessage();
