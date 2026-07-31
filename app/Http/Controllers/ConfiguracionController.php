@@ -102,6 +102,7 @@ class ConfiguracionController extends Controller
             'whatsapp'      => 'nullable|string|max:20',
             'email'         => 'nullable|email|max:255',
             'igv'           => 'required|numeric|min:0|max:100',
+            'comision_global_tecnicos' => 'nullable|numeric|min:0|max:100',
             'moneda'        => 'required|string|max:10',
             'simbolo_moneda'=> 'required|string|max:5',
             'terminos_garantia' => 'nullable|string|max:1000',
@@ -172,6 +173,7 @@ class ConfiguracionController extends Controller
             'email'    => 'required|email|unique:users,email,' . $usuario->id,
             'rol'      => 'required|in:admin,vendedor,tecnico',
             'telefono' => 'nullable|string|max:20',
+            'comision_porcentaje' => 'nullable|numeric|min:0|max:100',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
@@ -181,6 +183,11 @@ class ConfiguracionController extends Controller
             'rol'      => $validated['rol'],
             'telefono' => $validated['telefono'] ?? null,
         ];
+
+        // Solo guardar comisión si el usuario es técnico
+        if ($validated['rol'] === 'tecnico') {
+            $data['comision_porcentaje'] = $validated['comision_porcentaje'] ?? null;
+        }
 
         if (!empty($validated['password'])) {
             $data['password'] = Hash::make($validated['password']);
