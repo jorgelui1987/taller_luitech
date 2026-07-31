@@ -16,12 +16,13 @@ services:
       - APP_DEBUG=false
       - APP_URL=https://luitech.fun
       - APP_KEY=${APP_KEY}
-      - DB_CONNECTION=mysql
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
       - DB_HOST=${DB_HOST:-taller-servicio-m221g}
       - DB_PORT=${DB_PORT:-3306}
       - DB_DATABASE=${DB_DATABASE:-tiendacelulares_crm}
       - DB_USERNAME=${DB_USERNAME:-tiendacelulares_crm}
       - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SSLMODE=${DB_SSLMODE:-prefer}
       - SESSION_DRIVER=file
       - CACHE_DRIVER=file
       - QUEUE_CONNECTION=sync

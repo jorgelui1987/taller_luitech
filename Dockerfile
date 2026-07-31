@@ -24,7 +24,7 @@ RUN apt-get update -qq && apt-get install -y -qq \
 
 # Configurar y instalar extensiones PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-RUN docker-php-ext-install -j$(nproc) pdo_mysql mbstring exif bcmath gd zip intl
+RUN docker-php-ext-install -j$(nproc) pdo_mysql pdo_pgsql mbstring exif bcmath gd zip intl
 
 # Habilitar mod_rewrite de Apache
 RUN a2enmod rewrite
