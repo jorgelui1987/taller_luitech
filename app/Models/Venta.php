@@ -63,10 +63,12 @@ class Venta extends Model
             $tenantId = $tenant ? $tenant->id : 1;
         }
         
-        // Buscar el último registro por ID descendente
+        // Usar lockForUpdate para evitar condiciones de carrera
+        // Esto asegura que solo un proceso genere el número a la vez
         $ultimo = \Illuminate\Support\Facades\DB::table('ventas')
             ->where('tenant_id', $tenantId)
             ->orderBy('id', 'desc')
+            ->lockForUpdate()
             ->first(['id', 'numero_venta']);
             
         $numero = 1;
