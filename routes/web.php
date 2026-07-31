@@ -190,6 +190,13 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/backup/resetear',             [BackupController::class, 'resetear'])->name('backup.resetear');
         });
 
+        // Comisiones de técnicos (solo admin)
+        Route::middleware('check.admin')->group(function () {
+            Route::get('/comisiones', [\App\Http\Controllers\ComisionController::class, 'index'])->name('comisiones.index');
+            Route::post('/comisiones/{reparacion}/pagar', [\App\Http\Controllers\ComisionController::class, 'pagar'])->name('comisiones.pagar');
+            Route::post('/comisiones/tecnico/{tecnico}/pagar-todo', [\App\Http\Controllers\ComisionController::class, 'pagarTodo'])->name('comisiones.pagar-todo');
+        });
+
         // API interna para búsqueda de productos (para el formulario de ventas)
         Route::get('/api/productos/buscar', function () {
             $productos = \App\Models\Producto::with(['marca'])

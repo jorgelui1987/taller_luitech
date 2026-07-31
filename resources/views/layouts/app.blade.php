@@ -813,6 +813,12 @@
             Reportes
         </a>
 
+        <a href="{{ route('comisiones.index') }}"
+           class="nav-link {{ request()->routeIs('comisiones.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-money-bill-wave"></i></span>
+            Comisiones Técnicos
+        </a>
+
         <a href="{{ route('financiero.index') }}"
            class="nav-link {{ request()->routeIs('financiero.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
