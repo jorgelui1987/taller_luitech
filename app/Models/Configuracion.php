@@ -22,6 +22,7 @@ class Configuracion extends Model
         'moneda',
         'simbolo_moneda',
         'terminos_garantia',
+        'comision_global_tecnicos',
         'tenant_id',
     ];
 

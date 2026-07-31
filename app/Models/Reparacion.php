@@ -23,6 +23,7 @@ class Reparacion extends Model
         'fecha_recepcion', 'fecha_estimada', 'fecha_entrega',
         'garantia', 'dias_garantia', 'notas',
         'firma_recepcion', 'firma_entrega',
+        'comision_porcentaje', 'comision_monto', 'comision_pagada', 'comision_fecha_pago',
         'tenant_id',
     ];
 
@@ -35,6 +36,9 @@ class Reparacion extends Model
         'costo_final'      => 'decimal:2',
         'total'            => 'decimal:2',
         'garantia'         => 'boolean',
+        'comision_porcentaje' => 'decimal:2',
+        'comision_monto'   => 'decimal:2',
+        'comision_pagada'  => 'boolean',
     ];
 
     protected $dates = ['deleted_at'];

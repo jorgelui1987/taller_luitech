@@ -243,10 +243,45 @@ class ReparacionController extends Controller
 
         $reparacion->update($validated);
 
-        // ── CREAR VENTA AUTOMÁTICA AL ENTREGAR REPARACIÓN (Opción C) ──
+        // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN (Opción C) ──
         if ($validated['estado'] === 'entregado' && !$yaEntregada) {
             $totalReparacion = (float)($validated['costo_final'] ?? $validated['presupuesto'] ?? $reparacion->total ?? 0);
             
+            // ── Calcular comisión del técnico ──
+            // 1. Si el técnico tiene % propio, usar ese
+            // 2. Si no, usar el % global de configuración
+            // 3. Si no hay %, comisión = 0
+            $tecnico = User::find($validated['tecnico_id'] ?? $reparacion->tecnico_id);
+            $comisionPorcentaje = null;
+            
+            if ($tecnico) {
+                // Usar % del técnico si está definido
+                if ($tecnico->comision_porcentaje !== null && $tecnico->comision_porcentaje > 0) {
+                    $comisionPorcentaje = (float)$tecnico->comision_porcentaje;
+                } else {
+                    // Si no, usar % global
+                    $empresa = Configuracion::empresa();
+                    if ($empresa && $empresa->comision_global_tecnicos > 0) {
+                        $comisionPorcentaje = (float)$empresa->comision_global_tecnicos;
+                    }
+                }
+            }
+            
+            $comisionMonto = 0;
+            if ($comisionPorcentaje !== null && $totalReparacion > 0) {
+                $comisionMonto = round($totalReparacion * ($comisionPorcentaje / 100), 2);
+            }
+            
+            // Guardar comisión en la reparación
+            if ($comisionPorcentaje !== null) {
+                $reparacion->update([
+                    'comision_porcentaje' => $comisionPorcentaje,
+                    'comision_monto'      => $comisionMonto,
+                    'comision_pagada'     => false,
+                ]);
+            }
+            
+            // Crear venta si hay monto
             if ($totalReparacion > 0 || $request->filled('cobrar_sin_costo')) {
                 $metodoPago = $request->metodo_pago ?? 'efectivo';
                 
