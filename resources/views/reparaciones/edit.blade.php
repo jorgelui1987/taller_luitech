@@ -221,6 +221,16 @@
                                            value="{{ old('presupuesto',$reparacion->presupuesto) }}" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-3">
+                                    <label class="form-label">Método de Pago (al entregar)</label>
+                                    <select name="metodo_pago" class="form-select">
+                                        <option value="efectivo">💵 Efectivo</option>
+                                        <option value="tarjeta">💳 Tarjeta</option>
+                                        <option value="transferencia">🏦 Transferencia</option>
+                                        <option value="yape">📱 Yape</option>
+                                        <option value="plin">📲 Plin</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label">Costo Final (S/)</label>
                                     <input type="number" class="form-control" name="costo_final"
                                            value="{{ old('costo_final',$reparacion->costo_final) }}" min="0" step="0.01">

@@ -7,6 +7,7 @@ use App\Models\ReparacionFoto;
 use App\Models\Cliente;
 use App\Models\User;
 use App\Models\Configuracion;
+use App\Models\Venta;
 use App\Helpers\WhatsAppHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -181,6 +182,7 @@ class ReparacionController extends Controller
     {
         $validated = $request->validate([
             'tecnico_id'      => 'required|exists:users,id',
+            'metodo_pago'     => 'nullable|in:efectivo,tarjeta,transferencia,yape,plin',
             'tipo_dispositivo'=> 'required|in:celular,tablet,portatil,otros',
             'dispositivo'     => 'nullable|string|max:150',
             'codigo_equipo'   => 'nullable|string|max:80',
@@ -211,6 +213,9 @@ class ReparacionController extends Controller
             $validated['fecha_entrega'] = now();
         }
 
+        // Verificar si la reparación ya fue entregada antes
+        $yaEntregada = $reparacion->estado === 'entregado';
+
         // Guardar el estado anterior antes de actualizar
         $estadoAnterior = $reparacion->estado;
 
@@ -237,6 +242,30 @@ class ReparacionController extends Controller
         }
 
         $reparacion->update($validated);
+
+        // ── CREAR VENTA AUTOMÁTICA AL ENTREGAR REPARACIÓN (Opción C) ──
+        if ($validated['estado'] === 'entregado' && !$yaEntregada) {
+            $totalReparacion = (float)($validated['costo_final'] ?? $validated['presupuesto'] ?? $reparacion->total ?? 0);
+            
+            if ($totalReparacion > 0 || $request->filled('cobrar_sin_costo')) {
+                $metodoPago = $request->metodo_pago ?? 'efectivo';
+                
+                Venta::create([
+                    'numero_venta' => Venta::generarNumero(),
+                    'cliente_id'   => $reparacion->cliente_id,
+                    'user_id'      => Auth::id(),
+                    'fecha_venta'  => now(),
+                    'subtotal'     => $totalReparacion,
+                    'descuento'    => 0,
+                    'impuesto'     => 0,
+                    'total'        => $totalReparacion,
+                    'metodo_pago'  => $metodoPago,
+                    'estado'       => 'completada',
+                    'notas'        => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+                    'tenant_id'    => Auth::user()->tenant_id ?? $reparacion->tenant_id,
+                ]);
+            }
+        }
 
         // Notificar por WhatsApp si cambió a "listo" o "entregado"
         $whatsappUrl = null;
