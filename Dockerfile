@@ -12,6 +12,7 @@ RUN apt-get update -qq && apt-get install -y -qq \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
+    libpq-dev \
     zip \
     unzip \
     libfreetype6-dev \
