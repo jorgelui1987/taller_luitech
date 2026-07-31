@@ -26,11 +26,11 @@ echo "FORCE_HTTPS=true" >> /var/www/html/.env
 echo "SESSION_SECURE_COOKIE=true" >> /var/www/html/.env
 echo "" >> /var/www/html/.env
 echo "DB_CONNECTION=mysql" >> /var/www/html/.env
-echo "DB_HOST=${DB_HOST:-127.0.0.1}" >> /var/www/html/.env
-echo "DB_PORT=${DB_PORT:-3306}" >> /var/www/html/.env
-echo "DB_DATABASE=${DB_DATABASE:-tiendacelulares_crm}" >> /var/www/html/.env
-echo "DB_USERNAME=${DB_USERNAME:-root}" >> /var/www/html/.env
-echo "DB_PASSWORD=${DB_PASSWORD:-}" >> /var/www/html/.env
+echo "DB_HOST=luitech-luitech-rb1llz" >> /var/www/html/.env
+echo "DB_PORT=3306" >> /var/www/html/.env
+echo "DB_DATABASE=luitech" >> /var/www/html/.env
+echo "DB_USERNAME=luitech" >> /var/www/html/.env
+echo "DB_PASSWORD=Castro16@@" >> /var/www/html/.env
 echo "" >> /var/www/html/.env
 echo "SESSION_DRIVER=file" >> /var/www/html/.env
 echo "SESSION_LIFETIME=120" >> /var/www/html/.env

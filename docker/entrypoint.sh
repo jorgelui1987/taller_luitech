@@ -11,31 +11,26 @@ cd /var/www/html
 # Limpiar DATABASE_URL que Dokploy pueda haber inyectado (causa error "connection mariadb not configured")
 unset DATABASE_URL
 
-# Generar APP_KEY
-echo "Generando APP_KEY..."
-APP_KEY=$(php -r "echo 'base64:' . base64_encode(random_bytes(32));" 2>/dev/null)
-if [ -z "$APP_KEY" ]; then
-    APP_KEY=$(openssl rand -base64 32 2>/dev/null)
-    APP_KEY="base64:${APP_KEY}"
-fi
+# APP_KEY fija (no regenerar cada vez)
+APP_KEY="base64:QYszpHHh20nMzsI8IvPX80EBD4BhMG/xQj52l2fauYA="
 export APP_KEY
 
 # Escribir .env con valores literales (sin ${VAR} syntax)
 echo "Escribiendo .env..."
 echo "APP_NAME=\"CRM Tienda Celulares\"" > /var/www/html/.env
-echo "APP_ENV=${APP_ENV:-production}" >> /var/www/html/.env
+echo "APP_ENV=production" >> /var/www/html/.env
 echo "APP_KEY=${APP_KEY}" >> /var/www/html/.env
-echo "APP_DEBUG=${APP_DEBUG:-false}" >> /var/www/html/.env
-echo "APP_URL=${APP_URL:-http://localhost}" >> /var/www/html/.env
-echo "FORCE_HTTPS=${FORCE_HTTPS:-true}" >> /var/www/html/.env
-echo "SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}" >> /var/www/html/.env
+echo "APP_DEBUG=false" >> /var/www/html/.env
+echo "APP_URL=https://luitech.fun" >> /var/www/html/.env
+echo "FORCE_HTTPS=true" >> /var/www/html/.env
+echo "SESSION_SECURE_COOKIE=true" >> /var/www/html/.env
 echo "" >> /var/www/html/.env
 echo "DB_CONNECTION=mysql" >> /var/www/html/.env
-echo "DB_HOST=${DB_HOST:-127.0.0.1}" >> /var/www/html/.env
-echo "DB_PORT=${DB_PORT:-3306}" >> /var/www/html/.env
-echo "DB_DATABASE=${DB_DATABASE:-tiendacelulares_crm}" >> /var/www/html/.env
-echo "DB_USERNAME=${DB_USERNAME:-root}" >> /var/www/html/.env
-echo "DB_PASSWORD=${DB_PASSWORD:-}" >> /var/www/html/.env
+echo "DB_HOST=luitech-luitech-rb1llz" >> /var/www/html/.env
+echo "DB_PORT=3306" >> /var/www/html/.env
+echo "DB_DATABASE=luitech" >> /var/www/html/.env
+echo "DB_USERNAME=luitech" >> /var/www/html/.env
+echo "DB_PASSWORD=Castro16@@" >> /var/www/html/.env
 echo "" >> /var/www/html/.env
 echo "SESSION_DRIVER=file" >> /var/www/html/.env
 echo "SESSION_LIFETIME=120" >> /var/www/html/.env
