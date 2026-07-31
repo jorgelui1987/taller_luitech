@@ -25,9 +25,6 @@ mkdir -p /var/www/html/storage/app/public
 mkdir -p /var/www/html/bootstrap/cache
 
 # ── Generar .env desde variables de entorno ──────────────────────────
-# Esto es necesario porque en Docker no se copia el .env (está en .dockerignore)
-# y la plataforma (Railway/Dokploy) pasa todo como variables de entorno
-
 echo "Creando .env desde variables de entorno..."
 
 # Generar APP_KEY si no está definida
@@ -36,12 +33,19 @@ if [ -z "$APP_KEY" ]; then
     APP_KEY=$(php -r "echo 'base64:' . base64_encode(random_bytes(32));")
 fi
 
+# Asegurar que APP_URL tenga protocolo
+APP_URL="${APP_URL}"
+if [ -n "$APP_URL" ] && [[ "$APP_URL" != http* ]]; then
+    APP_URL="https://${APP_URL}"
+    echo "✓ APP_URL corregida: $APP_URL"
+fi
+
 {
     echo "APP_NAME=\"${APP_NAME:-CRM Tienda Celulares}\""
     echo "APP_ENV=${APP_ENV:-production}"
     echo "APP_KEY=${APP_KEY}"
     echo "APP_DEBUG=false"
-    echo "APP_URL=${APP_URL:-http://localhost}"
+    echo "APP_URL=${APP_URL}"
     echo "FORCE_HTTPS=${FORCE_HTTPS:-true}"
     echo "SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}"
     echo ""
@@ -117,7 +121,7 @@ if [[ "$DB_CHECK" == "OK" ]]; then
     echo "Ejecutando migraciones..."
     php artisan migrate --force 2>/dev/null && echo "✓ Migraciones ejecutadas" || echo "⚠ Migraciones ya ejecutadas o no necesarias"
 
-    echo "Ejecutando seeders (si tabla users está vacía)..."
+    echo "Ejecutando seeders..."
     php artisan db:seed --force 2>/dev/null && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
 else
     echo "⚠ No se pudo conectar a la BD: $DB_CHECK"
