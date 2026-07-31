@@ -7,6 +7,7 @@ use App\Models\DetalleOrdenCompra;
 use App\Models\Proveedor;
 use App\Models\Producto;
 use App\Models\MovimientoStock;
+use App\Models\Configuracion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -89,7 +90,8 @@ class OrdenCompraController extends Controller
 
             $descuento = (float)($request->descuento_general ?? 0);
             $base      = $subtotal - $descuento;
-            $impuesto  = round($base * 0.18, 2);
+            $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
+            $impuesto  = round($base * ($igvPorcentaje / 100), 2);
             $total     = $base + $impuesto;
 
             $orden = OrdenCompra::create([

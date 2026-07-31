@@ -92,7 +92,7 @@
                     <hr>
                     <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">S/ 0.00</span></div>
                     <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— S/ 0.00</span></div>
-                    <div class="d-flex justify-content-between mb-2"><span>IGV (18%)</span><span id="lblIgv">S/ 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span>IGV ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">S/ 0.00</span></div>
                     <hr>
                     <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#a855f7;">S/ 0.00</span></div>
                     <button type="submit" class="btn btn-primary w-100 py-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
@@ -196,8 +196,9 @@ function totales() {
     let base = Math.max(sub - dg, 0);
     document.getElementById('lblSubtotal').textContent = 'S/ ' + sub.toFixed(2);
     document.getElementById('lblDescuento').textContent = '— S/ ' + dg.toFixed(2);
-    document.getElementById('lblIgv').textContent = 'S/ ' + (base * 0.18).toFixed(2);
-    document.getElementById('lblTotal').textContent = 'S/ ' + (base * 1.18).toFixed(2);
+    let igvPct = {{ $empresa->igv ?? 18 }};
+    document.getElementById('lblIgv').textContent = 'S/ ' + (base * (igvPct / 100)).toFixed(2);
+    document.getElementById('lblTotal').textContent = 'S/ ' + (base * (1 + igvPct / 100)).toFixed(2);
     btnReg.disabled = Object.keys(items).length === 0;
 }
 

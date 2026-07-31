@@ -7,6 +7,7 @@ use App\Models\Cliente;
 use App\Models\Producto;
 use App\Models\DetalleVenta;
 use App\Models\MovimientoStock;
+use App\Models\Configuracion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +127,8 @@ class VentaController extends Controller
 
             $descuento = (float)($request->descuento_general ?? 0);
             $base      = $subtotal - $descuento;
-            $impuesto  = round($base * 0.18, 2);
+            $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
+            $impuesto  = round($base * ($igvPorcentaje / 100), 2);
             $total     = $base + $impuesto;
 
             $venta = Venta::create([

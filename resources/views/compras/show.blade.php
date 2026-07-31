@@ -84,7 +84,7 @@
                         <span style="color:#dc2626;">- S/ {{ number_format($ordenCompra->descuento, 2) }}</span>
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">Impuesto (18%)</span>
+                        <span class="text-muted">Impuesto ({{ $empresa->igv ?? 18 }}%)</span>
                         <span>S/ {{ number_format($ordenCompra->impuesto, 2) }}</span>
                     </div>
                     <div class="d-flex justify-content-between py-2">

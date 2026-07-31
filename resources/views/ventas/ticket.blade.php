@@ -67,7 +67,7 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 <div class="tot">
 <div class="l"><span>Subtotal</span><span>S/ {{ number_format($venta->subtotal,2) }}</span></div>
 @if($venta->descuento > 0)<div class="l"><span>Descuento</span><span>-S/ {{ number_format($venta->descuento,2) }}</span></div>@endif
-<div class="l"><span>IGV (18%)</span><span>S/ {{ number_format($venta->impuesto,2) }}</span></div>
+<div class="l"><span>IGV ({{ $empresa->igv ?? 18 }}%)</span><span>S/ {{ number_format($venta->impuesto,2) }}</span></div>
 <div class="lt"><span>TOTAL</span><span>S/ {{ number_format($venta->total,2) }}</span></div>
 </div>
 @if($venta->notas)<div class="not">Notas: {{ $venta->notas }}</div>@endif

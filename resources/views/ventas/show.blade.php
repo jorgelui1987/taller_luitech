@@ -151,7 +151,7 @@
                         </div>
                         @endif
                         <div class="d-flex justify-content-between mb-3" style="font-size:13.5px;">
-                            <span class="text-muted">IGV (18%)</span>
+                            <span class="text-muted">IGV ({{ $empresa->igv ?? 18 }}%)</span>
                             <span>S/ {{ number_format($venta->impuesto, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between p-3 rounded-3"
