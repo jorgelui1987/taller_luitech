@@ -11,6 +11,15 @@ cd /var/www/html
 # Limpiar DATABASE_URL que Dokploy pueda haber inyectado (causa error "connection mariadb not configured")
 unset DATABASE_URL
 
+# Crear directorios necesarios para Laravel (excluidos en .dockerignore)
+mkdir -p /var/www/html/storage/framework/sessions
+mkdir -p /var/www/html/storage/framework/views
+mkdir -p /var/www/html/storage/framework/cache/data
+mkdir -p /var/www/html/storage/app/public
+mkdir -p /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+
 # APP_KEY fija (no regenerar cada vez)
 APP_KEY="base64:QYszpHHh20nMzsI8IvPX80EBD4BhMG/xQj52l2fauYA="
 export APP_KEY
