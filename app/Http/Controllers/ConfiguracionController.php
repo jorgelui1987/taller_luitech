@@ -102,7 +102,6 @@ class ConfiguracionController extends Controller
             'whatsapp'      => 'nullable|string|max:20',
             'email'         => 'nullable|email|max:255',
             'igv'           => 'required|numeric|min:0|max:100',
-            'comision_global_tecnicos' => 'nullable|numeric|min:0|max:100',
             'moneda'        => 'required|string|max:10',
             'simbolo_moneda'=> 'required|string|max:5',
             'terminos_garantia' => 'nullable|string|max:1000',

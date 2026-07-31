@@ -10,8 +10,7 @@
     <div>
         <h4 class="mb-1 fw-bold">Comisiones de Técnicos</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Comisión global: <strong style="color:#a855f7;">{{ $comisionGlobal }}%</strong>
-            @if($totalesPorTecnico)<span> · Total comisiones del periodo: <strong style="color:#10b981;">S/ {{ number_format(collect($totalesPorTecnico)->sum('comision_total'), 2) }}</strong></span>@endif
+            @if($totalesPorTecnico)<span>Total comisiones del periodo: <strong style="color:#10b981;">S/ {{ number_format(collect($totalesPorTecnico)->sum('comision_total'), 2) }}</strong></span>@endif
         </p>
     </div>
 </div>

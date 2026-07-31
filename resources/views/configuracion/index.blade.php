@@ -108,15 +108,6 @@
                                    value="{{ old('igv', $empresa->igv ?? 18) }}" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Comisión Técnicos (%)</label>
-                            <div class="input-group">
-                                <input type="number" name="comision_global_tecnicos" class="form-control" step="0.01" min="0" max="100"
-                                       value="{{ old('comision_global_tecnicos', $empresa->comision_global_tecnicos ?? 0) }}">
-                                <span class="input-group-text">%</span>
-                            </div>
-                            <div class="form-text">% global de comisión por reparación entregada</div>
-                        </div>
-                        <div class="col-md-4">
                             <label class="form-label">Moneda</label>
                             <select name="moneda" class="form-select" required>
                                 <option value="">Seleccionar...</option>
@@ -525,12 +516,12 @@
                             <input type="text" name="telefono" id="editTelefono" class="form-control">
                         </div>
                         <div class="col-12" id="comisionSection" style="display:none;">
-                            <label class="form-label">Comisión (%) <span class="text-muted">(dejar vacío para usar el % global)</span></label>
+                            <label class="form-label">Comisión (%)</label>
                             <div class="input-group">
                                 <input type="number" name="comision_porcentaje" id="editComision" class="form-control" step="0.01" min="0" max="100" placeholder="Ej: 30">
                                 <span class="input-group-text">%</span>
                             </div>
-                            <div class="form-text">Se calcula automáticamente al entregar una reparación: Costo × % / 100</div>
+                            <div class="form-text">Se calcula automáticamente al entregar una reparación: Ganancia × % / 100</div>
                         </div>
                     </div>
                 </div>

@@ -250,23 +250,13 @@ class ReparacionController extends Controller
             $totalReparacion = (float)($validated['costo_final'] ?? $validated['presupuesto'] ?? $reparacion->total ?? 0);
             
             // ── Calcular comisión del técnico ──
-            // 1. Si el técnico tiene % propio, usar ese
-            // 2. Si no, usar el % global de configuración
-            // 3. Si no hay %, comisión = 0
+            // Solo se usa el % propio del técnico
+            // Si no tiene %, comisión = 0
             $tecnico = User::find($validated['tecnico_id'] ?? $reparacion->tecnico_id);
             $comisionPorcentaje = null;
             
-            if ($tecnico) {
-                // Usar % del técnico si está definido
-                if ($tecnico->comision_porcentaje !== null && $tecnico->comision_porcentaje > 0) {
-                    $comisionPorcentaje = (float)$tecnico->comision_porcentaje;
-                } else {
-                    // Si no, usar % global
-                    $empresa = Configuracion::empresa();
-                    if ($empresa && $empresa->comision_global_tecnicos > 0) {
-                        $comisionPorcentaje = (float)$empresa->comision_global_tecnicos;
-                    }
-                }
+            if ($tecnico && $tecnico->comision_porcentaje !== null && $tecnico->comision_porcentaje > 0) {
+                $comisionPorcentaje = (float)$tecnico->comision_porcentaje;
             }
             
             // Base de comisión = Ganancia (costo final - costo repuesto)

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Reparacion;
-use App\Models\Configuracion;
 use Illuminate\Http\Request;
 
 class ComisionController extends Controller
@@ -73,13 +72,9 @@ class ComisionController extends Controller
             }
         }
         
-        // Configuración para el % global
-        $empresa = Configuracion::empresa();
-        $comisionGlobal = $empresa->comision_global_tecnicos ?? 0;
-        
         return view('comisiones.index', compact(
             'tecnicos', 'tecnicoId', 'fechaDesde', 'fechaHasta',
-            'reparaciones', 'totalesPorTecnico', 'comisionGlobal'
+            'reparaciones', 'totalesPorTecnico'
         ));
     }
     
