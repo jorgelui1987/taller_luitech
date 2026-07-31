@@ -82,10 +82,10 @@
                 {{-- Datos del cliente --}}
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <div class="p-3 rounded-3" style="background:#f8f5ff;">
+                            <div class="p-3 rounded-3" style="background:#f8f5ff;">
                             <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">CLIENTE</div>
-                            <div style="font-weight:600;">{{ $venta->cliente->nombre_completo ?? '—' }}</div>
-                            <div style="font-size:12px; color:#6b7280;">{{ $venta->cliente->telefono ?? '' }}</div>
+                            <div style="font-weight:600;">{{ $venta->cliente?->nombre_completo ?? 'VENTA GENERAL' }}</div>
+                            <div style="font-size:12px; color:#6b7280;">{{ $venta->cliente?->telefono ?? '' }}</div>
                             @if($venta->cliente && $venta->cliente->email)
                             <div style="font-size:12px; color:#6b7280;">{{ $venta->cliente->email }}</div>
                             @endif

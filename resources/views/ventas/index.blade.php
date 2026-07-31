@@ -76,8 +76,8 @@
                             <span style="font-weight:600; color:#a855f7;">{{ $venta->numero_venta }}</span>
                         </td>
                         <td style="font-size:13px;">
-                            <div>{{ $venta->cliente->nombre_completo ?? '—' }}</div>
-                            <div style="font-size:11px; color:#9ca3af;">{{ $venta->cliente->telefono ?? '' }}</div>
+                            <div>{{ $venta->cliente?->nombre_completo ?? '—' }}</div>
+                            <div style="font-size:11px; color:#9ca3af;">{{ $venta->cliente?->telefono ?? '' }}</div>
                         </td>
                         <td style="font-size:13px; color:#6b7280;">{{ $venta->vendedor->name ?? '—' }}</td>
                         <td style="font-size:12px;">

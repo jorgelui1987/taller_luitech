@@ -43,7 +43,7 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 <div>{{ ucfirst($venta->estado) }} | {{ $venta->fecha_venta->format('d/m/Y H:i') }}</div>
 </div>
 <hr>
-<div class="det"><span class="etq">CLIENTE </span>{{ $venta->cliente->nombre_completo ?? 'VENTA GENERAL' }}{{ $venta->cliente && $venta->cliente->telefono ? ' T:'.$venta->cliente->telefono : '' }}{{ $venta->cliente && $venta->cliente->email ? ' E:'.$venta->cliente->email : '' }}</div>
+<div class="det"><span class="etq">CLIENTE </span>{{ $venta->cliente?->nombre_completo ?? 'VENTA GENERAL' }}{{ $venta->cliente?->telefono ? ' T:'.$venta->cliente->telefono : '' }}{{ $venta->cliente?->email ? ' E:'.$venta->cliente->email : '' }}</div>
 <div class="det"><span class="etq">PAGO </span>{{ ucfirst($venta->metodo_pago) }} | {{ $venta->vendedor->name ?? '—' }}</div>
 <hr>
 <table class="prod">
