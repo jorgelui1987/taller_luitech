@@ -63,29 +63,25 @@ class Venta extends Model
             $tenantId = $tenant ? $tenant->id : 1;
         }
         
-        // Usar lockForUpdate para evitar condiciones de carrera
-        // Esto asegura que solo un proceso genere el número a la vez
-        $ultimo = \Illuminate\Support\Facades\DB::table('ventas')
-            ->where('tenant_id', $tenantId)
-            ->orderBy('id', 'desc')
-            ->lockForUpdate()
-            ->first(['id', 'numero_venta']);
+        // Buscar el número más alto existente (sin importar tenant_id)
+        // Esto evita el problema de que el último registro tenga otro tenant
+        $maxNumero = \Illuminate\Support\Facades\DB::table('ventas')
+            ->where('numero_venta', 'like', 'VTA-%')
+            ->max('numero_venta');
             
         $numero = 1;
-        if ($ultimo && $ultimo->numero_venta) {
-            $parte = substr($ultimo->numero_venta, 4);
+        if ($maxNumero) {
+            $parte = substr($maxNumero, 4);
             if (is_numeric($parte)) {
                 $numero = (int)$parte + 1;
             }
         }
         
+        // Garantizar unicidad absoluta (por si hay huecos o colisiones)
         $nuevo = 'VTA-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
-        
-        // Garantizar unicidad (por si el último fue cancelado)
         $contador = 0;
         while (\Illuminate\Support\Facades\DB::table('ventas')
-            ->where('tenant_id', $tenantId)
-            ->where('numero_venta', $nuevo)->exists() && $contador < 100) {
+            ->where('numero_venta', $nuevo)->exists() && $contador < 1000) {
             $numero++;
             $nuevo = 'VTA-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
             $contador++;
