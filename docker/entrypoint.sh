@@ -119,10 +119,16 @@ DB_CHECK=$(php -r "
 if [[ "$DB_CHECK" == "OK" ]]; then
     echo "✓ Conexión a BD exitosa"
     echo "Ejecutando migraciones..."
-    php artisan migrate --force 2>/dev/null && echo "✓ Migraciones ejecutadas" || echo "⚠ Migraciones ya ejecutadas o no necesarias"
+    if php artisan migrate --force; then
+        echo "✓ Migraciones ejecutadas"
+    else
+        echo "⚠ Error en migraciones. Intentando de nuevo con migrar pendientes..."
+        php artisan migrate --force --pretend 2>&1 | head -20 || true
+        php artisan migrate --force 2>&1 || true
+    fi
 
     echo "Ejecutando seeders..."
-    php artisan db:seed --force 2>/dev/null && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
+    php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
 else
     echo "⚠ No se pudo conectar a la BD: $DB_CHECK"
     echo "  Las migraciones se ejecutarán manualmente después."

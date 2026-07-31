@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('configuracion', function (Blueprint $table) {
-            $table->dropColumn('comision_global_tecnicos');
-        });
+        if (Schema::hasColumn('configuracion', 'comision_global_tecnicos')) {
+            Schema::table('configuracion', function (Blueprint $table) {
+                $table->dropColumn('comision_global_tecnicos');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('configuracion', function (Blueprint $table) {
-            $table->decimal('comision_global_tecnicos', 5, 2)->default(0)->after('igv');
-        });
+        if (!Schema::hasColumn('configuracion', 'comision_global_tecnicos')) {
+            Schema::table('configuracion', function (Blueprint $table) {
+                $table->decimal('comision_global_tecnicos', 5, 2)->default(0)->after('igv');
+            });
+        }
     }
 };

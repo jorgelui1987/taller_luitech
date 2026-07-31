@@ -8,16 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Porcentaje de comisión por técnico (nullable = usar el global)
-            $table->decimal('comision_porcentaje', 5, 2)->nullable()->after('activo');
-        });
+        if (!Schema::hasColumn('users', 'comision_porcentaje')) {
+            Schema::table('users', function (Blueprint $table) {
+                // Porcentaje de comisión por técnico
+                $table->decimal('comision_porcentaje', 5, 2)->nullable()->after('activo');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('comision_porcentaje');
-        });
+        if (Schema::hasColumn('users', 'comision_porcentaje')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('comision_porcentaje');
+            });
+        }
     }
 };
