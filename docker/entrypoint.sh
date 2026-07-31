@@ -22,22 +22,22 @@ mkdir -p /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 
-# Generar APP_KEY si no está definida y no existe en .env
-if [ -z "$APP_KEY" ] && [ ! -f /var/www/html/.env ]; then
-    echo "Generando APP_KEY..."
-    APP_KEY=$(php -r "echo 'base64:' . base64_encode(random_bytes(32));")
-    export APP_KEY
-fi
-
-# NO escribir .env manualmente - usar variables de entorno reales
-# La plataforma (Railway, Dokploy, etc.) debe pasar todas las variables necesarias
-# Si no existe .env, crear uno mínimo con APP_KEY
+# ── APP_KEY ──────────────────────────────────────────────────────────────
+# Si no existe .env, crearlo desde variables de entorno
 if [ ! -f /var/www/html/.env ]; then
     echo "Creando .env desde variables de entorno..."
+
+    # Si APP_KEY no está definida como variable de entorno, generar una
+    if [ -z "$APP_KEY" ]; then
+        echo "Generando nueva APP_KEY..."
+        APP_KEY=$(php -r "echo 'base64:' . base64_encode(random_bytes(32));")
+        echo "APP_KEY generada: ${APP_KEY:0:20}..."
+    fi
+
     {
         echo "APP_NAME=\"${APP_NAME:-CRM Tienda Celulares}\""
         echo "APP_ENV=${APP_ENV:-production}"
-        echo "APP_KEY=${APP_KEY:-}"
+        echo "APP_KEY=${APP_KEY}"
         echo "APP_DEBUG=${APP_DEBUG:-false}"
         echo "APP_URL=${APP_URL:-http://localhost}"
         echo "FORCE_HTTPS=${FORCE_HTTPS:-true}"
@@ -61,10 +61,20 @@ if [ ! -f /var/www/html/.env ]; then
         echo "LOG_LEVEL=${LOG_LEVEL:-warning}"
     } > /var/www/html/.env
     echo ".env creado exitosamente"
+else
+    echo "Usando .env existente"
 fi
 
-echo "=== Configuración actual ==="
-grep -v "PASSWORD\|KEY" /var/www/html/.env 2>/dev/null || true
+# Verificar que APP_KEY no esté vacía en .env
+if grep -q "APP_KEY=$" /var/www/html/.env 2>/dev/null; then
+    echo "ERROR: APP_KEY está vacía en .env. Generando nueva..."
+    NEW_KEY=$(php -r "echo 'base64:' . base64_encode(random_bytes(32));")
+    sed -i "s/APP_KEY=$/APP_KEY=${NEW_KEY}/" /var/www/html/.env
+    echo "Nueva APP_KEY generada: ${NEW_KEY:0:20}..."
+fi
+
+echo "=== Configuración actual (ocultando contraseñas) ==="
+grep -v "PASSWORD\|DB_PASSWORD" /var/www/html/.env 2>/dev/null || true
 echo "============================"
 
 # Limpiar caché de configuración para que Laravel lea el .env fresco
