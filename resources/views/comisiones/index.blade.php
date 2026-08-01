@@ -10,7 +10,7 @@
     <div>
         <h4 class="mb-1 fw-bold">Comisiones de Técnicos</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            @if($totalesPorTecnico)<span>Total comisiones del periodo: <strong style="color:#10b981;">S/ {{ number_format(collect($totalesPorTecnico)->sum('comision_total'), 2) }}</strong></span>@endif
+            @if($totalesPorTecnico)<span>Total comisiones del periodo: <strong style="color:#10b981;">{{ \App\Helpers\FormatoHelper::moneda(collect($totalesPorTecnico)->sum('comision_total')) }}</strong></span>@endif
         </p>
     </div>
 </div>
@@ -62,19 +62,19 @@
                 </div>
                 <div class="d-flex justify-content-between mb-1" style="font-size:12px;">
                     <span class="text-muted">Base comisión (ganancia)</span>
-                    <span>S/ {{ number_format($total['total_reparado'], 2) }}</span>
+                    <span>{{ \App\Helpers\FormatoHelper::moneda($total['total_reparado']) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1" style="font-size:12px;">
                     <span class="text-muted">Comisión total</span>
-                    <span style="font-weight:700;color:#f59e0b;">S/ {{ number_format($total['comision_total'], 2) }}</span>
+                    <span style="font-weight:700;color:#f59e0b;">{{ \App\Helpers\FormatoHelper::moneda($total['comision_total']) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-1" style="font-size:12px;">
                     <span class="text-muted" style="color:#10b981;">Pagado</span>
-                    <span style="color:#10b981;">S/ {{ number_format($total['comision_pagada'], 2) }}</span>
+                    <span style="color:#10b981;">{{ \App\Helpers\FormatoHelper::moneda($total['comision_pagada']) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2" style="font-size:12px;">
                     <span class="text-muted" style="color:#dc2626;">Pendiente</span>
-                    <span style="color:#dc2626;font-weight:700;">S/ {{ number_format($total['comision_pendiente'], 2) }}</span>
+                    <span style="color:#dc2626;font-weight:700;">{{ \App\Helpers\FormatoHelper::moneda($total['comision_pendiente']) }}</span>
                 </div>
                 @if($total['comision_pendiente'] > 0)
                 <form action="{{ route('comisiones.pagar-todo', $total['tecnico']) }}" method="POST"
@@ -125,13 +125,13 @@
                         <td style="font-size:12px;">{{ optional($rep->fecha_entrega)->format('d/m/Y') }}</td>
                         <td>
                             @php $baseComision = max(0, ($rep->costo_final ?: $rep->presupuesto ?: 0) - ($rep->costo_repuesto ?? 0)); @endphp
-                            S/ {{ number_format($rep->costo_final ?: $rep->presupuesto ?: 0, 2) }}
+                            {{ \App\Helpers\FormatoHelper::moneda($rep->costo_final ?: $rep->presupuesto ?: 0) }}
                             @if($rep->costo_repuesto > 0)
-                                <div style="font-size:10px; color:#9ca3af;">Base (ganancia): S/ {{ number_format($baseComision, 2) }}</div>
+                                <div style="font-size:10px; color:#9ca3af;">Base (ganancia): {{ \App\Helpers\FormatoHelper::moneda($baseComision) }}</div>
                             @endif
                         </td>
                         <td>{{ $rep->comision_porcentaje }}%</td>
-                        <td style="font-weight:700;color:#f59e0b;">S/ {{ number_format($rep->comision_monto, 2) }}</td>
+                        <td style="font-weight:700;color:#f59e0b;">{{ \App\Helpers\FormatoHelper::moneda($rep->comision_monto) }}</td>
                         <td>
                             @if($rep->comision_pagada)
                                 <span style="background:#d1fae5;color:#065f46;border-radius:20px;padding:3px 10px;font-size:11px;">
