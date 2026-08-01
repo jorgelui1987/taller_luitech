@@ -99,6 +99,19 @@ class ProductoController extends Controller
             $validated['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
+        // Forzar tenant_id
+        $tenantId = auth()->user()->tenant_id;
+        if (!$tenantId) {
+            $tenant = \App\Models\Tenant::first();
+            if ($tenant) {
+                $tenantId = $tenant->id;
+                auth()->user()->update(['tenant_id' => $tenantId]);
+            } else {
+                return back()->with('error', 'Error de configuración: no hay tenants en el sistema. Contacta al administrador.')->withInput();
+            }
+        }
+        $validated['tenant_id'] = $tenantId;
+
         Producto::create($validated);
 
         return redirect()->route('productos.index')
