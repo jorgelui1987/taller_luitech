@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Venta;
 use App\Models\Cliente;
 use App\Models\Producto;
@@ -171,17 +172,45 @@ class BackupController extends Controller
             file_put_contents($this->backupDir . '/' . $autoNombre, $this->generarSQL());
         } catch (\Throwable) { /* Continúa aunque falle el backup */ }
 
+        // Tablas hijas que referencian a las tablas padre (orden de eliminación correcto)
+        $tablasHijas = [
+            'reparacion_fotos',
+            'detalle_ventas',
+            'detalle_ordenes_compra',
+            'ordenes_compra',
+            'movimientos_stock',
+            'comisiones_pagos',
+            'gastos_fijos',
+        ];
+
         try {
+            // Desactivar verificaciones de FK según driver
+            if ($driver === 'pgsql') {
+                DB::statement('SET session_replication_role = replica');
+            } else {
+                DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            }
+
             switch ($request->tipo_reset) {
                 case 'ventas':
-                    DB::table('detalle_ventas')->delete();
+                    // Tablas hijas
+                    foreach ($tablasHijas as $tabla) {
+                        if (Schema::hasTable($tabla)) {
+                            DB::table($tabla)->delete();
+                        }
+                    }
                     DB::table('ventas')->delete();
                     DB::table('reparaciones')->delete();
                     $msg = 'Ventas y reparaciones eliminadas. Clientes, productos y usuarios conservados.';
                     break;
 
                 case 'datos':
-                    DB::table('detalle_ventas')->delete();
+                    // Tablas hijas
+                    foreach ($tablasHijas as $tabla) {
+                        if (Schema::hasTable($tabla)) {
+                            DB::table($tabla)->delete();
+                        }
+                    }
                     DB::table('ventas')->delete();
                     DB::table('reparaciones')->delete();
                     DB::table('clientes')->delete();
@@ -190,7 +219,12 @@ class BackupController extends Controller
                     break;
 
                 case 'total':
-                    DB::table('detalle_ventas')->delete();
+                    // Tablas hijas
+                    foreach ($tablasHijas as $tabla) {
+                        if (Schema::hasTable($tabla)) {
+                            DB::table($tabla)->delete();
+                        }
+                    }
                     DB::table('ventas')->delete();
                     DB::table('reparaciones')->delete();
                     DB::table('clientes')->delete();
@@ -199,7 +233,23 @@ class BackupController extends Controller
                     $msg = 'Sistema reseteado a estado de fábrica. Solo el administrador fue conservado.';
                     break;
             }
+
+            // Reactivar verificaciones de FK
+            if ($driver === 'pgsql') {
+                DB::statement('SET session_replication_role = DEFAULT');
+            } else {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            }
         } catch (\Throwable $e) {
+            // Asegurar reactivación de FK en caso de error
+            try {
+                if ($driver === 'pgsql') {
+                    DB::statement('SET session_replication_role = DEFAULT');
+                } else {
+                    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+                }
+            } catch (\Throwable) {}
+
             return back()->with('error', 'Error durante el reset: ' . $e->getMessage());
         }
 
@@ -228,7 +278,8 @@ class BackupController extends Controller
             $sql .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
         }
 
-        $tablas = array_map('reset', $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' OR table_schema = DATABASE()")->fetchAll(PDO::FETCH_NUM));
+        $filas  = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' OR table_schema = DATABASE()")->fetchAll(PDO::FETCH_NUM);
+        $tablas = array_map(fn($fila) => $fila[0], $filas);
 
         foreach ($tablas as $tabla) {
             if (in_array($tabla, ['migrations', 'personal_access_tokens'])) continue;

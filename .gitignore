@@ -25,5 +25,7 @@ yarn-error.log
 !/storage/framework/sessions/.gitkeep
 /storage/app/public/*
 !/storage/app/public/.gitkeep
+/storage/app/backups/*
+!/storage/app/backups/.gitkeep
 /storage/logs/*.log
 /storage/debugbar/*
