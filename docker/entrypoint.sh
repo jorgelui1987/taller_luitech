@@ -61,7 +61,7 @@ fi
     echo "CACHE_DRIVER=${CACHE_DRIVER:-file}"
     echo "QUEUE_CONNECTION=${QUEUE_CONNECTION:-sync}"
     echo ""
-    echo "LOG_LEVEL=warning"
+    echo "LOG_LEVEL=debug"
     echo "TRUSTED_PROXIES=*"
 } > /var/www/html/.env
 

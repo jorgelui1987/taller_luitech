@@ -38,7 +38,7 @@
                     </div>
                     <div class="d-flex justify-content-between py-2">
                         <span class="text-muted">Órdenes</span>
-                        <strong>{{ $proveedor->ordenes_compra_count }}</strong>
+                        <strong>{{ $proveedor->ordenes_compra_count ?? $proveedor->ordenesCompra->count() }}</strong>
                     </div>
                 </div>
                 <hr>
@@ -60,10 +60,10 @@
                         <tbody>
                             @foreach($proveedor->ordenesCompra as $oc)
                             <tr>
-                                <td><a href="{{ route('compras.show', $oc) }}" style="color:#a855f7;font-weight:500;">{{ $oc->numero_orden }}</a></td>
-                                <td style="color:#6b7280;">{{ $oc->fecha_orden->format('d/m/Y') }}</td>
-                                <td style="font-weight:600;">S/ {{ number_format($oc->total, 2) }}</td>
-                                <td><span style="background:{{ $oc->estado_bg }};color:{{ $oc->estado_color }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_', ' ', $oc->estado)) }}</span></td>
+                                <td><a href="{{ route('compras.show', $oc) }}" style="color:#a855f7;font-weight:500;">{{ $oc->numero_orden ?? '—' }}</a></td>
+                                <td style="color:#6b7280;">{{ is_object($oc->fecha_orden) ? $oc->fecha_orden->format('d/m/Y') : ($oc->fecha_orden ?? '—') }}</td>
+                                <td style="font-weight:600;">S/ {{ number_format($oc->total ?? 0, 2) }}</td>
+                                <td><span style="background:{{ $oc->estado_bg ?? '#f3f4f6' }};color:{{ $oc->estado_color ?? '#6b7280' }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_', ' ', $oc->estado ?? 'pendiente')) }}</span></td>
                             </tr>
                             @endforeach
                         </tbody>
