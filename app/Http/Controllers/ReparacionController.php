@@ -219,8 +219,21 @@ class ReparacionController extends Controller
         // Auto-calcular total = presupuesto - abono
         $validated['total'] = max(0, ($validated['presupuesto'] ?? 0) - ($validated['abono'] ?? 0));
 
-        if ($validated['estado'] === 'entregado' && !$reparacion->fecha_entrega) {
-            $validated['fecha_entrega'] = now();
+        // ── Si se está entregando y no hay costo_final, usar el presupuesto automáticamente ──
+        if ($validated['estado'] === 'entregado') {
+            $presupuesto = (float)($validated['presupuesto'] ?? $reparacion->presupuesto ?? 0);
+            $costoFinalIngresado = isset($validated['costo_final']) && $validated['costo_final'] > 0
+                ? (float)$validated['costo_final']
+                : 0;
+
+            // Si no se ingresó costo_final, autocompletar con el presupuesto
+            if ($costoFinalIngresado <= 0 && $presupuesto > 0) {
+                $validated['costo_final'] = $presupuesto;
+            }
+
+            if (!$reparacion->fecha_entrega) {
+                $validated['fecha_entrega'] = now();
+            }
         }
 
         // Verificar si la reparación ya fue entregada antes
