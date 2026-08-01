@@ -126,17 +126,6 @@
                                    value="{{ old('simbolo_moneda', $empresa->simbolo_moneda ?? 'S/.') }}" required readonly
                                    style="background:#f9fafb;cursor:default;">
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Decimales en montos</label>
-                            <select name="decimales" class="form-select">
-                                <option value="0" {{ old('decimales', $empresa->decimales ?? 2) == 0 ? 'selected' : '' }}>0 decimales (S/ 50)</option>
-                                <option value="1" {{ old('decimales', $empresa->decimales ?? 2) == 1 ? 'selected' : '' }}>1 decimal (S/ 50.5)</option>
-                                <option value="2" {{ old('decimales', $empresa->decimales ?? 2) == 2 ? 'selected' : '' }}>2 decimales (S/ 50.00)</option>
-                                <option value="3" {{ old('decimales', $empresa->decimales ?? 2) == 3 ? 'selected' : '' }}>3 decimales (S/ 50.000)</option>
-                                <option value="4" {{ old('decimales', $empresa->decimales ?? 2) == 4 ? 'selected' : '' }}>4 decimales (S/ 50.0000)</option>
-                            </select>
-                            <div class="form-text">Cantidad de decimales para mostrar en montos</div>
-                        </div>
                     </div>
 
                     <div class="mb-3">
