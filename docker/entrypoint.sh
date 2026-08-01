@@ -44,7 +44,7 @@ fi
     echo "APP_NAME=\"${APP_NAME:-CRM Tienda Celulares}\""
     echo "APP_ENV=${APP_ENV:-production}"
     echo "APP_KEY=${APP_KEY}"
-    echo "APP_DEBUG=false"
+    echo "APP_DEBUG=${APP_DEBUG:-false}"
     echo "APP_URL=${APP_URL}"
     echo "FORCE_HTTPS=${FORCE_HTTPS:-true}"
     echo "SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}"

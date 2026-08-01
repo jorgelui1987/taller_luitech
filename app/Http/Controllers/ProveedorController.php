@@ -104,17 +104,34 @@ class ProveedorController extends Controller
         try {
             DB::beginTransaction();
 
-            // Desvincular productos asociados a este proveedor antes de eliminar
-            \App\Models\Producto::where('proveedor_id', $proveedor->id)->update(['proveedor_id' => null]);
+            $proveedorId = $proveedor->id;
 
-            // Eliminar explícitamente detalles y órdenes de compra asociadas
-            foreach ($proveedor->ordenesCompra as $orden) {
-                $orden->detalles()->delete();
-                $orden->delete();
+            // 1. Desvincular productos asociados a este proveedor (sin TenantScope)
+            DB::table('productos')
+                ->where('proveedor_id', $proveedorId)
+                ->update(['proveedor_id' => null]);
+
+            // 2. Obtener TODAS las órdenes de compra de este proveedor (sin TenantScope)
+            $ordenIds = DB::table('ordenes_compra')
+                ->where('proveedor_id', $proveedorId)
+                ->pluck('id');
+
+            if ($ordenIds->isNotEmpty()) {
+                // 3. Eliminar detalles de esas órdenes de compra
+                DB::table('detalle_ordenes_compra')
+                    ->whereIn('orden_compra_id', $ordenIds)
+                    ->delete();
+
+                // 4. Eliminar las órdenes de compra
+                DB::table('ordenes_compra')
+                    ->whereIn('id', $ordenIds)
+                    ->delete();
             }
 
-            // Eliminar el proveedor
-            $proveedor->delete();
+            // 5. Eliminar el registro del proveedor
+            DB::table('proveedores')
+                ->where('id', $proveedorId)
+                ->delete();
 
             DB::commit();
 
@@ -122,7 +139,9 @@ class ProveedorController extends Controller
                 ->with('success', 'Proveedor eliminado correctamente.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Error al eliminar el proveedor: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Error al eliminar proveedor ID ' . $proveedor->id . ': ' . $e->getMessage());
+            return redirect()->route('proveedores.index')
+                ->with('error', 'Error al eliminar el proveedor: ' . $e->getMessage());
         }
     }
 
