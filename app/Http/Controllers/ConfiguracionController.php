@@ -104,6 +104,7 @@ class ConfiguracionController extends Controller
             'igv'           => 'required|numeric|min:0|max:100',
             'moneda'        => 'required|string|max:10',
             'simbolo_moneda'=> 'required|string|max:5',
+            'decimales'     => 'required|integer|min:0|max:4',
             'terminos_garantia' => 'nullable|string|max:1000',
         ]);
 
