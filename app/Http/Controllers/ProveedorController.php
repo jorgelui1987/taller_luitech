@@ -67,7 +67,10 @@ class ProveedorController extends Controller
 
     public function show(Proveedor $proveedor)
     {
-        $proveedor->load('ordenesCompra');
+        $proveedor->loadCount('ordenesCompra');
+        $proveedor->load(['ordenesCompra' => function ($query) {
+            $query->orderByDesc('created_at');
+        }]);
         return view('proveedores.show', compact('proveedor'));
     }
 

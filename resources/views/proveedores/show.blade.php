@@ -38,7 +38,7 @@
                     </div>
                     <div class="d-flex justify-content-between py-2">
                         <span class="text-muted">Órdenes</span>
-                        <strong>{{ $proveedor->ordenesCompra->count() }}</strong>
+                        <strong>{{ $proveedor->ordenes_compra_count }}</strong>
                     </div>
                 </div>
                 <hr>
@@ -58,7 +58,7 @@
                     <table class="table table-hover align-middle mb-0" style="font-size:13px;">
                         <thead><tr><th>N° Orden</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
                         <tbody>
-                            @foreach($proveedor->ordenesCompra->sortByDesc('created_at') as $oc)
+                            @foreach($proveedor->ordenesCompra as $oc)
                             <tr>
                                 <td><a href="{{ route('compras.show', $oc) }}" style="color:#a855f7;font-weight:500;">{{ $oc->numero_orden }}</a></td>
                                 <td style="color:#6b7280;">{{ $oc->fecha_orden->format('d/m/Y') }}</td>
