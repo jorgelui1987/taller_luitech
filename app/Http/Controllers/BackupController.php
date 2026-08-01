@@ -278,7 +278,12 @@ class BackupController extends Controller
             $sql .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
         }
 
-        $filas  = $pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' OR table_schema = DATABASE()")->fetchAll(PDO::FETCH_NUM);
+        // PostgreSQL no tiene la función DATABASE() (es de MySQL)
+        $queryTablas = $driver === 'pgsql'
+            ? "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+            : "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()";
+
+        $filas  = $pdo->query($queryTablas)->fetchAll(PDO::FETCH_NUM);
         $tablas = array_map(fn($fila) => $fila[0], $filas);
 
         foreach ($tablas as $tabla) {
