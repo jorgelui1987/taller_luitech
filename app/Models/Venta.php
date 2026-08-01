@@ -13,15 +13,18 @@ class Venta extends Model
     protected $fillable = [
         'numero_venta', 'cliente_id', 'user_id', 'fecha_venta',
         'subtotal', 'descuento', 'impuesto', 'total',
+        'comision_monto', 'comision_pagada',
         'metodo_pago', 'estado', 'notas', 'tenant_id',
     ];
 
     protected $casts = [
-        'fecha_venta' => 'datetime',
-        'subtotal'    => 'decimal:2',
-        'descuento'   => 'decimal:2',
-        'impuesto'    => 'decimal:2',
-        'total'       => 'decimal:2',
+        'fecha_venta'    => 'datetime',
+        'subtotal'       => 'decimal:2',
+        'descuento'      => 'decimal:2',
+        'impuesto'       => 'decimal:2',
+        'total'          => 'decimal:2',
+        'comision_monto' => 'decimal:2',
+        'comision_pagada'=> 'boolean',
     ];
 
     protected static function booted(): void

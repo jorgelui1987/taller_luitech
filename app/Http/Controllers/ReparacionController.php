@@ -254,7 +254,7 @@ class ReparacionController extends Controller
         $reparacion->update($validated);
 
         // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN (Opción C) ──
-        if ($validated['estado'] === 'entregado' && !$yaEntregada) {
+        if ($validated['estado'] === 'entregado') {
             $totalReparacion = (float)($validated['costo_final'] ?? $validated['presupuesto'] ?? $reparacion->total ?? 0);
 
             // ── Calcular comisión del técnico ──
@@ -279,32 +279,33 @@ class ReparacionController extends Controller
                 $comisionMonto = round($baseComision * ($comisionPorcentaje / 100), 2);
             }
 
-            // Guardar comisión en la reparación
-            if ($comisionPorcentaje !== null) {
+            // Guardar o recalcular comisión si la comisión aún no ha sido pagada
+            if (!$reparacion->comision_pagada && $comisionPorcentaje !== null) {
                 $reparacion->update([
                     'comision_porcentaje' => $comisionPorcentaje,
                     'comision_monto'      => $comisionMonto,
-                    'comision_pagada'     => false,
                 ]);
             }
 
-            // Crear venta si hay monto
-            if ($totalReparacion > 0 || $request->filled('cobrar_sin_costo')) {
+            // Crear venta la primera vez que pasa a entregado
+            if (!$yaEntregada && ($totalReparacion > 0 || $request->filled('cobrar_sin_costo'))) {
                 $metodoPago = $request->metodo_pago ?? 'efectivo';
 
                 Venta::create([
-                    'numero_venta' => Venta::generarNumero(),
-                    'cliente_id'   => $reparacion->cliente_id,
-                    'user_id'      => Auth::id(),
-                    'fecha_venta'  => now(),
-                    'subtotal'     => $totalReparacion,
-                    'descuento'    => 0,
-                    'impuesto'     => 0,
-                    'total'        => $totalReparacion,
-                    'metodo_pago'  => $metodoPago,
-                    'estado'       => 'completada',
-                    'notas'        => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
-                    'tenant_id'    => Auth::user()->tenant_id ?? $reparacion->tenant_id,
+                    'numero_venta'   => Venta::generarNumero(),
+                    'cliente_id'     => $reparacion->cliente_id,
+                    'user_id'        => Auth::id(),
+                    'fecha_venta'    => now(),
+                    'subtotal'       => $totalReparacion,
+                    'descuento'      => 0,
+                    'impuesto'       => 0,
+                    'total'          => $totalReparacion,
+                    'comision_monto' => $comisionMonto,
+                    'comision_pagada'=> false,
+                    'metodo_pago'    => $metodoPago,
+                    'estado'         => 'completada',
+                    'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+                    'tenant_id'      => Auth::user()->tenant_id ?? $reparacion->tenant_id,
                 ]);
             }
         }

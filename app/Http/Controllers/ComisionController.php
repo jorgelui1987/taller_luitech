@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Reparacion;
+use App\Models\Venta;
 use Illuminate\Http\Request;
 
 class ComisionController extends Controller
@@ -11,108 +12,204 @@ class ComisionController extends Controller
     public function index(Request $request)
     {
         $tenantId = auth()->user()->tenant_id;
-        
+
         // Obtener todos los técnicos del tenant
         $tecnicos = User::where('tenant_id', $tenantId)
             ->where('rol', 'tecnico')
             ->where('activo', true)
             ->orderBy('name')
             ->get();
-        
+
         // Permitir filtrar por técnico y rango de fechas
         $tecnicoId = $request->tecnico_id;
         $fechaDesde = $request->fecha_desde ?? now()->startOfMonth()->format('Y-m-d');
         $fechaHasta = $request->fecha_hasta ?? now()->format('Y-m-d');
-        
-        // Base query para reparaciones entregadas con comisión
+
+        // Base query para reparaciones entregadas
         $query = Reparacion::with(['cliente', 'tecnico'])
             ->where('estado', 'entregado')
-            ->whereNotNull('comision_monto')
             ->whereBetween('fecha_entrega', [$fechaDesde . ' 00:00:00', $fechaHasta . ' 23:59:59']);
-        
+
         if ($tecnicoId) {
             $query->where('tecnico_id', $tecnicoId);
         }
-        
+
         $reparaciones = $query->orderByDesc('fecha_entrega')->get();
-        
+
         // Calcular totales por técnico
         $totalesPorTecnico = [];
         foreach ($reparaciones as $rep) {
             $tid = $rep->tecnico_id;
+            if (!$tid) continue;
+
+            $tecnicoObj = $rep->tecnico;
+            $porcentaje = $rep->comision_porcentaje;
+
+            // Si la reparación no tiene porcentaje guardado pero el técnico si tiene % en su perfil
+            if (($porcentaje === null || $porcentaje == 0) && $tecnicoObj && $tecnicoObj->comision_porcentaje > 0) {
+                $porcentaje = (float)$tecnicoObj->comision_porcentaje;
+            }
+
+            $montoReparado = $rep->costo_final !== null && $rep->costo_final > 0
+                ? (float)$rep->costo_final
+                : ((float)$rep->presupuesto ?? 0);
+
+            $costoRepuesto = (float)($rep->costo_repuesto ?? 0);
+            $baseManoObra = max(0, $montoReparado - $costoRepuesto);
+
+            $comisionMonto = (float)($rep->comision_monto ?? 0);
+
+            // Calcular monto si no estaba asignado o si faltaba porcentaje
+            if ($porcentaje > 0 && ($comisionMonto == 0 || $rep->comision_porcentaje === null)) {
+                $comisionMonto = round($baseManoObra * ($porcentaje / 100), 2);
+                if (!$rep->comision_pagada) {
+                    $rep->update([
+                        'comision_porcentaje' => $porcentaje,
+                        'comision_monto'      => $comisionMonto,
+                    ]);
+                }
+            }
+
+            // Si el monto recalculado es asignado temporalmente para la vista
+            $rep->comision_porcentaje = $porcentaje;
+            $rep->comision_monto = $comisionMonto;
+
             if (!isset($totalesPorTecnico[$tid])) {
                 $totalesPorTecnico[$tid] = [
-                    'nombre' => $rep->tecnico->name ?? '—',
-                    'total_reparado' => 0,
-                    'comision_total' => 0,
-                    'comision_pagada' => 0,
+                    'nombre'             => $tecnicoObj->name ?? '—',
+                    'total_reparado'     => 0,
+                    'comision_total'     => 0,
+                    'comision_pagada'    => 0,
                     'comision_pendiente' => 0,
-                    'cantidad' => 0,
-                    'tecnico' => $rep->tecnico,
+                    'cantidad'           => 0,
+                    'tecnico'            => $tecnicoObj,
                 ];
             }
-            
-            $montoReparado = $rep->costo_final !== null && $rep->costo_final > 0 
-                ? (float)$rep->costo_final 
-                : ((float)$rep->presupuesto ?? 0);
-            
-            // Restar costo de repuesto si existe → base de comisión (ganancia)
-            if ($rep->costo_repuesto && $rep->costo_repuesto > 0) {
-                $montoReparado = max(0, $montoReparado - (float)$rep->costo_repuesto);
-            }
-            
-            $totalesPorTecnico[$tid]['total_reparado'] += $montoReparado;
-            $totalesPorTecnico[$tid]['comision_total'] += (float)$rep->comision_monto;
+
+            $totalesPorTecnico[$tid]['total_reparado'] += $baseManoObra;
+            $totalesPorTecnico[$tid]['comision_total'] += $comisionMonto;
             $totalesPorTecnico[$tid]['cantidad']++;
-            
+
             if ($rep->comision_pagada) {
-                $totalesPorTecnico[$tid]['comision_pagada'] += (float)$rep->comision_monto;
+                $totalesPorTecnico[$tid]['comision_pagada'] += $comisionMonto;
             } else {
-                $totalesPorTecnico[$tid]['comision_pendiente'] += (float)$rep->comision_monto;
+                $totalesPorTecnico[$tid]['comision_pendiente'] += $comisionMonto;
             }
         }
-        
+
         return view('comisiones.index', compact(
             'tecnicos', 'tecnicoId', 'fechaDesde', 'fechaHasta',
             'reparaciones', 'totalesPorTecnico'
         ));
     }
-    
+
     /**
-     * Marcar una comisión como pagada
+     * Marcar una comisión como pagada y descontarla de Ventas
      */
     public function pagar(Request $request, Reparacion $reparacion)
     {
         $request->validate([
             'metodo_pago' => 'nullable|string|max:50',
         ]);
-        
-        $reparacion->update([
-            'comision_pagada' => true,
-            'comision_fecha_pago' => now(),
-        ]);
-        
-        return back()->with('success', "Comisión de {$reparacion->numero_orden} marcada como pagada.");
+
+        if (!$reparacion->comision_pagada) {
+            // Asegurar que comision_monto esté calculado
+            if (!$reparacion->comision_monto || $reparacion->comision_monto <= 0) {
+                $porcentaje = $reparacion->comision_porcentaje ?? $reparacion->tecnico?->comision_porcentaje ?? 0;
+                $montoTotalReparacion = $reparacion->costo_final ?: $reparacion->presupuesto ?: 0;
+                $costoRepuesto = $reparacion->costo_repuesto ?? 0;
+                $baseManoObra = max(0, $montoTotalReparacion - $costoRepuesto);
+                $reparacion->comision_monto = round($baseManoObra * ($porcentaje / 100), 2);
+            }
+
+            $reparacion->update([
+                'comision_pagada'     => true,
+                'comision_fecha_pago' => now(),
+            ]);
+
+            // Restar de Venta
+            if ($reparacion->comision_monto > 0) {
+                $metodoPago = $request->metodo_pago ?? 'efectivo';
+                Venta::create([
+                    'tenant_id'    => auth()->user()?->tenant_id ?? $reparacion->tenant_id,
+                    'numero_venta' => Venta::generarNumero(),
+                    'cliente_id'   => $reparacion->cliente_id,
+                    'user_id'      => auth()->id(),
+                    'fecha_venta'  => now(),
+                    'subtotal'     => -$reparacion->comision_monto,
+                    'impuesto'     => 0,
+                    'descuento'    => 0,
+                    'total'        => -$reparacion->comision_monto,
+                    'metodo_pago'  => $metodoPago,
+                    'estado'       => 'completada',
+                    'notas'        => "Pago de comisión a técnico ({$reparacion->tecnico?->name}) - Orden {$reparacion->numero_orden}",
+                ]);
+            }
+        }
+
+        return back()->with('success', "Comisión de {$reparacion->numero_orden} (S/ " . number_format($reparacion->comision_monto, 2) . ") marcada como pagada y restada de ventas.");
     }
-    
+
     /**
-     * Marcar todas las comisiones de un técnico como pagadas
+     * Marcar todas las comisiones de un técnico como pagadas y descontarlas de Ventas
      */
     public function pagarTodo(Request $request, User $tecnico)
     {
         $request->validate([
             'metodo_pago' => 'nullable|string|max:50',
         ]);
-        
-        Reparacion::where('tecnico_id', $tecnico->id)
+
+        $reparaciones = Reparacion::where('tecnico_id', $tecnico->id)
             ->where('estado', 'entregado')
-            ->whereNotNull('comision_monto')
             ->where('comision_pagada', false)
-            ->update([
-                'comision_pagada' => true,
-                'comision_fecha_pago' => now(),
+            ->get();
+
+        $metodoPago = $request->metodo_pago ?? 'efectivo';
+        $montoTotalComisiones = 0;
+
+        foreach ($reparaciones as $rep) {
+            $comisionMonto = (float)$rep->comision_monto;
+            if ($comisionMonto <= 0) {
+                $porcentaje = $rep->comision_porcentaje ?? $tecnico->comision_porcentaje ?? 0;
+                $montoTotalReparacion = $rep->costo_final ?: $rep->presupuesto ?: 0;
+                $costoRepuesto = $rep->costo_repuesto ?? 0;
+                $baseManoObra = max(0, $montoTotalReparacion - $costoRepuesto);
+                $comisionMonto = round($baseManoObra * ($porcentaje / 100), 2);
+                $rep->comision_monto = $comisionMonto;
+            }
+
+            if ($comisionMonto > 0) {
+                $rep->update([
+                    'comision_pagada'     => true,
+                    'comision_fecha_pago' => now(),
+                    'comision_monto'      => $comisionMonto,
+                ]);
+                $montoTotalComisiones += $comisionMonto;
+            } else {
+                $rep->update([
+                    'comision_pagada'     => true,
+                    'comision_fecha_pago' => now(),
+                ]);
+            }
+        }
+
+        if ($montoTotalComisiones > 0) {
+            Venta::create([
+                'tenant_id'    => auth()->user()?->tenant_id ?? $tecnico->tenant_id,
+                'numero_venta' => Venta::generarNumero(),
+                'cliente_id'   => null,
+                'user_id'      => auth()->id(),
+                'fecha_venta'  => now(),
+                'subtotal'     => -$montoTotalComisiones,
+                'impuesto'     => 0,
+                'descuento'    => 0,
+                'total'        => -$montoTotalComisiones,
+                'metodo_pago'  => $metodoPago,
+                'estado'       => 'completada',
+                'notas'        => "Pago total de comisiones a técnico {$tecnico->name} (S/ " . number_format($montoTotalComisiones, 2) . ")",
             ]);
-        
-        return back()->with('success', "Todas las comisiones de {$tecnico->name} fueron marcadas como pagadas.");
+        }
+
+        return back()->with('success', "Todas las comisiones de {$tecnico->name} (Total: S/ " . number_format($montoTotalComisiones, 2) . ") fueron marcadas como pagadas y restadas de ventas.");
     }
 }
