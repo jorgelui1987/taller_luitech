@@ -75,6 +75,16 @@ class Reparacion extends Model
         return $this->hasMany(ReparacionFoto::class);
     }
 
+    public function calcularTotal(): float
+    {
+        $precio = ($this->costo_final !== null && $this->costo_final > 0)
+            ? (float) $this->costo_final
+            : (float) ($this->presupuesto ?? 0);
+        $abono = (float) ($this->abono ?? 0);
+
+        return max(0, $precio - $abono);
+    }
+
     public function getFirmaRecepcionUrlAttribute(): ?string
     {
         return $this->firma_recepcion ? asset('storage/' . $this->firma_recepcion) : null;

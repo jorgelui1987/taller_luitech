@@ -518,13 +518,15 @@ function actualizarPatronTextoEdit(container) {
     }
 }
 
-// ── Auto-calcular Total = Presupuesto - Abono ──
+// ── Auto-calcular Total = Costo Final / Presupuesto - Abono ──
 document.addEventListener('input', function(e) {
-    if (e.target.name === 'presupuesto' || e.target.name === 'abono') {
+    if (['presupuesto', 'abono', 'costo_final'].includes(e.target.name)) {
         const presupuesto = parseFloat(document.querySelector('input[name="presupuesto"]').value) || 0;
+        const costoFinal = parseFloat(document.querySelector('input[name="costo_final"]')?.value) || 0;
         const abono = parseFloat(document.querySelector('input[name="abono"]').value) || 0;
         const totalInput = document.querySelector('input[name="total"]');
-        if (totalInput) totalInput.value = Math.max(0, presupuesto - abono).toFixed(2);
+        const base = costoFinal > 0 ? costoFinal : presupuesto;
+        if (totalInput) totalInput.value = Math.max(0, base - abono).toFixed(2);
     }
 });
 </script>

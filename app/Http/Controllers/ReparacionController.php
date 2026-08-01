@@ -216,21 +216,15 @@ class ReparacionController extends Controller
             'notas'           => 'nullable|string',
         ]);
 
-        // Auto-calcular total = presupuesto - abono
-        $validated['total'] = max(0, ($validated['presupuesto'] ?? 0) - ($validated['abono'] ?? 0));
+        // Auto-calcular total = costo_final - abono si existe, de lo contrario presupuesto - abono
+        $precioBase = ($validated['costo_final'] ?? 0) > 0
+            ? (float) $validated['costo_final']
+            : (float) ($validated['presupuesto'] ?? 0);
+        $validated['total'] = max(0, $precioBase - (float) ($validated['abono'] ?? 0));
 
-        // ── Si se está entregando y no hay costo_final, usar el presupuesto automáticamente ──
+        // ── Si se está entregando, solo registrar fecha de entrega ──
+        // (Sin autocompletar costo_final con presupuesto)
         if ($validated['estado'] === 'entregado') {
-            $presupuesto = (float)($validated['presupuesto'] ?? $reparacion->presupuesto ?? 0);
-            $costoFinalIngresado = isset($validated['costo_final']) && $validated['costo_final'] > 0
-                ? (float)$validated['costo_final']
-                : 0;
-
-            // Si no se ingresó costo_final, autocompletar con el presupuesto
-            if ($costoFinalIngresado <= 0 && $presupuesto > 0) {
-                $validated['costo_final'] = $presupuesto;
-            }
-
             if (!$reparacion->fecha_entrega) {
                 $validated['fecha_entrega'] = now();
             }
@@ -268,7 +262,10 @@ class ReparacionController extends Controller
 
         // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN (Opción C) ──
         if ($validated['estado'] === 'entregado') {
-            $totalReparacion = (float)($validated['costo_final'] ?? $validated['presupuesto'] ?? $reparacion->total ?? 0);
+            // Si no se ingresó costo_final (0 o null), usar presupuesto
+            $totalReparacion = (float)(($validated['costo_final'] ?? 0) > 0
+                ? $validated['costo_final']
+                : ($validated['presupuesto'] ?? $reparacion->presupuesto ?? $reparacion->total ?? 0));
 
             // ── Calcular comisión del técnico ──
             // Solo se usa el % propio del técnico
