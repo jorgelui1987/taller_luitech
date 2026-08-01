@@ -67,9 +67,9 @@
                             @error('apellido')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                   name="email" value="{{ old('email') }}" placeholder="correo@ejemplo.com">
+                                   name="email" value="{{ old('email') }}" placeholder="correo@ejemplo.com" required>
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
