@@ -816,7 +816,12 @@
         <a href="{{ route('comisiones.index') }}"
            class="nav-link {{ request()->routeIs('comisiones.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-money-bill-wave"></i></span>
-            Comisiones Técnicos
+            <span class="nav-text">Comisiones</span>
+        </a>
+        <a href="{{ route('gastos.index') }}"
+           class="nav-link {{ request()->routeIs('gastos.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-receipt"></i></span>
+            <span class="nav-text">Gastos Fijos</span>
         </a>
 
         <a href="{{ route('financiero.index') }}"

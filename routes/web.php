@@ -197,6 +197,15 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/comisiones/tecnico/{tecnico}/pagar-todo', [\App\Http\Controllers\ComisionController::class, 'pagarTodo'])->name('comisiones.pagar-todo');
         });
 
+        // Gastos Fijos (solo admin)
+        Route::middleware('check.admin')->group(function () {
+            Route::get('/gastos', [\App\Http\Controllers\GastoFijoController::class, 'index'])->name('gastos.index');
+            Route::post('/gastos', [\App\Http\Controllers\GastoFijoController::class, 'store'])->name('gastos.store');
+            Route::put('/gastos/{gasto}', [\App\Http\Controllers\GastoFijoController::class, 'update'])->name('gastos.update');
+            Route::patch('/gastos/{gasto}/toggle', [\App\Http\Controllers\GastoFijoController::class, 'toggle'])->name('gastos.toggle');
+            Route::delete('/gastos/{gasto}', [\App\Http\Controllers\GastoFijoController::class, 'destroy'])->name('gastos.destroy');
+        });
+
         // API interna para búsqueda de productos (para el formulario de ventas)
         Route::get('/api/productos/buscar', function () {
             $productos = \App\Models\Producto::with(['marca'])
