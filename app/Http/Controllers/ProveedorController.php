@@ -66,8 +66,10 @@ class ProveedorController extends Controller
             ->with('success', 'Proveedor registrado correctamente.');
     }
 
-    public function show(Proveedor $proveedor)
+    public function show($id)
     {
+        // Buscar sin TenantScope para evitar 500 si tenant_id es NULL
+        $proveedor = Proveedor::withoutGlobalScopes()->findOrFail($id);
         $proveedor->loadCount('ordenesCompra');
         $proveedor->load(['ordenesCompra' => function ($query) {
             $query->orderByDesc('created_at');
@@ -75,12 +77,14 @@ class ProveedorController extends Controller
         return view('proveedores.show', compact('proveedor'));
     }
 
-    public function edit(Proveedor $proveedor)
+    public function edit($id)
     {
+        // Buscar sin TenantScope para evitar 500 si tenant_id es NULL
+        $proveedor = Proveedor::withoutGlobalScopes()->findOrFail($id);
         return view('proveedores.edit', compact('proveedor'));
     }
 
-    public function update(Request $request, Proveedor $proveedor)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'nombre'    => 'required|string|max:255',
@@ -93,18 +97,24 @@ class ProveedorController extends Controller
             'activo'    => 'boolean',
         ]);
 
+        // Buscar sin TenantScope
+        $proveedor = Proveedor::withoutGlobalScopes()->findOrFail($id);
         $proveedor->update($validated);
 
         return redirect()->route('proveedores.index')
             ->with('success', 'Proveedor actualizado correctamente.');
     }
 
-    public function destroy(Proveedor $proveedor)
+    public function destroy($id)
     {
         try {
             DB::beginTransaction();
 
-            $proveedorId = $proveedor->id;
+            $proveedorId = (int) $id;
+
+            if (!$proveedorId) {
+                throw new \Exception('No se pudo identificar el proveedor a eliminar.');
+            }
 
             // 1. Desvincular productos asociados a este proveedor (sin TenantScope)
             DB::table('productos')
@@ -128,25 +138,32 @@ class ProveedorController extends Controller
                     ->delete();
             }
 
-            // 5. Eliminar el registro del proveedor
-            DB::table('proveedores')
+            // 5. Eliminar el registro del proveedor (sin TenantScope)
+            $eliminado = DB::table('proveedores')
                 ->where('id', $proveedorId)
                 ->delete();
 
             DB::commit();
 
+            if ($eliminado) {
+                return redirect()->route('proveedores.index')
+                    ->with('success', 'Proveedor eliminado correctamente.');
+            }
+
             return redirect()->route('proveedores.index')
-                ->with('success', 'Proveedor eliminado correctamente.');
+                ->with('error', 'No se encontró el proveedor para eliminar.');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Illuminate\Support\Facades\Log::error('Error al eliminar proveedor ID ' . $proveedor->id . ': ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Error al eliminar proveedor ID ' . $id . ': ' . $e->getMessage());
             return redirect()->route('proveedores.index')
                 ->with('error', 'Error al eliminar el proveedor: ' . $e->getMessage());
         }
     }
 
-    public function toggle(Proveedor $proveedor)
+    public function toggle($id)
     {
+        // Buscar sin TenantScope
+        $proveedor = Proveedor::withoutGlobalScopes()->findOrFail($id);
         $proveedor->update(['activo' => !$proveedor->activo]);
         return back()->with('success', 'Estado del proveedor actualizado.');
     }

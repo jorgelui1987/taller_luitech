@@ -104,9 +104,15 @@ Route::middleware(['tenant'])->group(function () {
         Route::post('/productos/marca-ajax', [\App\Http\Controllers\ProductoController::class, 'storeMarcaAjax'])->name('productos.marca-ajax');
         Route::post('/productos/categoria-ajax', [\App\Http\Controllers\ProductoController::class, 'storeCategoriaAjax'])->name('productos.categoria-ajax');
 
-        // Proveedores
-        Route::resource('proveedores', \App\Http\Controllers\ProveedorController::class);
-        Route::match(['post', 'patch'], '/proveedores/{proveedor}/toggle', [\App\Http\Controllers\ProveedorController::class, 'toggle'])->name('proveedores.toggle');
+        // Proveedores (sin route model binding para evitar TenantScope)
+        Route::get('/proveedores', [\App\Http\Controllers\ProveedorController::class, 'index'])->name('proveedores.index');
+        Route::get('/proveedores/crear', [\App\Http\Controllers\ProveedorController::class, 'create'])->name('proveedores.create');
+        Route::post('/proveedores', [\App\Http\Controllers\ProveedorController::class, 'store'])->name('proveedores.store');
+        Route::get('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'show'])->name('proveedores.show');
+        Route::get('/proveedores/{id}/editar', [\App\Http\Controllers\ProveedorController::class, 'edit'])->name('proveedores.edit');
+        Route::put('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'update'])->name('proveedores.update');
+        Route::delete('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'destroy'])->name('proveedores.destroy');
+        Route::match(['post', 'patch'], '/proveedores/{id}/toggle', [\App\Http\Controllers\ProveedorController::class, 'toggle'])->name('proveedores.toggle');
 
         // Órdenes de Compra
         Route::middleware('check.admin')->group(function () {
