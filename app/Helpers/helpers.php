@@ -4,22 +4,17 @@ use App\Models\Configuracion;
 
 if (!function_exists('formato_monto')) {
     /**
-     * Formatea un monto según los decimales configurados en la empresa.
+     * Formatea un monto SIN decimales (entero).
      */
     function formato_monto($monto): string
     {
-        $decimales = 2;
-        $empresa = Configuracion::empresa();
-        if ($empresa && $empresa->decimales !== null) {
-            $decimales = (int)$empresa->decimales;
-        }
-        return number_format((float)$monto, $decimales);
+        return number_format((float)$monto, 0);
     }
 }
 
 if (!function_exists('formato_moneda')) {
     /**
-     * Formatea un monto con el símbolo de la moneda configurada.
+     * Formatea un monto con el símbolo de la moneda configurada (sin decimales).
      */
     function formato_moneda($monto): string
     {

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('configuracion', 'decimales')) {
             Schema::table('configuracion', function (Blueprint $table) {
-                $table->integer('decimales')->default(2)->after('simbolo_moneda');
+                $table->integer('decimales')->default(0)->after('simbolo_moneda');
             });
         }
     }
