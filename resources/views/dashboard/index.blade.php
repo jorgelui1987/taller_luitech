@@ -27,11 +27,11 @@
     <div class="col-6 col-xl-3">
         <div class="kpi-card bg-grad-purple">
             <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">S/ {{ number_format($ventasHoy, 0) }}</div>
+            <div class="kpi-value">{{ formato_moneda_entero($ventasHoy) }}</div>
             <div class="kpi-label">Ventas de Hoy</div>
             <span class="kpi-badge">
                 <i class="fas fa-calendar-day fa-xs"></i>
-                S/ {{ number_format($ventasMes, 0) }} este mes
+                {{ formato_moneda_entero($ventasMes) }} este mes
             </span>
         </div>
     </div>
