@@ -85,6 +85,31 @@ class Reparacion extends Model
         return max(0, $precio - $abono);
     }
 
+    /**
+     * Base de comisión del técnico = Presupuesto - Costo de Repuesto(s)
+     * Ej: Presupuesto 50,000 - Repuesto 10,000 = Base 40,000
+     */
+    public function baseComision(): float
+    {
+        $presupuesto   = (float) ($this->presupuesto ?? 0);
+        $costoRepuesto = (float) ($this->costo_repuesto ?? 0);
+
+        return max(0, $presupuesto - $costoRepuesto);
+    }
+
+    /**
+     * Monto de comisión = Base × (% del técnico / 100)
+     */
+    public function montoComision(): float
+    {
+        $porcentaje = (float) ($this->comision_porcentaje ?? $this->tecnico?->comision_porcentaje ?? 0);
+        if ($porcentaje <= 0) {
+            return 0;
+        }
+
+        return round($this->baseComision() * ($porcentaje / 100), 2);
+    }
+
     public function getFirmaRecepcionUrlAttribute(): ?string
     {
         return $this->firma_recepcion ? asset('storage/' . $this->firma_recepcion) : null;

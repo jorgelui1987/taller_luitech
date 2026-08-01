@@ -50,12 +50,9 @@ class ComisionController extends Controller
                 $porcentaje = (float)$tecnicoObj->comision_porcentaje;
             }
 
-            $montoReparado = $rep->costo_final !== null && $rep->costo_final > 0
-                ? (float)$rep->costo_final
-                : ((float)$rep->presupuesto ?? 0);
-
-            $costoRepuesto = (float)($rep->costo_repuesto ?? 0);
-            $baseManoObra = max(0, $montoReparado - $costoRepuesto);
+            // Base de comisión SIEMPRE = Presupuesto - Costo de Repuesto
+            // Ej: Presupuesto 50,000 - Repuesto 10,000 = Base 40,000
+            $baseManoObra = $rep->baseComision();
 
             $comisionMonto = (float)($rep->comision_monto ?? 0);
 
@@ -114,12 +111,10 @@ class ComisionController extends Controller
 
         if (!$reparacion->comision_pagada) {
             // Asegurar que comision_monto esté calculado
+            // Base SIEMPRE = Presupuesto - Costo de Repuesto
             if (!$reparacion->comision_monto || $reparacion->comision_monto <= 0) {
                 $porcentaje = $reparacion->comision_porcentaje ?? $reparacion->tecnico?->comision_porcentaje ?? 0;
-                $montoTotalReparacion = $reparacion->costo_final ?: $reparacion->presupuesto ?: 0;
-                $costoRepuesto = $reparacion->costo_repuesto ?? 0;
-                $baseManoObra = max(0, $montoTotalReparacion - $costoRepuesto);
-                $reparacion->comision_monto = round($baseManoObra * ($porcentaje / 100), 2);
+                $reparacion->comision_monto = $reparacion->montoComision();
             }
 
             $reparacion->update([
@@ -171,10 +166,8 @@ class ComisionController extends Controller
             $comisionMonto = (float)$rep->comision_monto;
             if ($comisionMonto <= 0) {
                 $porcentaje = $rep->comision_porcentaje ?? $tecnico->comision_porcentaje ?? 0;
-                $montoTotalReparacion = $rep->costo_final ?: $rep->presupuesto ?: 0;
-                $costoRepuesto = $rep->costo_repuesto ?? 0;
-                $baseManoObra = max(0, $montoTotalReparacion - $costoRepuesto);
-                $comisionMonto = round($baseManoObra * ($porcentaje / 100), 2);
+                // Base SIEMPRE = Presupuesto - Costo de Repuesto
+                $comisionMonto = $rep->montoComision();
                 $rep->comision_monto = $comisionMonto;
             }
 

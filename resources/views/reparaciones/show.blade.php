@@ -560,6 +560,50 @@
                             </div>
                         </div>
                         @endif
+
+                        {{-- Comision del Tecnico: (Presupuesto - Repuesto) x % --}}
+                        @if($reparacion->estado === 'entregado' && $reparacion->presupuesto > 0)
+                        @php
+                            $baseCom = $reparacion->baseComision();
+                            $pctCom = $reparacion->comision_porcentaje ?? $reparacion->tecnico?->comision_porcentaje ?? 0;
+                            $montoCom = $reparacion->comision_monto ?? round($baseCom * ($pctCom / 100), 2);
+                        @endphp
+                        <div class="p-3 rounded-3" style="background:#fff7ed; border:2px solid #f59e0b;">
+                            <div style="font-weight:700; color:#9a3412; font-size:13px; margin-bottom:8px;">
+                                <i class="fas fa-coins me-1"></i>Comision del Tecnico ({{ $reparacion->tecnico->name ?? 'N/A' }})
+                            </div>
+                            <div style="font-size:12px; display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span style="color:#6b7280;">Presupuesto</span>
+                                <span>S/ {{ number_format($reparacion->presupuesto, 2) }}</span>
+                            </div>
+                            <div style="font-size:12px; display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span style="color:#6b7280;">Costo repuesto(s)</span>
+                                <span style="color:#dc2626;">- S/ {{ number_format((float)($reparacion->costo_repuesto ?? 0), 2) }}</span>
+                            </div>
+                            <div style="font-size:12px; display:flex; justify-content:space-between; margin-bottom:6px; font-weight:600;">
+                                <span style="color:#6b7280;">Base para comision</span>
+                                <span style="color:#9a3412;">S/ {{ number_format($baseCom, 2) }}</span>
+                            </div>
+                            <hr style="margin:4px 0;">
+                            <div style="font-size:12px; display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span style="color:#6b7280;">% del tecnico</span>
+                                <span>{{ $pctCom }}%</span>
+                            </div>
+                            <div style="font-size:14px; display:flex; justify-content:space-between; font-weight:700;">
+                                <span style="color:#9a3412;">Comision del tecnico</span>
+                                <span style="color:#f59e0b;">S/ {{ number_format($montoCom, 2) }}</span>
+                            </div>
+                            @if($reparacion->comision_pagada)
+                            <div style="font-size:11px; margin-top:6px; background:#d1fae5; color:#065f46; border-radius:8px; padding:4px 8px; text-align:center;">
+                                <i class="fas fa-check-circle me-1"></i>Comision pagada el {{ optional($reparacion->comision_fecha_pago)->format('d/m/Y') }}
+                            </div>
+                            @else
+                            <div style="font-size:11px; margin-top:6px; background:#fee2e2; color:#991b1b; border-radius:8px; padding:4px 8px; text-align:center;">
+                                <i class="fas fa-clock me-1"></i>Comision pendiente de pago
+                            </div>
+                            @endif
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

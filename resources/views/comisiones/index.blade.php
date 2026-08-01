@@ -124,10 +124,19 @@
                         <td style="font-size:12px;">{{ $rep->marca }} {{ $rep->modelo }}</td>
                         <td style="font-size:12px;">{{ optional($rep->fecha_entrega)->format('d/m/Y') }}</td>
                         <td>
-                            @php $baseComision = max(0, ($rep->costo_final ?: $rep->presupuesto ?: 0) - ($rep->costo_repuesto ?? 0)); @endphp
-                            {{ \App\Helpers\FormatoHelper::moneda($rep->costo_final ?: $rep->presupuesto ?: 0) }}
-                            @if($rep->costo_repuesto > 0)
-                                <div style="font-size:10px; color:#9ca3af;">Base (ganancia): {{ \App\Helpers\FormatoHelper::moneda($baseComision) }}</div>
+                            @php
+                                $baseComision = $rep->baseComision();
+                                $presupuesto = (float)($rep->presupuesto ?? 0);
+                                $costoRep = (float)($rep->costo_repuesto ?? 0);
+                            @endphp
+                            @if($presupuesto > 0)
+                                <div style="font-size:12px;">{{ \App\Helpers\FormatoHelper::moneda($presupuesto) }}</div>
+                                <div style="font-size:10px; color:#9ca3af;">
+                                    Presupuesto {{ \App\Helpers\FormatoHelper::moneda($presupuesto) }} - Repuesto {{ \App\Helpers\FormatoHelper::moneda($costoRep) }}
+                                </div>
+                                <div style="font-size:10px; color:#f59e0b; font-weight:600;">Base: {{ \App\Helpers\FormatoHelper::moneda($baseComision) }}</div>
+                            @else
+                                {{ \App\Helpers\FormatoHelper::moneda($rep->costo_final ?: 0) }}
                             @endif
                         </td>
                         <td>{{ $rep->comision_porcentaje }}%</td>
