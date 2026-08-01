@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProveedorController extends Controller
 {
@@ -100,15 +101,29 @@ class ProveedorController extends Controller
 
     public function destroy(Proveedor $proveedor)
     {
-        // Desvincular productos asociados a este proveedor antes de eliminar
-        \App\Models\Producto::where('proveedor_id', $proveedor->id)->update(['proveedor_id' => null]);
+        try {
+            DB::beginTransaction();
 
-        // La migración de ordenes_compra tiene onDelete('cascade'),
-        // por lo que las órdenes se eliminarán automáticamente
-        $proveedor->delete();
+            // Desvincular productos asociados a este proveedor antes de eliminar
+            \App\Models\Producto::where('proveedor_id', $proveedor->id)->update(['proveedor_id' => null]);
 
-        return redirect()->route('proveedores.index')
-            ->with('success', 'Proveedor eliminado correctamente. Sus órdenes de compra también fueron eliminadas.');
+            // Eliminar explícitamente detalles y órdenes de compra asociadas
+            foreach ($proveedor->ordenesCompra as $orden) {
+                $orden->detalles()->delete();
+                $orden->delete();
+            }
+
+            // Eliminar el proveedor
+            $proveedor->delete();
+
+            DB::commit();
+
+            return redirect()->route('proveedores.index')
+                ->with('success', 'Proveedor eliminado correctamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al eliminar el proveedor: ' . $e->getMessage());
+        }
     }
 
     public function toggle(Proveedor $proveedor)

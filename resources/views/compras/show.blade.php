@@ -9,7 +9,7 @@
     <div>
         <h4 class="mb-1 fw-bold">{{ $ordenCompra->numero_orden }}</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Proveedor: <a href="{{ route('proveedores.show', $ordenCompra->proveedor) }}" style="color:#7c3aed;">{{ $ordenCompra->proveedor->nombre }}</a>
+            Proveedor: @if($ordenCompra->proveedor)<a href="{{ route('proveedores.show', $ordenCompra->proveedor) }}" style="color:#7c3aed;">{{ $ordenCompra->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif
             · Fecha: {{ $ordenCompra->fecha_orden->format('d/m/Y') }}
             · Creado por: {{ $ordenCompra->user->name ?? '—' }}
         </p>

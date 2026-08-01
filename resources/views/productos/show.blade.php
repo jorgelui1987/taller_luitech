@@ -121,7 +121,7 @@
                     </div>
                     <div class="col-md-3">
                         <span class="text-muted d-block" style="font-size:11px;">PROVEEDOR</span>
-                        <strong>{{ $producto->proveedor->nombre ?? '—' }}</strong>
+                        <strong>{{ $producto->proveedor?->nombre ?? '—' }}</strong>
                     </div>
                     <div class="col-md-4">
                         <span class="text-muted d-block" style="font-size:11px;">MODELO</span>

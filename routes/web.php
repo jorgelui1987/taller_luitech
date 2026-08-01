@@ -106,7 +106,7 @@ Route::middleware(['tenant'])->group(function () {
 
         // Proveedores
         Route::resource('proveedores', \App\Http\Controllers\ProveedorController::class);
-        Route::patch('/proveedores/{proveedor}/toggle', [\App\Http\Controllers\ProveedorController::class, 'toggle'])->name('proveedores.toggle');
+        Route::match(['post', 'patch'], '/proveedores/{proveedor}/toggle', [\App\Http\Controllers\ProveedorController::class, 'toggle'])->name('proveedores.toggle');
 
         // Órdenes de Compra
         Route::middleware('check.admin')->group(function () {

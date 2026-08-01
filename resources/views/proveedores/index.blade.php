@@ -24,7 +24,7 @@
     <td class="text-end pe-4"><div class="d-flex gap-1 justify-content-end">
         <a href="{{ route('proveedores.show', $p) }}" class="btn btn-sm" style="background:#f3f4f6;color:#374151;border-radius:8px;padding:5px 10px;" title="Ver"><i class="fas fa-eye fa-sm"></i></a>
         <a href="{{ route('proveedores.edit', $p) }}" class="btn btn-sm" style="background:#ede9fe;color:#7c3aed;border-radius:8px;padding:5px 10px;" title="Editar"><i class="fas fa-edit fa-sm"></i></a>
-        <form action="{{ route('proveedores.toggle', $p) }}" method="POST" style="display:inline;">@csrf <button type="submit" class="btn btn-sm" style="background:#fef3c7;color:#92400e;border-radius:8px;padding:5px 10px;" title="{{ $p->activo ? 'Desactivar' : 'Activar' }}"><i class="fas fa-{{ $p->activo ? 'ban' : 'check' }} fa-sm"></i></button></form>
+        <form action="{{ route('proveedores.toggle', $p) }}" method="POST" style="display:inline;">@csrf @method('PATCH') <button type="submit" class="btn btn-sm" style="background:#fef3c7;color:#92400e;border-radius:8px;padding:5px 10px;" title="{{ $p->activo ? 'Desactivar' : 'Activar' }}"><i class="fas fa-{{ $p->activo ? 'ban' : 'check' }} fa-sm"></i></button></form>
         <form action="{{ route('proveedores.destroy', $p) }}" method="POST" onsubmit="return confirm('¿Eliminar {{ addslashes($p->nombre) }}?{{ $p->ordenes_compra_count > 0 ? ' Se eliminarán también sus ' . $p->ordenes_compra_count . ' órdenes de compra.' : '' }}')" style="display:inline;">@csrf @method('DELETE')<button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border-radius:8px;padding:5px 10px;" title="Eliminar"><i class="fas fa-trash fa-sm"></i></button></form>
     </div></td>
 </tr>

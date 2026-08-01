@@ -24,7 +24,7 @@
 @forelse($ordenes as $oc)
 <tr>
     <td class="ps-4" style="font-weight:600;">{{ $oc->numero_orden }}</td>
-    <td><a href="{{ route('proveedores.show', $oc->proveedor) }}" style="color:#7c3aed;font-weight:500;font-size:13px;">{{ $oc->proveedor->nombre }}</a></td>
+    <td>@if($oc->proveedor)<a href="{{ route('proveedores.show', $oc->proveedor) }}" style="color:#7c3aed;font-weight:500;font-size:13px;">{{ $oc->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif</td>
     <td style="font-size:13px;color:#6b7280;">{{ $oc->fecha_orden->format('d/m/Y') }}</td>
     <td style="font-weight:600;">S/ {{ number_format($oc->total, 2) }}</td>
     <td><span style="background:{{ $oc->estado_bg }};color:{{ $oc->estado_color }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_',' ',$oc->estado)) }}</span></td>

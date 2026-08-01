@@ -61,7 +61,7 @@
                             @foreach($proveedor->ordenesCompra as $oc)
                             <tr>
                                 <td><a href="{{ route('compras.show', $oc) }}" style="color:#a855f7;font-weight:500;">{{ $oc->numero_orden ?? '—' }}</a></td>
-                                <td style="color:#6b7280;">{{ is_object($oc->fecha_orden) ? $oc->fecha_orden->format('d/m/Y') : ($oc->fecha_orden ?? '—') }}</td>
+                                <td style="color:#6b7280;">{{ $oc->fecha_orden ? \Carbon\Carbon::parse($oc->fecha_orden)->format('d/m/Y') : '—' }}</td>
                                 <td style="font-weight:600;">S/ {{ number_format($oc->total ?? 0, 2) }}</td>
                                 <td><span style="background:{{ $oc->estado_bg ?? '#f3f4f6' }};color:{{ $oc->estado_color ?? '#6b7280' }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_', ' ', $oc->estado ?? 'pendiente')) }}</span></td>
                             </tr>
