@@ -190,6 +190,7 @@ class SuperAdminController extends Controller
         $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $nombre = $tenant->empresa;
         $tenantId = $tenant->id;
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
         DB::transaction(function () use ($tenantId) {
             // Eliminar en orden correcto para respetar foreign keys
@@ -219,6 +220,7 @@ class SuperAdminController extends Controller
                 DB::table('reparacion_fotos')->whereIn('reparacion_id', $reparacionIds)->delete();
             }
             DB::table('reparaciones')->where('tenant_id', $tenantId)->delete();
+            DB::table('reparaciones')->where('tenant_id', $tenantId)->whereNotNull('deleted_at')->delete();
 
             // 6. Movimientos de stock
             DB::table('movimientos_stock')->where('tenant_id', $tenantId)->delete();
@@ -233,6 +235,8 @@ class SuperAdminController extends Controller
             DB::table('productos')->where('tenant_id', $tenantId)->delete();
 
             // 10. Proveedores
+            DB::table('categorias')->where('tenant_id', $tenantId)->delete();
+            DB::table('marcas')->where('tenant_id', $tenantId)->delete();
             DB::table('proveedores')->where('tenant_id', $tenantId)->delete();
 
             // 11. Clientes
@@ -247,6 +251,9 @@ class SuperAdminController extends Controller
             // 14. El tenant
             DB::table('tenants')->where('id', $tenantId)->delete();
         });
+
+        // Reactivar foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         return redirect()->route('superadmin.tenants')
             ->with('success', "Tenant '{$nombre}' eliminado permanentemente.");
