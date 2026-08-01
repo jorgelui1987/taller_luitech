@@ -23,7 +23,7 @@ class ProveedorController extends Controller
             $query->where('activo', $request->activo === 'si');
         }
 
-        $proveedores = $query->orderBy('nombre')->paginate(15);
+        $proveedores = $query->withCount('ordenesCompra')->orderBy('nombre')->paginate(15);
         return view('proveedores.index', compact('proveedores'));
     }
 
@@ -97,13 +97,15 @@ class ProveedorController extends Controller
 
     public function destroy(Proveedor $proveedor)
     {
-        if ($proveedor->ordenesCompra()->count() > 0) {
-            return back()->with('error', 'No se puede eliminar: el proveedor tiene órdenes de compra.');
-        }
+        // Desvincular productos asociados a este proveedor antes de eliminar
+        \App\Models\Producto::where('proveedor_id', $proveedor->id)->update(['proveedor_id' => null]);
 
+        // La migración de ordenes_compra tiene onDelete('cascade'),
+        // por lo que las órdenes se eliminarán automáticamente
         $proveedor->delete();
+
         return redirect()->route('proveedores.index')
-            ->with('success', 'Proveedor eliminado correctamente.');
+            ->with('success', 'Proveedor eliminado correctamente. Sus órdenes de compra también fueron eliminadas.');
     }
 
     public function toggle(Proveedor $proveedor)

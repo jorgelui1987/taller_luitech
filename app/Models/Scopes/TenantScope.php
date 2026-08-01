@@ -16,11 +16,21 @@ class TenantScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         if (Auth::check()) {
-            $tenantId = Auth::user()->tenant_id;
+            $user = Auth::user();
 
-            if ($tenantId) {
-                $builder->where($model->getTable() . '.tenant_id', $tenantId);
+            // El superadmin no está limitado a un tenant
+            if ($user->rol === 'superadmin') {
+                return;
             }
+
+            // Si el usuario no tiene tenant asignado, no debe ver ningún registro
+            // (evita que vea datos de otros tenants)
+            if (!$user->tenant_id) {
+                $builder->whereRaw('1 = 0');
+                return;
+            }
+
+            $builder->where($model->getTable() . '.tenant_id', $user->tenant_id);
         }
     }
 }

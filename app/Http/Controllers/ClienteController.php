@@ -55,6 +55,21 @@ class ClienteController extends Controller
             'notas'           => 'nullable|string',
         ]);
 
+        // Forzar tenant_id
+        $tenantId = auth()->user()->tenant_id;
+        if (!$tenantId) {
+            // Fallback: usar el primer tenant disponible
+            $tenant = \App\Models\Tenant::first();
+            if ($tenant) {
+                $tenantId = $tenant->id;
+                // Asignar al usuario para futuras operaciones
+                auth()->user()->update(['tenant_id' => $tenantId]);
+            } else {
+                return back()->with('error', 'Error de configuración: no hay tenants en el sistema. Contacta al administrador.')->withInput();
+            }
+        }
+        $validated['tenant_id'] = $tenantId;
+
         Cliente::create($validated);
 
         return redirect()->route('clientes.index')
