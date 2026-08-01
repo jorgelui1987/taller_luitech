@@ -128,8 +128,9 @@ class SuperAdminController extends Controller
             ->with('success', "Tenant '{$validated['empresa']}' creado correctamente.");
     }
 
-    public function editTenant(Tenant $tenant)
+    public function editTenant($id)
     {
+        $tenant = Tenant::findOrFail($id);
         $limitesPorPlan = [
             'gratis'       => ['max_usuarios' => 3,  'max_productos' => 50],
             'basico'       => ['max_usuarios' => 5,  'max_productos' => 200],
@@ -139,8 +140,9 @@ class SuperAdminController extends Controller
         return view('superadmin.tenant-form', compact('tenant', 'limitesPorPlan'));
     }
 
-    public function updateTenant(Request $request, Tenant $tenant)
+    public function updateTenant(Request $request, $id)
     {
+        $tenant = Tenant::findOrFail($id);
         $validated = $request->validate([
             'empresa'          => "required|string|max:255|unique:tenants,empresa,{$tenant->id}",
             'subdominio'       => "required|string|max:50|unique:tenants,subdominio,{$tenant->id}|regex:/^[a-z0-9-]+$/",
@@ -170,28 +172,76 @@ class SuperAdminController extends Controller
             ->with('success', "Tenant '{$tenant->empresa}' actualizado a plan {$validated['plan']}.");
     }
 
-    public function toggleTenant(Tenant $tenant)
+    public function toggleTenant($id)
     {
+        $tenant = Tenant::findOrFail($id);
         $nuevoEstado = $tenant->estado === 'activo' ? 'suspendido' : 'activo';
         $tenant->update(['estado' => $nuevoEstado]);
 
         return back()->with('success', "Tenant '{$tenant->empresa}' {$nuevoEstado}.");
     }
 
-    public function destroyTenant(Tenant $tenant)
+    public function destroyTenant($id)
     {
+        $tenant = Tenant::findOrFail($id);
         $nombre = $tenant->empresa;
+        $tenantId = $tenant->id;
 
-        DB::transaction(function () use ($tenant) {
+        DB::transaction(function () use ($tenantId) {
             // Eliminar en orden correcto para respetar foreign keys
-            $tenant->reparaciones()->delete();
-            $tenant->ventas()->delete();
-            \App\Models\DetalleVenta::where('tenant_id', $tenant->id)->delete();
-            $tenant->productos()->delete();
-            $tenant->clientes()->delete();
-            $tenant->configuracion()->delete();
-            $tenant->usuarios()->delete();
-            $tenant->delete();
+            // Usar DB::table directamente para evitar TenantScope
+
+            // 1. Detalles de órdenes de compra
+            $ordenIds = DB::table('ordenes_compra')->where('tenant_id', $tenantId)->pluck('id');
+            if ($ordenIds->isNotEmpty()) {
+                DB::table('detalle_ordenes_compra')->whereIn('orden_compra_id', $ordenIds)->delete();
+            }
+
+            // 2. Órdenes de compra
+            DB::table('ordenes_compra')->where('tenant_id', $tenantId)->delete();
+
+            // 3. Detalles de ventas
+            $ventaIds = DB::table('ventas')->where('tenant_id', $tenantId)->pluck('id');
+            if ($ventaIds->isNotEmpty()) {
+                DB::table('detalle_ventas')->whereIn('venta_id', $ventaIds)->delete();
+            }
+
+            // 4. Ventas
+            DB::table('ventas')->where('tenant_id', $tenantId)->delete();
+
+            // 5. Reparaciones y sus fotos
+            $reparacionIds = DB::table('reparaciones')->where('tenant_id', $tenantId)->pluck('id');
+            if ($reparacionIds->isNotEmpty()) {
+                DB::table('reparacion_fotos')->whereIn('reparacion_id', $reparacionIds)->delete();
+            }
+            DB::table('reparaciones')->where('tenant_id', $tenantId)->delete();
+
+            // 6. Movimientos de stock
+            DB::table('movimientos_stock')->where('tenant_id', $tenantId)->delete();
+
+            // 7. Comisiones pagos
+            DB::table('comisiones_pagos')->where('tenant_id', $tenantId)->delete();
+
+            // 8. Gastos fijos
+            DB::table('gastos_fijos')->where('tenant_id', $tenantId)->delete();
+
+            // 9. Productos
+            DB::table('productos')->where('tenant_id', $tenantId)->delete();
+
+            // 10. Proveedores
+            DB::table('proveedores')->where('tenant_id', $tenantId)->delete();
+
+            // 11. Clientes
+            DB::table('clientes')->where('tenant_id', $tenantId)->delete();
+
+            // 12. Configuración
+            DB::table('configuracion')->where('tenant_id', $tenantId)->delete();
+
+            // 13. Usuarios
+            DB::table('users')->where('tenant_id', $tenantId)->delete();
+
+            // 14. El tenant
+            DB::table('tenants')->where('id', $tenantId)->delete();
         });
 
         return redirect()->route('superadmin.tenants')
@@ -201,8 +251,9 @@ class SuperAdminController extends Controller
     /**
      * Muestra los usuarios de un tenant (para soporte técnico).
      */
-    public function tenantUsers(Tenant $tenant)
+    public function tenantUsers($id)
     {
+        $tenant = Tenant::findOrFail($id);
         $usuarios = User::where('tenant_id', $tenant->id)->orderBy('rol')->orderBy('name')->get();
         return view('superadmin.tenant-users', compact('tenant', 'usuarios'));
     }
@@ -225,8 +276,9 @@ class SuperAdminController extends Controller
     /**
      * Login como un tenant específico (para soporte técnico).
      */
-    public function loginAsTenant(Tenant $tenant)
+    public function loginAsTenant($id)
     {
+        $tenant = Tenant::findOrFail($id);
         $admin = User::where('tenant_id', $tenant->id)
             ->where('rol', 'admin')
             ->first();

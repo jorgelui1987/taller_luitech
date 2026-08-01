@@ -25,12 +25,12 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::get('/tenants', [SuperAdminController::class, 'tenants'])->name('tenants');
         Route::get('/tenants/crear', [SuperAdminController::class, 'createTenant'])->name('tenants.create');
         Route::post('/tenants', [SuperAdminController::class, 'storeTenant'])->name('tenants.store');
-        Route::get('/tenants/{tenant}/editar', [SuperAdminController::class, 'editTenant'])->name('tenants.edit');
-        Route::put('/tenants/{tenant}', [SuperAdminController::class, 'updateTenant'])->name('tenants.update');
-        Route::post('/tenants/{tenant}/toggle', [SuperAdminController::class, 'toggleTenant'])->name('tenants.toggle');
-        Route::delete('/tenants/{tenant}', [SuperAdminController::class, 'destroyTenant'])->name('tenants.destroy');
-        Route::get('/tenants/{tenant}/login-as', [SuperAdminController::class, 'loginAsTenant'])->name('tenants.login-as');
-        Route::get('/tenants/{tenant}/usuarios', [SuperAdminController::class, 'tenantUsers'])->name('tenants.users');
+        Route::get('/tenants/{id}/editar', [SuperAdminController::class, 'editTenant'])->name('tenants.edit');
+        Route::put('/tenants/{id}', [SuperAdminController::class, 'updateTenant'])->name('tenants.update');
+        Route::post('/tenants/{id}/toggle', [SuperAdminController::class, 'toggleTenant'])->name('tenants.toggle');
+        Route::delete('/tenants/{id}', [SuperAdminController::class, 'destroyTenant'])->name('tenants.destroy');
+        Route::get('/tenants/{id}/login-as', [SuperAdminController::class, 'loginAsTenant'])->name('tenants.login-as');
+        Route::get('/tenants/{id}/usuarios', [SuperAdminController::class, 'tenantUsers'])->name('tenants.users');
         Route::post('/usuarios/{usuario}/cambiar-password', [SuperAdminController::class, 'changeUserPassword'])->name('usuarios.change-password');
 
         // Gestión de precios de planes
