@@ -16,10 +16,10 @@ class DatabaseSeeder extends Seeder
     {
         // ── SuperAdmin (accede a /superadmin/login) ──────────────────────
         User::firstOrCreate(
-            ['email' => 'camila1987chile@gmail.com'],
+            ['email' => 'luitechserena@gmail.com'],
             [
                 'name'     => 'Super Admin',
-                'password' => Hash::make('Castro16@'),
+                'password' => Hash::make('Castro161219@'),
                 'rol'      => 'superadmin',
                 'activo'   => true,
             ]
