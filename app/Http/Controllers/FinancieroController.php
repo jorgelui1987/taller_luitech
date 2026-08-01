@@ -7,6 +7,7 @@ use App\Models\Producto;
 use App\Models\Reparacion;
 use App\Models\OrdenCompra;
 use App\Models\DetalleVenta;
+use App\Models\GastoFijo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -241,7 +242,15 @@ class FinancieroController extends Controller
             ->whereIn('estado', ['completada', 'recibida_parcial'])
             ->sum('total');
 
-        $totalGastosOperativos = $gastosAdmin;
+        // Gastos fijos del periodo (activos)
+        $gastosFijos = GastoFijo::where('activo', true)
+            ->where(function ($q) use ($fechaInicio, $fechaFin) {
+                $q->whereBetween('fecha', [$fechaInicio, $fechaFin])
+                  ->orWhereNull('fecha');
+            })
+            ->sum('monto');
+
+        $totalGastosOperativos = $gastosAdmin + $gastosFijos;
 
         $utilidadOperativa   = $utilidadBruta - $totalGastosOperativos;
         $margenOperativo     = $totalIngresos > 0 ? ($utilidadOperativa / $totalIngresos) * 100 : 0;
