@@ -130,7 +130,8 @@ class SuperAdminController extends Controller
 
     public function editTenant($id)
     {
-        $tenant = Tenant::findOrFail($id);
+        // withoutGlobalScopes para que el superadmin pueda ver TODOS los tenants
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $limitesPorPlan = [
             'gratis'       => ['max_usuarios' => 3,  'max_productos' => 50],
             'basico'       => ['max_usuarios' => 5,  'max_productos' => 200],
@@ -142,7 +143,8 @@ class SuperAdminController extends Controller
 
     public function updateTenant(Request $request, $id)
     {
-        $tenant = Tenant::findOrFail($id);
+        // withoutGlobalScopes para que el superadmin pueda ver TODOS los tenants
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $validated = $request->validate([
             'empresa'          => "required|string|max:255|unique:tenants,empresa,{$tenant->id}",
             'subdominio'       => "required|string|max:50|unique:tenants,subdominio,{$tenant->id}|regex:/^[a-z0-9-]+$/",
@@ -174,7 +176,8 @@ class SuperAdminController extends Controller
 
     public function toggleTenant($id)
     {
-        $tenant = Tenant::findOrFail($id);
+        // withoutGlobalScopes para que el superadmin pueda ver TODOS los tenants
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $nuevoEstado = $tenant->estado === 'activo' ? 'suspendido' : 'activo';
         $tenant->update(['estado' => $nuevoEstado]);
 
@@ -183,7 +186,8 @@ class SuperAdminController extends Controller
 
     public function destroyTenant($id)
     {
-        $tenant = Tenant::findOrFail($id);
+        // withoutGlobalScopes para que el superadmin pueda ver TODOS los tenants
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $nombre = $tenant->empresa;
         $tenantId = $tenant->id;
 
@@ -253,7 +257,8 @@ class SuperAdminController extends Controller
      */
     public function tenantUsers($id)
     {
-        $tenant = Tenant::findOrFail($id);
+        // withoutGlobalScopes para que el superadmin pueda ver TODOS los tenants
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $usuarios = User::where('tenant_id', $tenant->id)->orderBy('rol')->orderBy('name')->get();
         return view('superadmin.tenant-users', compact('tenant', 'usuarios'));
     }
@@ -278,7 +283,8 @@ class SuperAdminController extends Controller
      */
     public function loginAsTenant($id)
     {
-        $tenant = Tenant::findOrFail($id);
+        // withoutGlobalScopes para que el superadmin pueda ver TODOS los tenants
+        $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $admin = User::where('tenant_id', $tenant->id)
             ->where('rol', 'admin')
             ->first();
