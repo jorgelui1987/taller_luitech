@@ -86,15 +86,17 @@ class Reparacion extends Model
     }
 
     /**
-     * Base de comisión del técnico = Presupuesto - Costo de Repuesto(s)
-     * Ej: Presupuesto 50,000 - Repuesto 10,000 = Base 40,000
+     * Base de comision del tecnico = Monto cobrado - Costo de Repuesto(s)
+     * Usa costo_final si existe, de lo contrario presupuesto.
      */
     public function baseComision(): float
     {
-        $presupuesto   = (float) ($this->presupuesto ?? 0);
+        $cobrado = ($this->costo_final !== null && $this->costo_final > 0)
+            ? (float) $this->costo_final
+            : (float) ($this->presupuesto ?? 0);
         $costoRepuesto = (float) ($this->costo_repuesto ?? 0);
 
-        return max(0, $presupuesto - $costoRepuesto);
+        return max(0, $cobrado - $costoRepuesto);
     }
 
     /**

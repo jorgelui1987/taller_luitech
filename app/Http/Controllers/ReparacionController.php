@@ -208,6 +208,7 @@ class ReparacionController extends Controller
             'abono'           => 'nullable|numeric|min:0',
             'costo_final'     => 'nullable|numeric|min:0',
             'costo_repuesto'  => 'nullable|numeric|min:0',
+            'comision_porcentaje' => 'nullable|numeric|min:0|max:100',
             'estado'          => 'required|in:recibido,en_diagnostico,esperando_repuesto,en_reparacion,listo,entregado,no_reparable',
             'prioridad'       => 'required|in:baja,media,alta,urgente',
             'fecha_estimada'  => 'nullable|date',
@@ -260,7 +261,7 @@ class ReparacionController extends Controller
 
         $reparacion->update($validated);
 
-        // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN (Opción C) ──
+        // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN ──
         if ($validated['estado'] === 'entregado') {
             // Si no se ingresó costo_final (0 o null), usar presupuesto
             $totalReparacion = (float)(($validated['costo_final'] ?? 0) > 0
@@ -268,16 +269,22 @@ class ReparacionController extends Controller
                 : ($validated['presupuesto'] ?? $reparacion->presupuesto ?? $reparacion->total ?? 0));
 
             // ── Calcular comisión del técnico ──
-            // Fórmula: comisión = (presupuesto - costo_repuesto) × (% del técnico / 100)
-            // Ej: Presupuesto 50,000 - Repuesto 10,000 = Base 40,000 → 40,000 × % técnico
+            // Fórmula: comisión = (Monto cobrado - costo_repuesto) × (% / 100)
+            // El % puede venir del formulario (manual) o del perfil del técnico
             $tecnico = User::find($validated['tecnico_id'] ?? $reparacion->tecnico_id);
             $comisionPorcentaje = null;
 
-            if ($tecnico && $tecnico->comision_porcentaje !== null && $tecnico->comision_porcentaje > 0) {
+            // Si se envió un % específico en el formulario, usarlo (Idea 2)
+            if (array_key_exists('comision_porcentaje', $validated)
+                && $validated['comision_porcentaje'] !== null
+                && $validated['comision_porcentaje'] !== '') {
+                $comisionPorcentaje = (float)$validated['comision_porcentaje'];
+            } elseif ($tecnico && $tecnico->comision_porcentaje !== null && $tecnico->comision_porcentaje > 0) {
+                // Si no se envió %, usar el % del perfil del técnico
                 $comisionPorcentaje = (float)$tecnico->comision_porcentaje;
             }
 
-            // La base SIEMPRE es: presupuesto - costo_repuesto (no usa costo_final)
+            // Calcular base: usa costo_final si existe, si no presupuesto, menos repuesto (Idea 1)
             $reparacion->comision_porcentaje = $comisionPorcentaje;
             $baseComision = $reparacion->baseComision();
 

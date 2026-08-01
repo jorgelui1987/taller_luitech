@@ -242,6 +242,11 @@
                                     <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia</div>
                                 </div>
                                 <div class="col-md-3">
+                                    <label class="form-label">% Comision del Tecnico</label>
+                                    <input type="number" class="form-control" name="comision_porcentaje" id="comisionPorcentajeEdit" value="@php echo old('comision_porcentaje', $reparacion->comision_porcentaje ?? $reparacion->tecnico->comision_porcentaje ?? ''); @endphp" min="0" max="100" step="0.01" placeholder="%">
+                                    <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Se pre-rellena con el % del perfil del tecnico</div>
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label">Abono (S/)</label>
                                     <input type="number" class="form-control" name="abono"
                                            value="{{ old('abono',$reparacion->abono) }}" min="0" step="0.01">
@@ -263,6 +268,36 @@
                                     <label class="form-label">Días de Garantía</label>
                                     <input type="number" class="form-control" name="dias_garantia"
                                            value="{{ old('dias_garantia',$reparacion->dias_garantia) }}" min="0">
+                                </div>
+                                <div class="col-12">
+                                    <div class="p-3 rounded-3" style="background:#fff7ed; border:2px solid #f59e0b;" id="comisionPreviewBox">
+                                        <div style="font-weight:700; color:#9a3412; font-size:13px; margin-bottom:8px;">
+                                            <i class="fas fa-coins me-1"></i>Vista Previa de Comision del Tecnico
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-md-2">
+                                                <div style="font-size:11px; color:#6b7280;">Monto a cobrar</div>
+                                                <div id="comisionPreviewCobrado" style="font-weight:600;">S/ 0.00</div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div style="font-size:11px; color:#6b7280;">Repuesto(s)</div>
+                                                <div id="comisionPreviewRepuesto" style="color:#dc2626;">- S/ 0.00</div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div style="font-size:11px; color:#6b7280;">Base comision</div>
+                                                <div id="comisionPreviewBase" style="color:#9a3412; font-weight:600;">S/ 0.00</div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div style="font-size:11px; color:#6b7280;">% del tecnico</div>
+                                                <div id="comisionPreviewPct">0%</div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div style="font-size:11px; color:#9a3412; font-weight:700;">Comision del tecnico</div>
+                                                <div id="comisionPreviewMonto" style="color:#f59e0b; font-size:18px; font-weight:700;">S/ 0.00</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Notas adicionales</label>
