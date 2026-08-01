@@ -35,7 +35,7 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 </style>
 <body>
 <div class="hdr">
-@if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="max-height:40px;max-width:60px">@endif
+@if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="max-height:60px;max-width:100px">@endif
 <div class="tienda">{{ $empresa->nombre_tienda ?? 'CRM Celulares' }}</div>
 <div class="inf">{{ $empresa->ruc ?? '' }}{{ ($empresa->ruc??'') && ($empresa->direccion??'') ? ' | ' : '' }}{{ $empresa->direccion ?? '' }}</div>
 <div class="inf">{{ $empresa->telefono ?? '' }}{{ ($empresa->telefono??'') && ($empresa->email??'') ? ' | ' : '' }}{{ $empresa->email ?? '' }}</div>
