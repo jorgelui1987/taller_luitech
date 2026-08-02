@@ -50,6 +50,7 @@ class Kernel extends HttpKernel
         'cache.headers'    => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can'              => \Illuminate\Auth\Middleware\Authorize::class,
         'check.admin'        => \App\Http\Middleware\CheckAdmin::class,
+        'check.delete'       => \App\Http\Middleware\CheckDeletePermission::class,
         'check.ventas'       => \App\Http\Middleware\CheckVentasAccess::class,
         'check.reparaciones' => \App\Http\Middleware\CheckReparacionesAccess::class,
         'check.tenant'       => \App\Http\Middleware\CheckTenantStatus::class,

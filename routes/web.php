@@ -96,11 +96,15 @@ Route::middleware(['tenant'])->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        // Clientes
-        Route::resource('clientes', ClienteController::class);
+        // Clientes (solo admin puede eliminar)
+        Route::resource('clientes', ClienteController::class)->except(['destroy']);
+        Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])
+            ->name('clientes.destroy')->middleware('check.delete');
 
-        // Productos
-        Route::resource('productos', ProductoController::class);
+        // Productos (solo admin puede eliminar)
+        Route::resource('productos', ProductoController::class)->except(['destroy']);
+        Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])
+            ->name('productos.destroy')->middleware('check.delete');
         Route::post('/productos/marca-ajax', [\App\Http\Controllers\ProductoController::class, 'storeMarcaAjax'])->name('productos.marca-ajax');
         Route::post('/productos/categoria-ajax', [\App\Http\Controllers\ProductoController::class, 'storeCategoriaAjax'])->name('productos.categoria-ajax');
 
@@ -111,7 +115,7 @@ Route::middleware(['tenant'])->group(function () {
         Route::get('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'show'])->name('proveedores.show');
         Route::get('/proveedores/{id}/editar', [\App\Http\Controllers\ProveedorController::class, 'edit'])->name('proveedores.edit');
         Route::put('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'update'])->name('proveedores.update');
-        Route::delete('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'destroy'])->name('proveedores.destroy');
+        Route::delete('/proveedores/{id}', [\App\Http\Controllers\ProveedorController::class, 'destroy'])->name('proveedores.destroy')->middleware('check.delete');
         Route::match(['post', 'patch'], '/proveedores/{id}/toggle', [\App\Http\Controllers\ProveedorController::class, 'toggle'])->name('proveedores.toggle');
 
         // Órdenes de Compra
