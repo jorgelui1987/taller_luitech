@@ -228,27 +228,12 @@ class SuperAdminController extends Controller
         $nombre = $tenant->empresa;
         $tenantId = $tenant->id;
 
-        // Detectar driver (MySQL o PostgreSQL)
-        $driver = DB::connection()->getDriverName();
-
-        try {
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = replica');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=0');
-            }
-
-            DB::transaction(function () use ($tenantId) {
-                $this->eliminarDatosTenant($tenantId);
-                DB::table('tenants')->where('id', $tenantId)->delete();
-            });
-        } finally {
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = origin');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            }
-        }
+        // Eliminar en orden correcto para respetar foreign keys
+        // (No se desactivan restricciones porque el orden de eliminación es correcto)
+        DB::transaction(function () use ($tenantId) {
+            $this->eliminarDatosTenant($tenantId);
+            DB::table('tenants')->where('id', $tenantId)->delete();
+        });
 
         return redirect()->route('superadmin.tenants')
             ->with('success', "Tenant '{$nombre}' eliminado permanentemente.");
