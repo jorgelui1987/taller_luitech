@@ -161,6 +161,16 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/ventas/{venta}/whatsapp', [VentaController::class, 'enviarWhatsApp'])->name('ventas.whatsapp');
         });
 
+        // Devoluciones (solo admin y vendedor)
+        Route::middleware('check.ventas')->group(function () {
+            Route::get('/devoluciones', [\App\Http\Controllers\DevolucionController::class, 'index'])->name('devoluciones.index');
+            Route::get('/devoluciones/crear', [\App\Http\Controllers\DevolucionController::class, 'create'])->name('devoluciones.create');
+            Route::post('/devoluciones', [\App\Http\Controllers\DevolucionController::class, 'store'])->name('devoluciones.store');
+            Route::get('/devoluciones/{devolucion}', [\App\Http\Controllers\DevolucionController::class, 'show'])->name('devoluciones.show');
+            Route::patch('/devoluciones/{devolucion}/anular', [\App\Http\Controllers\DevolucionController::class, 'anular'])->name('devoluciones.anular');
+            Route::get('/api/devoluciones/venta/{ventaId}', [\App\Http\Controllers\DevolucionController::class, 'getVentaDetalles'])->name('devoluciones.api.venta');
+        });
+
         // Reparaciones (solo admin y técnico)
         Route::middleware('check.reparaciones')->group(function () {
             Route::resource('reparaciones', ReparacionController::class)->parameters(['reparaciones' => 'reparacion']);

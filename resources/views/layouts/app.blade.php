@@ -846,6 +846,12 @@
             <span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>
             Ventas
         </a>
+
+        <a href="{{ route('devoluciones.index') }}"
+           class="nav-link {{ request()->routeIs('devoluciones.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-undo-alt"></i></span>
+            Devoluciones
+        </a>
         @endif
 
         @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
