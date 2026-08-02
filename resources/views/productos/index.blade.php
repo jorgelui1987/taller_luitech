@@ -191,6 +191,7 @@
                                    class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;" title="Editar">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </a>
+                                @if(Auth::user()->esAdmin() || Auth::user()->esSuperAdmin())
                                 <form action="{{ route('productos.destroy', $producto) }}" method="POST"
                                       onsubmit="return confirm('¿Eliminar {{ addslashes($producto->nombre) }}?')">
                                     @csrf @method('DELETE')
@@ -199,6 +200,7 @@
                                         <i class="fas fa-trash fa-sm"></i>
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

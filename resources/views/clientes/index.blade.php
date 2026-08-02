@@ -117,6 +117,7 @@
                                    class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </a>
+                                @if(auth()->user()->esAdmin() || auth()->user()->esSuperAdmin())
                                 <form action="{{ route('clientes.destroy', $cliente) }}" method="POST"
                                       onsubmit="return confirm('¿Eliminar cliente {{ addslashes($cliente->nombre_completo) }}?')">
                                     @csrf @method('DELETE')
@@ -125,6 +126,7 @@
                                         <i class="fas fa-trash fa-sm"></i>
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
