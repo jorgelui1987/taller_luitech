@@ -167,6 +167,96 @@ class ReparacionController extends Controller
         return view('reparaciones.ticket', compact('reparacion'));
     }
 
+    /**
+     * Genera el ticket de reparación como texto formateado y abre WhatsApp.
+     */
+    public function enviarWhatsApp(Reparacion $reparacion)
+    {
+        $reparacion->load(['cliente', 'tecnico']);
+        $empresa = Configuracion::empresa();
+
+        // Obtener teléfono del cliente
+        $telefono = $reparacion->cliente?->telefono ?? $reparacion->cliente?->celular ?? null;
+        if (!$telefono) {
+            return back()->with('error', 'El cliente no tiene teléfono registrado para enviar por WhatsApp.');
+        }
+
+        // Limpiar teléfono: solo dígitos
+        $telefono = preg_replace('/[^0-9]/', '', $telefono);
+
+        // Si no tiene código de país, agregar el de la configuración
+        $pais = $empresa?->pais ?? 'PE';
+        $codigos = ['PE' => '51', 'CL' => '56', 'AR' => '54', 'MX' => '52', 'CO' => '57', 'EC' => '593', 'BO' => '591', 'US' => '1'];
+        $codigoPais = $codigos[$pais] ?? '51';
+
+        if (strlen($telefono) <= 9) {
+            $telefono = $codigoPais . $telefono;
+        }
+
+        // Líneas del ticket
+        $linea = str_repeat('─', 32);
+        $lineaDoble = str_repeat('═', 32);
+
+        $tipoDispositivo = ['celular' => 'Celular', 'tablet' => 'Tablet', 'portatil' => 'Portatil', 'otros' => 'Otros'];
+        $estadoLabel = str_replace('_', ' ', ucfirst($reparacion->estado));
+
+        $texto = $lineaDoble . "\n";
+        $texto .= str_pad($empresa?->nombre_tienda ?? 'CRM Celulares', 32, ' ', STR_PAD_BOTH) . "\n";
+        if ($empresa?->ruc) $texto .= str_pad('RUC: ' . $empresa->ruc, 32, ' ', STR_PAD_BOTH) . "\n";
+        if ($empresa?->direccion) $texto .= str_pad($empresa->direccion, 32, ' ', STR_PAD_BOTH) . "\n";
+        $texto .= $lineaDoble . "\n";
+        $texto .= str_pad($reparacion->numero_orden, 32, ' ', STR_PAD_BOTH) . "\n";
+        $texto .= str_pad($estadoLabel, 32, ' ', STR_PAD_BOTH) . "\n";
+        $texto .= $linea . "\n";
+
+        // Cliente
+        $texto .= 'CLIENTE: ' . ($reparacion->cliente->nombre_completo ?? '—') . "\n";
+        if ($reparacion->cliente?->telefono) $texto .= 'TEL: ' . $reparacion->cliente->telefono . "\n";
+        $texto .= 'TECNICO: ' . ($reparacion->tecnico->name ?? '—') . "\n";
+        $texto .= $linea . "\n";
+
+        // Equipo
+        $texto .= 'TIPO: ' . ($tipoDispositivo[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?? '—') . "\n";
+        if ($reparacion->marca) $texto .= 'MARCA: ' . $reparacion->marca . "\n";
+        if ($reparacion->modelo) $texto .= 'MODELO: ' . $reparacion->modelo . "\n";
+        if ($reparacion->imei) $texto .= 'IMEI: ' . $reparacion->imei . "\n";
+        if ($reparacion->color) $texto .= 'COLOR: ' . $reparacion->color . "\n";
+        if ($reparacion->fecha_recepcion) $texto .= 'RECIBIDO: ' . $reparacion->fecha_recepcion->format('d/m/Y H:i') . "\n";
+        if ($reparacion->fecha_estimada) $texto .= 'EST. ENTREGA: ' . $reparacion->fecha_estimada->format('d/m/Y') . "\n";
+        $texto .= $linea . "\n";
+
+        // Falla y diagnóstico
+        if ($reparacion->falla_reportada) $texto .= 'FALLA: ' . $reparacion->falla_reportada . "\n";
+        if ($reparacion->diagnostico) $texto .= 'DIAGNOSTICO: ' . $reparacion->diagnostico . "\n";
+        if ($reparacion->solucion) $texto .= 'SOLUCION: ' . $reparacion->solucion . "\n";
+
+        // Precios
+        if ($reparacion->presupuesto > 0) $texto .= 'PRESUPUESTO: S/ ' . number_format($reparacion->presupuesto, 2) . "\n";
+        if ($reparacion->costo_final > 0) $texto .= 'COSTO FINAL: S/ ' . number_format($reparacion->costo_final, 2) . "\n";
+        if ($reparacion->abono > 0) $texto .= 'ABONO: S/ ' . number_format($reparacion->abono, 2) . "\n";
+        if ($reparacion->total > 0) {
+            $texto .= $lineaDoble . "\n";
+            $texto .= 'TOTAL: S/ ' . number_format($reparacion->total, 2) . "\n";
+            $texto .= $lineaDoble . "\n";
+        }
+
+        // Garantía
+        if ($reparacion->garantia) $texto .= "\nGarantía: " . $reparacion->dias_garantia . " días\n";
+        if ($empresa?->terminos_garantia) {
+            $texto .= "\nGARANTÍA:\n" . $empresa->terminos_garantia . "\n";
+        }
+
+        // Notas
+        if ($reparacion->notas) $texto .= "\nNOTAS: " . $reparacion->notas . "\n";
+
+        $texto .= "\n" . str_pad('¡Gracias por su preferencia!', 32, ' ', STR_PAD_BOTH) . "\n";
+
+        // URL de WhatsApp
+        $url = 'https://wa.me/' . $telefono . '?text=' . urlencode($texto);
+
+        return redirect()->away($url);
+    }
+
     public function edit(Reparacion $reparacion)
     {
         $clientes = Cliente::where('activo', true)->orderBy('nombre')->get();

@@ -165,6 +165,7 @@ Route::middleware(['tenant'])->group(function () {
         Route::middleware('check.reparaciones')->group(function () {
             Route::resource('reparaciones', ReparacionController::class)->parameters(['reparaciones' => 'reparacion']);
             Route::get('/reparaciones/{reparacion}/ticket', [ReparacionController::class, 'printTicket'])->name('reparaciones.ticket');
+            Route::get('/reparaciones/{reparacion}/whatsapp', [ReparacionController::class, 'enviarWhatsApp'])->name('reparaciones.whatsapp');
 
             // Firmas y fotos (AJAX)
             Route::post('/reparaciones/{reparacion}/firma', [ReparacionController::class, 'subirFirma'])->name('reparaciones.firma');

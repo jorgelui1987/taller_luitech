@@ -157,13 +157,19 @@
             <i class="fas fa-user-cog me-1"></i>Técnico: <strong>{{ $reparacion->tecnico->name ?? '—' }}</strong>
         </p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
         <a href="{{ route('reparaciones.ticket', $reparacion) }}" target="_blank" class="btn btn-outline-primary px-4">
             <i class="fas fa-receipt me-2"></i>Sticker 80mm
         </a>
         <button onclick="window.print()" class="btn btn-outline-secondary px-4">
             <i class="fas fa-print me-2"></i>Imprimir
         </button>
+        @if($reparacion->cliente && ($reparacion->cliente->telefono || $reparacion->cliente->celular))
+        <a href="{{ route('reparaciones.whatsapp', $reparacion) }}" target="_blank" class="btn px-4"
+           style="background:#25D366; color:#fff; border-radius:8px;">
+            <i class="fab fa-whatsapp me-2"></i>Enviar por WhatsApp
+        </a>
+        @endif
         <a href="{{ route('reparaciones.edit', $reparacion) }}" class="btn btn-primary px-4">
             <i class="fas fa-edit me-2"></i>Actualizar Estado
         </a>
