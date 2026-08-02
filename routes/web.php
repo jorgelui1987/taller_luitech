@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Storage;
 // ── PANEL SUPERADMIN (SIN tenant) ──────────────────────────────────────────
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [SuperAdminController::class, 'login'])->name('login.post');
+    Route::post('/login', [SuperAdminController::class, 'login'])->name('login.post')->middleware('throttle:10,1');
     Route::post('/logout', [SuperAdminController::class, 'logout'])->name('logout');
 
-    Route::middleware(['auth', 'check.tenant'])->group(function () {
+    Route::middleware(['auth', 'check.superadmin', 'check.tenant'])->group(function () {
         Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/tenants', [SuperAdminController::class, 'tenants'])->name('tenants');
         Route::get('/tenants/crear', [SuperAdminController::class, 'createTenant'])->name('tenants.create');
@@ -31,7 +31,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::delete('/tenants/{id}', [SuperAdminController::class, 'destroyTenant'])->name('tenants.destroy');
         Route::get('/tenants/{id}/login-as', [SuperAdminController::class, 'loginAsTenant'])->name('tenants.login-as');
         Route::get('/tenants/{id}/usuarios', [SuperAdminController::class, 'tenantUsers'])->name('tenants.users');
-        Route::post('/usuarios/{usuario}/cambiar-password', [SuperAdminController::class, 'changeUserPassword'])->name('usuarios.change-password');
+        Route::post('/usuarios/{usuario}/cambiar-password', [SuperAdminController::class, 'changeUserPassword'])->name('usuarios.change-password')->middleware('throttle:10,1');
 
         // Gestión de precios de planes
         Route::get('/planes-precios', [SuperAdminController::class, 'planPreciosIndex'])->name('planes-precios');

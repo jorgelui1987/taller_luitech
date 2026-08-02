@@ -112,7 +112,7 @@ class ConfiguracionController extends Controller
         // Subir logo si se envió uno nuevo
         if ($request->hasFile('logo')) {
             $request->validate([
-                'logo' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'logo' => 'required|file|image|mimes:jpeg,png,jpg,gif,webp|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             ]);
 
             $logoPath = $request->file('logo')->store('logos', 'public');
@@ -140,11 +140,11 @@ class ConfiguracionController extends Controller
     public function storeUsuario(Request $request)
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'name'     => 'required|string|max:100|regex:/^[\pL\pM\s\-]+$/u',
+            'email'    => 'required|email:rfc,dns|unique:users,email',
+            'password' => 'required|string|min:12|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
             'rol'      => 'required|in:admin,vendedor,tecnico',
-            'telefono' => 'nullable|string|max:20',
+            'telefono' => 'nullable|string|max:20|regex:/^\+?[0-9\s-]{7,20}$/',
         ]);
 
         // Verificar límite de usuarios del plan
@@ -154,12 +154,13 @@ class ConfiguracionController extends Controller
         }
 
         User::create([
-            'name'      => $validated['name'],
-            'email'     => $validated['email'],
+            'name'      => trim($validated['name']),
+            'email'     => strtolower($validated['email']),
             'password'  => Hash::make($validated['password']),
             'rol'       => $validated['rol'],
             'telefono'  => $validated['telefono'] ?? null,
             'tenant_id' => auth()->user()->tenant_id,
+            'activo'    => true,
         ]);
 
         return back()->with('success', 'Usuario creado correctamente.');
@@ -168,17 +169,17 @@ class ConfiguracionController extends Controller
     public function updateUsuario(Request $request, User $usuario)
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users,email,' . $usuario->id,
+            'name'     => 'required|string|max:100|regex:/^[\pL\pM\s\-]+$/u',
+            'email'    => 'required|email:rfc,dns|unique:users,email,' . $usuario->id,
             'rol'      => 'required|in:admin,vendedor,tecnico',
-            'telefono' => 'nullable|string|max:20',
+            'telefono' => 'nullable|string|max:20|regex:/^\+?[0-9\s-]{7,20}$/',
             'comision_porcentaje' => 'nullable|numeric|min:0|max:100',
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:12|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
         ]);
 
         $data = [
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name'     => trim($validated['name']),
+            'email'    => strtolower($validated['email']),
             'rol'      => $validated['rol'],
             'telefono' => $validated['telefono'] ?? null,
         ];

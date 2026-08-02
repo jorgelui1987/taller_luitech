@@ -51,16 +51,31 @@ class SuperAdminController extends Controller
             DB::table('reparaciones')->where('tenant_id', $tenantId)->whereNotNull('deleted_at')->delete();
         }
 
-        DB::table('movimientos_stock')->where('tenant_id', $tenantId)->delete();
-        DB::table('comisiones_pagos')->where('tenant_id', $tenantId)->delete();
-        DB::table('gastos_fijos')->where('tenant_id', $tenantId)->delete();
-        DB::table('productos')->where('tenant_id', $tenantId)->delete();
-        DB::table('categorias')->where('tenant_id', $tenantId)->delete();
-        DB::table('marcas')->where('tenant_id', $tenantId)->delete();
-        DB::table('proveedores')->where('tenant_id', $tenantId)->delete();
-        DB::table('clientes')->where('tenant_id', $tenantId)->delete();
-        DB::table('configuracion')->where('tenant_id', $tenantId)->delete();
-        DB::table('users')->where('tenant_id', $tenantId)->delete();
+        // Tablas con columna tenant_id definida por migración
+        $tablasConTenant = [
+            'movimientos_stock',
+            'comisiones_pagos',
+            'gastos_fijos',
+            'productos',
+            'proveedores',
+            'clientes',
+            'configuracion',
+            'users',
+        ];
+
+        foreach ($tablasConTenant as $tabla) {
+            if (DB::getSchemaBuilder()->hasColumn($tabla, 'tenant_id')) {
+                DB::table($tabla)->where('tenant_id', $tenantId)->delete();
+            }
+        }
+
+        // categorias y marcas NO tienen columna tenant_id (tablas globales),
+        // por lo que solo se eliminan si efectivamente la tienen.
+        foreach (['categorias', 'marcas'] as $tabla) {
+            if (DB::getSchemaBuilder()->hasColumn($tabla, 'tenant_id')) {
+                DB::table($tabla)->where('tenant_id', $tenantId)->delete();
+            }
+        }
     }
 
     // ─── Autenticación SuperAdmin ────────────────────────────────────────

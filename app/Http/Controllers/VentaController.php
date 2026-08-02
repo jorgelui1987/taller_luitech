@@ -65,11 +65,12 @@ class VentaController extends Controller
         $request->validate([
             'cliente_id'          => 'nullable|exists:clientes,id',
             'metodo_pago'         => 'required|in:efectivo,tarjeta,transferencia,cuotas,yape,plin',
-            'productos'           => 'required|array|min:1',
+            'productos'           => 'required|array|min:1|max:100',
             'productos.*.id'      => 'required|exists:productos,id',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'descuento_general'   => 'nullable|numeric|min:0',
-            'notas'               => 'nullable|string',
+            'productos.*.cantidad' => 'required|integer|min:1|max:1000',
+            'productos.*.descuento' => 'nullable|numeric|min:0|max:99999999.99',
+            'descuento_general'   => 'nullable|numeric|min:0|max:99999999.99',
+            'notas'               => 'nullable|string|max:2000',
         ]);
 
         // Obtener tenant_id con fallback
@@ -89,6 +90,10 @@ class VentaController extends Controller
 
             foreach ($request->productos as $item) {
                 $producto = Producto::findOrFail($item['id']);
+
+                if ($producto->tenant_id && $producto->tenant_id !== $tenantId) {
+                    throw new \Exception('No puedes vender productos de otro tenant.');
+                }
 
                 if ($producto->stock < $item['cantidad']) {
                     throw new \Exception("Stock insuficiente para: {$producto->nombre}");

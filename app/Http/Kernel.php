@@ -53,6 +53,7 @@ class Kernel extends HttpKernel
         'check.ventas'       => \App\Http\Middleware\CheckVentasAccess::class,
         'check.reparaciones' => \App\Http\Middleware\CheckReparacionesAccess::class,
         'check.tenant'       => \App\Http\Middleware\CheckTenantStatus::class,
+        'check.superadmin'   => \App\Http\Middleware\CheckSuperAdmin::class,
         'tenant'             => \App\Http\Middleware\IdentifyTenant::class,
         'guest'            => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

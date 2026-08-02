@@ -60,21 +60,21 @@ class ProductoController extends Controller
     {
         $rules = [
             'tipo'          => 'required|in:celular,accesorio,otro',
-            'codigo'        => 'required|string|unique:productos,codigo|max:50',
-            'codigo_barras' => 'nullable|string|max:100|unique:productos,codigo_barras',
-            'nombre'        => 'required|string|max:150',
-            'descripcion'   => 'nullable|string',
-            'garantia_dias' => 'nullable|integer|min:0',
+            'codigo'        => 'required|string|max:50|regex:/^[A-Za-z0-9\-_.]+$/|unique:productos,codigo',
+            'codigo_barras' => 'nullable|string|max:100|regex:/^[A-Za-z0-9\-_.]+$/|unique:productos,codigo_barras',
+            'nombre'        => 'required|string|max:150|regex:/^[\pL\pM\s\-0-9.,()]+$/u',
+            'descripcion'   => 'nullable|string|max:2000',
+            'garantia_dias' => 'nullable|integer|min:0|max:3650',
             'categoria_id'  => 'required|exists:categorias,id',
             'marca_id'      => 'required|exists:marcas,id',
             'proveedor_id'  => 'nullable|exists:proveedores,id',
-            'modelo'        => 'nullable|string|max:100',
-            'color'         => 'nullable|string|max:50',
-            'precio_compra' => 'required|numeric|min:0',
-            'precio_venta'  => 'required|numeric|min:0',
-            'stock'         => 'required|integer|min:0',
-            'stock_minimo'  => 'required|integer|min:0',
-            'imagen'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'modelo'        => 'nullable|string|max:100|regex:/^[A-Za-z0-9\-_.\s]+$/',
+            'color'         => 'nullable|string|max:50|regex:/^[\pL\pM\s\-]+$/u',
+            'precio_compra' => 'required|numeric|min:0|max:99999999.99',
+            'precio_venta'  => 'required|numeric|min:0|max:99999999.99',
+            'stock'         => 'required|integer|min:0|max:100000',
+            'stock_minimo'  => 'required|integer|min:0|max:100000',
+            'imagen'        => 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
         ];
 
         // Campos solo para celulares
@@ -135,19 +135,19 @@ class ProductoController extends Controller
     {
         $rules = [
             'tipo'          => 'required|in:celular,accesorio,otro',
-            'codigo'        => 'required|string|unique:productos,codigo,' . $producto->id . '|max:50',
-            'nombre'        => 'required|string|max:150',
-            'descripcion'   => 'nullable|string',
+            'codigo'        => 'required|string|max:50|regex:/^[A-Za-z0-9\-_.]+$/|unique:productos,codigo,' . $producto->id,
+            'nombre'        => 'required|string|max:150|regex:/^[\pL\pM\s\-0-9.,()]+$/u',
+            'descripcion'   => 'nullable|string|max:2000',
             'categoria_id'  => 'required|exists:categorias,id',
             'marca_id'      => 'required|exists:marcas,id',
-            'modelo'        => 'nullable|string|max:100',
-            'color'         => 'nullable|string|max:50',
-            'precio_compra' => 'required|numeric|min:0',
-            'precio_venta'  => 'required|numeric|min:0',
-            'stock'         => 'required|integer|min:0',
-            'stock_minimo'  => 'required|integer|min:0',
+            'modelo'        => 'nullable|string|max:100|regex:/^[A-Za-z0-9\-_.\s]+$/',
+            'color'         => 'nullable|string|max:50|regex:/^[\pL\pM\s\-]+$/u',
+            'precio_compra' => 'required|numeric|min:0|max:99999999.99',
+            'precio_venta'  => 'required|numeric|min:0|max:99999999.99',
+            'stock'         => 'required|integer|min:0|max:100000',
+            'stock_minimo'  => 'required|integer|min:0|max:100000',
             'activo'        => 'boolean',
-            'imagen'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'imagen'        => 'nullable|file|image|mimes:jpeg,png,jpg,webp|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
         ];
 
         if ($request->tipo === 'celular') {
