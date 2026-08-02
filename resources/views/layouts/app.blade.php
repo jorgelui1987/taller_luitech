@@ -761,8 +761,11 @@
 <aside class="sidebar" id="sidebar">
     <!-- Brand -->
     <div class="sidebar-brand d-flex align-items-center gap-3">
-        @if(isset($empresa) && $empresa && $empresa->logo)
-            <img src="{{ $empresa->logo_url ?? asset($empresa->logo) }}" alt="Logo" style="width:42px;height:42px;border-radius:12px;object-fit:contain;">
+        @if(isset($empresa) && $empresa && $empresa->logo && !empty($empresa->logo_url))
+            <img src="{{ $empresa->logo_url }}" alt="Logo" style="width:42px;height:42px;border-radius:12px;object-fit:contain;">
+        @elseif(isset($empresa) && $empresa && !empty($empresa->logo))
+            {{-- Si el logo existe pero no se pudo generar URL, usar el generador PWA que lee el logo de la BD --}}
+            <img src="{{ route('pwa.icon', ['size' => 192]) }}" alt="Logo" style="width:42px;height:42px;border-radius:12px;object-fit:contain;">
         @else
             <div class="brand-logo"><i class="fas fa-mobile-alt"></i></div>
         @endif
