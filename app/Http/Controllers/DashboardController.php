@@ -19,9 +19,26 @@ class DashboardController extends Controller
         $finMesAnterior = Carbon::now()->subMonth()->endOfMonth();
 
         // ── KPIs principales ─────────────────────────────────────────────
-        $ventasHoy        = Venta::whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
-        $ventasMes        = Venta::where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
-        $ventasMesAnterior = Venta::whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
+        $ventasHoy          = Venta::whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
+        $ventasMes          = Venta::where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
+        $ventasMesAnterior  = Venta::whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
+
+        // Restar costo de repuestos de reparaciones entregadas (ganancia real del negocio)
+        $costoRepuestosHoy = Reparacion::where('estado', 'entregado')
+            ->whereDate('fecha_entrega', $hoy)
+            ->sum('costo_repuesto');
+        $costoRepuestosMes = Reparacion::where('estado', 'entregado')
+            ->where('fecha_entrega', '>=', $inicioMes)
+            ->sum('costo_repuesto');
+        $costoRepuestosMesAnterior = Reparacion::where('estado', 'entregado')
+            ->whereBetween('fecha_entrega', [$inicioMesAnterior, $finMesAnterior])
+            ->sum('costo_repuesto');
+
+        // Ganancia real = Ventas - Comisiones (ventas negativas) - Costo de repuestos
+        $ventasHoy   = max(0, $ventasHoy - $costoRepuestosHoy);
+        $ventasMes   = max(0, $ventasMes - $costoRepuestosMes);
+        $ventasMesAnterior = max(0, $ventasMesAnterior - $costoRepuestosMesAnterior);
+
         $crecimientoVentas = $ventasMesAnterior > 0 ? (($ventasMes - $ventasMesAnterior) / $ventasMesAnterior) * 100 : 0;
 
         $totalClientes    = Cliente::where('activo', true)->count();
