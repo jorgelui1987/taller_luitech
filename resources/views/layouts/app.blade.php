@@ -317,6 +317,7 @@
         .bg-grad-pink   { background: linear-gradient(135deg, #ec4899, #db2777); }
         .bg-grad-cyan   { background: linear-gradient(135deg, #06b6d4, #0284c7); }
         .bg-grad-green  { background: linear-gradient(135deg, #10b981, #059669); }
+        .bg-grad-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
         /* ── TABLE STYLES ────────────────────────────────────────── */
         .table { font-size: 13.5px; }

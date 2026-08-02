@@ -13,12 +13,36 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
         $hoy = Carbon::today();
         $inicioMes = Carbon::now()->startOfMonth();
         $inicioMesAnterior = Carbon::now()->subMonth()->startOfMonth();
         $finMesAnterior = Carbon::now()->subMonth()->endOfMonth();
 
-        // ── KPIs principales ─────────────────────────────────────────────
+        // ── ADMIN: Datos globales ─────────────────────────────────────────
+        if ($user->esAdmin() || $user->esSuperAdmin()) {
+            return $this->dashboardAdmin($hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
+        }
+
+        // ── VENDEDOR: Solo sus ventas ─────────────────────────────────────
+        if ($user->esVendedor()) {
+            return $this->dashboardVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
+        }
+
+        // ── TÉCNICO: Solo sus reparaciones y comisiones ───────────────────
+        if ($user->esTecnico()) {
+            return $this->dashboardTecnico($user, $hoy, $inicioMes);
+        }
+
+        // Fallback: admin
+        return $this->dashboardAdmin($hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
+    }
+
+    /**
+     * Dashboard para ADMIN: ve todo el negocio (global)
+     */
+    private function dashboardAdmin($hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior)
+    {
         $ventasHoy          = Venta::whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
         $ventasMes          = Venta::where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
         $ventasMesAnterior  = Venta::whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
@@ -50,13 +74,171 @@ class DashboardController extends Controller
         $reparacionesPendientes = Reparacion::whereNotIn('estado', ['entregado', 'no_reparable'])->count();
         $reparacionesListas    = Reparacion::where('estado', 'listo')->count();
 
-        // ── Gráfica de ventas por día (últimos 7 días) ────────────────────
+        // Gráfica de ventas por día (últimos 7 días)
+        $diasSemana = $this->ventasPorDia(Venta::query());
+
+        // Ventas por mes (últimos 6 meses)
+        $ventasPorMes = $this->ventasPorMes(Venta::query());
+
+        // Top 5 productos más vendidos
+        $topProductos = $this->topProductos();
+
+        // Últimas ventas
+        $ultimasVentas = Venta::with(['cliente', 'vendedor'])
+            ->orderByDesc('created_at')
+            ->limit(8)
+            ->get();
+
+        // Reparaciones recientes
+        $ultimasReparaciones = Reparacion::with(['cliente', 'tecnico'])
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        $miComisionPorcentaje = null;
+
+        return view('dashboard.index', compact(
+            'ventasHoy', 'ventasMes', 'crecimientoVentas',
+            'totalClientes', 'clientesNuevosMes',
+            'totalProductos', 'stockBajo',
+            'reparacionesPendientes', 'reparacionesListas',
+            'diasSemana', 'ventasPorMes', 'topProductos',
+            'ultimasVentas', 'ultimasReparaciones',
+            'miComisionPorcentaje'
+        ));
+    }
+
+    /**
+     * Dashboard para VENDEDOR: solo sus ventas
+     */
+    private function dashboardVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior)
+    {
+        $ventasHoy          = Venta::where('user_id', $user->id)->whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
+        $ventasMes          = Venta::where('user_id', $user->id)->where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
+        $ventasMesAnterior  = Venta::where('user_id', $user->id)->whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
+        $crecimientoVentas = $ventasMesAnterior > 0 ? (($ventasMes - $ventasMesAnterior) / $ventasMesAnterior) * 100 : 0;
+
+        $misVentasHoy = Venta::where('user_id', $user->id)->whereDate('fecha_venta', $hoy)->where('estado', 'completada')->count();
+        $misVentasMes = Venta::where('user_id', $user->id)->where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->count();
+
+        // Gráfica de mis ventas por día
+        $diasSemana = $this->ventasPorDia(Venta::where('user_id', $user->id));
+
+        // Mis ventas por mes
+        $ventasPorMes = $this->ventasPorMes(Venta::where('user_id', $user->id));
+
+        // Mis últimas ventas
+        $ultimasVentas = Venta::with(['cliente', 'vendedor'])
+            ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->limit(8)
+            ->get();
+
+        // Variables vacías para la vista
+        $totalClientes = 0;
+        $clientesNuevosMes = 0;
+        $totalProductos = 0;
+        $stockBajo = 0;
+        $reparacionesPendientes = 0;
+        $reparacionesListas = 0;
+        $topProductos = collect([]);
+        $ultimasReparaciones = collect([]);
+        $miComisionPorcentaje = null;
+
+        return view('dashboard.index', compact(
+            'ventasHoy', 'ventasMes', 'crecimientoVentas',
+            'totalClientes', 'clientesNuevosMes',
+            'totalProductos', 'stockBajo',
+            'reparacionesPendientes', 'reparacionesListas',
+            'diasSemana', 'ventasPorMes', 'topProductos',
+            'ultimasVentas', 'ultimasReparaciones',
+            'miComisionPorcentaje', 'misVentasHoy', 'misVentasMes'
+        ));
+    }
+
+    /**
+     * Dashboard para TÉCNICO: solo sus reparaciones y comisiones
+     */
+    private function dashboardTecnico($user, $hoy, $inicioMes)
+    {
+        // Mis reparaciones activas (no entregadas)
+        $misReparacionesActivas = Reparacion::where('tecnico_id', $user->id)
+            ->whereNotIn('estado', ['entregado', 'no_reparable'])
+            ->count();
+
+        // Mis reparaciones listas para entregar
+        $misReparacionesListas = Reparacion::where('tecnico_id', $user->id)
+            ->where('estado', 'listo')
+            ->count();
+
+        // Mis reparaciones entregadas este mes
+        $misEntregadasMes = Reparacion::where('tecnico_id', $user->id)
+            ->where('estado', 'entregado')
+            ->where('fecha_entrega', '>=', $inicioMes)
+            ->count();
+
+        // Mis comisiones pendientes
+        $misComisionesPendientes = Reparacion::where('tecnico_id', $user->id)
+            ->where('estado', 'entregado')
+            ->where('comision_pagada', false)
+            ->sum('comision_monto');
+
+        // Mis comisiones pagadas
+        $misComisionesPagadas = Reparacion::where('tecnico_id', $user->id)
+            ->where('estado', 'entregado')
+            ->where('comision_pagada', true)
+            ->sum('comision_monto');
+
+        // Mi porcentaje de comisión
+        $miComisionPorcentaje = $user->comision_porcentaje;
+
+        // Mis últimas reparaciones
+        $ultimasReparaciones = Reparacion::with(['cliente', 'tecnico'])
+            ->where('tecnico_id', $user->id)
+            ->orderByDesc('created_at')
+            ->limit(8)
+            ->get();
+
+        // Variables vacías para la vista
+        $ventasHoy = 0;
+        $ventasMes = 0;
+        $crecimientoVentas = 0;
+        $totalClientes = 0;
+        $clientesNuevosMes = 0;
+        $totalProductos = 0;
+        $stockBajo = 0;
+        $reparacionesPendientes = 0;
+        $reparacionesListas = 0;
+        $diasSemana = collect([]);
+        $ventasPorMes = collect([]);
+        $topProductos = collect([]);
+        $ultimasVentas = collect([]);
+
+        return view('dashboard.index', compact(
+            'ventasHoy', 'ventasMes', 'crecimientoVentas',
+            'totalClientes', 'clientesNuevosMes',
+            'totalProductos', 'stockBajo',
+            'reparacionesPendientes', 'reparacionesListas',
+            'diasSemana', 'ventasPorMes', 'topProductos',
+            'ultimasVentas', 'ultimasReparaciones',
+            'miComisionPorcentaje',
+            'misReparacionesActivas', 'misReparacionesListas',
+            'misEntregadasMes', 'misComisionesPendientes', 'misComisionesPagadas'
+        ));
+    }
+
+    /**
+     * Ventas por día (últimos 7 días)
+     */
+    private function ventasPorDia($query)
+    {
         $driver = DB::connection()->getDriverName();
         $fechaExpr = $driver === 'pgsql'
             ? "TO_CHAR(fecha_venta, 'YYYY-MM-DD')"
             : "DATE(fecha_venta)";
 
-        $ventasSemana = Venta::select(
+        $ventasSemana = (clone $query)
+            ->select(
                 DB::raw("$fechaExpr as fecha"),
                 DB::raw('SUM(total) as total'),
                 DB::raw('COUNT(*) as cantidad')
@@ -78,11 +260,20 @@ class DashboardController extends Controller
             ]);
         }
 
-        // ── Ventas por mes (últimos 6 meses) ─────────────────────────────
+        return $diasSemana;
+    }
+
+    /**
+     * Ventas por mes (últimos 6 meses)
+     */
+    private function ventasPorMes($query)
+    {
+        $driver = DB::connection()->getDriverName();
         $yearExpr = $driver === 'pgsql' ? "EXTRACT(YEAR FROM fecha_venta)" : "YEAR(fecha_venta)";
         $monthExpr = $driver === 'pgsql' ? "EXTRACT(MONTH FROM fecha_venta)" : "MONTH(fecha_venta)";
 
-        $ventasPorMes = Venta::select(
+        return (clone $query)
+            ->select(
                 DB::raw("$yearExpr as año"),
                 DB::raw("$monthExpr as mes"),
                 DB::raw('SUM(total) as total')
@@ -97,9 +288,16 @@ class DashboardController extends Controller
                 'mes'   => Carbon::createFromDate($v->año, $v->mes, 1)->isoFormat('MMM YY'),
                 'total' => (float) $v->total,
             ]);
+    }
 
-        // ── Top 5 productos más vendidos ──────────────────────────────────
-        $topProductos = DB::table('detalle_ventas')
+    /**
+     * Top 5 productos más vendidos
+     */
+    private function topProductos()
+    {
+        $inicioMes = Carbon::now()->startOfMonth();
+
+        return DB::table('detalle_ventas')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->where('ventas.estado', 'completada')
@@ -109,30 +307,5 @@ class DashboardController extends Controller
             ->orderByDesc('total_vendido')
             ->limit(5)
             ->get();
-
-        // ── Últimas ventas ────────────────────────────────────────────────
-        $ultimasVentas = Venta::with(['cliente', 'vendedor'])
-            ->orderByDesc('created_at')
-            ->limit(8)
-            ->get();
-
-        // ── Reparaciones recientes ────────────────────────────────────────
-        $ultimasReparaciones = Reparacion::with(['cliente', 'tecnico'])
-            ->orderByDesc('created_at')
-            ->limit(5)
-            ->get();
-
-        // ── Comisión del técnico actual (solo lectura) ────────────────────
-        $miComisionPorcentaje = auth()->user()->comision_porcentaje;
-
-        return view('dashboard.index', compact(
-            'ventasHoy', 'ventasMes', 'crecimientoVentas',
-            'totalClientes', 'clientesNuevosMes',
-            'totalProductos', 'stockBajo',
-            'reparacionesPendientes', 'reparacionesListas',
-            'diasSemana', 'ventasPorMes', 'topProductos',
-            'ultimasVentas', 'ultimasReparaciones',
-            'miComisionPorcentaje'
-        ));
     }
 }
