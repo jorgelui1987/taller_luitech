@@ -164,6 +164,27 @@ class ConfiguracionController extends Controller
         return back()->with('success', 'Datos de la empresa actualizados correctamente.');
     }
 
+    // ── Guardar / Actualizar zona horaria ─────────────────────────────
+    public function updateZonaHoraria(Request $request)
+    {
+        $validated = $request->validate([
+            'zona_horaria' => 'required|string|max:100',
+        ], [
+            'zona_horaria.required' => 'Debes seleccionar una zona horaria.',
+            'zona_horaria.max'      => 'La zona horaria no puede superar los 100 caracteres.',
+        ]);
+
+        $empresa = Configuracion::empresa();
+
+        if ($empresa) {
+            $empresa->update(['zona_horaria' => $validated['zona_horaria']]);
+        } else {
+            Configuracion::create(['zona_horaria' => $validated['zona_horaria']]);
+        }
+
+        return back()->with('success', 'Zona horaria actualizada correctamente.');
+    }
+
     // ── Usuarios ───────────────────────────────────────────────────────
     public function storeUsuario(Request $request)
     {

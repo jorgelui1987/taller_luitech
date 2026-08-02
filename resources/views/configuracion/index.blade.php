@@ -189,17 +189,20 @@
                 <h6 class="fw-bold mb-3"><i class="fas fa-clock me-2" style="color:#a855f7;"></i>Zona Horaria</h6>
                 <p class="text-muted" style="font-size:12px;">Configura la zona horaria de tu empresa para que las fechas y horas se muestren correctamente.</p>
 
-                <form action="{{ route('configuracion.updateEmpresa') }}" method="POST">
+                <form action="{{ route('configuracion.updateZonaHoraria') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label">Zona horaria</label>
-                        <select name="zona_horaria" class="form-select" required>
+                        <select name="zona_horaria" class="form-select @error('zona_horaria') is-invalid @enderror" required>
                             @foreach($zonasHorarias as $codigo => $descripcion)
                                 <option value="{{ $codigo }}" {{ (old('zona_horaria', $empresa->zona_horaria ?? 'America/Lima') == $codigo) ? 'selected' : '' }}>
                                     {{ $descripcion }}
                                 </option>
                             @endforeach
                         </select>
+                        @error('zona_horaria')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                         <div class="form-text">La hora actual en esta zona: <strong id="horaActual"></strong></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">

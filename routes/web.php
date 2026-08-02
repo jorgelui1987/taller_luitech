@@ -191,6 +191,7 @@ Route::middleware(['tenant'])->group(function () {
         Route::middleware('check.admin')->group(function () {
             Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
             Route::post('/configuracion/empresa', [ConfiguracionController::class, 'updateEmpresa'])->name('configuracion.updateEmpresa');
+            Route::post('/configuracion/zona-horaria', [ConfiguracionController::class, 'updateZonaHoraria'])->name('configuracion.updateZonaHoraria');
             Route::post('/configuracion/usuarios', [ConfiguracionController::class, 'storeUsuario'])->name('configuracion.storeUsuario');
             Route::patch('/configuracion/usuarios/{usuario}/toggle', [ConfiguracionController::class, 'toggleUsuario'])->name('configuracion.toggleUsuario');
             Route::put('/configuracion/usuarios/{usuario}', [ConfiguracionController::class, 'updateUsuario'])->name('configuracion.updateUsuario');
