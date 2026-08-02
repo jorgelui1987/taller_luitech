@@ -75,6 +75,29 @@
     </div>
 </div>
 
+{{-- ── Mi Comisión (solo técnicos, solo lectura) ─────────────────────── --}}
+@if(auth()->user()->esTecnico())
+<div class="card mb-4" style="border:1px solid #fef3c7; background:linear-gradient(135deg,#fffbeb,#fef3c7);">
+    <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div style="width:48px;height:48px;background:#f59e0b;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="fas fa-percentage" style="color:#fff;font-size:20px;"></i>
+            </div>
+            <div>
+                <div style="font-size:13px;color:#92400e;font-weight:500;">Mi porcentaje de comisión</div>
+                <div style="font-size:24px;font-weight:700;color:#78350f;">
+                    {{ $miComisionPorcentaje !== null ? number_format($miComisionPorcentaje, 1) . '%' : 'No asignado' }}
+                </div>
+            </div>
+        </div>
+        <div style="font-size:12px;color:#92400e;max-width:300px;text-align:right;">
+            <i class="fas fa-info-circle me-1"></i>
+            Se calcula automáticamente al entregar una reparación: Ganancia × % / 100
+        </div>
+    </div>
+</div>
+@endif
+
 {{-- ── Gráficas principales ─────────────────────────────────────────── --}}
 <div class="row g-3 mb-4">
     {{-- Ventas por día --}}

@@ -105,13 +105,17 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // ── Comisión del técnico actual (solo lectura) ────────────────────
+        $miComisionPorcentaje = auth()->user()->comision_porcentaje;
+
         return view('dashboard.index', compact(
             'ventasHoy', 'ventasMes', 'crecimientoVentas',
             'totalClientes', 'clientesNuevosMes',
             'totalProductos', 'stockBajo',
             'reparacionesPendientes', 'reparacionesListas',
             'diasSemana', 'ventasPorMes', 'topProductos',
-            'ultimasVentas', 'ultimasReparaciones'
+            'ultimasVentas', 'ultimasReparaciones',
+            'miComisionPorcentaje'
         ));
     }
 }
