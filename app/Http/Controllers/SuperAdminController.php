@@ -14,6 +14,55 @@ use Illuminate\Support\Str;
 
 class SuperAdminController extends Controller
 {
+    private function limitesPorPlan(): array
+    {
+        return [
+            'gratis'      => ['max_usuarios' => 3,  'max_productos' => 50],
+            'basico'      => ['max_usuarios' => 5,  'max_productos' => 200],
+            'profesional' => ['max_usuarios' => 15, 'max_productos' => 1000],
+            'empresarial' => ['max_usuarios' => 999, 'max_productos' => 99999],
+        ];
+    }
+
+    private function eliminarDatosTenant(int $tenantId): void
+    {
+        $ordenIds = DB::table('ordenes_compra')->where('tenant_id', $tenantId)->pluck('id');
+        if ($ordenIds->isNotEmpty()) {
+            DB::table('detalle_ordenes_compra')->whereIn('orden_compra_id', $ordenIds)->delete();
+        }
+
+        DB::table('ordenes_compra')->where('tenant_id', $tenantId)->delete();
+
+        $ventaIds = DB::table('ventas')->where('tenant_id', $tenantId)->pluck('id');
+        if ($ventaIds->isNotEmpty()) {
+            DB::table('detalle_ventas')->whereIn('venta_id', $ventaIds)->delete();
+        }
+
+        DB::table('ventas')->where('tenant_id', $tenantId)->delete();
+
+        $reparacionIds = DB::table('reparaciones')->where('tenant_id', $tenantId)->pluck('id');
+        if ($reparacionIds->isNotEmpty()) {
+            DB::table('reparacion_fotos')->whereIn('reparacion_id', $reparacionIds)->delete();
+        }
+
+        DB::table('reparaciones')->where('tenant_id', $tenantId)->delete();
+
+        if (DB::getSchemaBuilder()->hasColumn('reparaciones', 'deleted_at')) {
+            DB::table('reparaciones')->where('tenant_id', $tenantId)->whereNotNull('deleted_at')->delete();
+        }
+
+        DB::table('movimientos_stock')->where('tenant_id', $tenantId)->delete();
+        DB::table('comisiones_pagos')->where('tenant_id', $tenantId)->delete();
+        DB::table('gastos_fijos')->where('tenant_id', $tenantId)->delete();
+        DB::table('productos')->where('tenant_id', $tenantId)->delete();
+        DB::table('categorias')->where('tenant_id', $tenantId)->delete();
+        DB::table('marcas')->where('tenant_id', $tenantId)->delete();
+        DB::table('proveedores')->where('tenant_id', $tenantId)->delete();
+        DB::table('clientes')->where('tenant_id', $tenantId)->delete();
+        DB::table('configuracion')->where('tenant_id', $tenantId)->delete();
+        DB::table('users')->where('tenant_id', $tenantId)->delete();
+    }
+
     // ─── Autenticación SuperAdmin ────────────────────────────────────────
     public function showLoginForm()
     {
@@ -65,12 +114,7 @@ class SuperAdminController extends Controller
 
     public function createTenant()
     {
-        $limitesPorPlan = [
-            'gratis'       => ['max_usuarios' => 3,  'max_productos' => 50],
-            'basico'       => ['max_usuarios' => 5,  'max_productos' => 200],
-            'profesional'  => ['max_usuarios' => 15, 'max_productos' => 1000],
-            'empresarial'  => ['max_usuarios' => 999,'max_productos' => 99999],
-        ];
+        $limitesPorPlan = $this->limitesPorPlan();
         return view('superadmin.tenant-form', compact('limitesPorPlan'));
     }
 
@@ -155,14 +199,7 @@ class SuperAdminController extends Controller
             'estado'           => 'required|in:activo,suspendido,cancelado',
         ]);
 
-        // Auto-asignar límites según el plan seleccionado
-        $limitesPorPlan = [
-            'gratis'       => ['max_usuarios' => 3,  'max_productos' => 50],
-            'basico'       => ['max_usuarios' => 5,  'max_productos' => 200],
-            'profesional'  => ['max_usuarios' => 15, 'max_productos' => 1000],
-            'empresarial'  => ['max_usuarios' => 999,'max_productos' => 99999],
-        ];
-
+        $limitesPorPlan = $this->limitesPorPlan();
         $limites = $limitesPorPlan[$validated['plan']] ?? $limitesPorPlan['gratis'];
 
         $validated['max_usuarios']  = $limites['max_usuarios'];
@@ -190,70 +227,17 @@ class SuperAdminController extends Controller
         $tenant = Tenant::withoutGlobalScopes()->findOrFail($id);
         $nombre = $tenant->empresa;
         $tenantId = $tenant->id;
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        DB::transaction(function () use ($tenantId) {
-            // Eliminar en orden correcto para respetar foreign keys
-            // Usar DB::table directamente para evitar TenantScope
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-            // 1. Detalles de órdenes de compra
-            $ordenIds = DB::table('ordenes_compra')->where('tenant_id', $tenantId)->pluck('id');
-            if ($ordenIds->isNotEmpty()) {
-                DB::table('detalle_ordenes_compra')->whereIn('orden_compra_id', $ordenIds)->delete();
-            }
-
-            // 2. Órdenes de compra
-            DB::table('ordenes_compra')->where('tenant_id', $tenantId)->delete();
-
-            // 3. Detalles de ventas
-            $ventaIds = DB::table('ventas')->where('tenant_id', $tenantId)->pluck('id');
-            if ($ventaIds->isNotEmpty()) {
-                DB::table('detalle_ventas')->whereIn('venta_id', $ventaIds)->delete();
-            }
-
-            // 4. Ventas
-            DB::table('ventas')->where('tenant_id', $tenantId)->delete();
-
-            // 5. Reparaciones y sus fotos
-            $reparacionIds = DB::table('reparaciones')->where('tenant_id', $tenantId)->pluck('id');
-            if ($reparacionIds->isNotEmpty()) {
-                DB::table('reparacion_fotos')->whereIn('reparacion_id', $reparacionIds)->delete();
-            }
-            DB::table('reparaciones')->where('tenant_id', $tenantId)->delete();
-            DB::table('reparaciones')->where('tenant_id', $tenantId)->whereNotNull('deleted_at')->delete();
-
-            // 6. Movimientos de stock
-            DB::table('movimientos_stock')->where('tenant_id', $tenantId)->delete();
-
-            // 7. Comisiones pagos
-            DB::table('comisiones_pagos')->where('tenant_id', $tenantId)->delete();
-
-            // 8. Gastos fijos
-            DB::table('gastos_fijos')->where('tenant_id', $tenantId)->delete();
-
-            // 9. Productos
-            DB::table('productos')->where('tenant_id', $tenantId)->delete();
-
-            // 10. Proveedores
-            DB::table('categorias')->where('tenant_id', $tenantId)->delete();
-            DB::table('marcas')->where('tenant_id', $tenantId)->delete();
-            DB::table('proveedores')->where('tenant_id', $tenantId)->delete();
-
-            // 11. Clientes
-            DB::table('clientes')->where('tenant_id', $tenantId)->delete();
-
-            // 12. Configuración
-            DB::table('configuracion')->where('tenant_id', $tenantId)->delete();
-
-            // 13. Usuarios
-            DB::table('users')->where('tenant_id', $tenantId)->delete();
-
-            // 14. El tenant
-            DB::table('tenants')->where('id', $tenantId)->delete();
-        });
-
-        // Reactivar foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            DB::transaction(function () use ($tenantId) {
+                $this->eliminarDatosTenant($tenantId);
+                DB::table('tenants')->where('id', $tenantId)->delete();
+            });
+        } finally {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
 
         return redirect()->route('superadmin.tenants')
             ->with('success', "Tenant '{$nombre}' eliminado permanentemente.");
