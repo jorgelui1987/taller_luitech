@@ -26,13 +26,19 @@
             Atendido por <strong>{{ $venta->vendedor->name ?? '—' }}</strong>
         </p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
         <a href="{{ route('ventas.ticket', $venta) }}" target="_blank" class="btn btn-outline-primary px-4">
             <i class="fas fa-receipt me-2"></i>Ticket 80mm
         </a>
         <button onclick="window.print()" class="btn btn-outline-primary px-4">
             <i class="fas fa-print me-2"></i>Imprimir
         </button>
+        @if($venta->cliente && ($venta->cliente->telefono || $venta->cliente->celular))
+        <a href="{{ route('ventas.whatsapp', $venta) }}" target="_blank" class="btn px-4"
+           style="background:#25D366; color:#fff; border-radius:8px;">
+            <i class="fab fa-whatsapp me-2"></i>Enviar por WhatsApp
+        </a>
+        @endif
         @if($venta->estado === 'completada')
         <form action="{{ route('ventas.cancelar', $venta) }}" method="POST"
               onsubmit="return confirm('¿Cancelar esta venta y restaurar el stock?')">
