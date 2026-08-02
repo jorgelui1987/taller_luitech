@@ -711,7 +711,7 @@
         /* ── Botón de instalación PWA ── */
         .pwa-install-btn {
             position: fixed;
-            bottom: 90px;
+            bottom: 24px;
             right: 20px;
             z-index: 1000;
             background: var(--gradient);
@@ -726,7 +726,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all .2s;
             min-height: 44px;
         }
@@ -737,10 +737,16 @@
         .pwa-install-btn.d-none {
             display: none !important;
         }
+        /* En desktop también se muestra, posición arriba del FAB si existe */
         @media (min-width: 576px) {
             .pwa-install-btn {
-                display: none !important;
+                bottom: 24px;
+                right: 20px;
             }
+        }
+        /* Icono del botón PWA */
+        .pwa-install-btn i {
+            font-size: 18px;
         }
     </style>
 
@@ -1063,7 +1069,7 @@
 
 @stack('scripts')
 
-{{-- Botón de instalación PWA (solo móvil) --}}
+{{-- Botón de instalación PWA --}}
 <button id="pwaInstallBtn" class="pwa-install-btn d-none">
     <i class="fas fa-download"></i>
     <span>Instalar App</span>
@@ -1085,49 +1091,80 @@
 
     // ── PWA: Botón de instalación ─────────────────────────────────
     let deferredPrompt = null;
+    const pwaBtn = document.getElementById('pwaInstallBtn');
 
+    // Detectar si ya está instalada como app (standalone)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true;
+
+    // Función para mostrar el botón de instalación
+    function showPwaInstallBtn() {
+        if (pwaBtn && !isStandalone) {
+            pwaBtn.classList.remove('d-none');
+        }
+    }
+
+    // Función para ocultar el botón de instalación
+    function hidePwaInstallBtn() {
+        if (pwaBtn) pwaBtn.classList.add('d-none');
+    }
+
+    // En móvil (Android/Chrome), mostrar el botón siempre que sea instalable.
+    // En iOS Safari no existe beforeinstallprompt, pero se muestra el botón
+    // con instrucciones para "Agregar a pantalla de inicio".
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // Si la app ya está instalada, ocultar el botón
+    if (isStandalone) {
+        hidePwaInstallBtn();
+    } else if (isMobile) {
+        // En móvil, siempre mostrar el botón (el SW ya está registrado)
+        // El evento beforeinstallprompt puede tardar en dispararse
+        setTimeout(showPwaInstallBtn, 3000);
+    }
+
+    // Evento beforeinstallprompt (Chrome, Edge, Android)
     window.addEventListener('beforeinstallprompt', (e) => {
         // Prevenir el mini-infobar automático del navegador
         e.preventDefault();
         // Guardar el evento para usarlo después
         deferredPrompt = e;
         // Mostrar el botón de instalación
-        const btn = document.getElementById('pwaInstallBtn');
-        if (btn) {
-            btn.classList.remove('d-none');
-        }
+        showPwaInstallBtn();
     });
 
     // Click en el botón de instalación
-    document.addEventListener('click', function(e) {
-        const btn = document.getElementById('pwaInstallBtn');
-        if (btn && btn.contains(e.target) && deferredPrompt) {
-            // Mostrar el diálogo de instalación nativo
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('✅ App instalada');
+    if (pwaBtn) {
+        pwaBtn.addEventListener('click', function() {
+            if (deferredPrompt) {
+                // Chrome/Android: mostrar diálogo nativo de instalación
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ App instalada');
+                        hidePwaInstallBtn();
+                    } else {
+                        console.log('❌ Instalación cancelada');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // iOS Safari / otros navegadores: mostrar instrucciones
+                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                if (isIOS) {
+                    alert('📱 Para instalar esta app:\n\n1. Toca el botón Compartir (⬆️)\n2. Desplázate y toca "Añadir a pantalla de inicio"\n3. Toca "Añadir"');
                 } else {
-                    console.log('❌ Instalación cancelada');
+                    alert('📲 Para instalar esta app:\n\nUsa la opción "Instalar app" o "Agregar a pantalla de inicio" del menú del navegador.\n\nEn Chrome: Menú ⋮ → "Instalar app" o "Agregar a pantalla de inicio".');
                 }
-                deferredPrompt = null;
-                btn.classList.add('d-none');
-            });
-        }
-    });
+            }
+        });
+    }
 
     // Ocultar botón cuando la app ya esté instalada (display-mode: standalone)
     window.addEventListener('appinstalled', () => {
-        const btn = document.getElementById('pwaInstallBtn');
-        if (btn) btn.classList.add('d-none');
+        hidePwaInstallBtn();
         deferredPrompt = null;
     });
-
-    // Si ya está en modo standalone (instalada), ocultar el botón
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        const btn = document.getElementById('pwaInstallBtn');
-        if (btn) btn.classList.add('d-none');
-    }
 </script>
 
 </body>
