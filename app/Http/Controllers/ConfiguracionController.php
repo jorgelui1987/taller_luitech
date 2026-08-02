@@ -63,7 +63,34 @@ class ConfiguracionController extends Controller
             'CNY' => ['simbolo' => '¥',    'pais' => 'China'],
         ];
 
-        // 5. Datos del plan del tenant
+        // 5. Zonas horarias disponibles
+        $zonasHorarias = [
+            'America/Lima'          => '🇵🇪 Perú (Lima) - UTC-5',
+            'America/Bogota'        => '🇨🇴 Colombia (Bogotá) - UTC-5',
+            'America/Mexico_City'   => '🇲🇽 México (Ciudad de México) - UTC-6',
+            'America/Guayaquil'     => '🇪🇨 Ecuador (Guayaquil) - UTC-5',
+            'America/Caracas'       => '🇻🇪 Venezuela (Caracas) - UTC-4',
+            'America/La_Paz'        => '🇧🇴 Bolivia (La Paz) - UTC-4',
+            'America/Santiago'      => '🇨🇱 Chile (Santiago) - UTC-4',
+            'America/Argentina/Buenos_Aires' => '🇦🇷 Argentina (Buenos Aires) - UTC-3',
+            'America/Montevideo'    => '🇺🇾 Uruguay (Montevideo) - UTC-3',
+            'America/Asuncion'      => '🇵🇾 Paraguay (Asunción) - UTC-4',
+            'America/Guatemala'     => '🇬🇹 Guatemala - UTC-6',
+            'America/Tegucigalpa'   => '🇭🇳 Honduras (Tegucigalpa) - UTC-6',
+            'America/Managua'       => '🇳🇮 Nicaragua (Managua) - UTC-6',
+            'America/Panama'        => '🇵🇦 Panamá - UTC-5',
+            'America/Santo_Domingo' => '🇩🇴 República Dominicana (Santo Domingo) - UTC-4',
+            'America/Costa_Rica'    => '🇨🇷 Costa Rica (San José) - UTC-6',
+            'America/New_York'      => '🇺🇸 Estados Unidos (Nueva York) - UTC-5',
+            'America/Los_Angeles'   => '🇺🇸 Estados Unidos (Los Ángeles) - UTC-8',
+            'America/Sao_Paulo'     => '🇧🇷 Brasil (São Paulo) - UTC-3',
+            'Europe/Madrid'         => '🇪🇸 España (Madrid) - UTC+1',
+            'Europe/London'         => '🇬🇧 Reino Unido (Londres) - UTC+0',
+            'Asia/Tokyo'            => '🇯🇵 Japón (Tokio) - UTC+9',
+            'Asia/Shanghai'         => '🇨🇳 China (Shanghái) - UTC+8',
+        ];
+
+        // 6. Datos del plan del tenant
         $planes = [
             'gratis'       => '🌱 Gratis',
             'basico'       => '🚀 Básico',
@@ -87,7 +114,7 @@ class ConfiguracionController extends Controller
 
         return view('configuracion.index', compact(
             'usuarios', 'empresa', 'stats', 'monedas',
-            'planes', 'coloresPlan', 'badgeColor'
+            'planes', 'coloresPlan', 'badgeColor', 'zonasHorarias'
         ));
     }
 
@@ -104,6 +131,7 @@ class ConfiguracionController extends Controller
             'igv'           => 'required|numeric|min:0|max:100',
             'moneda'        => 'required|string|max:10',
             'simbolo_moneda'=> 'required|string|max:5',
+            'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
         ]);
 

@@ -183,32 +183,29 @@
             </div>
         </div>
 
-        <!-- Info del sistema -->
+        <!-- Zona horaria -->
         <div class="card mb-4">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3">Información del Sistema</h6>
-                <div style="font-size:13px;" class="mb-3">
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">Versión</span>
-                        <span class="fw-500">1.0.0</span>
+                <h6 class="fw-bold mb-3"><i class="fas fa-clock me-2" style="color:#a855f7;"></i>Zona Horaria</h6>
+                <p class="text-muted" style="font-size:12px;">Configura la zona horaria de tu empresa para que las fechas y horas se muestren correctamente.</p>
+
+                <form action="{{ route('configuracion.updateEmpresa') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Zona horaria</label>
+                        <select name="zona_horaria" class="form-select" required>
+                            @foreach($zonasHorarias as $codigo => $descripcion)
+                                <option value="{{ $codigo }}" {{ (old('zona_horaria', $empresa->zona_horaria ?? 'America/Lima') == $codigo) ? 'selected' : '' }}>
+                                    {{ $descripcion }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="form-text">La hora actual en esta zona: <strong id="horaActual"></strong></div>
                     </div>
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">Framework</span>
-                        <span class="fw-500">Laravel 10</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">Base de datos</span>
-                        <span class="fw-500">MySQL</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">Zona horaria</span>
-                        <span class="fw-500">America/Lima</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-2">
-                        <span class="text-muted">Moneda</span>
-                        <span class="fw-500">{{ $empresa->simbolo_moneda ?? 'S/.' }} ({{ $empresa->moneda ?? 'PEN' }})</span>
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-save me-2"></i>Guardar Zona Horaria
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -560,6 +557,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 simboloInput.value = simbolo;
             }
         });
+    }
+
+    // Mostrar hora actual en la zona horaria seleccionada
+    var zonaSelect = document.querySelector('select[name="zona_horaria"]');
+    var horaActual = document.getElementById('horaActual');
+
+    function actualizarHora() {
+        if (zonaSelect && horaActual) {
+            var zona = zonaSelect.value;
+            try {
+                var ahora = new Date();
+                var hora = ahora.toLocaleTimeString('es-ES', {
+                    timeZone: zona,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                horaActual.textContent = hora;
+            } catch (e) {
+                horaActual.textContent = '--:--:--';
+            }
+        }
+    }
+
+    if (zonaSelect && horaActual) {
+        zonaSelect.addEventListener('change', actualizarHora);
+        actualizarHora();
+        setInterval(actualizarHora, 1000);
     }
 });
 

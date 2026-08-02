@@ -21,6 +21,7 @@ class Configuracion extends Model
         'igv',
         'moneda',
         'simbolo_moneda',
+        'zona_horaria',
         'terminos_garantia',
         'tenant_id',
     ];
