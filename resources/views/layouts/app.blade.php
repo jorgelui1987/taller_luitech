@@ -6,6 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CRM') — Tienda Celulares</title>
 
+    <!-- ── PWA ─────────────────────────────────────────────────── -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+    <meta name="theme-color" content="#1a0a3e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Taller CRM">
+
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -688,11 +699,46 @@
         .accordion-mobile .accordion-body.show {
             display: block;
         }
-        @media (min-width: 576px) {
+@media (min-width: 576px) {
             .accordion-mobile .accordion-body {
                 display: block !important;
             }
             .accordion-mobile .accordion-header i {
+                display: none !important;
+            }
+        }
+
+        /* ── Botón de instalación PWA ── */
+        .pwa-install-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(168,85,247,0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all .2s;
+            min-height: 44px;
+        }
+        .pwa-install-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(168,85,247,0.5);
+        }
+        .pwa-install-btn.d-none {
+            display: none !important;
+        }
+        @media (min-width: 576px) {
+            .pwa-install-btn {
                 display: none !important;
             }
         }
@@ -1016,6 +1062,73 @@
 </script>
 
 @stack('scripts')
+
+{{-- Botón de instalación PWA (solo móvil) --}}
+<button id="pwaInstallBtn" class="pwa-install-btn d-none">
+    <i class="fas fa-download"></i>
+    <span>Instalar App</span>
+</button>
+
+<script>
+    // ── PWA: Registrar Service Worker ──────────────────────────────
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                    console.log('✅ Service Worker registrado:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('❌ Error al registrar Service Worker:', error);
+                });
+        });
+    }
+
+    // ── PWA: Botón de instalación ─────────────────────────────────
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevenir el mini-infobar automático del navegador
+        e.preventDefault();
+        // Guardar el evento para usarlo después
+        deferredPrompt = e;
+        // Mostrar el botón de instalación
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn) {
+            btn.classList.remove('d-none');
+        }
+    });
+
+    // Click en el botón de instalación
+    document.addEventListener('click', function(e) {
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn && btn.contains(e.target) && deferredPrompt) {
+            // Mostrar el diálogo de instalación nativo
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('✅ App instalada');
+                } else {
+                    console.log('❌ Instalación cancelada');
+                }
+                deferredPrompt = null;
+                btn.classList.add('d-none');
+            });
+        }
+    });
+
+    // Ocultar botón cuando la app ya esté instalada (display-mode: standalone)
+    window.addEventListener('appinstalled', () => {
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.classList.add('d-none');
+        deferredPrompt = null;
+    });
+
+    // Si ya está en modo standalone (instalada), ocultar el botón
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.classList.add('d-none');
+    }
+</script>
 
 </body>
 </html>
