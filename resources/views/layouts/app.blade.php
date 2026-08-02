@@ -1149,10 +1149,15 @@
                     deferredPrompt = null;
                 });
             } else {
-                // iOS Safari / otros navegadores: mostrar instrucciones
+                // No hay evento beforeinstallprompt disponible.
+                // En Chrome Android, la instalación se hace desde el menú ⋮
                 const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                const isAndroidChrome = /Android/i.test(navigator.userAgent) && /Chrome|CriOS/i.test(navigator.userAgent);
+
                 if (isIOS) {
                     alert('📱 Para instalar esta app:\n\n1. Toca el botón Compartir (⬆️)\n2. Desplázate y toca "Añadir a pantalla de inicio"\n3. Toca "Añadir"');
+                } else if (isAndroidChrome) {
+                    alert('📲 Para instalar esta app en Chrome:\n\n1. Toca el menú ⋮ (arriba a la derecha)\n2. Busca y toca "Instalar app" o "Agregar a pantalla de inicio"\n3. Confirma la instalación\n\nSi no aparece esa opción, asegúrate de:\n• Estar conectado por HTTPS (candado 🔒)\n• Haber visitado la página más de una vez\n• Borrar caché si ya lo intentaste antes');
                 } else {
                     alert('📲 Para instalar esta app:\n\nUsa la opción "Instalar app" o "Agregar a pantalla de inicio" del menú del navegador.\n\nEn Chrome: Menú ⋮ → "Instalar app" o "Agregar a pantalla de inicio".');
                 }
