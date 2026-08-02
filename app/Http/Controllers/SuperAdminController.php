@@ -26,54 +26,80 @@ class SuperAdminController extends Controller
 
     private function eliminarDatosTenant(int $tenantId): void
     {
-        $ordenIds = DB::table('ordenes_compra')->where('tenant_id', $tenantId)->pluck('id');
-        if ($ordenIds->isNotEmpty()) {
-            DB::table('detalle_ordenes_compra')->whereIn('orden_compra_id', $ordenIds)->delete();
+        // Desactivar restricciones de foreign key temporalmente
+        // para evitar errores 500 por orden de eliminación
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'mysql') {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        } elseif ($driver === 'pgsql') {
+            DB::statement('SET session_replication_role = replica');
         }
 
-        DB::table('ordenes_compra')->where('tenant_id', $tenantId)->delete();
-
-        $ventaIds = DB::table('ventas')->where('tenant_id', $tenantId)->pluck('id');
-        if ($ventaIds->isNotEmpty()) {
-            DB::table('detalle_ventas')->whereIn('venta_id', $ventaIds)->delete();
-        }
-
-        DB::table('ventas')->where('tenant_id', $tenantId)->delete();
-
-        $reparacionIds = DB::table('reparaciones')->where('tenant_id', $tenantId)->pluck('id');
-        if ($reparacionIds->isNotEmpty()) {
-            DB::table('reparacion_fotos')->whereIn('reparacion_id', $reparacionIds)->delete();
-        }
-
-        DB::table('reparaciones')->where('tenant_id', $tenantId)->delete();
-
-        if (DB::getSchemaBuilder()->hasColumn('reparaciones', 'deleted_at')) {
-            DB::table('reparaciones')->where('tenant_id', $tenantId)->whereNotNull('deleted_at')->delete();
-        }
-
-        // Tablas con columna tenant_id definida por migración
-        $tablasConTenant = [
-            'movimientos_stock',
-            'comisiones_pagos',
-            'gastos_fijos',
-            'productos',
-            'proveedores',
-            'clientes',
-            'configuracion',
-            'users',
-        ];
-
-        foreach ($tablasConTenant as $tabla) {
-            if (DB::getSchemaBuilder()->hasColumn($tabla, 'tenant_id')) {
-                DB::table($tabla)->where('tenant_id', $tenantId)->delete();
+        try {
+            // 1. Detalles de órdenes de compra
+            $ordenIds = DB::table('ordenes_compra')->where('tenant_id', $tenantId)->pluck('id');
+            if ($ordenIds->isNotEmpty()) {
+                DB::table('detalle_ordenes_compra')->whereIn('orden_compra_id', $ordenIds)->delete();
             }
-        }
+            DB::table('ordenes_compra')->where('tenant_id', $tenantId)->delete();
 
-        // categorias y marcas NO tienen columna tenant_id (tablas globales),
-        // por lo que solo se eliminan si efectivamente la tienen.
-        foreach (['categorias', 'marcas'] as $tabla) {
-            if (DB::getSchemaBuilder()->hasColumn($tabla, 'tenant_id')) {
-                DB::table($tabla)->where('tenant_id', $tenantId)->delete();
+            // 2. Detalles de ventas
+            $ventaIds = DB::table('ventas')->where('tenant_id', $tenantId)->pluck('id');
+            if ($ventaIds->isNotEmpty()) {
+                DB::table('detalle_ventas')->whereIn('venta_id', $ventaIds)->delete();
+            }
+            DB::table('ventas')->where('tenant_id', $tenantId)->delete();
+
+            // 3. Fotos de reparaciones
+            $reparacionIds = DB::table('reparaciones')->where('tenant_id', $tenantId)->pluck('id');
+            if ($reparacionIds->isNotEmpty()) {
+                DB::table('reparacion_fotos')->whereIn('reparacion_id', $reparacionIds)->delete();
+            }
+
+            // 4. Reparaciones (incluye soft deletes - eliminar físicamente)
+            // Primero eliminar las que tienen deleted_at (soft deleted)
+            if (DB::getSchemaBuilder()->hasColumn('reparaciones', 'deleted_at')) {
+                DB::table('reparaciones')->where('tenant_id', $tenantId)->whereNotNull('deleted_at')->delete();
+            }
+            // Luego eliminar las activas
+            DB::table('reparaciones')->where('tenant_id', $tenantId)->delete();
+
+            // 5. Movimientos de stock (dependen de productos)
+            DB::table('movimientos_stock')->where('tenant_id', $tenantId)->delete();
+
+            // 6. Comisiones pagos
+            DB::table('comisiones_pagos')->where('tenant_id', $tenantId)->delete();
+
+            // 7. Gastos fijos
+            DB::table('gastos_fijos')->where('tenant_id', $tenantId)->delete();
+
+            // 8. Productos
+            DB::table('productos')->where('tenant_id', $tenantId)->delete();
+
+            // 9. Proveedores
+            DB::table('proveedores')->where('tenant_id', $tenantId)->delete();
+
+            // 10. Clientes
+            DB::table('clientes')->where('tenant_id', $tenantId)->delete();
+
+            // 11. Configuración
+            DB::table('configuracion')->where('tenant_id', $tenantId)->delete();
+
+            // 12. Usuarios
+            DB::table('users')->where('tenant_id', $tenantId)->delete();
+
+            // 13. Categorías y marcas si tienen tenant_id
+            foreach (['categorias', 'marcas'] as $tabla) {
+                if (DB::getSchemaBuilder()->hasColumn($tabla, 'tenant_id')) {
+                    DB::table($tabla)->where('tenant_id', $tenantId)->delete();
+                }
+            }
+        } finally {
+            // Reactivar restricciones de foreign key
+            if ($driver === 'mysql') {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            } elseif ($driver === 'pgsql') {
+                DB::statement('SET session_replication_role = origin');
             }
         }
     }
