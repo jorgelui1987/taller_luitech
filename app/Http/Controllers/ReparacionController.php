@@ -251,6 +251,10 @@ class ReparacionController extends Controller
 
         $texto .= "\n" . str_pad('¡Gracias por su preferencia!', 32, ' ', STR_PAD_BOTH) . "\n";
 
+        // Link para ver el estado en línea (lo que muestra el QR en la impresión)
+        $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
+        $texto .= "\n🔗 *Sigue el estado de tu reparación:*\n" . $urlEstado . "\n";
+
         // URL de WhatsApp
         $url = 'https://wa.me/' . $telefono . '?text=' . urlencode($texto);
 
