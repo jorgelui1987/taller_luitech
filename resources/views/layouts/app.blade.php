@@ -1075,23 +1075,90 @@
     <span>Instalar App</span>
 </button>
 
+{{-- Modal de instalación PWA --}}
+<div class="modal fade" id="pwaInstallModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:none;">
+            <div class="modal-header" style="background:var(--gradient); color:#fff; border-radius:16px 16px 0 0;">
+                <h5 class="modal-title"><i class="fas fa-download me-2"></i>Instalar Taller CRM</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="pwaDiagnostic" class="mb-3" style="font-size:13px;">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span id="pwaSwStatus" class="badge bg-secondary">Verificando...</span>
+                        <span>Service Worker</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span id="pwaManifestStatus" class="badge bg-secondary">Verificando...</span>
+                        <span>Manifest</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span id="pwaHttpsStatus" class="badge bg-secondary">Verificando...</span>
+                        <span>Conexión HTTPS</span>
+                    </div>
+                </div>
+
+                <div id="pwaInstallInstructions" style="font-size:13.5px; line-height:1.7;">
+                    <div class="alert alert-info py-2 px-3 mb-3" style="font-size:13px;">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <strong>Para instalar en Chrome Android:</strong>
+                    </div>
+                    <ol class="mb-3 ps-3">
+                        <li class="mb-1">Toca el menú <strong>⋮</strong> (tres puntos, arriba a la derecha)</li>
+                        <li class="mb-1">Busca y toca <strong>"Instalar app"</strong> o <strong>"Agregar a pantalla de inicio"</strong></li>
+                        <li class="mb-1">Confirma tocando <strong>"Instalar"</strong></li>
+                    </ol>
+                    <div class="alert alert-warning py-2 px-3 mb-2" style="font-size:12.5px;">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        <strong>Si no aparece la opción:</strong>
+                        <ul class="mb-0 mt-1 ps-3">
+                            <li>Visita el sitio <strong>2 veces</strong> con al menos <strong>5 minutos</strong> de diferencia</li>
+                            <li>Verifica que el candado 🔒 HTTPS esté presente</li>
+                            <li>Borra caché: <em>Chrome → ⋮ → Configuración → Privacidad → Borrar datos</em></li>
+                            <li>Revisa que el Service Worker esté activo (estado arriba)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" id="pwaRetryInstall" class="btn btn-primary">
+                    <i class="fas fa-sync me-1"></i>Reintentar instalación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // ── PWA: Registrar Service Worker ──────────────────────────────
+    let swRegistered = false;
+    let swError = null;
+
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/sw.js')
                 .then(function(registration) {
+                    swRegistered = true;
                     console.log('✅ Service Worker registrado:', registration.scope);
+                    updatePwaDiagnostic();
                 })
                 .catch(function(error) {
+                    swError = error;
                     console.log('❌ Error al registrar Service Worker:', error);
+                    updatePwaDiagnostic();
                 });
         });
+    } else {
+        swError = 'Service Worker no soportado';
+        updatePwaDiagnostic();
     }
 
     // ── PWA: Botón de instalación ─────────────────────────────────
     let deferredPrompt = null;
     const pwaBtn = document.getElementById('pwaInstallBtn');
+    const pwaModal = document.getElementById('pwaInstallModal');
 
     // Detectar si ya está instalada como app (standalone)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
@@ -1109,28 +1176,67 @@
         if (pwaBtn) pwaBtn.classList.add('d-none');
     }
 
+    // Actualizar diagnóstico en el modal
+    function updatePwaDiagnostic() {
+        const swStatus = document.getElementById('pwaSwStatus');
+        const manifestStatus = document.getElementById('pwaManifestStatus');
+        const httpsStatus = document.getElementById('pwaHttpsStatus');
+
+        // Service Worker
+        if (swRegistered) {
+            swStatus.textContent = '✅ Activo';
+            swStatus.className = 'badge bg-success';
+        } else if (swError) {
+            swStatus.textContent = '❌ Error';
+            swStatus.className = 'badge bg-danger';
+            swStatus.title = swError.message || swError;
+        } else {
+            swStatus.textContent = '⏳ Registrando...';
+            swStatus.className = 'badge bg-warning text-dark';
+        }
+
+        // Manifest
+        fetch('/manifest.json')
+            .then(r => {
+                if (r.ok) {
+                    manifestStatus.textContent = '✅ Cargado';
+                    manifestStatus.className = 'badge bg-success';
+                } else {
+                    manifestStatus.textContent = '❌ Error ' + r.status;
+                    manifestStatus.className = 'badge bg-danger';
+                }
+            })
+            .catch(() => {
+                manifestStatus.textContent = '❌ No accesible';
+                manifestStatus.className = 'badge bg-danger';
+            });
+
+        // HTTPS
+        if (window.isSecureContext) {
+            httpsStatus.textContent = '✅ Seguro';
+            httpsStatus.className = 'badge bg-success';
+        } else {
+            httpsStatus.textContent = '❌ No HTTPS';
+            httpsStatus.className = 'badge bg-danger';
+        }
+    }
+
     // En móvil (Android/Chrome), mostrar el botón siempre que sea instalable.
-    // En iOS Safari no existe beforeinstallprompt, pero se muestra el botón
-    // con instrucciones para "Agregar a pantalla de inicio".
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     // Si la app ya está instalada, ocultar el botón
     if (isStandalone) {
         hidePwaInstallBtn();
     } else if (isMobile) {
-        // En móvil, siempre mostrar el botón (el SW ya está registrado)
-        // El evento beforeinstallprompt puede tardar en dispararse
         setTimeout(showPwaInstallBtn, 3000);
     }
 
     // Evento beforeinstallprompt (Chrome, Edge, Android)
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevenir el mini-infobar automático del navegador
         e.preventDefault();
-        // Guardar el evento para usarlo después
         deferredPrompt = e;
-        // Mostrar el botón de instalación
         showPwaInstallBtn();
+        updatePwaDiagnostic();
     });
 
     // Click en el botón de instalación
@@ -1149,23 +1255,35 @@
                     deferredPrompt = null;
                 });
             } else {
-                // No hay evento beforeinstallprompt disponible.
-                // En Chrome Android, la instalación se hace desde el menú ⋮
-                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-                const isAndroidChrome = /Android/i.test(navigator.userAgent) && /Chrome|CriOS/i.test(navigator.userAgent);
-
-                if (isIOS) {
-                    alert('📱 Para instalar esta app:\n\n1. Toca el botón Compartir (⬆️)\n2. Desplázate y toca "Añadir a pantalla de inicio"\n3. Toca "Añadir"');
-                } else if (isAndroidChrome) {
-                    alert('📲 Para instalar esta app en Chrome:\n\n1. Toca el menú ⋮ (arriba a la derecha)\n2. Busca y toca "Instalar app" o "Agregar a pantalla de inicio"\n3. Confirma la instalación\n\nSi no aparece esa opción, asegúrate de:\n• Estar conectado por HTTPS (candado 🔒)\n• Haber visitado la página más de una vez\n• Borrar caché si ya lo intentaste antes');
-                } else {
-                    alert('📲 Para instalar esta app:\n\nUsa la opción "Instalar app" o "Agregar a pantalla de inicio" del menú del navegador.\n\nEn Chrome: Menú ⋮ → "Instalar app" o "Agregar a pantalla de inicio".');
+                // Mostrar modal con diagnóstico e instrucciones
+                updatePwaDiagnostic();
+                if (pwaModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(pwaModal).show();
                 }
             }
         });
     }
 
-    // Ocultar botón cuando la app ya esté instalada (display-mode: standalone)
+    // Botón "Reintentar instalación" en el modal
+    const retryBtn = document.getElementById('pwaRetryInstall');
+    if (retryBtn) {
+        retryBtn.addEventListener('click', function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        hidePwaInstallBtn();
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Recargar para intentar de nuevo
+                location.reload();
+            }
+        });
+    }
+
+    // Ocultar botón cuando la app ya esté instalada
     window.addEventListener('appinstalled', () => {
         hidePwaInstallBtn();
         deferredPrompt = null;
