@@ -4,7 +4,7 @@
 //              Network-first para navegación (datos siempre frescos)
 // ─────────────────────────────────────────────────────────────────────
 
-const CACHE_VERSION = 'crm-pwa-v1';
+const CACHE_VERSION = 'crm-pwa-v2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -13,7 +13,6 @@ const PRECACHE_ASSETS = [
     '/',
     '/login',
     '/offline.html',
-    '/manifest.json',
     // Bootstrap
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
@@ -61,6 +60,12 @@ self.addEventListener('fetch', (event) => {
     if (request.method !== 'GET') return;
 
     const url = new URL(request.url);
+
+    // No cachear manifest ni iconos dinámicos (siempre red fresca)
+    if (url.pathname === '/manifest.json' || url.pathname.startsWith('/pwa/icon/')) {
+        event.respondWith(fetch(request));
+        return;
+    }
 
     // No cachear rutas API (siempre red fresca)
     if (url.pathname.startsWith('/api/')) {

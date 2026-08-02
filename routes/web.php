@@ -12,6 +12,7 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\PwaController;
 use Illuminate\Support\Facades\Storage;
 
 // ── PANEL SUPERADMIN (SIN tenant) ──────────────────────────────────────────
@@ -38,6 +39,10 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::put('/planes-precios/{planPrecio}', [SuperAdminController::class, 'planPreciosUpdate'])->name('planes-precios.update');
     });
 });
+
+// ── PWA: Manifest e iconos dinámicos (sin autenticación) ──────────────
+Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
+Route::get('/pwa/icon/{size}', [PwaController::class, 'icon'])->where('size', '192|512')->name('pwa.icon');
 
 // ── RUTA PÚBLICA PARA QR DE REPARACIONES (sin autenticación) ──────────────
 // El middleware CheckTenantStatus no afecta usuarios no autenticados (solo redirige si hay sesión y el tenant
