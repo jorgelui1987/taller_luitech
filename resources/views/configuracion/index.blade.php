@@ -212,6 +212,115 @@
             </div>
         </div>
 
+        <!-- ═══════ Publicidad / Página Pública ═══════ -->
+        @php
+            $tenantActual = auth()->user()->tenant;
+            $slugPublico = $tenantActual?->slug_publico;
+            $urlPublica = $slugPublico ? url('/t/' . $slugPublico) : null;
+        @endphp
+        <div class="card mb-4" style="border:2px solid #a855f7;">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3"><i class="fas fa-bullhorn me-2" style="color:#a855f7;"></i>Publicidad y Página Pública</h6>
+
+                @if($urlPublica)
+                <div class="p-3 mb-3 text-center" style="background:#f0fdf4;border-radius:12px;border:1px dashed #10b981;">
+                    <div style="font-size:12px;color:#065f46;" class="mb-2">
+                        <i class="fas fa-globe me-1"></i>Tu página pública está activa
+                    </div>
+                    <a href="{{ $urlPublica }}" target="_blank" class="btn btn-success btn-sm" style="border-radius:20px;">
+                        <i class="fas fa-external-link-alt me-2"></i>Ver mi página pública
+                    </a>
+                    <div class="form-text mt-2" style="font-size:11px;">
+                        Comparte este link: <strong>{{ $urlPublica }}</strong>
+                    </div>
+                </div>
+                @else
+                <div class="alert alert-warning py-2 px-3" style="font-size:12px;">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    Tu tenant no tiene slug público. Ejecuta <code>php artisan tenant:asignar-slugs</code> en el servidor.
+                </div>
+                @endif
+
+                <form action="{{ route('configuracion.updateEmpresa') }}" method="POST">
+                    @csrf
+
+                    <div class="mb-2 d-flex align-items-center justify-content-between">
+                        <label class="form-label mb-0">Activar página pública</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="pagina_publica_activa" value="1"
+                                   id="paginaPublicaActiva" {{ old('pagina_publica_activa', $empresa->pagina_publica_activa ?? true) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="paginaPublicaActiva" style="font-size:12px;">Sí / No</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Descripción corta</label>
+                        <textarea name="descripcion_corta" class="form-control" rows="2" maxlength="500"
+                                  placeholder="Ej: Expertos en reparación de celulares. Repuestos originales y garantía.">{{ old('descripcion_corta', $empresa->descripcion_corta ?? '') }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Horario de atención</label>
+                        <input type="text" name="horario_atencion" class="form-control" maxlength="255"
+                               value="{{ old('horario_atencion', $empresa->horario_atencion ?? '') }}"
+                               placeholder="Ej: Lun-Vie 9am-7pm, Sáb 9am-2pm">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><i class="fab fa-instagram me-1" style="color:#e1306c;"></i>Instagram</label>
+                            <input type="text" name="instagram" class="form-control" maxlength="255"
+                                   value="{{ old('instagram', $empresa->instagram ?? '') }}" placeholder="https://instagram.com/...">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><i class="fab fa-facebook me-1" style="color:#1877f2;"></i>Facebook</label>
+                            <input type="text" name="facebook" class="form-control" maxlength="255"
+                                   value="{{ old('facebook', $empresa->facebook ?? '') }}" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><i class="fab fa-tiktok me-1"></i>TikTok</label>
+                            <input type="text" name="tiktok" class="form-control" maxlength="255"
+                                   value="{{ old('tiktok', $empresa->tiktok ?? '') }}" placeholder="https://tiktok.com/...">
+                        </div>
+                    </div>
+
+                    <hr style="border-top:1px dashed #e5e7eb;">
+
+                    <h6 class="fw-bold mb-3" style="font-size:13px;">
+                        <i class="fas fa-ticket-alt me-2" style="color:#10b981;"></i>Cupón de Descuento Automático
+                    </h6>
+
+                    <div class="mb-2 d-flex align-items-center justify-content-between">
+                        <label class="form-label mb-0">Generar cupón al entregar</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="cupon_automatico_al_entregar" value="1"
+                                   id="cuponAutomatico" {{ old('cupon_automatico_al_entregar', $empresa->cupon_automatico_al_entregar ?? true) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="cuponAutomatico" style="font-size:12px;">Sí / No</label>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Descuento (%)</label>
+                            <input type="number" name="cupon_descuento_porcentaje" class="form-control"
+                                   min="0" max="100" step="0.5"
+                                   value="{{ old('cupon_descuento_porcentaje', $empresa->cupon_descuento_porcentaje ?? 10) }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Días de validez</label>
+                            <input type="number" name="cupon_dias_validez" class="form-control"
+                                   min="1" max="365"
+                                   value="{{ old('cupon_dias_validez', $empresa->cupon_dias_validez ?? 30) }}">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-save me-2"></i>Guardar Publicidad
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <!-- Estadísticas rápidas -->
         <div class="card mb-4">
             <div class="card-body p-4">

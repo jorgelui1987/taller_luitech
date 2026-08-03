@@ -133,6 +133,16 @@ class ConfiguracionController extends Controller
             'simbolo_moneda'=> 'required|string|max:5',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
+            // ── Publicidad / Página pública ──
+            'instagram'     => 'nullable|string|max:255',
+            'facebook'      => 'nullable|string|max:255',
+            'tiktok'        => 'nullable|string|max:255',
+            'horario_atencion' => 'nullable|string|max:255',
+            'descripcion_corta' => 'nullable|string|max:500',
+            'pagina_publica_activa' => 'boolean',
+            'cupon_automatico_al_entregar' => 'boolean',
+            'cupon_descuento_porcentaje' => 'nullable|numeric|min:0|max:100',
+            'cupon_dias_validez' => 'nullable|integer|min:1|max:365',
         ]);
 
         $data = $validated;
