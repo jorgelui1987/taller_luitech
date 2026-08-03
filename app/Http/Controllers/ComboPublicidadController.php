@@ -31,29 +31,39 @@ class ComboPublicidadController extends Controller
         }
 
         // Reseñas públicas (solo publicadas y con calificación >= 4)
-        $resenas = Resena::withoutGlobalScopes()
-            ->where('tenant_id', $tenant->id)
-            ->where('publicada', true)
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
+        $resenas = collect();
+        $promedio = null;
+        try {
+            $resenas = Resena::withoutGlobalScopes()
+                ->where('tenant_id', $tenant->id)
+                ->where('publicada', true)
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get();
 
-        // Promedio de calificación
-        $promedio = Resena::withoutGlobalScopes()
-            ->where('tenant_id', $tenant->id)
-            ->where('publicada', true)
-            ->avg('calificacion');
+            $promedio = Resena::withoutGlobalScopes()
+                ->where('tenant_id', $tenant->id)
+                ->where('publicada', true)
+                ->avg('calificacion');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('No se pudieron cargar reseñas: ' . $e->getMessage());
+        }
 
         // Cupones activos (para mostrar en la página)
-        $cupones = Cupon::withoutGlobalScopes()
-            ->where('tenant_id', $tenant->id)
-            ->where('estado', 'activo')
-            ->where(function ($q) {
-                $q->whereNull('fecha_expiracion')->orWhere('fecha_expiracion', '>', now());
-            })
-            ->orderByDesc('created_at')
-            ->limit(5)
-            ->get();
+        $cupones = collect();
+        try {
+            $cupones = Cupon::withoutGlobalScopes()
+                ->where('tenant_id', $tenant->id)
+                ->where('estado', 'activo')
+                ->where(function ($q) {
+                    $q->whereNull('fecha_expiracion')->orWhere('fecha_expiracion', '>', now());
+                })
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('No se pudieron cargar cupones: ' . $e->getMessage());
+        }
 
         // Logo URL
         $logoSrc = null;
