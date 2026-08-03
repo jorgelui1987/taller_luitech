@@ -14,6 +14,7 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\AyudaController;
+use App\Http\Controllers\ComboPublicidadController;
 use Illuminate\Support\Facades\Storage;
 
 // ── PANEL SUPERADMIN (SIN tenant) ──────────────────────────────────────────
@@ -46,10 +47,17 @@ Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.mani
 Route::get('/pwa/icon/{size}', [PwaController::class, 'icon'])->where('size', '192|512')->name('pwa.icon');
 
 // ── RUTA PÚBLICA PARA QR DE REPARACIONES (sin autenticación) ──────────────
-// El middleware CheckTenantStatus no afecta usuarios no autenticados (solo redirige si hay sesión y el tenant
-// está suspendido/expirado). La ruta es accesible públicamente para que los clientes escaneen el QR.
 Route::get('/r/{numero_orden}', [\App\Http\Controllers\PublicReparacionController::class, 'status'])
     ->name('reparaciones.public-status');
+
+// ── PÁGINA PÚBLICA DE LA TIENDA (mini-web) ────────────────────────────────
+Route::get('/t/{slug}', [ComboPublicidadController::class, 'tiendaPublica'])->name('public.tienda');
+Route::get('/t/{slug}/resena', [ComboPublicidadController::class, 'formularioResena'])->name('public.resena.form');
+Route::get('/t/{slug}/resena/{numeroOrden}', [ComboPublicidadController::class, 'formularioResena'])->name('public.resena.form.orden');
+Route::post('/t/{slug}/resena', [ComboPublicidadController::class, 'guardarResena'])->name('public.resena.store');
+
+// ── API PÚBLICA PARA VALIDAR CUPONES ──────────────────────────────────────
+Route::post('/api/cupon/validar', [ComboPublicidadController::class, 'validarCupon'])->name('api.cupon.validar');
 
 // ── RUTA PARA SERVIR ARCHIVOS DE STORAGE (sin symlink) ──────────────
 Route::get('/storage/{path}', function ($path) {
@@ -180,6 +188,13 @@ Route::middleware(['tenant'])->group(function () {
             Route::resource('reparaciones', ReparacionController::class)->parameters(['reparaciones' => 'reparacion']);
             Route::get('/reparaciones/{reparacion}/ticket', [ReparacionController::class, 'printTicket'])->name('reparaciones.ticket');
             Route::get('/reparaciones/{reparacion}/whatsapp', [ReparacionController::class, 'enviarWhatsApp'])->name('reparaciones.whatsapp');
+
+            // Kanban (vista de tablero)
+            Route::get('/reparaciones/kanban', [ComboPublicidadController::class, 'kanban'])->name('reparaciones.kanban');
+            Route::post('/reparaciones/{reparacion}/kanban-estado', [ComboPublicidadController::class, 'kanbanActualizarEstado'])->name('reparaciones.kanban.estado');
+
+            // Recordatorio de retiro por WhatsApp
+            Route::get('/reparaciones/{reparacion}/recordatorio-retiro', [ComboPublicidadController::class, 'enviarRecordatorioRetiro'])->name('reparaciones.recordatorio-retiro');
 
             // Firmas y fotos (AJAX)
             Route::post('/reparaciones/{reparacion}/firma', [ReparacionController::class, 'subirFirma'])->name('reparaciones.firma');

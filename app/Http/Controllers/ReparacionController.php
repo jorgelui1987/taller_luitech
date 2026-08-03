@@ -357,6 +357,11 @@ class ReparacionController extends Controller
 
         // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN ──
         if ($validated['estado'] === 'entregado') {
+            // Generar cupón de descuento automático al entregar
+            if (!$yaEntregada) {
+                \App\Http\Controllers\ComboPublicidadController::generarCuponAlEntregar($reparacion);
+            }
+
             // Si no se ingresó costo_final (0 o null), usar presupuesto
             $totalReparacion = (float)(($validated['costo_final'] ?? 0) > 0
                 ? $validated['costo_final']

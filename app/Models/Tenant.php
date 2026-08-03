@@ -10,6 +10,7 @@ class Tenant extends Model
     protected $fillable = [
         'empresa',
         'subdominio',
+        'slug_publico',
         'dominio',
         'email_contacto',
         'telefono_contacto',
@@ -24,11 +25,15 @@ class Tenant extends Model
         'max_productos',
         'fecha_expiracion',
         'configuracion_extra',
+        'redes_sociales',
+        'descripcion_corta',
+        'horario_atencion',
     ];
 
     protected $casts = [
         'fecha_expiracion' => 'datetime',
         'configuracion_extra' => 'array',
+        'redes_sociales' => 'array',
         'max_usuarios' => 'integer',
         'max_productos' => 'integer',
         'impuesto' => 'decimal:2',
@@ -65,6 +70,16 @@ class Tenant extends Model
         return $this->hasMany(Reparacion::class);
     }
 
+    public function cupones(): HasMany
+    {
+        return $this->hasMany(Cupon::class);
+    }
+
+    public function resenas(): HasMany
+    {
+        return $this->hasMany(Resena::class);
+    }
+
     // ─── Scopes ────────────────────────────────────────────────────
     public function scopeActivo($query)
     {
@@ -95,6 +110,12 @@ class Tenant extends Model
     public function puedeAgregarProducto(): bool
     {
         return $this->productos()->count() < $this->max_productos;
+    }
+
+    public function getUrlPublicaAttribute(): ?string
+    {
+        if (!$this->slug_publico) return null;
+        return url('/t/' . $this->slug_publico);
     }
 
     /**

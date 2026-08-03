@@ -899,13 +899,18 @@
 
         @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
         <a href="{{ route('reparaciones.index') }}"
-           class="nav-link {{ request()->routeIs('reparaciones.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+           class="nav-link {{ request()->routeIs('reparaciones.*') && !request()->routeIs('reparaciones.kanban') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-tools"></i></span>
             Reparaciones
             @php $pendRep = \App\Models\Reparacion::where('estado','listo')->count(); @endphp
             @if($pendRep > 0)
                 <span class="badge-count">{{ $pendRep }}</span>
             @endif
+        </a>
+        <a href="{{ route('reparaciones.kanban') }}"
+           class="nav-link {{ request()->routeIs('reparaciones.kanban') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-columns"></i></span>
+            Tablero Kanban
         </a>
         @endif
 

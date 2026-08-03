@@ -23,7 +23,23 @@ class Configuracion extends Model
         'simbolo_moneda',
         'zona_horaria',
         'terminos_garantia',
+        'instagram',
+        'facebook',
+        'tiktok',
+        'horario_atencion',
+        'descripcion_corta',
+        'pagina_publica_activa',
+        'cupon_automatico_al_entregar',
+        'cupon_descuento_porcentaje',
+        'cupon_dias_validez',
         'tenant_id',
+    ];
+
+    protected $casts = [
+        'pagina_publica_activa' => 'boolean',
+        'cupon_automatico_al_entregar' => 'boolean',
+        'cupon_descuento_porcentaje' => 'decimal:2',
+        'cupon_dias_validez' => 'integer',
     ];
 
     protected static function booted(): void

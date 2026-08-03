@@ -58,6 +58,11 @@ class Venta extends Model
         return $this->hasMany(DetalleVenta::class);
     }
 
+    public function cupones()
+    {
+        return $this->hasMany(Cupon::class);
+    }
+
     public static function generarNumero(): string
     {
         $tenantId = auth()->check() ? auth()->user()->tenant_id : null;

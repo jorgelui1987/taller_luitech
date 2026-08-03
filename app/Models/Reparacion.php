@@ -75,6 +75,21 @@ class Reparacion extends Model
         return $this->hasMany(ReparacionFoto::class);
     }
 
+    public function cupones()
+    {
+        return $this->hasMany(Cupon::class);
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(Resena::class);
+    }
+
+    public function recordatoriosRetiro()
+    {
+        return $this->hasMany(RecordatorioRetiro::class);
+    }
+
     public function calcularTotal(): float
     {
         $precio = ($this->costo_final !== null && $this->costo_final > 0)
