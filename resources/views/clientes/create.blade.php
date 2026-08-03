@@ -97,7 +97,7 @@
                         <div class="col-md-4">
                             <label class="form-label">Ciudad</label>
                             <input type="text" class="form-control" name="ciudad"
-                                   value="{{ old('ciudad') }}" placeholder="">
+                                   value="{{ old('ciudad') }}" placeholder="serena">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Dirección</label>
