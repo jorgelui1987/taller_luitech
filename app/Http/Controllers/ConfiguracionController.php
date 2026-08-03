@@ -19,6 +19,19 @@ class ConfiguracionController extends Controller
     {
         $tenantId = auth()->user()->tenant_id;
 
+        // 0. Asignar slug_publico automáticamente si no existe
+        $tenant = auth()->user()->tenant;
+        if ($tenant && !$tenant->slug_publico) {
+            $base = \Illuminate\Support\Str::slug($tenant->empresa ?? $tenant->subdominio ?? 'tienda');
+            $slug = $base;
+            $contador = 1;
+            while (\App\Models\Tenant::where('slug_publico', $slug)->exists()) {
+                $slug = $base . '-' . $contador;
+                $contador++;
+            }
+            $tenant->update(['slug_publico' => $slug]);
+        }
+
         // 1. Usuarios del mismo tenant (excluyendo superadmin)
         $usuarios = User::where('tenant_id', $tenantId)
             ->where('rol', '!=', 'superadmin')
