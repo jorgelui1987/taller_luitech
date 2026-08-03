@@ -16,7 +16,8 @@
         .feature-list { list-style: none; padding: 0; }
         .feature-list li { padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
         .feature-list li:last-child { border-bottom: none; }
-        .feature-list i { color: #10b981; margin-right: 8px; }
+        .feature-list .feature-yes { color: #10b981; margin-right: 8px; }
+        .feature-list .feature-no { color: #dc2626; margin-right: 8px; }
         .hero-section { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%); }
     </style>
 </head>
@@ -108,14 +109,14 @@
                             <p class="text-muted small">{{ $planGratis->descripcion ?? 'Para empezar' }}</p>
                             <div class="price">{{ $mostrarPrecio($planGratis, 'S/0') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <li><i class="bi bi-check2"></i> Hasta 3 usuarios</li>
-                                <li><i class="bi bi-check2"></i> Hasta 50 productos</li>
-                                <li><i class="bi bi-check2"></i> Ventas básicas</li>
-                                <li><i class="bi bi-check2"></i> Reparaciones básicas</li>
-                                <li><i class="bi bi-check2"></i> Reportes básicos</li>
-                                <li><i class="bi bi-x text-danger"></i> <span class="text-muted">Exportar a Excel</span></li>
-                                <li><i class="bi bi-x text-danger"></i> <span class="text-muted">Notificaciones WhatsApp</span></li>
-                                <li><i class="bi bi-x text-danger"></i> <span class="text-muted">Soporte prioritario</span></li>
+                                <li><span class="feature-yes">✅</span> Hasta 3 usuarios</li>
+                                <li><span class="feature-yes">✅</span> Hasta 50 productos</li>
+                                <li><span class="feature-yes">✅</span> Ventas básicas</li>
+                                <li><span class="feature-yes">✅</span> Reparaciones básicas</li>
+                                <li><span class="feature-yes">✅</span> Reportes básicos</li>
+                                <li><span class="feature-no">❌</span> <span class="text-muted">Exportar a Excel</span></li>
+                                <li><span class="feature-no">❌</span> <span class="text-muted">Notificaciones WhatsApp</span></li>
+                                <li><span class="feature-no">❌</span> <span class="text-muted">Soporte prioritario</span></li>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Comenzar Gratis</a>
                         </div>
@@ -130,14 +131,14 @@
                             <p class="text-muted small">{{ $planBasico->descripcion ?? 'Para negocios pequeños' }}</p>
                             <div class="price">{{ $mostrarPrecio($planBasico, 'S/49') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <li><i class="bi bi-check2"></i> Hasta 5 usuarios</li>
-                                <li><i class="bi bi-check2"></i> Hasta 200 productos</li>
-                                <li><i class="bi bi-check2"></i> Ventas completas</li>
-                                <li><i class="bi bi-check2"></i> Reparaciones completas</li>
-                                <li><i class="bi bi-check2"></i> Reportes avanzados</li>
-                                <li><i class="bi bi-check2"></i> Exportar a Excel</li>
-                                <li><i class="bi bi-check2"></i> Notificaciones WhatsApp</li>
-                                <li><i class="bi bi-x text-danger"></i> <span class="text-muted">Soporte prioritario</span></li>
+                                <li><span class="feature-yes">✅</span> Hasta 5 usuarios</li>
+                                <li><span class="feature-yes">✅</span> Hasta 200 productos</li>
+                                <li><span class="feature-yes">✅</span> Ventas completas</li>
+                                <li><span class="feature-yes">✅</span> Reparaciones completas</li>
+                                <li><span class="feature-yes">✅</span> Reportes avanzados</li>
+                                <li><span class="feature-yes">✅</span> Exportar a Excel</li>
+                                <li><span class="feature-yes">✅</span> Notificaciones WhatsApp</li>
+                                <li><span class="feature-no">❌</span> <span class="text-muted">Soporte prioritario</span></li>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Lo quiero</a>
                         </div>
@@ -153,14 +154,14 @@
                             <p class="text-muted small">{{ $planProfesional->descripcion ?? 'Para negocios en crecimiento' }}</p>
                             <div class="price">{{ $mostrarPrecio($planProfesional, 'S/99') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <li><i class="bi bi-check2"></i> Hasta 15 usuarios</li>
-                                <li><i class="bi bi-check2"></i> Hasta 1,000 productos</li>
-                                <li><i class="bi bi-check2"></i> Ventas completas</li>
-                                <li><i class="bi bi-check2"></i> Reparaciones completas</li>
-                                <li><i class="bi bi-check2"></i> Reportes avanzados</li>
-                                <li><i class="bi bi-check2"></i> Exportar a Excel</li>
-                                <li><i class="bi bi-check2"></i> Notificaciones WhatsApp</li>
-                                <li><i class="bi bi-check2"></i> Soporte prioritario</li>
+                                <li><span class="feature-yes">✅</span> Hasta 15 usuarios</li>
+                                <li><span class="feature-yes">✅</span> Hasta 1,000 productos</li>
+                                <li><span class="feature-yes">✅</span> Ventas completas</li>
+                                <li><span class="feature-yes">✅</span> Reparaciones completas</li>
+                                <li><span class="feature-yes">✅</span> Reportes avanzados</li>
+                                <li><span class="feature-yes">✅</span> Exportar a Excel</li>
+                                <li><span class="feature-yes">✅</span> Notificaciones WhatsApp</li>
+                                <li><span class="feature-yes">✅</span> Soporte prioritario</li>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-primary w-100 mt-3">Lo quiero</a>
                         </div>
@@ -175,14 +176,14 @@
                             <p class="text-muted small">{{ $planEmpresarial->descripcion ?? 'Para grandes tiendas' }}</p>
                             <div class="price">{{ $mostrarPrecio($planEmpresarial, 'S/199') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <li><i class="bi bi-check2"></i> Usuarios ilimitados</li>
-                                <li><i class="bi bi-check2"></i> Productos ilimitados</li>
-                                <li><i class="bi bi-check2"></i> Todas las funcionalidades</li>
-                                <li><i class="bi bi-check2"></i> Múltiples sucursales</li>
-                                <li><i class="bi bi-check2"></i> API personalizada</li>
-                                <li><i class="bi bi-check2"></i> Soporte 24/7</li>
-                                <li><i class="bi bi-check2"></i> Capacitación del equipo</li>
-                                <li><i class="bi bi-check2"></i> Dominio personalizado</li>
+                                <li><span class="feature-yes">✅</span> Usuarios ilimitados</li>
+                                <li><span class="feature-yes">✅</span> Productos ilimitados</li>
+                                <li><span class="feature-yes">✅</span> Todas las funcionalidades</li>
+                                <li><span class="feature-yes">✅</span> Múltiples sucursales</li>
+                                <li><span class="feature-yes">✅</span> API personalizada</li>
+                                <li><span class="feature-yes">✅</span> Soporte 24/7</li>
+                                <li><span class="feature-yes">✅</span> Capacitación del equipo</li>
+                                <li><span class="feature-yes">✅</span> Dominio personalizado</li>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Contactar</a>
                         </div>
