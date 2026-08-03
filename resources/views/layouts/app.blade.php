@@ -708,45 +708,88 @@
             }
         }
 
-        /* ── Botón de instalación PWA ── */
+        /* ── Botón de instalación PWA (compacto) ── */
         .pwa-install-btn {
             position: fixed;
-            bottom: 24px;
-            right: 20px;
+            bottom: 20px;
+            right: 16px;
             z-index: 1000;
             background: var(--gradient);
             color: #fff;
             border: none;
             border-radius: 50px;
-            padding: 14px 20px;
-            font-size: 14px;
+            padding: 8px 14px;
+            font-size: 12px;
             font-weight: 500;
             font-family: inherit;
-            box-shadow: 0 4px 15px rgba(168,85,247,0.4);
+            box-shadow: 0 3px 10px rgba(168,85,247,0.35);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             transition: all .2s;
-            min-height: 44px;
+            min-height: 34px;
+            line-height: 1;
         }
         .pwa-install-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(168,85,247,0.5);
+            transform: scale(1.04);
+            box-shadow: 0 4px 14px rgba(168,85,247,0.45);
         }
         .pwa-install-btn.d-none {
             display: none !important;
         }
-        /* En desktop también se muestra, posición arriba del FAB si existe */
-        @media (min-width: 576px) {
+        /* Botón de cierre (X) dentro del botón PWA */
+        .pwa-install-btn .pwa-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            font-size: 10px;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 2px;
+            transition: background .2s;
+            flex-shrink: 0;
+        }
+        .pwa-install-btn .pwa-close:hover {
+            background: rgba(255,255,255,0.45);
+        }
+        /* En móvil: solo icono circular pequeño */
+        @media (max-width: 575.98px) {
             .pwa-install-btn {
-                bottom: 24px;
-                right: 20px;
+                bottom: 16px;
+                right: 14px;
+                width: 44px;
+                height: 44px;
+                padding: 0;
+                border-radius: 50%;
+                justify-content: center;
+                gap: 0;
+                min-height: 0;
+            }
+            .pwa-install-btn span.pwa-text {
+                display: none;
+            }
+            .pwa-install-btn .pwa-close {
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                width: 16px;
+                height: 16px;
+                font-size: 9px;
+                background: rgba(0,0,0,0.6);
+                border: 1.5px solid #fff;
+            }
+            .pwa-install-btn i {
+                font-size: 18px;
             }
         }
         /* Icono del botón PWA */
         .pwa-install-btn i {
-            font-size: 18px;
+            font-size: 15px;
         }
     </style>
 
@@ -1081,7 +1124,10 @@
 {{-- Botón de instalación PWA --}}
 <button id="pwaInstallBtn" class="pwa-install-btn d-none">
     <i class="fas fa-download"></i>
-    <span>Instalar App</span>
+    <span class="pwa-text">Instalar App</span>
+    <span class="pwa-close" id="pwaCloseBtn" title="No mostrar de nuevo">
+        <i class="fas fa-times"></i>
+    </span>
 </button>
 
 {{-- Modal de instalación PWA --}}
@@ -1168,6 +1214,10 @@
     let deferredPrompt = null;
     const pwaBtn = document.getElementById('pwaInstallBtn');
     const pwaModal = document.getElementById('pwaInstallModal');
+    const pwaCloseBtn = document.getElementById('pwaCloseBtn');
+
+    // Clave para persistir que el usuario cerró/descartó el botón
+    const PWA_DISMISS_KEY = 'pwa_install_dismissed';
 
     // Detectar si ya está instalada como app (standalone)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
@@ -1176,6 +1226,10 @@
     // Función para mostrar el botón de instalación
     function showPwaInstallBtn() {
         if (pwaBtn && !isStandalone) {
+            // No mostrar si el usuario ya lo descartó antes
+            try {
+                if (localStorage.getItem(PWA_DISMISS_KEY) === '1') return;
+            } catch(e) {}
             pwaBtn.classList.remove('d-none');
         }
     }
@@ -1183,6 +1237,22 @@
     // Función para ocultar el botón de instalación
     function hidePwaInstallBtn() {
         if (pwaBtn) pwaBtn.classList.add('d-none');
+    }
+
+    // Función para descartar el botón permanentemente (con localStorage)
+    function dismissPwaInstallBtn() {
+        hidePwaInstallBtn();
+        try {
+            localStorage.setItem(PWA_DISMISS_KEY, '1');
+        } catch(e) {}
+    }
+
+    // Click en la X para descartar el botón
+    if (pwaCloseBtn) {
+        pwaCloseBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dismissPwaInstallBtn();
+        });
     }
 
     // Actualizar diagnóstico en el modal
@@ -1230,14 +1300,9 @@
         }
     }
 
-    // En móvil (Android/Chrome), mostrar el botón siempre que sea instalable.
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
     // Si la app ya está instalada, ocultar el botón
     if (isStandalone) {
         hidePwaInstallBtn();
-    } else if (isMobile) {
-        setTimeout(showPwaInstallBtn, 3000);
     }
 
     // Evento beforeinstallprompt (Chrome, Edge, Android)
@@ -1257,9 +1322,11 @@
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         console.log('✅ App instalada');
-                        hidePwaInstallBtn();
+                        dismissPwaInstallBtn();
                     } else {
                         console.log('❌ Instalación cancelada');
+                        // Si el usuario cancela, no mostrar el botón de nuevo en esta sesión
+                        dismissPwaInstallBtn();
                     }
                     deferredPrompt = null;
                 });
@@ -1281,7 +1348,7 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        hidePwaInstallBtn();
+                        dismissPwaInstallBtn();
                     }
                     deferredPrompt = null;
                 });
@@ -1294,7 +1361,7 @@
 
     // Ocultar botón cuando la app ya esté instalada
     window.addEventListener('appinstalled', () => {
-        hidePwaInstallBtn();
+        dismissPwaInstallBtn();
         deferredPrompt = null;
     });
 </script>
