@@ -13,6 +13,7 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\PwaController;
+use App\Http\Controllers\AyudaController;
 use Illuminate\Support\Facades\Storage;
 
 // ── PANEL SUPERADMIN (SIN tenant) ──────────────────────────────────────────
@@ -100,6 +101,9 @@ Route::middleware(['tenant'])->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Manual de Ayuda
+        Route::get('/ayuda', [AyudaController::class, 'index'])->name('ayuda.index');
 
         // Clientes (solo admin puede eliminar)
         Route::resource('clientes', ClienteController::class)->except(['destroy']);

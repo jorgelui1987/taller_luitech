@@ -952,6 +952,12 @@
         </a>
         @endif
 
+        <a href="{{ route('ayuda.index') }}"
+           class="nav-link {{ request()->routeIs('ayuda.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-book-open"></i></span>
+            Manual de Ayuda
+        </a>
+
     </nav>
 
     <!-- Logout -->
