@@ -185,16 +185,14 @@ Route::middleware(['tenant'])->group(function () {
 
         // Reparaciones (solo admin y técnico)
         Route::middleware('check.reparaciones')->group(function () {
+            // Kanban (vista de tablero) - IMPORTANTE: antes del resource
+            Route::get('/reparaciones/kanban', [ComboPublicidadController::class, 'kanban'])->name('reparaciones.kanban');
+            Route::post('/reparaciones/{reparacion}/kanban-estado', [ComboPublicidadController::class, 'kanbanActualizarEstado'])->name('reparaciones.kanban.estado');
+            Route::get('/reparaciones/{reparacion}/recordatorio-retiro', [ComboPublicidadController::class, 'enviarRecordatorioRetiro'])->name('reparaciones.recordatorio-retiro');
+
             Route::resource('reparaciones', ReparacionController::class)->parameters(['reparaciones' => 'reparacion']);
             Route::get('/reparaciones/{reparacion}/ticket', [ReparacionController::class, 'printTicket'])->name('reparaciones.ticket');
             Route::get('/reparaciones/{reparacion}/whatsapp', [ReparacionController::class, 'enviarWhatsApp'])->name('reparaciones.whatsapp');
-
-            // Kanban (vista de tablero)
-            Route::get('/reparaciones/kanban', [ComboPublicidadController::class, 'kanban'])->name('reparaciones.kanban');
-            Route::post('/reparaciones/{reparacion}/kanban-estado', [ComboPublicidadController::class, 'kanbanActualizarEstado'])->name('reparaciones.kanban.estado');
-
-            // Recordatorio de retiro por WhatsApp
-            Route::get('/reparaciones/{reparacion}/recordatorio-retiro', [ComboPublicidadController::class, 'enviarRecordatorioRetiro'])->name('reparaciones.recordatorio-retiro');
 
             // Firmas y fotos (AJAX)
             Route::post('/reparaciones/{reparacion}/firma', [ReparacionController::class, 'subirFirma'])->name('reparaciones.firma');
