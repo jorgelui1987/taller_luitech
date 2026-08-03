@@ -169,30 +169,36 @@ class ComboPublicidadController extends Controller
      */
     public static function generarCuponAlEntregar(Reparacion $reparacion): ?Cupon
     {
-        $config = Configuracion::withoutGlobalScopes()
-            ->where('tenant_id', $reparacion->tenant_id)
-            ->first();
+        try {
+            $config = Configuracion::withoutGlobalScopes()
+                ->where('tenant_id', $reparacion->tenant_id)
+                ->first();
 
-        if (!$config || !$config->cupon_automatico_al_entregar) {
+            if (!$config || !$config->cupon_automatico_al_entregar) {
+                return null;
+            }
+
+            $porcentaje = (float) ($config->cupon_descuento_porcentaje ?? 10);
+            $diasValidez = (int) ($config->cupon_dias_validez ?? 30);
+
+            $cupon = Cupon::create([
+                'tenant_id' => $reparacion->tenant_id,
+                'reparacion_id' => $reparacion->id,
+                'codigo' => Cupon::generarCodigo(),
+                'tipo' => 'porcentaje',
+                'valor' => $porcentaje,
+                'descripcion' => "Descuento del {$porcentaje}% en tu próxima visita",
+                'fecha_expiracion' => now()->addDays($diasValidez),
+                'estado' => 'activo',
+                'compartible' => true,
+            ]);
+
+            return $cupon;
+        } catch (\Exception $e) {
+            // Si falla la creación del cupón (ej: tabla no existe), no romper la entrega
+            \Illuminate\Support\Facades\Log::warning('No se pudo generar cupón al entregar: ' . $e->getMessage());
             return null;
         }
-
-        $porcentaje = (float) ($config->cupon_descuento_porcentaje ?? 10);
-        $diasValidez = (int) ($config->cupon_dias_validez ?? 30);
-
-        $cupon = Cupon::create([
-            'tenant_id' => $reparacion->tenant_id,
-            'reparacion_id' => $reparacion->id,
-            'codigo' => Cupon::generarCodigo(),
-            'tipo' => 'porcentaje',
-            'valor' => $porcentaje,
-            'descripcion' => "Descuento del {$porcentaje}% en tu próxima visita",
-            'fecha_expiracion' => now()->addDays($diasValidez),
-            'estado' => 'activo',
-            'compartible' => true,
-        ]);
-
-        return $cupon;
     }
 
     /**
