@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - CRM Celulares</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .password-requirements {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .password-requirements ul {
+            margin: 4px 0 0 0;
+            padding-left: 18px;
+        }
+        .password-requirements li {
+            margin-bottom: 2px;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container py-5">
@@ -17,24 +35,33 @@
                     <div class="card-body">
                         @if($errors->any())
                             <div class="alert alert-danger">
-                                @foreach($errors->all() as $error) <p class="mb-0">{{ $error }}</p> @endforeach
+                                <strong><i class="bi bi-exclamation-triangle"></i> Por favor corrige los siguientes errores:</strong>
+                                <ul class="mb-0 mt-2 ps-3">
+                                    @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                                </ul>
                             </div>
                         @endif
 
                         <form method="POST" action="{{ route('register.post') }}">
                             @csrf
                             <div class="mb-3">
-                                <label class="form-label">Nombre completo</label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+                                <label class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Contraseña</label>
-                                <div class="input-group">
-                                    <input type="password" name="password" id="password" class="form-control" required>
+                                <label class="form-label">Contraseña <span class="text-danger">*</span></label>
+                                <div class="input-group @error('password') has-validation @enderror">
+                                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)" title="Mostrar/Ocultar contraseña">
                                         <svg id="icon-password" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
@@ -42,11 +69,24 @@
                                         </svg>
                                     </button>
                                 </div>
+                                @error('password')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <div class="password-requirements">
+                                    <strong>Requisitos:</strong>
+                                    <ul>
+                                        <li>Mínimo 12 caracteres</li>
+                                        <li>Al menos una letra mayúscula (A-Z)</li>
+                                        <li>Al menos una letra minúscula (a-z)</li>
+                                        <li>Al menos un número (0-9)</li>
+                                        <li>Al menos un símbolo (!@#$%^&*)</li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Confirmar contraseña</label>
+                                <label class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password') is-invalid @enderror" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password_confirmation', this)" title="Mostrar/Ocultar contraseña">
                                         <svg id="icon-password_confirmation" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
@@ -54,17 +94,26 @@
                                         </svg>
                                     </button>
                                 </div>
+                                @error('password')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Rol</label>
-                                <select name="rol" class="form-select" required>
-                                    <option value="vendedor">Vendedor</option>
-                                    <option value="tecnico">Técnico</option>
+                                <label class="form-label">Rol <span class="text-danger">*</span></label>
+                                <select name="rol" class="form-select @error('rol') is-invalid @enderror" required>
+                                    <option value="vendedor" {{ old('rol')=='vendedor'?'selected':'' }}>Vendedor</option>
+                                    <option value="tecnico" {{ old('rol')=='tecnico'?'selected':'' }}>Técnico</option>
                                 </select>
+                                @error('rol')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Teléfono</label>
-                                <input type="text" name="telefono" class="form-control" value="{{ old('telefono') }}">
+                                <input type="text" name="telefono" class="form-control @error('telefono') is-invalid @enderror" value="{{ old('telefono') }}">
+                                @error('telefono')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Registrar</button>
                         </form>
