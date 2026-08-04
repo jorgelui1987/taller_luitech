@@ -324,6 +324,7 @@ class ReparacionController extends Controller
             'garantia'        => 'boolean',
             'dias_garantia'   => 'nullable|integer|min:0',
             'notas'           => 'nullable|string',
+            'cupon_codigo'    => 'nullable|string|max:30',
         ]);
 
         // Auto-calcular total = costo_final - abono si existe, de lo contrario presupuesto - abono
@@ -331,6 +332,39 @@ class ReparacionController extends Controller
             ? (float) $validated['costo_final']
             : (float) ($validated['presupuesto'] ?? 0);
         $validated['total'] = max(0, $precioBase - (float) ($validated['abono'] ?? 0));
+
+        // ── Procesar cupón de descuento ──
+        $cuponAplicado = null;
+        if ($request->filled('cupon_codigo')) {
+            $codigoCupon = strtoupper(trim($request->cupon_codigo));
+            $cupon = Cupon::where('codigo', $codigoCupon)->first();
+
+            if (!$cupon) {
+                return back()->with('error', "El cupón '{$codigoCupon}' no existe.")
+                    ->withInput();
+            }
+
+            if (!$cupon->esValido()) {
+                return back()->with('error', "El cupón '{$codigoCupon}' ya fue usado o está expirado.")
+                    ->withInput();
+            }
+
+            // Evitar que el cupón se use en la misma reparación que lo generó
+            if ($cupon->reparacion_id === $reparacion->id) {
+                return back()->with('error', "El cupón '{$codigoCupon}' fue generado en esta misma reparación y no puede usarse aquí.")
+                    ->withInput();
+            }
+
+            // Aplicar descuento según tipo
+            if ($cupon->tipo === 'porcentaje') {
+                $descuentoCupon = round($validated['total'] * ((float)$cupon->valor / 100), 2);
+            } else {
+                $descuentoCupon = (float)$cupon->valor;
+            }
+
+            $validated['total'] = max(0, $validated['total'] - $descuentoCupon);
+            $cuponAplicado = $cupon;
+        }
 
         // ── Si se está entregando, solo registrar fecha de entrega ──
         // (Sin autocompletar costo_final con presupuesto)
@@ -370,6 +404,11 @@ class ReparacionController extends Controller
 
         $reparacion->update($validated);
 
+        // ── MARCAR CUPÓN COMO USADO EN LA REPARACIÓN ──
+        if ($cuponAplicado) {
+            $cuponAplicado->marcarUsadoEnReparacion($reparacion->id);
+        }
+
         // ── CREAR VENTA AUTOMÁTICA Y COMISIÓN AL ENTREGAR REPARACIÓN ──
         if ($validated['estado'] === 'entregado') {
             // Generar cupón de descuento automático al entregar
@@ -381,6 +420,16 @@ class ReparacionController extends Controller
             $totalReparacion = (float)(($validated['costo_final'] ?? 0) > 0
                 ? $validated['costo_final']
                 : ($validated['presupuesto'] ?? $reparacion->presupuesto ?? $reparacion->total ?? 0));
+
+            // Aplicar descuento del cupón al total de la venta automática
+            if ($cuponAplicado) {
+                if ($cuponAplicado->tipo === 'porcentaje') {
+                    $descuentoVenta = round($totalReparacion * ((float)$cuponAplicado->valor / 100), 2);
+                } else {
+                    $descuentoVenta = (float)$cuponAplicado->valor;
+                }
+                $totalReparacion = max(0, $totalReparacion - $descuentoVenta);
+            }
 
             // ── Calcular comisión del técnico ──
             // Fórmula: comisión = (Monto cobrado - costo_repuesto) × (% / 100)
