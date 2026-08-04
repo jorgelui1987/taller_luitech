@@ -419,6 +419,9 @@
         <a class="indice-item" data-target="configuracion">
             <i class="fas fa-cog"></i> Configuración
         </a>
+        <a class="indice-item" data-target="pagina-publica">
+            <i class="fas fa-globe"></i> Página Pública (Mini Web)
+        </a>
         <a class="indice-item" data-target="backup">
             <i class="fas fa-database"></i> Backup & Restore
         </a>
@@ -1279,6 +1282,110 @@
                     <strong>Importante:</strong> Solo el <strong>Administrador</strong> puede acceder a Configuración. 
                     Asigna roles con cuidado: los <strong>vendedores</strong> no pueden ver reportes financieros 
                     ni configuración.
+                </div>
+            </div>
+        </section>
+
+        {{-- ── PÁGINA PÚBLICA (MINI WEB) ── --}}
+        <section class="ayuda-seccion" id="pagina-publica">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#4f46e5,#3730a3);">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Página Pública (Mini Web)</h2>
+                    <p class="seccion-desc">Tu tienda en línea para mostrar información, reseñas y cupones</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Activar tu página pública</div>
+                    <p class="paso-texto">
+                        Ve a <strong>Configuración → Publicidad y Página Pública</strong>.
+                        Activa la opción <strong>"Activar página pública"</strong> y guarda los cambios.
+                        Tu página estará disponible en una URL tipo: <strong>https://tudominio.com/t/tu-tienda</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Personalizar tu página</div>
+                    <p class="paso-texto">
+                        En la misma sección puedes configurar:
+                        <br>• <strong>Descripción corta</strong> - texto que aparece debajo del nombre de tu tienda.
+                        <br>• <strong>Horario de atención</strong> - ej: "Lun-Vie 9am-7pm".
+                        <br>• <strong>Redes sociales</strong> - Instagram, Facebook, TikTok.
+                        <br>• <strong>Ubicación en Google Maps</strong> - pega el link de tu ubicación.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Agregar tu ubicación en el mapa</div>
+                    <p class="paso-texto">
+                        Para que tu página muestre un <strong>mapa interactivo</strong>:
+                        <br>1. Abre <strong>Google Maps</strong> y busca tu dirección.
+                        <br>2. Haz clic en <strong>"Compartir"</strong> → <strong>"Copiar enlace"</strong>.
+                        <br>3. Pega el enlace en el campo <strong>"Ubicación en Google Maps"</strong> en Configuración.
+                        <br>4. Tu página mostrará el mapa con un botón <strong>"Cómo llegar"</strong>.
+                        <br><br>💡 <strong>Alternativa:</strong> Si solo tienes la dirección configurada, el mapa se genera automáticamente.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Ver tu página pública</div>
+                    <p class="paso-texto">
+                        En Configuración verás un botón <strong>"Ver mi página pública"</strong>.
+                        Desde ahí puedes ver tu página y compartir el enlace con tus clientes.
+                        Tu página muestra:
+                        <br>• <strong>Información</strong> - dirección, teléfono, horario, email.
+                        <br>• <strong>Mapa</strong> - tu ubicación con botón "Cómo llegar".
+                        <br>• <strong>Reseñas</strong> - opiniones de tus clientes.
+                        <br>• <strong>Seguimiento</strong> - los clientes pueden ver el estado de su reparación.
+                        <br>• <strong>Cupones activos</strong> - descuentos disponibles.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">5</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Cupones de descuento automáticos</div>
+                    <p class="paso-texto">
+                        En <strong>Configuración → Publicidad</strong> puedes activar:
+                        <br>• <strong>Generar cupón al entregar</strong> - se crea un cupón automáticamente cuando entregas una reparación.
+                        <br>• <strong>Descuento (%)</strong> - el porcentaje del cupón (ej: 10%).
+                        <br>• <strong>Días de validez</strong> - cuántos días es válido el cupón.
+                        <br><br>Los cupones se muestran en tu <strong>página pública</strong> y en los <strong>tickets impresos</strong>.
+                        El cliente puede usar el cupón en su próxima <strong>venta</strong> o <strong>reparación</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="consejo">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Consejo:</strong> Comparte el link de tu página pública en tus <strong>redes sociales</strong> 
+                    y en los <strong>tickets de venta y reparación</strong>. La URL también se incluye automáticamente 
+                    en los <strong>mensajes de WhatsApp</strong> que envías a tus clientes.
+                </div>
+            </div>
+
+            <div class="nota">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    Cuando actualizas tu página pública, el <strong>logo</strong> que subas debe estar en formato 
+                    <strong>PNG, JPG o WEBP</strong> (máx 2MB). Asegúrate de <strong>subirlo nuevamente</strong> si 
+                    actualizas el sistema, ya que los archivos se guardan localmente.
                 </div>
             </div>
         </section>
