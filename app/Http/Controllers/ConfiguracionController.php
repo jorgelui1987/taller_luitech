@@ -187,6 +187,34 @@ class ConfiguracionController extends Controller
         return back()->with('success', 'Datos de la empresa actualizados correctamente.');
     }
 
+    // ── Guardar / Actualizar Publicidad y Página Pública ──────────────
+    public function updatePublicidad(Request $request)
+    {
+        $validated = $request->validate([
+            'instagram'     => 'nullable|string|max:255',
+            'facebook'      => 'nullable|string|max:255',
+            'tiktok'        => 'nullable|string|max:255',
+            'horario_atencion' => 'nullable|string|max:255',
+            'descripcion_corta' => 'nullable|string|max:500',
+            'pagina_publica_activa' => 'boolean',
+            'cupon_automatico_al_entregar' => 'boolean',
+            'cupon_descuento_porcentaje' => 'nullable|numeric|min:0|max:100',
+            'cupon_dias_validez' => 'nullable|integer|min:1|max:365',
+        ]);
+
+        $data = $validated;
+
+        $empresa = Configuracion::empresa();
+
+        if ($empresa) {
+            $empresa->update($data);
+        } else {
+            Configuracion::create($data);
+        }
+
+        return back()->with('success', 'Publicidad actualizada correctamente.');
+    }
+
     // ── Guardar / Actualizar zona horaria ─────────────────────────────
     public function updateZonaHoraria(Request $request)
     {

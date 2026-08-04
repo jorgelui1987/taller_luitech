@@ -241,7 +241,7 @@
                 </div>
                 @endif
 
-                <form action="{{ route('configuracion.updateEmpresa') }}" method="POST">
+                <form action="{{ route('configuracion.updatePublicidad') }}" method="POST">
                     @csrf
 
                     <div class="mb-2 d-flex align-items-center justify-content-between">
