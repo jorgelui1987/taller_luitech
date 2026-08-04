@@ -298,6 +298,13 @@ class VentaController extends Controller
 
         $texto .= "\n" . str_pad('¡Gracias por su preferencia!', 32, ' ', STR_PAD_BOTH) . "\n";
 
+        // URL de la mini página web
+        $tenant = $venta->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+        if ($urlMiniWeb) {
+            $texto .= "\n🌐 *Visita nuestra tienda:*\n" . $urlMiniWeb . "\n";
+        }
+
         // URL de WhatsApp
         $url = 'https://wa.me/' . $telefono . '?text=' . urlencode($texto);
 

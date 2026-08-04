@@ -245,6 +245,13 @@ class ComboPublicidadController extends Controller
             $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
         }
 
+        // URL de la mini página web
+        $tenant = $reparacion->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+        if ($urlMiniWeb) {
+            $mensaje .= "\n\n🌐 *Visita nuestra tienda:*\n{$urlMiniWeb}";
+        }
+
         $whatsappUrl = WhatsAppHelper::generarUrl($telefono, $mensaje);
 
         // Registrar el recordatorio

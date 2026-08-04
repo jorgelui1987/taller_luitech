@@ -303,6 +303,13 @@ class ReparacionController extends Controller
         $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
         $texto .= "\n🔗 *Sigue el estado de tu reparación:*\n" . $urlEstado . "\n";
 
+        // URL de la mini página web
+        $tenant = $reparacion->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+        if ($urlMiniWeb) {
+            $texto .= "\n🌐 *Visita nuestra tienda:*\n" . $urlMiniWeb . "\n";
+        }
+
         // URL de WhatsApp
         $url = 'https://wa.me/' . $telefono . '?text=' . urlencode($texto);
 
@@ -545,6 +552,13 @@ class ReparacionController extends Controller
 
                 if ($urlEstado) {
                     $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
+                }
+
+                // URL de la mini página web
+                $tenant = $reparacion->tenant;
+                $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+                if ($urlMiniWeb) {
+                    $mensaje .= "\n\n🌐 *Visita nuestra tienda:*\n{$urlMiniWeb}";
                 }
             }
 

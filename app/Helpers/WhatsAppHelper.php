@@ -61,6 +61,22 @@ class WhatsAppHelper
     }
 
     /**
+     * Obtiene la URL de la mini página web del tenant de la reparación.
+     */
+    private static function obtenerUrlMiniWeb($reparacion): ?string
+    {
+        try {
+            $tenant = $reparacion->tenant;
+            if ($tenant && $tenant->slug_publico) {
+                return url('/t/' . $tenant->slug_publico);
+            }
+        } catch (\Exception $e) {
+            // Si falla, no incluir la URL
+        }
+        return null;
+    }
+
+    /**
      * Genera el mensaje de "Recibido" para una orden de reparación.
      */
     public static function mensajeRecibido($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null): string
@@ -74,6 +90,11 @@ class WhatsAppHelper
 
         if ($urlEstado) {
             $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
+        }
+
+        $urlMiniWeb = self::obtenerUrlMiniWeb($reparacion);
+        if ($urlMiniWeb) {
+            $mensaje .= "\n\n🌐 *Visita nuestra tienda:*\n{$urlMiniWeb}";
         }
 
         return $mensaje;
@@ -95,6 +116,11 @@ class WhatsAppHelper
 
         if ($urlEstado) {
             $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
+        }
+
+        $urlMiniWeb = self::obtenerUrlMiniWeb($reparacion);
+        if ($urlMiniWeb) {
+            $mensaje .= "\n\n🌐 *Visita nuestra tienda:*\n{$urlMiniWeb}";
         }
 
         return $mensaje;
