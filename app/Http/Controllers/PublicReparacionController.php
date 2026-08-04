@@ -14,8 +14,13 @@ class PublicReparacionController extends Controller
      * Vista pública para que el cliente escanee el QR
      * y vea el estado de su reparación, condiciones y garantía.
      */
-    public function status($numero_orden)
+    public function status($numero_orden = null)
     {
+        // Si viene por query string (búsqueda desde la mini web)
+        if (!$numero_orden && request()->filled('numero_orden')) {
+            $numero_orden = request('numero_orden');
+        }
+
         $reparacion = Reparacion::withoutGlobalScopes()
             ->where('numero_orden', $numero_orden)
             ->firstOrFail();

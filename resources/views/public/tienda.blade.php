@@ -164,6 +164,19 @@
                 </div>
                 @endif
 
+                <div class="card p-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-truck me-2 text-primary"></i>Seguimiento de Reparación</h5>
+                    <p class="text-muted" style="font-size:14px;">Ingresa tu número de orden para ver el estado de tu equipo.</p>
+                    <form action="{{ route('reparaciones.public-status') }}" method="GET" class="d-flex gap-2">
+                        <input type="text" name="numero_orden" class="form-control" 
+                               placeholder="N° de orden (ej: R-0001)" 
+                               value="{{ request('numero_orden') }}" required>
+                        <button type="submit" class="btn btn-primary" style="white-space:nowrap;">
+                            <i class="bi bi-search me-1"></i>Buscar
+                        </button>
+                    </form>
+                </div>
+
                 <div class="card p-4">
                     <h5 class="fw-bold mb-3"><i class="bi bi-patch-check me-2 text-primary"></i>¿Reparaste con nosotros?</h5>
                     <p class="text-muted" style="font-size:14px;">Cuéntanos tu experiencia y ayuda a otros clientes.</p>

@@ -149,6 +149,21 @@
 @endpush
 
 @section('content')
+
+@if(session('cupon_generado'))
+<div class="alert alert-success alert-dismissible fade show" role="alert" style="border-left:4px solid #10b981;border-radius:10px;">
+    <div class="d-flex align-items-center gap-3">
+        <div style="font-size:32px;">🎟️</div>
+        <div>
+            <strong>Cupón de descuento generado al recibir el equipo:</strong>
+            <div style="font-size:20px;font-weight:800;letter-spacing:2px;color:#059669;">{{ session('cupon_generado') }}</div>
+            <small class="text-muted">Se imprimirá en el ticket junto con el QR de la mini web. El cliente podrá usarlo en su próxima visita.</small>
+        </div>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+@endif
+
 <div class="d-flex align-items-center justify-content-between mb-4 btn-acciones">
     <div>
         <h4 class="mb-1 fw-bold">{{ $reparacion->numero_orden }}</h4>

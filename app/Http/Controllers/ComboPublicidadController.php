@@ -183,6 +183,42 @@ class ComboPublicidadController extends Controller
     }
 
     /**
+     * Generar cupón automático al recibir una reparación.
+     */
+    public static function generarCuponAlRecibir(Reparacion $reparacion): ?Cupon
+    {
+        try {
+            $config = Configuracion::withoutGlobalScopes()
+                ->where('tenant_id', $reparacion->tenant_id)
+                ->first();
+
+            if (!$config || !$config->cupon_automatico_al_entregar) {
+                return null;
+            }
+
+            $porcentaje = (float) ($config->cupon_descuento_porcentaje ?? 10);
+            $diasValidez = (int) ($config->cupon_dias_validez ?? 30);
+
+            $cupon = Cupon::create([
+                'tenant_id' => $reparacion->tenant_id,
+                'reparacion_id' => $reparacion->id,
+                'codigo' => Cupon::generarCodigo(),
+                'tipo' => 'porcentaje',
+                'valor' => $porcentaje,
+                'descripcion' => "Descuento del {$porcentaje}% en tu próxima visita",
+                'fecha_expiracion' => now()->addDays($diasValidez),
+                'estado' => 'activo',
+                'compartible' => true,
+            ]);
+
+            return $cupon;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('No se pudo generar cupón al recibir: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Generar cupón automático al entregar una reparación.
      */
     public static function generarCuponAlEntregar(Reparacion $reparacion): ?Cupon

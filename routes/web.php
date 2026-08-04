@@ -49,6 +49,8 @@ Route::get('/pwa/icon/{size}', [PwaController::class, 'icon'])->where('size', '1
 // ── RUTA PÚBLICA PARA QR DE REPARACIONES (sin autenticación) ──────────────
 Route::get('/r/{numero_orden}', [\App\Http\Controllers\PublicReparacionController::class, 'status'])
     ->name('reparaciones.public-status');
+Route::get('/estado', [\App\Http\Controllers\PublicReparacionController::class, 'status'])
+    ->name('reparaciones.public-status.search');
 
 // ── PÁGINA PÚBLICA DE LA TIENDA (mini-web) ────────────────────────────────
 Route::get('/t/{slug}', [ComboPublicidadController::class, 'tiendaPublica'])->name('public.tienda');
