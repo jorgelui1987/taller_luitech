@@ -210,7 +210,12 @@ class VentaController extends Controller
     public function printTicket(Venta $venta)
     {
         $venta->load(['cliente', 'vendedor', 'detalles.producto.marca']);
-        return view('ventas.ticket', compact('venta'));
+
+        // Obtener URL de la mini página web
+        $tenant = $venta->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+
+        return view('ventas.ticket', compact('venta', 'urlMiniWeb'));
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\User;
 use App\Models\Configuracion;
 use App\Models\Venta;
+use App\Models\Cupon;
 use App\Helpers\WhatsAppHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -164,7 +165,21 @@ class ReparacionController extends Controller
     public function printTicket(Reparacion $reparacion)
     {
         $reparacion->load(['cliente', 'tecnico']);
-        return view('reparaciones.ticket', compact('reparacion'));
+
+        // Obtener el cupón activo de esta reparación (si existe)
+        $cupon = Cupon::withoutGlobalScopes()
+            ->where('reparacion_id', $reparacion->id)
+            ->where('estado', 'activo')
+            ->where(function ($q) {
+                $q->whereNull('fecha_expiracion')->orWhere('fecha_expiracion', '>', now());
+            })
+            ->first();
+
+        // Obtener URL de la mini página web
+        $tenant = $reparacion->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+
+        return view('reparaciones.ticket', compact('reparacion', 'cupon', 'urlMiniWeb'));
     }
 
     /**

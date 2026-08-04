@@ -76,6 +76,17 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 <div class="section">GARANTÍA</div>
 <div style="font-size:11px;font-weight:700;text-align:justify;">{{ $empresa->terminos_garantia }}</div>
 @endif
+
+@if($urlMiniWeb)
+<hr>
+<div class="section" style="text-align:center;font-size:11px;">🌐 VISÍTANOS EN LÍNEA</div>
+<div style="margin:4px auto;text-align:center;">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($urlMiniWeb) }}" alt="QR Mini Web" style="width:80px;height:80px">
+    <div style="font-size:9px;font-weight:700;">Escanea para ver nuestra tienda</div>
+    <div style="font-size:8px;word-break:break-all;">{{ $urlMiniWeb }}</div>
+</div>
+@endif
+
 <div class="ftr">
 <div class="gr">Gracias por su preferencia!</div>
 <div>{{ $venta->created_at->format('d/m/Y H:i') }}</div>

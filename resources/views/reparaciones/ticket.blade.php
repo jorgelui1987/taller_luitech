@@ -118,6 +118,31 @@ hr{border:none;border-top:2px solid #000;margin:3px 0}
     <div class="firma-label">Cliente: {{ $reparacion->cliente->nombre_completo ?? '' }}</div>
 </div>
 @endif
+
+@if($cupon)
+<hr>
+<div class="section" style="text-align:center;font-size:14px;">🎟️ CUPÓN DE DESCUENTO</div>
+<div style="text-align:center;border:2px dashed #000;padding:6px;margin:3px 0;">
+    <div style="font-size:10px;">Código</div>
+    <div style="font-size:18px;font-weight:700;letter-spacing:2px;">{{ $cupon->codigo }}</div>
+    <div style="font-size:14px;font-weight:700;margin-top:2px;">{{ $cupon->valor }}% DE DESCUENTO</div>
+    <div style="font-size:10px;">{{ $cupon->descripcion }}</div>
+    @if($cupon->fecha_expiracion)
+    <div style="font-size:10px;font-weight:700;margin-top:2px;">Vence: {{ $cupon->fecha_expiracion->format('d/m/Y') }}</div>
+    @endif
+</div>
+@endif
+
+@if($urlMiniWeb)
+<hr>
+<div class="section" style="text-align:center;font-size:13px;">🌐 VISÍTANOS EN LÍNEA</div>
+<div style="margin:4px auto;text-align:center;">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($urlMiniWeb) }}" alt="QR Mini Web" style="width:80px;height:80px">
+    <div style="font-size:10px;font-weight:700;">Escanea para ver nuestra tienda</div>
+    <div style="font-size:9px;word-break:break-all;">{{ $urlMiniWeb }}</div>
+</div>
+@endif
+
 <div class="ftr">
 @php $qrUrl = route('reparaciones.public-status', $reparacion->numero_orden); @endphp
 <div style="margin:4px auto;text-align:center;">
