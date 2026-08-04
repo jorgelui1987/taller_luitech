@@ -107,9 +107,6 @@ class ReparacionController extends Controller
 
         $reparacion = Reparacion::create($validated);
 
-        // Generar cupón automático al recibir el equipo
-        $cuponRecibido = \App\Http\Controllers\ComboPublicidadController::generarCuponAlRecibir($reparacion);
-
         // Guardar fotos de evidencia recibidas en la nueva orden
         if ($request->hasFile('fotos')) {
             $fotos = $request->file('fotos');
@@ -151,10 +148,6 @@ class ReparacionController extends Controller
 
         $redirect = redirect()->route('reparaciones.show', $reparacion)
             ->with('success', 'Orden de reparación registrada correctamente.');
-
-        if ($cuponRecibido) {
-            $redirect->with('cupon_generado', $cuponRecibido->codigo);
-        }
 
         if ($whatsappUrl) {
             $redirect->with('whatsapp_url', $whatsappUrl);
