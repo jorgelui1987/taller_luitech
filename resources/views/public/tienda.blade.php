@@ -144,26 +144,31 @@
         }
         .card-body-modern { padding: 24px; }
 
-        /* ── Info items (sin cuadros, solo iconos limpios) ── */
-        .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+        /* ── Info items (Opción 5: Burbujas redondas pastel) ── */
+        .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
         .info-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 6px 0;
+            padding: 4px 0;
             transition: all .3s;
         }
         .info-item:hover { transform: translateX(4px); }
         .info-item .icon {
-            font-size: 22px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
             flex-shrink: 0;
-            width: 28px;
-            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
         }
-        .info-item .icon.direccion { color: #ef4444; }
-        .info-item .icon.telefono { color: #10b981; }
-        .info-item .icon.horario { color: #f59e0b; }
-        .info-item .icon.email { color: #06b6d4; }
+        .info-item .icon.direccion { background: #fee2e2; color: #ef4444; }
+        .info-item .icon.telefono { background: #d1fae5; color: #10b981; }
+        .info-item .icon.horario { background: #fef3c7; color: #f59e0b; }
+        .info-item .icon.email { background: #e0f2fe; color: #06b6d4; }
         .info-item .label { font-size: .72rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
         .info-item .value { font-weight: 600; font-size: .92rem; color: var(--dark); }
 
