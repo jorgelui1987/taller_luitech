@@ -144,30 +144,33 @@
         }
         .card-body-modern { padding: 24px; }
 
-        /* ── Info items ── */
+        /* ── Info items (nuevo diseño elegante) ── */
+        .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .info-item {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 12px;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
             background: var(--light);
             border: 1px solid var(--border);
             transition: all .3s;
-            height: 100%;
         }
-        .info-item:hover { border-color: var(--primary); background: #eef2ff; }
+        .info-item:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79,70,229,.08); transform: translateY(-2px); }
         .info-item .icon {
-            width: 40px; height: 40px;
-            border-radius: 10px;
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 17px;
             flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(79,70,229,.25);
         }
-        .info-item .label { font-size: .75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
-        .info-item .value { font-weight: 600; font-size: .95rem; color: var(--dark); }
+        .info-item .label { font-size: .72rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+        .info-item .value { font-weight: 600; font-size: .92rem; color: var(--dark); }
 
         /* ── Reseñas ── */
         .resena-card {
@@ -258,6 +261,7 @@
         @media (max-width: 768px) {
             .hero { padding: 50px 0 70px; }
             .hero h1 { font-size: 1.8rem; }
+            .info-list { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -318,48 +322,40 @@
                         <h5 class="fw-bold mb-0">Información</h5>
                     </div>
                     <div class="card-body-modern">
-                        <div class="row g-3">
+                        <div class="info-list">
                             @if($config->direccion)
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="icon" style="background:#fee2e2;color:var(--danger);"><i class="bi bi-geo-alt"></i></div>
-                                    <div>
-                                        <div class="label">Dirección</div>
-                                        <div class="value">{{ $config->direccion }}</div>
-                                    </div>
+                            <div class="info-item">
+                                <div class="icon"><i class="bi bi-geo-alt"></i></div>
+                                <div>
+                                    <div class="label">Dirección</div>
+                                    <div class="value">{{ $config->direccion }}</div>
                                 </div>
                             </div>
                             @endif
                             @if($config->telefono)
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="icon" style="background:#d1fae5;color:var(--success);"><i class="bi bi-telephone"></i></div>
-                                    <div>
-                                        <div class="label">Teléfono</div>
-                                        <div class="value">{{ $config->telefono }}</div>
-                                    </div>
+                            <div class="info-item">
+                                <div class="icon"><i class="bi bi-telephone"></i></div>
+                                <div>
+                                    <div class="label">Teléfono</div>
+                                    <div class="value">{{ $config->telefono }}</div>
                                 </div>
                             </div>
                             @endif
                             @if($config->horario_atencion)
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="icon" style="background:#fef3c7;color:var(--warning);"><i class="bi bi-clock"></i></div>
-                                    <div>
-                                        <div class="label">Horario</div>
-                                        <div class="value">{{ $config->horario_atencion }}</div>
-                                    </div>
+                            <div class="info-item">
+                                <div class="icon"><i class="bi bi-clock"></i></div>
+                                <div>
+                                    <div class="label">Horario</div>
+                                    <div class="value">{{ $config->horario_atencion }}</div>
                                 </div>
                             </div>
                             @endif
                             @if($config->email)
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="icon" style="background:#e0f2fe;color:var(--accent);"><i class="bi bi-envelope"></i></div>
-                                    <div>
-                                        <div class="label">Email</div>
-                                        <div class="value">{{ $config->email }}</div>
-                                    </div>
+                            <div class="info-item">
+                                <div class="icon"><i class="bi bi-envelope"></i></div>
+                                <div>
+                                    <div class="label">Email</div>
+                                    <div class="value">{{ $config->email }}</div>
                                 </div>
                             </div>
                             @endif
@@ -397,7 +393,7 @@
 
                 <!-- Reseñas -->
                 @if($resenas->isNotEmpty())
-                <div class="card-modern animate-fade animate-delay-2">
+                <div class="card-modern mb-4 animate-fade animate-delay-2">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#fef3c7;color:var(--warning);">
                             <i class="bi bi-star"></i>
@@ -431,6 +427,29 @@
                     </div>
                 </div>
                 @endif
+
+                <!-- Seguimiento de Reparación (debajo de reseñas) -->
+                <div class="card-modern mb-4 animate-fade animate-delay-3">
+                    <div class="card-header-modern">
+                        <div class="icon-circle" style="background:#e0f2fe;color:var(--accent);">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Seguimiento de Reparación</h5>
+                    </div>
+                    <div class="card-body-modern">
+                        <p class="text-muted" style="font-size:14px;">Ingresa tu número de orden para ver el estado de tu equipo.</p>
+                        <div class="tracking-form">
+                            <form action="{{ route('reparaciones.public-status.search') }}" method="GET" class="d-flex gap-2">
+                                <input type="text" name="numero_orden" class="form-control"
+                                       placeholder="N° de orden (ej: R-0001)"
+                                       value="{{ request('numero_orden') }}" required>
+                                <button type="submit" class="btn btn-primary" style="white-space:nowrap;border-radius:10px;">
+                                    <i class="bi bi-search me-1"></i>Buscar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ── Columna lateral ── -->
@@ -460,31 +479,8 @@
                 </div>
                 @endif
 
-                <!-- Seguimiento -->
-                <div class="card-modern mb-4 animate-fade animate-delay-2">
-                    <div class="card-header-modern">
-                        <div class="icon-circle" style="background:#e0f2fe;color:var(--accent);">
-                            <i class="bi bi-truck"></i>
-                        </div>
-                        <h5 class="fw-bold mb-0">Seguimiento de Reparación</h5>
-                    </div>
-                    <div class="card-body-modern">
-                        <p class="text-muted" style="font-size:14px;">Ingresa tu número de orden para ver el estado de tu equipo.</p>
-                        <div class="tracking-form">
-                            <form action="{{ route('reparaciones.public-status.search') }}" method="GET" class="d-flex gap-2">
-                                <input type="text" name="numero_orden" class="form-control"
-                                       placeholder="N° de orden (ej: R-0001)"
-                                       value="{{ request('numero_orden') }}" required>
-                                <button type="submit" class="btn btn-primary" style="white-space:nowrap;border-radius:10px;">
-                                    <i class="bi bi-search me-1"></i>Buscar
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Reseña -->
-                <div class="card-modern animate-fade animate-delay-3">
+                <div class="card-modern animate-fade animate-delay-2">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#f3e8ff;color:#a855f7;">
                             <i class="bi bi-patch-check"></i>
