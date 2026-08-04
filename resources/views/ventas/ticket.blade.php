@@ -79,12 +79,7 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 
 @if($urlMiniWeb)
 <hr>
-<div class="section" style="text-align:center;font-size:11px;">🌐 VISÍTANOS EN LÍNEA</div>
-<div style="margin:4px auto;text-align:center;">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($urlMiniWeb) }}" alt="QR Mini Web" style="width:80px;height:80px">
-    <div style="font-size:9px;font-weight:700;">Escanea para ver nuestra tienda</div>
-    <div style="font-size:8px;word-break:break-all;">{{ $urlMiniWeb }}</div>
-</div>
+<div style="text-align:center;font-size:9px;">🌐 {{ $urlMiniWeb }}</div>
 @endif
 
 <div class="ftr">

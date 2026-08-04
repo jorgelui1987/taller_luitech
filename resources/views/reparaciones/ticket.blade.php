@@ -133,22 +133,15 @@ hr{border:none;border-top:2px solid #000;margin:3px 0}
 </div>
 @endif
 
-@if($urlMiniWeb)
-<hr>
-<div class="section" style="text-align:center;font-size:13px;">🌐 VISÍTANOS EN LÍNEA</div>
-<div style="margin:4px auto;text-align:center;">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($urlMiniWeb) }}" alt="QR Mini Web" style="width:80px;height:80px">
-    <div style="font-size:10px;font-weight:700;">Escanea para ver nuestra tienda</div>
-    <div style="font-size:9px;word-break:break-all;">{{ $urlMiniWeb }}</div>
-</div>
-@endif
-
 <div class="ftr">
 @php $qrUrl = route('reparaciones.public-status', $reparacion->numero_orden); @endphp
 <div style="margin:4px auto;text-align:center;">
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($qrUrl) }}" alt="QR" style="width:80px;height:80px">
     <div style="font-size:10px;font-weight:700;">Escanea para ver estado</div>
 </div>
+@if($urlMiniWeb)
+<div style="font-size:9px;margin-top:2px;">🌐 {{ $urlMiniWeb }}</div>
+@endif
 <div class="gr">¡Gracias por su preferencia!</div>
 <div style="font-size:10px;">{{ $reparacion->created_at->format('d/m/Y H:i') }} | {{ $reparacion->numero_orden }}</div>
 </div>
