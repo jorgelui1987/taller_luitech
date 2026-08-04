@@ -364,7 +364,42 @@
                 </div>
 
                 <!-- Mapa / Ubicación -->
-                @if($config->mapa_url)
+                @php
+                    // Convertir link de Google Maps a formato embed si es necesario
+                    $mapaEmbed = null;
+                    $mapaLink = $config->mapa_url ?? null;
+
+                    if ($mapaLink) {
+                        // Si ya es un embed, usarlo directo
+                        if (str_contains($mapaLink, '/maps/embed') || str_contains($mapaLink, 'output=embed')) {
+                            $mapaEmbed = $mapaLink;
+                        }
+                        // Si es un link corto de Google Maps (maps.app.goo.gl), no se puede convertir directamente
+                        // Usar la dirección para generar el embed
+                        elseif (str_contains($mapaLink, 'maps.app.goo.gl')) {
+                            if ($config->direccion) {
+                                $mapaEmbed = 'https://maps.google.com/maps?q=' . urlencode($config->direccion) . '&z=16&output=embed';
+                            }
+                        }
+                        // Si es un link normal de Google Maps, extraer la dirección o usar el link
+                        elseif (str_contains($mapaLink, 'google.com/maps') || str_contains($mapaLink, 'goo.gl/maps')) {
+                            if ($config->direccion) {
+                                $mapaEmbed = 'https://maps.google.com/maps?q=' . urlencode($config->direccion) . '&z=16&output=embed';
+                            }
+                        }
+                        // Si es otro tipo de link, intentar usarlo directo
+                        else {
+                            $mapaEmbed = $mapaLink;
+                        }
+                    }
+                    // Si no hay link pero hay dirección, generar mapa automáticamente
+                    elseif ($config->direccion) {
+                        $mapaEmbed = 'https://maps.google.com/maps?q=' . urlencode($config->direccion) . '&z=16&output=embed';
+                        $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($config->direccion);
+                    }
+                @endphp
+
+                @if($mapaEmbed)
                 <div class="card-modern mb-4 animate-fade animate-delay-1">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#fee2e2;color:var(--danger);">
@@ -375,7 +410,7 @@
                     <div class="card-body-modern">
                         <div class="mapa-container mb-3">
                             <iframe
-                                src="{{ $config->mapa_url }}"
+                                src="{{ $mapaEmbed }}"
                                 loading="lazy"
                                 allowfullscreen
                                 referrerpolicy="no-referrer-when-downgrade"
@@ -383,7 +418,7 @@
                             </iframe>
                         </div>
                         <div class="text-center">
-                            <a href="{{ $config->mapa_url }}" target="_blank" class="btn-como-llegar">
+                            <a href="{{ $mapaLink }}" target="_blank" class="btn-como-llegar">
                                 <i class="bi bi-sign-turn-right"></i> Cómo llegar
                             </a>
                         </div>
