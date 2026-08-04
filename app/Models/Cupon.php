@@ -10,6 +10,8 @@ class Cupon extends Model
 {
     use HasFactory;
 
+    protected $table = 'cupones';
+
     protected $fillable = [
         'tenant_id', 'reparacion_id', 'codigo', 'tipo', 'valor',
         'descripcion', 'fecha_expiracion', 'fecha_uso', 'venta_id',
