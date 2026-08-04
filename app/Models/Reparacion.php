@@ -19,6 +19,7 @@ class Reparacion extends Model
         'marca', 'modelo', 'imei', 'color',
         'falla_reportada', 'diagnostico', 'solucion',
         'presupuesto', 'abono', 'costo_final', 'costo_repuesto', 'total',
+        'cupon_codigo',
         'estado', 'prioridad',
         'fecha_recepcion', 'fecha_estimada', 'fecha_entrega',
         'garantia', 'dias_garantia', 'notas',

@@ -82,6 +82,7 @@ class ReparacionController extends Controller
             'firma_recepcion_data'=> 'nullable|string',
             'fotos.*'             => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'fotos_tipos.*'       => 'nullable|string',
+            'cupon_codigo'        => 'nullable|string|max:30',
         ]);
 
         $validated['numero_orden']    = Reparacion::generarNumero();
@@ -89,6 +90,33 @@ class ReparacionController extends Controller
         $validated['fecha_recepcion'] = now();
         $validated['total']           = max(0, ($validated['presupuesto'] ?? 0) - ($validated['abono'] ?? 0));
         $validated['tenant_id']       = Auth::user()?->tenant_id;
+
+        // ── Procesar cupón de descuento ──
+        $cuponAplicado = null;
+        if ($request->filled('cupon_codigo')) {
+            $codigoCupon = strtoupper(trim($request->cupon_codigo));
+            $cupon = Cupon::where('codigo', $codigoCupon)->first();
+
+            if (!$cupon) {
+                return back()->with('error', "El cupón '{$codigoCupon}' no existe.")
+                    ->withInput();
+            }
+
+            if (!$cupon->esValido()) {
+                return back()->with('error', "El cupón '{$codigoCupon}' ya fue usado o está expirado.")
+                    ->withInput();
+            }
+
+            // Aplicar descuento según tipo
+            if ($cupon->tipo === 'porcentaje') {
+                $descuentoCupon = round($validated['total'] * ((float)$cupon->valor / 100), 2);
+            } else {
+                $descuentoCupon = (float)$cupon->valor;
+            }
+
+            $validated['total'] = max(0, $validated['total'] - $descuentoCupon);
+            $cuponAplicado = $cupon;
+        }
 
         // Guardar firma de recepción si fue dibujada
         if (!empty($request->firma_recepcion_data)) {
@@ -106,6 +134,11 @@ class ReparacionController extends Controller
         unset($validated['firma_recepcion_data'], $validated['fotos'], $validated['fotos_tipos']);
 
         $reparacion = Reparacion::create($validated);
+
+        // ── MARCAR CUPÓN COMO USADO EN LA REPARACIÓN ──
+        if ($cuponAplicado) {
+            $cuponAplicado->marcarUsadoEnReparacion($reparacion->id);
+        }
 
         // Guardar fotos de evidencia recibidas en la nueva orden
         if ($request->hasFile('fotos')) {

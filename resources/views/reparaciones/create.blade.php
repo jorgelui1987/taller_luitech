@@ -294,13 +294,27 @@
                                                        value="{{ old('abono', 0) }}" min="0" step="0.01">
                                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Monto pagado por adelantado</div>
                                             </div>
-                                            <div>
-                                                <label class="form-label" style="font-size:12px;">Costo de Repuesto(s) (S/)</label>
-                                                <input type="number" class="form-control" name="costo_repuesto"
-                                                       value="{{ old('costo_repuesto', 0) }}" min="0" step="0.01">
-                                                <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia del técnico</div>
-                                            </div>
-                                            <div class="p-3 rounded-3" style="background:#fef3c7; border:2px solid #f59e0b;">
+                                             <div>
+                                                 <label class="form-label" style="font-size:12px;">Costo de Repuesto(s) (S/)</label>
+                                                 <input type="number" class="form-control" name="costo_repuesto"
+                                                        value="{{ old('costo_repuesto', 0) }}" min="0" step="0.01">
+                                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia del técnico</div>
+                                             </div>
+                                             <div>
+                                                 <label class="form-label" style="font-size:12px;">🎟️ Cupón de Descuento</label>
+                                                 <div class="input-group input-group-sm">
+                                                     <input type="text" class="form-control" name="cupon_codigo" id="cuponCodigoInput"
+                                                            value="{{ old('cupon_codigo', session('cupon_codigo')) }}" placeholder="Código del cupón (ej: CUP-XXXXXX-XXX)">
+                                                     <button type="button" class="btn btn-outline-primary" id="validarCuponBtn" onclick="validarCuponReparacion()">
+                                                         <i class="fas fa-check me-1"></i>Validar
+                                                     </button>
+                                                 </div>
+                                                 <div id="cuponInfo" class="mt-2" style="font-size:12px;"></div>
+                                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">
+                                                     Si el cliente tiene un cupón de una venta anterior, ingrésalo aquí para aplicar el descuento.
+                                                 </div>
+                                             </div>
+                                             <div class="p-3 rounded-3" style="background:#fef3c7; border:2px solid #f59e0b;">
                                                 <div style="font-size:11px; color:#92400e; font-weight:600;">SALDO PENDIENTE</div>
                                                 <input type="number" class="form-control total-auto mt-1" name="total"
                                                        value="{{ old('total', 0) }}" min="0" step="0.01" readonly
@@ -612,5 +626,54 @@ document.addEventListener('input', function(e) {
         if (totalInput) totalInput.value = Math.max(0, presupuesto - abono).toFixed(2);
     }
 });
+
+// ── VALIDAR CUPÓN DE DESCUENTO ──
+function validarCuponReparacion() {
+    const codigo = document.getElementById('cuponCodigoInput').value.trim();
+    const infoDiv = document.getElementById('cuponInfo');
+
+    if (!codigo) {
+        infoDiv.innerHTML = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Ingresa un código de cupón.</span>';
+        return;
+    }
+
+    fetch('{{ route("api.cupon.validar") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ codigo: codigo }),
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            const cupon = data.cupon;
+            const valorTexto = cupon.tipo === 'porcentaje' ? cupon.valor + '%' : 'S/ ' + cupon.valor;
+            infoDiv.innerHTML = `
+                <div class="alert alert-success py-2 px-3 mb-0" style="font-size:12px;">
+                    <i class="fas fa-check-circle me-1"></i>
+                    <strong>Cupón válido:</strong> ${valorTexto} de descuento
+                    ${cupon.descripcion ? '<br><small class="text-muted">' + cupon.descripcion + '</small>' : ''}
+                </div>
+            `;
+            document.getElementById('validarCuponBtn').classList.add('btn-success');
+            document.getElementById('validarCuponBtn').classList.remove('btn-outline-primary');
+        } else {
+            infoDiv.innerHTML = `
+                <div class="alert alert-danger py-2 px-3 mb-0" style="font-size:12px;">
+                    <i class="fas fa-times-circle me-1"></i>${data.message || 'Cupón no válido.'}
+                </div>
+            `;
+            document.getElementById('validarCuponBtn').classList.remove('btn-success');
+            document.getElementById('validarCuponBtn').classList.add('btn-outline-primary');
+        }
+    })
+    .catch(err => {
+        infoDiv.innerHTML = '<div class="alert alert-danger py-2 px-3 mb-0" style="font-size:12px;"><i class="fas fa-times-circle me-1"></i>Error de conexión al validar el cupón.</div>';
+        console.error(err);
+    });
+}
 </script>
 @endpush
