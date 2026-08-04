@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $config->nombre_tienda ?? $tenant->empresa ?? 'Tienda' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -97,8 +97,12 @@
             border: none;
             transition: all .3s;
             box-shadow: 0 4px 15px rgba(37,211,102,.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         .btn-whatsapp:hover { background: #1da851; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,.4); }
+        .btn-whatsapp svg { width: 20px; height: 20px; fill: currentColor; }
         .social-btn {
             width: 48px; height: 48px;
             border-radius: 50%;
@@ -111,6 +115,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,.2);
         }
         .social-btn:hover { transform: translateY(-3px) scale(1.05); color: #fff; }
+        .social-btn svg { width: 22px; height: 22px; fill: currentColor; }
         .social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         .social-btn.facebook { background: #1877f2; }
         .social-btn.tiktok { background: #000; }
@@ -139,12 +144,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
             flex-shrink: 0;
         }
+        .card-header-modern .icon-circle svg { width: 20px; height: 20px; fill: currentColor; }
         .card-body-modern { padding: 24px; }
 
-        /* ── Info items (Opción 5: Burbujas redondas pastel) ── */
+        /* ── Info items (Burbujas redondas pastel) ── */
         .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
         .info-item {
             display: flex;
@@ -161,10 +166,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0,0,0,.06);
         }
+        .info-item .icon svg { width: 18px; height: 18px; fill: currentColor; }
         .info-item .icon.direccion { background: #fee2e2; color: #ef4444; }
         .info-item .icon.telefono { background: #d1fae5; color: #10b981; }
         .info-item .icon.horario { background: #fef3c7; color: #f59e0b; }
@@ -229,6 +234,7 @@
             align-items: center;
             gap: 8px;
         }
+        .btn-como-llegar svg { width: 16px; height: 16px; fill: currentColor; }
         .btn-como-llegar:hover { background: var(--primary-dark); color: #fff; transform: translateY(-2px); }
 
         /* ── Seguimiento ── */
@@ -292,17 +298,24 @@
             <div class="social-row">
                 @if($config->whatsapp)
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $config->whatsapp) }}" target="_blank" class="btn btn-whatsapp">
-                        <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp
                     </a>
                 @endif
                 @if($config->instagram)
-                    <a href="{{ $config->instagram }}" target="_blank" class="social-btn instagram" title="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="{{ $config->instagram }}" target="_blank" class="social-btn instagram" title="Instagram">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
                 @endif
                 @if($config->facebook)
-                    <a href="{{ $config->facebook }}" target="_blank" class="social-btn facebook" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="{{ $config->facebook }}" target="_blank" class="social-btn facebook" title="Facebook">
+                        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
                 @endif
                 @if($config->tiktok)
-                    <a href="{{ $config->tiktok }}" target="_blank" class="social-btn tiktok" title="TikTok"><i class="bi bi-tiktok"></i></a>
+                    <a href="{{ $config->tiktok }}" target="_blank" class="social-btn tiktok" title="TikTok">
+                        <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                    </a>
                 @endif
             </div>
         </div>
@@ -317,7 +330,7 @@
                 <div class="card-modern mb-4 animate-fade">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#eef2ff;color:var(--primary);">
-                            <i class="bi bi-info-circle"></i>
+                            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">Información</h5>
                     </div>
@@ -325,7 +338,9 @@
                         <div class="info-list">
                             @if($config->direccion)
                             <div class="info-item">
-                                <div class="icon direccion"><i class="bi bi-geo-alt"></i></div>
+                                <div class="icon direccion">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+                                </div>
                                 <div>
                                     <div class="label">Dirección</div>
                                     <div class="value">{{ $config->direccion }}</div>
@@ -334,7 +349,9 @@
                             @endif
                             @if($config->telefono)
                             <div class="info-item">
-                                <div class="icon telefono"><i class="bi bi-telephone"></i></div>
+                                <div class="icon telefono">
+                                    <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                                </div>
                                 <div>
                                     <div class="label">Teléfono</div>
                                     <div class="value">{{ $config->telefono }}</div>
@@ -343,7 +360,9 @@
                             @endif
                             @if($config->horario_atencion)
                             <div class="info-item">
-                                <div class="icon horario"><i class="bi bi-clock"></i></div>
+                                <div class="icon horario">
+                                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                </div>
                                 <div>
                                     <div class="label">Horario</div>
                                     <div class="value">{{ $config->horario_atencion }}</div>
@@ -352,7 +371,9 @@
                             @endif
                             @if($config->email)
                             <div class="info-item">
-                                <div class="icon email"><i class="bi bi-envelope"></i></div>
+                                <div class="icon email">
+                                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                </div>
                                 <div>
                                     <div class="label">Email</div>
                                     <div class="value">{{ $config->email }}</div>
@@ -370,30 +391,16 @@
                     $mapaLink = $config->mapa_url ?? null;
 
                     if ($mapaLink) {
-                        // Si ya es un embed, usarlo directo
                         if (str_contains($mapaLink, '/maps/embed') || str_contains($mapaLink, 'output=embed')) {
                             $mapaEmbed = $mapaLink;
-                        }
-                        // Si es un link corto de Google Maps (maps.app.goo.gl), no se puede convertir directamente
-                        // Usar la dirección para generar el embed
-                        elseif (str_contains($mapaLink, 'maps.app.goo.gl')) {
+                        } elseif (str_contains($mapaLink, 'maps.app.goo.gl') || str_contains($mapaLink, 'google.com/maps') || str_contains($mapaLink, 'goo.gl/maps')) {
                             if ($config->direccion) {
                                 $mapaEmbed = 'https://maps.google.com/maps?q=' . urlencode($config->direccion) . '&z=16&output=embed';
                             }
-                        }
-                        // Si es un link normal de Google Maps, extraer la dirección o usar el link
-                        elseif (str_contains($mapaLink, 'google.com/maps') || str_contains($mapaLink, 'goo.gl/maps')) {
-                            if ($config->direccion) {
-                                $mapaEmbed = 'https://maps.google.com/maps?q=' . urlencode($config->direccion) . '&z=16&output=embed';
-                            }
-                        }
-                        // Si es otro tipo de link, intentar usarlo directo
-                        else {
+                        } else {
                             $mapaEmbed = $mapaLink;
                         }
-                    }
-                    // Si no hay link pero hay dirección, generar mapa automáticamente
-                    elseif ($config->direccion) {
+                    } elseif ($config->direccion) {
                         $mapaEmbed = 'https://maps.google.com/maps?q=' . urlencode($config->direccion) . '&z=16&output=embed';
                         $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($config->direccion);
                     }
@@ -403,7 +410,7 @@
                 <div class="card-modern mb-4 animate-fade animate-delay-1">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#fee2e2;color:var(--danger);">
-                            <i class="bi bi-map"></i>
+                            <svg viewBox="0 0 24 24"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">Ubicación</h5>
                     </div>
@@ -419,7 +426,8 @@
                         </div>
                         <div class="text-center">
                             <a href="{{ $mapaLink }}" target="_blank" class="btn-como-llegar">
-                                <i class="bi bi-sign-turn-right"></i> Cómo llegar
+                                <svg viewBox="0 0 24 24"><path d="M6.5 8.5L12 3l5.5 5.5H13V21h-2V8.5H6.5z"/></svg>
+                                Cómo llegar
                             </a>
                         </div>
                     </div>
@@ -431,7 +439,7 @@
                 <div class="card-modern mb-4 animate-fade animate-delay-2">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#fef3c7;color:var(--warning);">
-                            <i class="bi bi-star"></i>
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">Reseñas de Clientes</h5>
                     </div>
@@ -463,11 +471,11 @@
                 </div>
                 @endif
 
-                <!-- Seguimiento de Reparación (debajo de reseñas) -->
+                <!-- Seguimiento de Reparación -->
                 <div class="card-modern mb-4 animate-fade animate-delay-3">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#e0f2fe;color:var(--accent);">
-                            <i class="bi bi-truck"></i>
+                            <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">Seguimiento de Reparación</h5>
                     </div>
@@ -479,25 +487,27 @@
                                        placeholder="N° de orden (ej: R-0001)"
                                        value="{{ request('numero_orden') }}" required>
                                 <button type="submit" class="btn btn-primary" style="white-space:nowrap;border-radius:10px;">
-                                    <i class="bi bi-search me-1"></i>Buscar
+                                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;margin-right:4px;"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                                    Buscar
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- Reseña (debajo de seguimiento) -->
+                <!-- ¿Reparaste con nosotros? -->
                 <div class="card-modern mb-4 animate-fade animate-delay-3">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#f3e8ff;color:#a855f7;">
-                            <i class="bi bi-patch-check"></i>
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">¿Reparaste con nosotros?</h5>
                     </div>
                     <div class="card-body-modern">
                         <p class="text-muted" style="font-size:14px;">Cuéntanos tu experiencia y ayuda a otros clientes.</p>
                         <a href="{{ route('public.resena.form', $tenant->slug_publico) }}" class="btn btn-primary w-100" style="border-radius:10px;">
-                            <i class="bi bi-star me-2"></i>Dejar una reseña
+                            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;margin-right:6px;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            Dejar una reseña
                         </a>
                     </div>
                 </div>
@@ -510,7 +520,7 @@
                 <div class="card-modern mb-4 animate-fade animate-delay-1">
                     <div class="card-header-modern">
                         <div class="icon-circle" style="background:#d1fae5;color:var(--success);">
-                            <i class="bi bi-ticket-perforated"></i>
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2V6c0-1.1-.9-2-2-2zm-3 14H7v-2h10v2zm0-5H7v-2h10v2zm0-5H7V6h10v2z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">Cupones Activos</h5>
                     </div>
@@ -538,10 +548,10 @@
         <div class="container">
             <div class="brand mb-2">{{ $config->nombre_tienda ?? $tenant->empresa ?? 'Mi Tienda' }}</div>
             @if($config->direccion)
-                <p class="small mb-1"><i class="bi bi-geo-alt me-1"></i>{{ $config->direccion }}</p>
+                <p class="small mb-1">{{ $config->direccion }}</p>
             @endif
             @if($config->telefono)
-                <p class="small mb-1"><i class="bi bi-telephone me-1"></i>{{ $config->telefono }}</p>
+                <p class="small mb-1">{{ $config->telefono }}</p>
             @endif
             <p class="small mb-0 mt-3">© {{ date('Y') }} {{ $config->nombre_tienda ?? $tenant->empresa ?? 'Mi Tienda' }}. Todos los derechos reservados.</p>
         </div>
