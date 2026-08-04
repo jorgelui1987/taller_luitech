@@ -144,33 +144,31 @@
         }
         .card-body-modern { padding: 24px; }
 
-        /* ── Info items (nuevo diseño elegante) ── */
-        .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        /* ── Info items (Opción C: Iconos grandes sin fondo) ── */
+        .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .info-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            border-radius: 14px;
-            background: var(--light);
-            border: 1px solid var(--border);
+            gap: 16px;
+            padding: 8px 0;
             transition: all .3s;
         }
-        .info-item:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79,70,229,.08); transform: translateY(-2px); }
+        .info-item:hover { transform: translateX(4px); }
         .info-item .icon {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #fff;
+            width: 52px; height: 52px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 17px;
+            font-size: 24px;
             flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(79,70,229,.25);
         }
-        .info-item .label { font-size: .72rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
-        .info-item .value { font-weight: 600; font-size: .92rem; color: var(--dark); }
+        .info-item .icon.direccion { background: #fee2e2; color: #ef4444; }
+        .info-item .icon.telefono { background: #d1fae5; color: #10b981; }
+        .info-item .icon.horario { background: #fef3c7; color: #f59e0b; }
+        .info-item .icon.email { background: #e0f2fe; color: #06b6d4; }
+        .info-item .label { font-size: .75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+        .info-item .value { font-weight: 600; font-size: .95rem; color: var(--dark); }
 
         /* ── Reseñas ── */
         .resena-card {
@@ -325,7 +323,7 @@
                         <div class="info-list">
                             @if($config->direccion)
                             <div class="info-item">
-                                <div class="icon"><i class="bi bi-geo-alt"></i></div>
+                                <div class="icon direccion"><i class="bi bi-geo-alt"></i></div>
                                 <div>
                                     <div class="label">Dirección</div>
                                     <div class="value">{{ $config->direccion }}</div>
@@ -334,7 +332,7 @@
                             @endif
                             @if($config->telefono)
                             <div class="info-item">
-                                <div class="icon"><i class="bi bi-telephone"></i></div>
+                                <div class="icon telefono"><i class="bi bi-telephone"></i></div>
                                 <div>
                                     <div class="label">Teléfono</div>
                                     <div class="value">{{ $config->telefono }}</div>
@@ -343,7 +341,7 @@
                             @endif
                             @if($config->horario_atencion)
                             <div class="info-item">
-                                <div class="icon"><i class="bi bi-clock"></i></div>
+                                <div class="icon horario"><i class="bi bi-clock"></i></div>
                                 <div>
                                     <div class="label">Horario</div>
                                     <div class="value">{{ $config->horario_atencion }}</div>
@@ -352,7 +350,7 @@
                             @endif
                             @if($config->email)
                             <div class="info-item">
-                                <div class="icon"><i class="bi bi-envelope"></i></div>
+                                <div class="icon email"><i class="bi bi-envelope"></i></div>
                                 <div>
                                     <div class="label">Email</div>
                                     <div class="value">{{ $config->email }}</div>
@@ -450,6 +448,22 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Reseña (debajo de seguimiento) -->
+                <div class="card-modern mb-4 animate-fade animate-delay-3">
+                    <div class="card-header-modern">
+                        <div class="icon-circle" style="background:#f3e8ff;color:#a855f7;">
+                            <i class="bi bi-patch-check"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">¿Reparaste con nosotros?</h5>
+                    </div>
+                    <div class="card-body-modern">
+                        <p class="text-muted" style="font-size:14px;">Cuéntanos tu experiencia y ayuda a otros clientes.</p>
+                        <a href="{{ route('public.resena.form', $tenant->slug_publico) }}" class="btn btn-primary w-100" style="border-radius:10px;">
+                            <i class="bi bi-star me-2"></i>Dejar una reseña
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <!-- ── Columna lateral ── -->
@@ -478,22 +492,6 @@
                     </div>
                 </div>
                 @endif
-
-                <!-- Reseña -->
-                <div class="card-modern animate-fade animate-delay-2">
-                    <div class="card-header-modern">
-                        <div class="icon-circle" style="background:#f3e8ff;color:#a855f7;">
-                            <i class="bi bi-patch-check"></i>
-                        </div>
-                        <h5 class="fw-bold mb-0">¿Reparaste con nosotros?</h5>
-                    </div>
-                    <div class="card-body-modern">
-                        <p class="text-muted" style="font-size:14px;">Cuéntanos tu experiencia y ayuda a otros clientes.</p>
-                        <a href="{{ route('public.resena.form', $tenant->slug_publico) }}" class="btn btn-primary w-100" style="border-radius:10px;">
-                            <i class="bi bi-star me-2"></i>Dejar una reseña
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
