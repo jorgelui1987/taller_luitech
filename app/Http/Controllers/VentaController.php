@@ -8,6 +8,7 @@ use App\Models\Producto;
 use App\Models\DetalleVenta;
 use App\Models\MovimientoStock;
 use App\Models\Configuracion;
+use App\Models\Cupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -70,6 +71,7 @@ class VentaController extends Controller
             'productos.*.cantidad' => 'required|integer|min:1|max:1000',
             'productos.*.descuento' => 'nullable|numeric|min:0|max:99999999.99',
             'descuento_general'   => 'nullable|numeric|min:0|max:99999999.99',
+            'cupon_codigo'        => 'nullable|string|max:30',
             'notas'               => 'nullable|string|max:2000',
         ]);
 
@@ -131,6 +133,33 @@ class VentaController extends Controller
             }
 
             $descuento = (float)($request->descuento_general ?? 0);
+            $cuponAplicado = null;
+
+            // ── Procesar cupón de descuento ──
+            if ($request->filled('cupon_codigo')) {
+                $codigoCupon = strtoupper(trim($request->cupon_codigo));
+                $cupon = Cupon::where('codigo', $codigoCupon)->first();
+
+                if (!$cupon) {
+                    throw new \Exception("El cupón '{$codigoCupon}' no existe.");
+                }
+
+                if (!$cupon->esValido()) {
+                    throw new \Exception("El cupón '{$codigoCupon}' ya fue usado o está expirado.");
+                }
+
+                // Aplicar descuento según tipo
+                if ($cupon->tipo === 'porcentaje') {
+                    $descuentoCupon = round($subtotal * ((float)$cupon->valor / 100), 2);
+                } else {
+                    // Descuento fijo
+                    $descuentoCupon = (float)$cupon->valor;
+                }
+
+                $descuento += $descuentoCupon;
+                $cuponAplicado = $cupon;
+            }
+
             $base      = $subtotal - $descuento;
             $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
             $impuesto  = round($base * ($igvPorcentaje / 100), 2);
@@ -154,6 +183,11 @@ class VentaController extends Controller
             foreach ($detalles as $detalle) {
                 $detalle['venta_id'] = $venta->id;
                 DetalleVenta::create($detalle);
+            }
+
+            // Marcar cupón como usado
+            if ($cuponAplicado) {
+                $cuponAplicado->marcarUsado($venta->id);
             }
 
             DB::commit();

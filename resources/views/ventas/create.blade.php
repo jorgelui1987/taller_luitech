@@ -84,6 +84,18 @@
                             <label class="form-label">Descuento General</label>
                             <input type="number" class="form-control" name="descuento_general" id="descGen" min="0" step="0.01" value="0" oninput="totales()">
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cupón de Descuento</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="cupon_codigo" id="cuponInput" 
+                                       placeholder="Ingresa el código del cupón (ej: CUP-ABC123-456)" 
+                                       style="text-transform:uppercase;" autocomplete="off">
+                                <button type="button" class="btn btn-outline-success" id="btnValidarCupon" onclick="validarCupon()">
+                                    <i class="fas fa-check me-1"></i>Validar
+                                </button>
+                            </div>
+                            <div id="cuponMsg" class="form-text mt-1" style="font-size:12px;"></div>
+                        </div>
                         <div class="col-12">
                             <label class="form-label">Notas</label>
                             <textarea class="form-control" name="notas" rows="2"></textarea>
@@ -92,6 +104,10 @@
                     <hr>
                     <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">S/ 0.00</span></div>
                     <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— S/ 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-2" id="cuponRow" style="display:none;">
+                        <span>Cupón <span id="lblCuponCodigo" class="text-success"></span></span>
+                        <span id="lblCuponDescuento" class="text-danger">— S/ 0.00</span>
+                    </div>
                     <div class="d-flex justify-content-between mb-2"><span>IGV ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">S/ 0.00</span></div>
                     <hr>
                     <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#a855f7;">S/ 0.00</span></div>
@@ -183,6 +199,8 @@ function quitar(id) {
     totales();
 }
 
+let cuponAplicado = null;
+
 function totales() {
     let sub = 0;
     Object.keys(items).forEach(id => {
@@ -193,14 +211,84 @@ function totales() {
         sub += (items[id].precio * cant) - desc;
     });
     let dg = parseFloat(document.getElementById('descGen').value) || 0;
-    let base = Math.max(sub - dg, 0);
+    let descCupon = 0;
+    if (cuponAplicado) {
+        if (cuponAplicado.tipo === 'porcentaje') {
+            descCupon = sub * (cuponAplicado.valor / 100);
+        } else {
+            descCupon = cuponAplicado.valor;
+        }
+    }
+    let base = Math.max(sub - dg - descCupon, 0);
     document.getElementById('lblSubtotal').textContent = 'S/ ' + sub.toFixed(2);
     document.getElementById('lblDescuento').textContent = '— S/ ' + dg.toFixed(2);
+    if (cuponAplicado) {
+        document.getElementById('cuponRow').style.display = 'flex';
+        document.getElementById('lblCuponCodigo').textContent = cuponAplicado.codigo;
+        document.getElementById('lblCuponDescuento').textContent = '— S/ ' + descCupon.toFixed(2);
+    } else {
+        document.getElementById('cuponRow').style.display = 'none';
+    }
     let igvPct = {{ $empresa->igv ?? 18 }};
     document.getElementById('lblIgv').textContent = 'S/ ' + (base * (igvPct / 100)).toFixed(2);
     document.getElementById('lblTotal').textContent = 'S/ ' + (base * (1 + igvPct / 100)).toFixed(2);
     btnReg.disabled = Object.keys(items).length === 0;
 }
+
+function validarCupon() {
+    let codigo = document.getElementById('cuponInput').value.trim().toUpperCase();
+    let msg = document.getElementById('cuponMsg');
+    let btn = document.getElementById('btnValidarCupon');
+
+    if (!codigo) {
+        msg.innerHTML = '<span class="text-warning">Ingresa un código de cupón</span>';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Validando...';
+    msg.innerHTML = '';
+
+    fetch('{{ route("api.cupon.validar") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ codigo: codigo })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            cuponAplicado = data.cupon;
+            document.getElementById('cuponInput').value = data.cupon.codigo;
+            msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Cupón válido: ' + 
+                (data.cupon.tipo === 'porcentaje' ? data.cupon.valor + '% de descuento' : 'S/ ' + data.cupon.valor + ' de descuento') + '</span>';
+            totales();
+        } else {
+            cuponAplicado = null;
+            msg.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + data.message + '</span>';
+            totales();
+        }
+    })
+    .catch(err => {
+        cuponAplicado = null;
+        msg.innerHTML = '<span class="text-danger">Error al validar el cupón</span>';
+        totales();
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-1"></i>Validar';
+    });
+}
+
+// Validar cupón al presionar Enter en el campo
+document.getElementById('cuponInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        validarCupon();
+    }
+});
 
 function iniciarScanner() {
     let container = document.getElementById('scannerContainer');

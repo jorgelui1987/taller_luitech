@@ -152,7 +152,15 @@ class ComboPublicidadController extends Controller
 
         $codigo = strtoupper(trim($request->codigo));
 
-        $cupon = Cupon::where('codigo', $codigo)->first();
+        // Buscar el cupón sin el scope global de tenant para poder filtrar manualmente
+        $query = Cupon::withoutGlobalScopes()->where('codigo', $codigo);
+
+        // Si el usuario está autenticado, filtrar por su tenant
+        if (auth()->check() && auth()->user()->tenant_id) {
+            $query->where('tenant_id', auth()->user()->tenant_id);
+        }
+
+        $cupon = $query->first();
 
         if (!$cupon) {
             return response()->json(['success' => false, 'message' => 'Cupón no encontrado.'], 404);
