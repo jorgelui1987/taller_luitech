@@ -27,6 +27,7 @@ class Configuracion extends Model
         'facebook',
         'tiktok',
         'horario_atencion',
+        'mapa_url',
         'descripcion_corta',
         'pagina_publica_activa',
         'cupon_automatico_al_entregar',

@@ -266,6 +266,17 @@
                                placeholder="Ej: Lun-Vie 9am-7pm, Sáb 9am-2pm">
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-map-marker-alt me-1" style="color:#ef4444;"></i>Ubicación en Google Maps</label>
+                        <input type="text" name="mapa_url" class="form-control" maxlength="1000"
+                               value="{{ old('mapa_url', $empresa->mapa_url ?? '') }}"
+                               placeholder="Pega el link de Google Maps (ej: https://maps.app.goo.gl/...)">
+                        <div class="form-text">
+                            Cómo obtenerlo: Abre Google Maps → busca tu dirección → clic en "Compartir" → "Copiar enlace".
+                            Se mostrará un mapa interactivo y un botón "Cómo llegar" en tu página pública.
+                        </div>
+                    </div>
+
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
                             <label class="form-label"><i class="fab fa-instagram me-1" style="color:#e1306c;"></i>Instagram</label>

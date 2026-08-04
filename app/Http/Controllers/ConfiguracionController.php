@@ -195,6 +195,7 @@ class ConfiguracionController extends Controller
             'facebook'      => 'nullable|string|max:255',
             'tiktok'        => 'nullable|string|max:255',
             'horario_atencion' => 'nullable|string|max:255',
+            'mapa_url'      => 'nullable|string|max:1000',
             'descripcion_corta' => 'nullable|string|max:500',
             'pagina_publica_activa' => 'boolean',
             'cupon_automatico_al_entregar' => 'boolean',
