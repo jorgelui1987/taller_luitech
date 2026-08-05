@@ -378,9 +378,15 @@
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h6 class="fw-bold mb-0">Gestión de Usuarios</h6>
-                    <span style="background:#ede9fe;color:#7c3aed;border-radius:20px;padding:3px 12px;font-size:12px;">
-                        {{ $usuarios->count() }} usuarios
-                    </span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="background:#ede9fe;color:#7c3aed;border-radius:20px;padding:3px 12px;font-size:12px;">
+                            {{ $usuarios->count() }} usuarios
+                        </span>
+                        <button type="button" class="btn btn-primary btn-sm" style="border-radius:20px;"
+                                data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+                            <i class="fas fa-user-plus me-1"></i> Nuevo Usuario
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Leyenda de roles -->
