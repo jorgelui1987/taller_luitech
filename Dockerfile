@@ -55,9 +55,21 @@ FROM base AS final
 # Instalar Composer
 COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 
-# Copiar archivos del proyecto
-# NOSONAR - .dockerignore excluye archivos sensibles (.env, *.sql, etc.)
-COPY . /var/www/html
+# Copiar archivos del proyecto (excluye archivos sensibles via .dockerignore)
+COPY app /var/www/html/app
+COPY bootstrap /var/www/html/bootstrap
+COPY config /var/www/html/config
+COPY database /var/www/html/database
+COPY lang /var/www/html/lang
+COPY public /var/www/html/public
+COPY resources /var/www/html/resources
+COPY routes /var/www/html/routes
+COPY storage /var/www/html/storage
+COPY artisan /var/www/html/artisan
+COPY composer.json /var/www/html/composer.json
+COPY composer.lock /var/www/html/composer.lock
+COPY .htaccess /var/www/html/.htaccess
+COPY docker /var/www/html/docker
 
 # Configurar permisos
 RUN chown -R www-data:www-data /var/www/html \

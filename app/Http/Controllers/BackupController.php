@@ -98,7 +98,7 @@ class BackupController extends Controller
     public function restaurar(Request $request)
     {
         $request->validate([
-            'archivo_sql' => 'required|file|max:102400|mimes:sql,txt',
+            'archivo_sql' => 'required|file|max:51200|mimes:sql,txt',
         ], [
             'archivo_sql.required' => 'Debes seleccionar un archivo .sql',
             'archivo_sql.max'      => 'El archivo no puede superar 100 MB.',
