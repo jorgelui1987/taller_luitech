@@ -62,11 +62,24 @@ Route::post('/t/{slug}/resena', [ComboPublicidadController::class, 'guardarResen
 Route::post('/api/cupon/validar', [ComboPublicidadController::class, 'validarCupon'])->name('api.cupon.validar');
 
 // ── RUTA PARA SERVIR ARCHIVOS DE STORAGE (sin symlink) ──────────────
+// Solo archivos públicos permitidos (imágenes, PDFs, etc.)
 Route::get('/storage/{path}', function ($path) {
+    // Prevenir path traversal
+    $path = str_replace(['..', '\\'], ['', '/'], $path);
+    
     $fullPath = storage_path('app/public/' . $path);
-    if (!file_exists($fullPath)) {
+    if (!file_exists($fullPath) || !is_file($fullPath)) {
         abort(404);
     }
+
+    // Solo permitir extensiones seguras
+    $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+    $permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf', 'txt', 'csv', 'xlsx', 'doc', 'docx'];
+
+    if (!in_array($extension, $permitidas)) {
+        abort(403, 'Tipo de archivo no permitido.');
+    }
+
     return response()->file($fullPath);
 })->where('path', '.*')->name('storage.serve');
 

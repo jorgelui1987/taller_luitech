@@ -98,10 +98,11 @@ class BackupController extends Controller
     public function restaurar(Request $request)
     {
         $request->validate([
-            'archivo_sql' => 'required|file|max:102400',
+            'archivo_sql' => 'required|file|max:102400|mimes:sql,txt',
         ], [
             'archivo_sql.required' => 'Debes seleccionar un archivo .sql',
             'archivo_sql.max'      => 'El archivo no puede superar 100 MB.',
+            'archivo_sql.mimes'    => 'El archivo debe ser de tipo .sql',
         ]);
 
         set_time_limit(600);
@@ -116,20 +117,56 @@ class BackupController extends Controller
 
             $contenido = file_get_contents($request->file('archivo_sql')->getRealPath());
 
+            // Validar que el archivo contenga al menos una sentencia de backup esperada
+            $sentenciasPermitidas = [
+                'INSERT INTO', 'CREATE TABLE', 'SET NAMES', 'SET FOREIGN_KEY_CHECKS',
+                'SET session_replication_role', 'DROP TABLE IF EXISTS', 'ALTER TABLE',
+                'UPDATE ', 'DELETE FROM'
+            ];
+
+            $esBackupValido = false;
+            foreach ($sentenciasPermitidas as $permitida) {
+                if (stripos($contenido, $permitida) !== false) {
+                    $esBackupValido = true;
+                    break;
+                }
+            }
+
+            if (!$esBackupValido) {
+                throw new \RuntimeException('El archivo no contiene sentencias SQL válidas de backup.');
+            }
+
             if ($driver === 'pgsql') {
                 DB::statement('SET session_replication_role = replica');
             } else {
                 DB::statement('SET FOREIGN_KEY_CHECKS=0');
             }
 
-            // Dividir en sentencias individuales
+            // Dividir en sentencias individuales y validar cada una
             $statements = preg_split('/;\s*[\r\n]+/', $contenido);
+
+            $comandosBloqueados = ['DROP DATABASE', 'DROP USER', 'GRANT', 'REVOKE', 'ALTER USER', 'CREATE USER'];
 
             foreach ($statements as $stmt) {
                 $stmt = trim($stmt);
                 if (empty($stmt) || preg_match('/^--/', $stmt) || preg_match('/^\/\*/', $stmt)) {
                     continue;
                 }
+
+                // Bloquear comandos peligrosos
+                $stmtUpper = strtoupper($stmt);
+                $comandoBloqueado = false;
+                foreach ($comandosBloqueados as $comando) {
+                    if (strpos($stmtUpper, $comando) !== false) {
+                        $comandoBloqueado = true;
+                        break;
+                    }
+                }
+
+                if ($comandoBloqueado) {
+                    continue;
+                }
+
                 try {
                     DB::unprepared($stmt);
                 } catch (\Throwable $e) {
