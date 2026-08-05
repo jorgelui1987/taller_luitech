@@ -955,6 +955,12 @@
             <span class="nav-icon"><i class="fas fa-database"></i></span>
             Backup & Restore
         </a>
+
+        <a href="{{ route('auditoria.index') }}"
+           class="nav-link {{ request()->routeIs('auditoria.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-clipboard-check"></i></span>
+            Auditoría
+        </a>
         @endif
 
         <a href="{{ route('ayuda.index') }}"

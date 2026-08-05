@@ -15,6 +15,7 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\AyudaController;
 use App\Http\Controllers\ComboPublicidadController;
+use App\Http\Controllers\AuditoriaController;
 use Illuminate\Support\Facades\Storage;
 
 // ── PANEL SUPERADMIN (SIN tenant) ──────────────────────────────────────────
@@ -261,6 +262,11 @@ Route::middleware(['tenant'])->group(function () {
             Route::delete('/backup/eliminar/{nombre}',  [BackupController::class, 'eliminar'])->name('backup.eliminar');
             Route::post('/backup/restaurar',            [BackupController::class, 'restaurar'])->name('backup.restaurar');
             Route::post('/backup/resetear',             [BackupController::class, 'resetear'])->name('backup.resetear');
+        });
+
+        // Auditoría (solo admin)
+        Route::middleware('check.admin')->group(function () {
+            Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
         });
 
         // Comisiones de técnicos (solo admin)

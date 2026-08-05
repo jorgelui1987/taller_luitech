@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'activo' => 'boolean',
+        'two_factor_confirmed_at' => 'datetime',
     ];
 
     public function ventas()
