@@ -2,7 +2,7 @@
 @section('title', 'Reparaciones')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Reparaciones</li>
+    <ul><li class="breadcrumb-item active">Reparaciones</li></ul>
 @endsection
 
 @section('content')

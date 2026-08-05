@@ -2,8 +2,8 @@
 @section('title', 'Detalle Venta '.$venta->numero_venta)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#a855f7;">Ventas</a></li>
-    <li class="breadcrumb-item active">{{ $venta->numero_venta }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#a855f7;">Ventas</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $venta->numero_venta }}</li></ul>
 @endsection
 
 @push('styles')

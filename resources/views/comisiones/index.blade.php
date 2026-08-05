@@ -2,7 +2,7 @@
 @section('title', 'Comisiones de Técnicos')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Comisiones</li>
+    <ul><li class="breadcrumb-item active">Comisiones</li></ul>
 @endsection
 
 @section('content')

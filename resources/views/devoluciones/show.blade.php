@@ -2,8 +2,8 @@
 @section('title', 'Devolución ' . $devolucion->numero_devolucion)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('devoluciones.index') }}">Devoluciones</a></li>
-    <li class="breadcrumb-item active">{{ $devolucion->numero_devolucion }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('devoluciones.index') }}">Devoluciones</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $devolucion->numero_devolucion }}</li></ul>
 @endsection
 
 @section('content')

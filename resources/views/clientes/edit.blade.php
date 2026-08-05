@@ -2,8 +2,8 @@
 @section('title', 'Editar Cliente')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li>
-    <li class="breadcrumb-item active">Editar</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li></ul>
+    <ul><li class="breadcrumb-item active">Editar</li></ul>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0 ps-3">
-                            @foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach
+                            @foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach
                         </ul>
                     </div>
                 @endif

@@ -2,9 +2,9 @@
 @section('title', 'Ajuste de Inventario')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('stock.movimientos') }}" style="color:#a855f7;">Movimientos</a></li>
-    <li class="breadcrumb-item active">Nuevo Ajuste</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('stock.movimientos') }}" style="color:#a855f7;">Movimientos</a></li></ul>
+    <ul><li class="breadcrumb-item active">Nuevo Ajuste</li></ul>
 @endsection
 
 @section('content')
@@ -20,7 +20,7 @@
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0 ps-3">
-                            @foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach
+                            @foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach
                         </ul>
                     </div>
                 @endif

@@ -2,8 +2,8 @@
 @section('title', 'Nueva Devolución')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('devoluciones.index') }}">Devoluciones</a></li>
-    <li class="breadcrumb-item active">Nueva Devolución</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('devoluciones.index') }}">Devoluciones</a></li></ul>
+    <ul><li class="breadcrumb-item active">Nueva Devolución</li></ul>
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
     <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
         <ul class="mb-0 ps-3">
             @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
+                <ul><li>{{ $error }}</li></ul>
             @endforeach
         </ul>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

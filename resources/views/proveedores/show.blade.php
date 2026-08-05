@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', $proveedor->nombre)
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('proveedores.index') }}" style="color:#a855f7;">Proveedores</a></li>
-    <li class="breadcrumb-item active">{{ $proveedor->nombre }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('proveedores.index') }}" style="color:#a855f7;">Proveedores</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $proveedor->nombre }}</li></ul>
 @endsection
 @section('content')
 <div class="row g-4">

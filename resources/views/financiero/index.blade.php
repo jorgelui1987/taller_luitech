@@ -2,7 +2,7 @@
 
 @section('title', 'Estado Financiero')
 @section('breadcrumb')
-    <li class="breadcrumb-item active" aria-current="page">Estado Financiero</li>
+    <ul><li class="breadcrumb-item active" aria-current="page">Estado Financiero</li></ul>
 @endsection
 
 @push('styles')

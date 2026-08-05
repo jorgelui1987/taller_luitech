@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Editar ' . $ordenCompra->numero_orden)
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li>
-    <li class="breadcrumb-item active">Editar {{ $ordenCompra->numero_orden }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li></ul>
+    <ul><li class="breadcrumb-item active">Editar {{ $ordenCompra->numero_orden }}</li></ul>
 @endsection
 @section('content')
 <div class="row justify-content-center">

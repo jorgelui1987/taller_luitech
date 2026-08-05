@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', $ordenCompra->numero_orden)
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li>
-    <li class="breadcrumb-item active">{{ $ordenCompra->numero_orden }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $ordenCompra->numero_orden }}</li></ul>
 @endsection
 @section('content')
 <div class="d-flex align-items-center justify-content-between mb-4">
@@ -22,13 +22,13 @@
             </button>
             <ul class="dropdown-menu shadow-sm border-0" style="border-radius:12px;font-size:13px;">
                 @if($ordenCompra->estado === 'pendiente')
-                <li><form action="{{ route('compras.estado', $ordenCompra) }}" method="POST">@csrf<input type="hidden" name="estado" value="aprobada"><button class="dropdown-item" type="submit"><span style="display:inline-block;width:10px;height:10px;background:#06b6d4;border-radius:50%;margin-right:8px;"></span>Aprobar</button></form></li>
+                <ul><li><form action="{{ route('compras.estado', $ordenCompra) }}" method="POST">@csrf<input type="hidden" name="estado" value="aprobada"><button class="dropdown-item" type="submit"><span style="display:inline-block;width:10px;height:10px;background:#06b6d4;border-radius:50%;margin-right:8px;"></span>Aprobar</button></form></li></ul>
                 @endif
                 @if(in_array($ordenCompra->estado, ['pendiente','aprobada']))
-                <li><form action="{{ route('compras.estado', $ordenCompra) }}" method="POST">@csrf<input type="hidden" name="estado" value="cancelada"><button class="dropdown-item text-danger" type="submit"><span style="display:inline-block;width:10px;height:10px;background:#dc2626;border-radius:50%;margin-right:8px;"></span>Cancelar</button></form></li>
+                <ul><li><form action="{{ route('compras.estado', $ordenCompra) }}" method="POST">@csrf<input type="hidden" name="estado" value="cancelada"><button class="dropdown-item text-danger" type="submit"><span style="display:inline-block;width:10px;height:10px;background:#dc2626;border-radius:50%;margin-right:8px;"></span>Cancelar</button></form></li></ul>
                 @endif
                 @if(in_array($ordenCompra->estado, ['aprobada','enviada','recibida_parcial']))
-                <li><form action="{{ route('compras.estado', $ordenCompra) }}" method="POST">@csrf<input type="hidden" name="estado" value="completada"><button class="dropdown-item" type="submit"><span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:50%;margin-right:8px;"></span>Marcar como Completada (recibir todo)</button></form></li>
+                <ul><li><form action="{{ route('compras.estado', $ordenCompra) }}" method="POST">@csrf<input type="hidden" name="estado" value="completada"><button class="dropdown-item" type="submit"><span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:50%;margin-right:8px;"></span>Marcar como Completada (recibir todo)</button></form></li></ul>
                 @endif
             </ul>
         </div>

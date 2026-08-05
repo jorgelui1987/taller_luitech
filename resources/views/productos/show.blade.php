@@ -2,8 +2,8 @@
 @section('title', $producto->nombre)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li>
-    <li class="breadcrumb-item active">{{ $producto->nombre }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $producto->nombre }}</li></ul>
 @endsection
 
 @section('content')

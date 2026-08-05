@@ -3,7 +3,7 @@
 @section('title', 'Manual de Ayuda')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Manual de Ayuda</li>
+    <ul><li class="breadcrumb-item active">Manual de Ayuda</li></ul>
 @endsection
 
 @section('styles')
@@ -504,7 +504,7 @@
                         Al iniciar sesión, verás el <strong>Dashboard</strong> con indicadores clave:
                         ventas del día, reparaciones pendientes, productos con stock bajo y más.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura del Dashboard')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del Dashboard')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del Dashboard</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -560,7 +560,7 @@
                     <p class="paso-texto">
                         En el menú lateral, haz clic en <strong>Clientes</strong> para ver la lista completa.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura de Clientes')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura de Clientes')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura de la lista de Clientes</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -577,7 +577,7 @@
                         Completa los campos: <strong>nombre, teléfono, email, dirección</strong> y otros datos.
                         Luego presiona <strong>"Guardar"</strong>.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Cliente')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Cliente')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Cliente</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -725,7 +725,7 @@
                         En el menú, haz clic en <strong>Inventario</strong> para ver todos tus productos 
                         con su <strong>stock, precio de venta y estado</strong>.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura del Inventario')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del Inventario')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del Inventario</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -742,7 +742,7 @@
                         <strong>nombre, código, marca, categoría, precio de compra, precio de venta, 
                         stock inicial y stock mínimo</strong>. Presiona <strong>"Guardar"</strong>.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Producto')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Producto')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Producto</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -850,7 +850,7 @@
                         Haz clic en <strong>"Nueva Venta"</strong> (botón en la barra superior) 
                         o ve a <strong>Ventas → Nueva Venta</strong>.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Venta')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Venta')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Venta</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -986,7 +986,7 @@
                         Selecciona el <strong>cliente</strong>, el <strong>técnico</strong> asignado, 
                         el <strong>equipo</strong> (marca, modelo, IMEI) y describe el <strong>problema reportado</strong>.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Reparación')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Reparación')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Reparación</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
@@ -1243,7 +1243,7 @@
                         <strong>nombre, RUC, teléfono, dirección, logo</strong> y otros datos.
                         Estos datos aparecerán en los <strong>tickets y reportes</strong>.
                     </p>
-                    <div class="captura-placeholder" onclick="alert('Aquí se insertará la captura de Configuración')">
+                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura de Configuración')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura de Configuración</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>

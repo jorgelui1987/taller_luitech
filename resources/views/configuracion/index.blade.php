@@ -2,7 +2,7 @@
 @section('title', 'Configuración')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Configuración</li>
+    <ul><li class="breadcrumb-item active">Configuración</li></ul>
 @endsection
 
 @section('content')
@@ -524,7 +524,7 @@
                         <div class="alert alert-danger" style="border-radius:10px;font-size:13px;">
                             <ul class="mb-0 ps-3">
                                 @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
+                                    <ul><li>{{ $error }}</li></ul>
                                 @endforeach
                             </ul>
                         </div>

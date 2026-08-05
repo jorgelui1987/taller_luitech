@@ -2,8 +2,8 @@
 @section('title', 'Alertas de Stock Bajo')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li>
-    <li class="breadcrumb-item active">Alertas de Stock</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item active">Alertas de Stock</li></ul>
 @endsection
 
 @section('content')

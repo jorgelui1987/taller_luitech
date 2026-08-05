@@ -2,7 +2,7 @@
 @section('title', 'Inventario')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Inventario</li>
+    <ul><li class="breadcrumb-item active">Inventario</li></ul>
 @endsection
 
 @section('content')
@@ -27,7 +27,7 @@
                 <li><a class="dropdown-item" href="{{ route('productos.exportar.html') }}">
                     <i class="fas fa-file-export me-2 text-primary"></i>Exportar a HTML (PDF)
                 </a></li>
-                <li><hr class="dropdown-divider"></li>
+                <ul><li><hr class="dropdown-divider"></li></ul>
                 <li><a class="dropdown-item" href="{{ route('productos.plantilla') }}">
                     <i class="fas fa-download me-2 text-info"></i>Descargar Plantilla CSV
                 </a></li>

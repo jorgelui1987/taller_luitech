@@ -798,7 +798,7 @@
 <body>
 
 <!-- ══════════ SIDEBAR OVERLAY (mobile) ══════════ -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar-overlay" id="sidebarOverlay" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="toggleSidebar()"></div>
 
 <!-- ══════════ SIDEBAR ══════════ -->
 <aside class="sidebar" id="sidebar">
@@ -1008,8 +1008,8 @@
                     <i class="fas fa-user-circle"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius:12px; font-size:13px;">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2 text-muted"></i>Mi Perfil</a></li>
-                    <li><hr class="dropdown-divider"></li>
+                    <ul><li><a class="dropdown-item" href="#"><i class="fas fa-user me-2 text-muted"></i>Mi Perfil</a></li></ul>
+                    <ul><li><hr class="dropdown-divider"></li></ul>
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
@@ -1029,7 +1029,7 @@
         @hasSection('breadcrumb')
         <nav class="mb-3" style="font-size:13px;">
             <ol class="breadcrumb mb-0" style="background:transparent; padding:0;">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" style="color:var(--accent1);">Inicio</a></li>
+                <ul><li class="breadcrumb-item"><a href="{{ route('dashboard') }}" style="color:var(--accent1);">Inicio</a></li></ul>
                 @yield('breadcrumb')
             </ol>
         </nav>
@@ -1171,18 +1171,18 @@
                         <strong>Para instalar en Chrome Android:</strong>
                     </div>
                     <ol class="mb-3 ps-3">
-                        <li class="mb-1">Toca el menú <strong>⋮</strong> (tres puntos, arriba a la derecha)</li>
-                        <li class="mb-1">Busca y toca <strong>"Instalar app"</strong> o <strong>"Agregar a pantalla de inicio"</strong></li>
-                        <li class="mb-1">Confirma tocando <strong>"Instalar"</strong></li>
+                        <ul><li class="mb-1">Toca el menú <strong>⋮</strong> (tres puntos, arriba a la derecha)</li></ul>
+                        <ul><li class="mb-1">Busca y toca <strong>"Instalar app"</strong> o <strong>"Agregar a pantalla de inicio"</strong></li></ul>
+                        <ul><li class="mb-1">Confirma tocando <strong>"Instalar"</strong></li></ul>
                     </ol>
                     <div class="alert alert-warning py-2 px-3 mb-2" style="font-size:12.5px;">
                         <i class="fas fa-exclamation-triangle me-1"></i>
                         <strong>Si no aparece la opción:</strong>
                         <ul class="mb-0 mt-1 ps-3">
-                            <li>Visita el sitio <strong>2 veces</strong> con al menos <strong>5 minutos</strong> de diferencia</li>
-                            <li>Verifica que el candado 🔒 HTTPS esté presente</li>
-                            <li>Borra caché: <em>Chrome → ⋮ → Configuración → Privacidad → Borrar datos</em></li>
-                            <li>Revisa que el Service Worker esté activo (estado arriba)</li>
+                            <ul><li>Visita el sitio <strong>2 veces</strong> con al menos <strong>5 minutos</strong> de diferencia</li></ul>
+                            <ul><li>Verifica que el candado 🔒 HTTPS esté presente</li></ul>
+                            <ul><li>Borra caché: <em>Chrome → ⋮ → Configuración → Privacidad → Borrar datos</em></li></ul>
+                            <ul><li>Revisa que el Service Worker esté activo (estado arriba)</li></ul>
                         </ul>
                     </div>
                 </div>

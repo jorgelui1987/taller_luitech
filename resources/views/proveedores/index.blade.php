@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Proveedores')
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Proveedores</li>
+    <ul><li class="breadcrumb-item active">Proveedores</li></ul>
 @endsection
 @section('content')
 <div class="d-flex align-items-center justify-content-between mb-4">

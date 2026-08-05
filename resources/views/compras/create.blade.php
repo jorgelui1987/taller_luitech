@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Nueva Orden de Compra')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li>
-    <li class="breadcrumb-item active">Nueva Orden</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li></ul>
+    <ul><li class="breadcrumb-item active">Nueva Orden</li></ul>
 @endsection
 @section('content')
 <div class="row justify-content-center">
@@ -12,7 +12,7 @@
                 <h5 class="fw-bold mb-1">Nueva Orden de Compra</h5>
                 <p class="text-muted mb-4" style="font-size:13px;">Selecciona el proveedor y los productos a ordenar</p>
                 @if($errors->any())
-                    <div class="alert alert-danger"><ul class="mb-0 ps-3">@foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach</ul></div>
+                    <div class="alert alert-danger"><ul class="mb-0 ps-3">@foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach</ul></div>
                 @endif
                 <form action="{{ route('compras.store') }}" method="POST">
                     @csrf

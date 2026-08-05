@@ -2,8 +2,8 @@
 
 @section('title', 'Indicadores Financieros')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('financiero.index') }}">Estado Financiero</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Indicadores Financieros</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('financiero.index') }}">Estado Financiero</a></li></ul>
+    <ul><li class="breadcrumb-item active" aria-current="page">Indicadores Financieros</li></ul>
 @endsection
 
 @push('styles')

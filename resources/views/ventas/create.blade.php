@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Nueva Venta')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#a855f7;">Ventas</a></li>
-    <li class="breadcrumb-item active">Nueva Venta</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#a855f7;">Ventas</a></li></ul>
+    <ul><li class="breadcrumb-item active">Nueva Venta</li></ul>
 @endsection
 @section('content')
 <div class="row justify-content-center">

@@ -2,8 +2,8 @@
 @section('title', 'Perfil Cliente')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li>
-    <li class="breadcrumb-item active">{{ $cliente->nombre_completo }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $cliente->nombre_completo }}</li></ul>
 @endsection
 
 @section('content')

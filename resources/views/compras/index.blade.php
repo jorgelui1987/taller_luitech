@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Órdenes de Compra')
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Órdenes de Compra</li>
+    <ul><li class="breadcrumb-item active">Órdenes de Compra</li></ul>
 @endsection
 @section('content')
 <div class="d-flex align-items-center justify-content-between mb-4">

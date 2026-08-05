@@ -2,8 +2,8 @@
 
 @section('title', 'Flujo de Caja')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('financiero.index') }}">Estado Financiero</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Flujo de Caja</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('financiero.index') }}">Estado Financiero</a></li></ul>
+    <ul><li class="breadcrumb-item active" aria-current="page">Flujo de Caja</li></ul>
 @endsection
 
 @push('styles')

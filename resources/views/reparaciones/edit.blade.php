@@ -2,9 +2,9 @@
 @section('title', 'Actualizar Reparación')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#a855f7;">Reparaciones</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('reparaciones.show', $reparacion) }}" style="color:#a855f7;">{{ $reparacion->numero_orden }}</a></li>
-    <li class="breadcrumb-item active">Editar</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#a855f7;">Reparaciones</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.show', $reparacion) }}" style="color:#a855f7;">{{ $reparacion->numero_orden }}</a></li></ul>
+    <ul><li class="breadcrumb-item active">Editar</li></ul>
 @endsection
 
 @section('content')
@@ -27,7 +27,7 @@
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0 ps-3">
-                            @foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach
+                            @foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach
                         </ul>
                     </div>
                 @endif
@@ -159,7 +159,7 @@
                                                         display:flex; align-items:center; justify-content:center;
                                                         font-size:13px; color:#a855f7; cursor:pointer; background:#f8f5ff;
                                                         transition:all .2s; user-select:none;"
-                                                 onclick="togglePuntoEdit(this)">
+                                                 role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="togglePuntoEdit(this)">
                                                 {{ $i }}
                                             </div>
                                             @endfor

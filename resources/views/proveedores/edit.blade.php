@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Editar Proveedor')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('proveedores.index') }}" style="color:#a855f7;">Proveedores</a></li>
-    <li class="breadcrumb-item active">Editar: {{ $proveedor->nombre }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('proveedores.index') }}" style="color:#a855f7;">Proveedores</a></li></ul>
+    <ul><li class="breadcrumb-item active">Editar: {{ $proveedor->nombre }}</li></ul>
 @endsection
 @section('content')
 <div class="row justify-content-center">
@@ -12,7 +12,7 @@
                 <h5 class="fw-bold mb-1">Editar Proveedor</h5>
                 <p class="text-muted mb-4" style="font-size:13px;">Modifica los datos del proveedor</p>
                 @if($errors->any())
-                    <div class="alert alert-danger"><ul class="mb-0 ps-3">@foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach</ul></div>
+                    <div class="alert alert-danger"><ul class="mb-0 ps-3">@foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach</ul></div>
                 @endif
                 <form action="{{ route('proveedores.update', $proveedor) }}" method="POST">
                     @csrf @method('PUT')

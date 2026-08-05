@@ -2,8 +2,8 @@
 @section('title', 'Importar Productos')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li>
-    <li class="breadcrumb-item active">Importar Productos</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item active">Importar Productos</li></ul>
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0 ps-3">
-                            @foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach
+                            @foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach
                         </ul>
                     </div>
                 @endif
@@ -49,10 +49,10 @@
                         <div class="p-4 rounded-3" style="background:#f9fafb;">
                             <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-muted"></i>Instrucciones</h6>
                             <ol style="font-size:13px; color:#374151; padding-left:18px;">
-                                <li class="mb-2">Descarga la <strong>plantilla CSV</strong> de ejemplo</li>
-                                <li class="mb-2">Completa los datos respetando los nombres de columna</li>
-                                <li class="mb-2">Guarda el archivo en formato <strong>CSV UTF-8</strong></li>
-                                <li class="mb-2">Súbelo usando el formulario de la izquierda</li>
+                                <ul><li class="mb-2">Descarga la <strong>plantilla CSV</strong> de ejemplo</li></ul>
+                                <ul><li class="mb-2">Completa los datos respetando los nombres de columna</li></ul>
+                                <ul><li class="mb-2">Guarda el archivo en formato <strong>CSV UTF-8</strong></li></ul>
+                                <ul><li class="mb-2">Súbelo usando el formulario de la izquierda</li></ul>
                             </ol>
 
                             <div class="mt-3">

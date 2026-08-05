@@ -2,7 +2,7 @@
 @section('title', 'Gastos Fijos')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Gastos Fijos</li>
+    <ul><li class="breadcrumb-item active">Gastos Fijos</li></ul>
 @endsection
 
 @section('content')

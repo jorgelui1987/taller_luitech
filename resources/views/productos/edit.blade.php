@@ -2,8 +2,8 @@
 @section('title', 'Editar Producto')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li>
-    <li class="breadcrumb-item active">Editar</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item active">Editar</li></ul>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0 ps-3">
-                            @foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach
+                            @foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach
                         </ul>
                     </div>
                 @endif
@@ -225,7 +225,7 @@
                                 <img id="previewImg" src="" style="display:none; width:100%; border-radius:12px; max-height:220px; object-fit:cover; margin-bottom:8px;">
                             @endif
 
-                            <div onclick="document.getElementById('imagenInput').click()"
+                            <div role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('imagenInput').click()"
                                  style="border:2px dashed #d1d5db; border-radius:12px; padding:20px;
                                         text-align:center; cursor:pointer; background:#fafafa;">
                                 <i class="fas fa-camera text-muted mb-2 d-block"></i>

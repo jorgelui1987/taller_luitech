@@ -2,8 +2,8 @@
 @section('title', 'Nuevo Producto')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li>
-    <li class="breadcrumb-item active">Nuevo Producto</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item active">Nuevo Producto</li></ul>
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0 ps-3">
-                            @foreach($errors->all() as $e)<li style="font-size:13px;">{{ $e }}</li>@endforeach
+                            @foreach($errors->all() as $e)<ul><li style="font-size:13px;">{{ $e }}</li></ul>@endforeach
                         </ul>
                     </div>
                 @endif
@@ -214,7 +214,7 @@
                         {{-- Columna derecha - imagen --}}
                         <div class="col-lg-4">
                             <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Imagen del Producto</h6>
-                            <div id="dropZone" onclick="document.getElementById('imagenInput').click()"
+                            <div id="dropZone" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('imagenInput').click()"
                                  style="border:2px dashed #d1d5db; border-radius:16px; padding:32px 20px;
                                         text-align:center; cursor:pointer; background:#fafafa; transition:.2s;"
                                  ondragover="event.preventDefault(); this.style.borderColor='#a855f7';"

@@ -2,7 +2,7 @@
 @section('title', 'Backup & Restauración')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Backup & Restauración</li>
+    <ul><li class="breadcrumb-item active">Backup & Restauración</li></ul>
 @endsection
 
 @push('styles')
@@ -247,10 +247,10 @@
                         <strong style="color:#374151;">¿Qué incluye?</strong>
                     </div>
                     <ul class="mb-0 ps-4" style="line-height:1.9;">
-                        <li>Estructura completa de tablas</li>
-                        <li>Todos los registros del sistema</li>
-                        <li>Configuración y usuarios</li>
-                        <li>Formato SQL compatible MySQL</li>
+                        <ul><li>Estructura completa de tablas</li></ul>
+                        <ul><li>Todos los registros del sistema</li></ul>
+                        <ul><li>Configuración y usuarios</li></ul>
+                        <ul><li>Formato SQL compatible MySQL</li></ul>
                     </ul>
                 </div>
 
@@ -350,7 +350,7 @@
                 <form action="{{ route('backup.restaurar') }}" method="POST" enctype="multipart/form-data" id="formRestore">
                     @csrf
 
-                    <div class="drop-zone mb-3" id="dropZone" onclick="document.getElementById('archivoSql').click()">
+                    <div class="drop-zone mb-3" id="dropZone" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('archivoSql').click()">
                         <input type="file" name="archivo_sql" id="archivoSql" accept=".sql,.txt">
                         <div class="dz-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                         <div id="dzText" style="font-size:13px;font-weight:600;color:#374151;">

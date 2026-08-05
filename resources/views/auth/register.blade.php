@@ -37,7 +37,7 @@
                             <div class="alert alert-danger">
                                 <strong><i class="bi bi-exclamation-triangle"></i> Por favor corrige los siguientes errores:</strong>
                                 <ul class="mb-0 mt-2 ps-3">
-                                    @foreach($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+                                    @foreach($errors->all() as $error) <ul><li>{{ $error }}</li></ul> @endforeach
                                 </ul>
                             </div>
                         @endif
@@ -75,11 +75,11 @@
                                 <div class="password-requirements">
                                     <strong>Requisitos:</strong>
                                     <ul>
-                                        <li>Mínimo 12 caracteres</li>
-                                        <li>Al menos una letra mayúscula (A-Z)</li>
-                                        <li>Al menos una letra minúscula (a-z)</li>
-                                        <li>Al menos un número (0-9)</li>
-                                        <li>Al menos un símbolo (!@#$%^&*)</li>
+                                        <ul><li>Mínimo 12 caracteres</li></ul>
+                                        <ul><li>Al menos una letra mayúscula (A-Z)</li></ul>
+                                        <ul><li>Al menos una letra minúscula (a-z)</li></ul>
+                                        <ul><li>Al menos un número (0-9)</li></ul>
+                                        <ul><li>Al menos un símbolo (!@#$%^&*)</li></ul>
                                     </ul>
                                 </div>
                             </div>

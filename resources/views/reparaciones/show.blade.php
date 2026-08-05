@@ -2,8 +2,8 @@
 @section('title', 'Orden '.$reparacion->numero_orden)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#a855f7;">Reparaciones</a></li>
-    <li class="breadcrumb-item active">{{ $reparacion->numero_orden }}</li>
+    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#a855f7;">Reparaciones</a></li></ul>
+    <ul><li class="breadcrumb-item active">{{ $reparacion->numero_orden }}</li></ul>
 @endsection
 
 @push('styles')
@@ -347,7 +347,7 @@
                         </div>
                         @endforelse
                         <div class="col-3">
-                            <div class="foto-upload-box" onclick="document.getElementById('fotoInput').click()">
+                            <div class="foto-upload-box" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('fotoInput').click()">
                                 <i class="fas fa-plus" style="font-size:20px;"></i>
                                 <span style="font-size:10px; margin-top:3px;">Agregar</span>
                             </div>
@@ -699,7 +699,7 @@
 </div>
 
 {{-- Lightbox --}}
-<div class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()">
+<div class="lightbox-overlay" id="lightbox" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="cerrarLightbox()">
     <button class="close">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
 </div>
