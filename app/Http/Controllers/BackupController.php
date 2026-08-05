@@ -218,6 +218,11 @@ class BackupController extends Controller
             'movimientos_stock',
             'comisiones_pagos',
             'gastos_fijos',
+            'cupones',
+            'resenas',
+            'recordatorios_retiro',
+            'devolucion_detalles',
+            'devoluciones',
         ];
 
         try {
