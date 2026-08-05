@@ -50,6 +50,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
 FROM composer:latest AS composer-stage
 
 # ---- Stage final ----
+# NOSONAR - Apache necesita root para el puerto 80
 FROM base AS final
 
 # Instalar Composer
