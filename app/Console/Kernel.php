@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Backup automático diario a las 2:00 AM
+        $schedule->command('backup:automatico --retencion=7')->dailyAt('02:00');
+
+        // Generar facturas mensuales el primer día de cada mes a las 5:00 AM
+        $schedule->command('facturas:generar')->monthlyOn(1, '05:00');
     }
 
     /**
