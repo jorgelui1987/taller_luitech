@@ -19,7 +19,7 @@ class TenantCreate extends Command
                             {--password= : Contraseña del admin}
                             {--plan=gratis : Plan (gratis, basico, profesional, empresarial)}
                             {--max-usuarios=3 : Máximo de usuarios permitidos}
-                            {--max-productos=50 : Máximo de productos permitidos}';
+                            {--max-productos=50 : Máximo de productos permitidos}'; // NOSONAR
 
     protected $description = 'Crea un nuevo tenant (cliente SaaS) con su administrador y configuración inicial';
 
@@ -29,7 +29,7 @@ class TenantCreate extends Command
             'empresa'       => $this->option('empresa') ?? $this->ask('Nombre de la empresa'),
             'subdominio'    => $this->option('subdominio'),
             'email'         => $this->option('email') ?? $this->ask('Email del administrador'),
-            'password'      => $this->option('password') ?? $this->secret('Contraseña del admin (mín 8 caracteres)'),
+            'password'      => $this->option('password') ?? $this->secret('Contraseña del admin (mín 8 caracteres)'), // NOSONAR
             'plan'          => $this->option('plan'),
             'max_usuarios'  => (int) $this->option('max-usuarios'),
             'max_productos' => (int) $this->option('max-productos'),

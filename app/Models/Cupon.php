@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Scopes\TenantScope;
+use App\Models\Traits\BelongsToTenant;
 
 class Cupon extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToTenant;
 
     protected $table = 'cupones';
 
@@ -24,22 +24,6 @@ class Cupon extends Model
         'valor' => 'decimal:2',
         'compartible' => 'boolean',
     ];
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope(new TenantScope);
-
-        static::creating(function ($cupon) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $cupon->tenant_id = auth()->user()->tenant_id;
-            }
-        });
-    }
-
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
 
     public function reparacion()
     {
@@ -92,6 +76,6 @@ class Cupon extends Model
 
     public static function generarCodigo(): string
     {
-        return 'CUP-' . strtoupper(substr(uniqid(), -6)) . '-' . rand(100, 999);
+        return 'CUP-' . strtoupper(bin2hex(random_bytes(3))) . '-' . random_int(100, 999);
     }
 }

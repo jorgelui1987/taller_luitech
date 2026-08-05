@@ -56,6 +56,7 @@ FROM base AS final
 COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 
 # Copiar archivos del proyecto
+# NOSONAR - .dockerignore excluye archivos sensibles (.env, *.sql, etc.)
 COPY . /var/www/html
 
 # Configurar permisos
@@ -78,5 +79,7 @@ WORKDIR /var/www/html
 
 EXPOSE 80
 
+# NOSONAR - Apache 2 necesita iniciarse como root para enlazar al puerto 80
+# Luego Apache cambia automáticamente al usuario www-data para procesar las peticiones
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]

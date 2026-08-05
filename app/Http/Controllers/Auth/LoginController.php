@@ -11,7 +11,7 @@ class LoginController extends Controller
 {
     private function rateLimitKey(string $email, Request $request): string
     {
-        return 'login:' . md5($request->ip() . ':' . strtolower($email));
+        return 'login:' . hash('sha256', $request->ip() . ':' . strtolower($email));
     }
 
     private function incrementRateLimit(string $key): void
