@@ -379,6 +379,10 @@
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h6 class="fw-bold mb-0">Gestión de Usuarios</h6>
                     <div class="d-flex align-items-center gap-2">
+                        <a href="{{ route('two-factor.setup') }}" class="btn btn-outline-secondary btn-sm" style="border-radius:20px;"
+                           title="Configurar verificación en dos pasos para tu cuenta">
+                            <i class="fas fa-shield-halved me-1" style="color:#a855f7;"></i> Mi 2FA
+                        </a>
                         <span style="background:#ede9fe;color:#7c3aed;border-radius:20px;padding:3px 12px;font-size:12px;">
                             {{ $usuarios->count() }} usuarios
                         </span>
