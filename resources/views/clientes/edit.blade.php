@@ -43,52 +43,52 @@
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('nombre') is-invalid @enderror"
-                                   name="nombre" value="{{ old('nombre', $cliente->nombre) }}">
+                                   name="nombre" id="nombre" value="{{ old('nombre', $cliente->nombre) }}">
                             @error('nombre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Apellido <span class="text-danger">*</span></label>
+                            <label for="apellido" class="form-label">Apellido <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('apellido') is-invalid @enderror"
-                                   name="apellido" value="{{ old('apellido', $cliente->apellido) }}">
+                                   name="apellido" id="apellido" value="{{ old('apellido', $cliente->apellido) }}">
                             @error('apellido')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email <small class="text-muted">(opcional)</small></label>
+                            <label for="email" class="form-label">Email <small class="text-muted">(opcional)</small></label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                   name="email" value="{{ old('email', $cliente->email) }}">
+                                   name="email" id="email" value="{{ old('email', $cliente->email) }}">
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Teléfono <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="telefono"
+                            <input type="text" class="form-control" name="telefono" id="telefono"
                                    value="{{ old('telefono', $cliente->telefono) }}">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Celular</label>
-                            <input type="text" class="form-control" name="celular"
+                            <label for="celular" class="form-label">Celular</label>
+                            <input type="text" class="form-control" name="celular" id="celular"
                                    value="{{ old('celular', $cliente->celular) }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">DNI</label>
+                            <label for="dni" class="form-label">DNI</label>
                             <input type="text" class="form-control @error('dni') is-invalid @enderror"
-                                   name="dni" value="{{ old('dni', $cliente->dni) }}">
+                                   name="dni" id="dni" value="{{ old('dni', $cliente->dni) }}">
                             @error('dni')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" name="fecha_nacimiento"
+                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" name="fecha_nacimiento" id="fecha_nacimiento"
                                    value="{{ old('fecha_nacimiento', optional($cliente->fecha_nacimiento)->format('Y-m-d')) }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Ciudad</label>
-                            <input type="text" class="form-control" name="ciudad"
+                            <label for="ciudad" class="form-label">Ciudad</label>
+                            <input type="text" class="form-control" name="ciudad" id="ciudad"
                                    value="{{ old('ciudad', $cliente->ciudad) }}">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Dirección</label>
-                            <input type="text" class="form-control" name="direccion"
+                            <input type="text" class="form-control" name="direccion" id="direccion"
                                    value="{{ old('direccion', $cliente->direccion) }}">
                         </div>
                     </div>
@@ -99,12 +99,12 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
                                 <label class="form-label">Razón Social</label>
-                                <input type="text" class="form-control" name="empresa"
+                                <input type="text" class="form-control" name="empresa" id="empresa"
                                        value="{{ old('empresa', $cliente->empresa) }}">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">RUC</label>
-                                <input type="text" class="form-control" name="ruc"
+                                <label for="ruc" class="form-label">RUC</label>
+                                <input type="text" class="form-control" name="ruc" id="ruc"
                                        value="{{ old('ruc', $cliente->ruc) }}">
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col-md-8">
                             <label class="form-label">Notas</label>
-                            <textarea class="form-control" name="notas" rows="3">{{ old('notas', $cliente->notas) }}</textarea>
+                            <textarea class="form-control" name="notas" id="notas" rows="3">{{ old('notas', $cliente->notas) }}</textarea>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Estado</label>

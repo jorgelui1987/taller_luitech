@@ -55,53 +55,53 @@
                     {{-- Datos personales --}}
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('nombre') is-invalid @enderror"
-                                   name="nombre" value="{{ old('nombre') }}" placeholder="Nombre">
+                                   name="nombre" id="nombre" value="{{ old('nombre') }}" placeholder="Nombre">
                             @error('nombre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Apellido <span class="text-danger">*</span></label>
+                            <label for="apellido" class="form-label">Apellido <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('apellido') is-invalid @enderror"
-                                   name="apellido" value="{{ old('apellido') }}" placeholder="Apellido">
+                                   name="apellido" id="apellido" value="{{ old('apellido') }}" placeholder="Apellido">
                             @error('apellido')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email <small class="text-muted">(opcional)</small></label>
+                            <label for="email" class="form-label">Email <small class="text-muted">(opcional)</small></label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                   name="email" value="{{ old('email') }}" placeholder="correo@ejemplo.com">
+                                   name="email" id="email" value="{{ old('email') }}" placeholder="correo@ejemplo.com">
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Teléfono <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('telefono') is-invalid @enderror"
-                                   name="telefono" value="{{ old('telefono') }}" placeholder="999 999 999">
+                                   name="telefono" id="telefono" value="{{ old('telefono') }}" placeholder="999 999 999">
                             @error('telefono')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Celular</label>
-                            <input type="text" class="form-control" name="celular"
+                            <label for="celular" class="form-label">Celular</label>
+                            <input type="text" class="form-control" name="celular" id="celular"
                                    value="{{ old('celular') }}" placeholder="999 999 999">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">DNI / Documento</label>
+                            <label for="dni" class="form-label">DNI / Documento</label>
                             <input type="text" class="form-control @error('dni') is-invalid @enderror"
-                                   name="dni" value="{{ old('dni') }}" placeholder="12345678">
+                                   name="dni" id="dni" value="{{ old('dni') }}" placeholder="12345678">
                             @error('dni')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" name="fecha_nacimiento"
+                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" name="fecha_nacimiento" id="fecha_nacimiento"
                                    value="{{ old('fecha_nacimiento') }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Ciudad</label>
-                            <input type="text" class="form-control" name="ciudad"
+                            <label for="ciudad" class="form-label">Ciudad</label>
+                            <input type="text" class="form-control" name="ciudad" id="ciudad"
                                    value="{{ old('ciudad') }}" placeholder="serena">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Dirección</label>
-                            <input type="text" class="form-control" name="direccion"
+                            <input type="text" class="form-control" name="direccion" id="direccion"
                                    value="{{ old('direccion') }}" placeholder="Av. Ejemplo 123">
                         </div>
                     </div>
@@ -113,12 +113,12 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
                                 <label class="form-label">Razón Social</label>
-                                <input type="text" class="form-control" name="empresa"
+                                <input type="text" class="form-control" name="empresa" id="empresa"
                                        value="{{ old('empresa') }}" placeholder="Empresa SAC">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">RUC</label>
-                                <input type="text" class="form-control" name="ruc"
+                                <label for="ruc" class="form-label">RUC</label>
+                                <input type="text" class="form-control" name="ruc" id="ruc"
                                        value="{{ old('ruc') }}" placeholder="20123456789">
                             </div>
                         </div>
@@ -126,8 +126,8 @@
 
                     <hr>
                     <div class="mb-3">
-                        <label class="form-label">Notas internas</label>
-                        <textarea class="form-control" name="notas" rows="3"
+                        <label for="notas" class="form-label">Notas internas</label>
+                        <textarea class="form-control" name="notas" id="notas" rows="3"
                                   placeholder="Observaciones, preferencias del cliente...">{{ old('notas') }}</textarea>
                     </div>
 

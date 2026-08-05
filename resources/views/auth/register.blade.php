@@ -45,21 +45,21 @@
                         <form method="POST" action="{{ route('register.post') }}">
                             @csrf
                             <div class="mb-3">
-                                <label class="form-label">Nombre completo <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                                <label for="name" class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                                <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Contraseña <span class="text-danger">*</span></label>
+                                <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
                                 <div class="input-group @error('password') has-validation @enderror">
                                     <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)" title="Mostrar/Ocultar contraseña">
@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
+                                <label for="password_confirmation" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password') is-invalid @enderror" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password_confirmation', this)" title="Mostrar/Ocultar contraseña">
@@ -99,8 +99,8 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Rol <span class="text-danger">*</span></label>
-                                <select name="rol" class="form-select @error('rol') is-invalid @enderror" required>
+                                <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
+                                <select name="rol" id="rol" class="form-select @error('rol') is-invalid @enderror" required>
                                     <option value="vendedor" {{ old('rol')=='vendedor'?'selected':'' }}>Vendedor</option>
                                     <option value="tecnico" {{ old('rol')=='tecnico'?'selected':'' }}>Técnico</option>
                                 </select>
@@ -109,8 +109,8 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Teléfono</label>
-                                <input type="text" name="telefono" class="form-control @error('telefono') is-invalid @enderror" value="{{ old('telefono') }}">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="text" name="telefono" id="telefono" class="form-control @error('telefono') is-invalid @enderror" value="{{ old('telefono') }}">
                                 @error('telefono')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
