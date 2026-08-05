@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Scopes\TenantScope;
+use App\Models\Traits\BelongsToTenant;
 
 class Venta extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToTenant;
 
     protected $fillable = [
         'numero_venta', 'cliente_id', 'user_id', 'fecha_venta',
@@ -26,22 +26,6 @@ class Venta extends Model
         'comision_monto' => 'decimal:2',
         'comision_pagada'=> 'boolean',
     ];
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope(new TenantScope);
-
-        static::creating(function ($venta) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $venta->tenant_id = auth()->user()->tenant_id;
-            }
-        });
-    }
-
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
 
     public function cliente()
     {

@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Scopes\TenantScope;
+use App\Models\Traits\BelongsToTenant;
 
 class Devolucion extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToTenant;
 
     protected $table = 'devoluciones';
 
@@ -37,22 +37,6 @@ class Devolucion extends Model
         'impuesto'         => 'decimal:2',
         'total'            => 'decimal:2',
     ];
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope(new TenantScope);
-
-        static::creating(function ($devolucion) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $devolucion->tenant_id = auth()->user()->tenant_id;
-            }
-        });
-    }
-
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
 
     public function venta()
     {
