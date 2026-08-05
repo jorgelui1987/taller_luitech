@@ -12,15 +12,14 @@ use Illuminate\Support\Facades\Validator;
 
 class TenantCreate extends Command
 {
-    protected $signature = 'tenant:create
-                            {--empresa= : Nombre de la empresa}
-                            {--subdominio= : Subdominio único (ej: mitienda)}
-                            {--email= : Email del administrador}'
-                            // NOSONAR - Entrada CLI segura, no credencial hardcodeada
-                            . '{--password= : Contraseña del admin}
-                            {--plan=gratis : Plan (gratis, basico, profesional, empresarial)}
-                            {--max-usuarios=3 : Máximo de usuarios permitidos}
-                            {--max-productos=50 : Máximo de productos permitidos}';
+    protected $signature = 'tenant:create'
+        . ' {--empresa= : Nombre de la empresa}'
+        . ' {--subdominio= : Subdominio único (ej: mitienda)}'
+        . ' {--email= : Email del administrador}'
+        . ' {--password= : Contraseña del admin}' // NOSONAR - Entrada CLI segura, no credencial hardcodeada
+        . ' {--plan=gratis : Plan (gratis, basico, profesional, empresarial)}'
+        . ' {--max-usuarios=3 : Máximo de usuarios permitidos}'
+        . ' {--max-productos=50 : Máximo de productos permitidos}';
 
     protected $description = 'Crea un nuevo tenant (cliente SaaS) con su administrador y configuración inicial';
 
