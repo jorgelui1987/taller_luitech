@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Scopes\TenantScope;
+use App\Models\Traits\BelongsToTenant;
 
 class OrdenCompra extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToTenant;
 
     protected $table = 'ordenes_compra';
 
@@ -30,12 +30,9 @@ class OrdenCompra extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new TenantScope);
+        // El trait BelongsToTenant registra el scope y asigna tenant_id automáticamente
         static::creating(function ($model) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $model->tenant_id = auth()->user()->tenant_id;
-            }
-            if (!$model->numero_orden) {
+            if ($model->tenant_id && !$model->numero_orden) {
                 $model->numero_orden = static::generarNumero();
             }
         });
@@ -71,7 +68,6 @@ class OrdenCompra extends Model
         return $nuevo;
     }
 
-    public function tenant() { return $this->belongsTo(Tenant::class); }
     public function proveedor() { return $this->belongsTo(Proveedor::class); }
     public function user() { return $this->belongsTo(User::class); }
     public function detalles() { return $this->hasMany(DetalleOrdenCompra::class); }

@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Scopes\TenantScope;
+use App\Models\Traits\BelongsToTenant;
 
 class Reparacion extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, BelongsToTenant;
 
     protected $table = 'reparaciones';
 
@@ -45,21 +45,6 @@ class Reparacion extends Model
 
     protected $dates = ['deleted_at'];
 
-    protected static function booted(): void
-    {
-        static::addGlobalScope(new TenantScope);
-
-        static::creating(function ($reparacion) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $reparacion->tenant_id = auth()->user()->tenant_id;
-            }
-        });
-    }
-
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
 
     public function cliente()
     {
