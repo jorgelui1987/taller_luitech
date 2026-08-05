@@ -524,7 +524,7 @@
                         <div class="alert alert-danger" style="border-radius:10px;font-size:13px;">
                             <ul class="mb-0 ps-3">
                                 @foreach($errors->all() as $error)
-                                    <ul><li>{{ $error }}</li></ul>
+                                    <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
                         </div>
