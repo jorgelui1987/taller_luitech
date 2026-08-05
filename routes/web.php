@@ -115,6 +115,12 @@ Route::middleware(['tenant'])->group(function () {
         Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
         Route::get('/register',  [RegisterController::class, 'showRegistrationForm'])->name('register');
         Route::post('/register', [RegisterController::class, 'register'])->name('register.post')->middleware('throttle:3,1');
+
+        // Rutas 2FA challenge (usuario aún no autenticado)
+        Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'showChallenge'])
+            ->name('two-factor.challenge')->middleware('throttle:5,1');
+        Route::post('/two-factor-challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verifyChallenge'])
+            ->name('two-factor.verify-challenge')->middleware('throttle:5,1');
     });
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -124,6 +130,12 @@ Route::middleware(['tenant'])->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // 2FA Management (usuario autenticado)
+        Route::get('/configuracion/2fa', [\App\Http\Controllers\Auth\TwoFactorController::class, 'registro'])->name('two-factor.setup');
+        Route::post('/configuracion/2fa/generar', [\App\Http\Controllers\Auth\TwoFactorController::class, 'generar'])->name('two-factor.generar');
+        Route::post('/configuracion/2fa/confirmar', [\App\Http\Controllers\Auth\TwoFactorController::class, 'confirmar'])->name('two-factor.confirmar');
+        Route::post('/configuracion/2fa/desactivar', [\App\Http\Controllers\Auth\TwoFactorController::class, 'desactivar'])->name('two-factor.desactivar');
 
         // Manual de Ayuda
         Route::get('/ayuda', [AyudaController::class, 'index'])->name('ayuda.index');

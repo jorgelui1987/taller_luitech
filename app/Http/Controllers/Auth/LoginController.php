@@ -48,26 +48,33 @@ class LoginController extends Controller
             ])->onlyInput('email');
         }
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $user = Auth::getProvider()->retrieveByCredentials($credentials);
 
-            if (!Auth::user()->activo) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return back()->withErrors([
-                    'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
-                ]);
-            }
-
-            return redirect()->intended(route('dashboard'));
+        // Verificar credenciales SIN autenticar aún
+        if (!$user || !Auth::getProvider()->validateCredentials($user, $credentials)) {
+            $this->incrementRateLimit($throttledKey);
+            return back()->withErrors([
+                'email' => 'Las credenciales no coinciden con nuestros registros.',
+            ])->onlyInput('email');
         }
 
-        $this->incrementRateLimit($throttledKey);
+        // Verificar estado activo
+        if (!$user->activo) {
+            return back()->withErrors([
+                'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
+            ]);
+        }
 
-        return back()->withErrors([
-            'email' => 'Las credenciales no coinciden con nuestros registros.',
-        ])->onlyInput('email');
+        // Si el usuario tiene 2FA activado, no autenticar aún - mostrar challenge
+        if ($user->two_factor_secret && $user->two_factor_confirmed_at) {
+            $request->session()->put('2fa_user_id', $user->id);
+            return redirect()->route('two-factor.challenge');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('dashboard'));
     }
 
     public function logout(Request $request)
