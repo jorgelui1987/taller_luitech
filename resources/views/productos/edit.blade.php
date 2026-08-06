@@ -32,7 +32,7 @@
 
                                 {{-- TIPO DE PRODUCTO --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">Tipo de Producto <span class="text-danger">*</span></label>
+                                    <label for="tipoProducto" class="form-label">Tipo de Producto <span class="text-danger">*</span></label>
                                     <select name="tipo" id="tipoProducto" class="form-select @error('tipo') is-invalid @enderror" required>
                                         <option value="celular" {{ old('tipo', $producto->tipo ?? 'celular')=='celular'?'selected':'' }}>📱 Celular</option>
                                         <option value="accesorio" {{ old('tipo', $producto->tipo)=='accesorio'?'selected':'' }}>🔌 Accesorio</option>
@@ -42,32 +42,32 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label class="form-label">Código SKU <span class="text-danger">*</span></label>
+                                    <label for="codigo" class="form-label">Código SKU <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('codigo') is-invalid @enderror"
-                                           name="codigo" value="{{ old('codigo', $producto->codigo) }}">
+                                           name="codigo" id="codigo" value="{{ old('codigo', $producto->codigo) }}">
                                     @error('codigo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Código de Barras</label>
+                                    <label for="codigo_barras" class="form-label">Código de Barras</label>
                                     <input type="text" class="form-control @error('codigo_barras') is-invalid @enderror"
-                                           name="codigo_barras" value="{{ old('codigo_barras', $producto->codigo_barras) }}">
+                                           name="codigo_barras" id="codigo_barras" value="{{ old('codigo_barras', $producto->codigo_barras) }}">
                                     @error('codigo_barras')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Garantía (días)</label>
-                                    <input type="number" class="form-control" name="garantia_dias"
+                                    <label for="garantia_dias" class="form-label">Garantía (días)</label>
+                                    <input type="number" class="form-control" name="garantia_dias" id="garantia_dias"
                                            value="{{ old('garantia_dias', $producto->garantia_dias ?? 0) }}" min="0">
                                 </div>
                                 <div class="col-md-8">
-                                    <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                                    <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('nombre') is-invalid @enderror"
-                                           name="nombre" value="{{ old('nombre', $producto->nombre) }}">
+                                           name="nombre" id="nombre" value="{{ old('nombre', $producto->nombre) }}">
                                     @error('nombre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
 
                                 {{-- CATEGORÍA --}}
                                 <div class="col-md-6">
-                                    <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                                    <label for="categoriaSelect" class="form-label">Categoría <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="categoria_id" id="categoriaSelect" class="form-select @error('categoria_id') is-invalid @enderror" required>
                                             <option value="">— Seleccionar —</option>
@@ -84,7 +84,7 @@
 
                                 {{-- MARCA --}}
                                 <div class="col-md-6">
-                                    <label class="form-label">Marca <span class="text-danger">*</span></label>
+                                    <label for="marcaSelect" class="form-label">Marca <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="marca_id" id="marcaSelect" class="form-select @error('marca_id') is-invalid @enderror" required>
                                             <option value="">— Seleccionar —</option>
