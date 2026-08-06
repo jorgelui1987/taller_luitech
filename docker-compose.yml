@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Aplicación Laravel
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taller-luitech-app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://luitech.fun
+      - APP_KEY=${APP_KEY}
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-taller-servicio-m221g}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-tiendacelulares_crm}
+      - DB_USERNAME=${DB_USERNAME:-tiendacelulares_crm}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SSLMODE=${DB_SSLMODE:-prefer}
+      - SESSION_DRIVER=file
+      - CACHE_DRIVER=file
+      - QUEUE_CONNECTION=sync
+      - FORCE_HTTPS=true
+      - SESSION_SECURE_COOKIE=true
+      - TRUSTED_PROXIES=*
+      - LOG_LEVEL=warning
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - taller-luitech-network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: taller-luitech-mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-tiendacelulares_crm}
+      - MYSQL_USER=${DB_USERNAME:-tiendacelulares_crm}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - taller-luitech-network
+
+volumes:
+  mysql_data:
+
+networks:
+  taller-luitech-network:
+    driver: bridge
