@@ -57,7 +57,11 @@ class ReparacionController extends Controller
 
     public function create()
     {
-        $clientes  = Cliente::where('activo', true)->orderBy('nombre')->get();
+        $clientes  = Cliente::where('activo', true)
+            ->orderBy('nombre')
+            ->orderBy('apellido')
+            ->limit(50)
+            ->get();
         $tecnicos  = User::where('tenant_id', Auth::user()->tenant_id)
             ->where('rol', 'tecnico')
             ->where('activo', true)

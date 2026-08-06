@@ -285,6 +285,26 @@ Route::middleware(['tenant'])->group(function () {
             Route::delete('/gastos/{gasto}', [\App\Http\Controllers\GastoFijoController::class, 'destroy'])->name('gastos.destroy');
         });
 
+        // API interna para búsqueda de clientes (autocompletado en formularios)
+        Route::get('/api/clientes/buscar', function () {
+            $clientes = \App\Models\Cliente::where('activo', true)
+                ->when(request('q'), fn($q, $buscar) =>
+                    $q->where(function ($sub) use ($buscar) {
+                        $sub->where('nombre', 'like', "%$buscar%")
+                            ->orWhere('apellido', 'like', "%$buscar%")
+                            ->orWhere('telefono', 'like', "%$buscar%")
+                            ->orWhere('celular', 'like', "%$buscar%")
+                            ->orWhere('dni', 'like', "%$buscar%");
+                    })
+                )
+                ->orderBy('nombre')
+                ->orderBy('apellido')
+                ->limit(15)
+                ->get(['id', 'nombre', 'apellido', 'telefono', 'celular', 'dni']);
+
+            return response()->json($clientes);
+        })->name('api.clientes.buscar');
+
         // API interna para búsqueda de productos (para el formulario de ventas)
         Route::get('/api/productos/buscar', function () {
             $productos = \App\Models\Producto::with(['marca'])

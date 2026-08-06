@@ -101,15 +101,19 @@
                                         <div class="row g-3">
                                             <div class="col-md-5">
                                                 <label class="form-label">Cliente <span class="text-danger">*</span></label>
-                                                <select name="cliente_id" class="form-select @error('cliente_id') is-invalid @enderror" required>
-                                                    <option value="">— Seleccionar cliente —</option>
-                                                    @foreach($clientes as $c)
-                                                        <option value="{{ $c->id }}"
-                                                                {{ (old('cliente_id', request('cliente')) == $c->id) ? 'selected' : '' }}>
-                                                            {{ $c->nombre_completo }} — {{ $c->telefono }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                <div class="cliente-buscador" style="position:relative;">
+                                                    <input type="text"
+                                                           id="clienteBuscarInput"
+                                                           class="form-control @error('cliente_id') is-invalid @enderror"
+                                                           placeholder="🔍 Escribe nombre, teléfono o DNI..."
+                                                           autocomplete="off"
+                                                           value="{{ old('cliente_id', request('cliente')) ? optional($clientes->firstWhere('id', old('cliente_id', request('cliente'))))->nombre_completo : '' }}">
+                                                    <input type="hidden" name="cliente_id" id="clienteIdHidden"
+                                                           value="{{ old('cliente_id', request('cliente')) }}">
+                                                    <div id="clienteResultados" class="dropdown-menu"
+                                                         style="display:none; width:100%; max-height:250px; overflow-y:auto;"></div>
+                                                </div>
+                                                <div id="clienteSeleccionado" style="font-size:11px; color:#10b981; font-weight:600; min-height:16px;"></div>
                                                 @error('cliente_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-md-4">
@@ -625,6 +629,96 @@ document.addEventListener('input', function(e) {
         const totalInput = document.querySelector('input[name="total"]');
         if (totalInput) totalInput.value = Math.max(0, presupuesto - abono).toFixed(2);
     }
+});
+
+// ── BUSCADOR DE CLIENTES (AUTOCOMPLETADO) ──
+let clienteTimer = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('clienteBuscarInput');
+    const resultados = document.getElementById('clienteResultados');
+    const hidden = document.getElementById('clienteIdHidden');
+    const seleccionado = document.getElementById('clienteSeleccionado');
+
+    if (!input) return;
+
+    // Mostrar cliente seleccionado si ya hay uno (por old())
+    if (hidden.value) {
+        const nombre = input.value;
+        if (nombre) {
+            seleccionado.innerHTML = '✅ ' + nombre;
+        }
+    }
+
+    input.addEventListener('input', function() {
+        const q = this.value.trim();
+        clearTimeout(clienteTimer);
+
+        if (q.length < 1) {
+            resultados.style.display = 'none';
+            hidden.value = '';
+            seleccionado.innerHTML = '';
+            return;
+        }
+
+        clienteTimer = setTimeout(function() {
+            fetch('{{ route("api.clientes.buscar") }}?q=' + encodeURIComponent(q), {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(clientes => {
+                if (clientes.length === 0) {
+                    resultados.innerHTML = '<div class="dropdown-item text-muted" style="font-size:12px;">No se encontraron clientes con "' + q + '"</div>';
+                    resultados.style.display = 'block';
+                    return;
+                }
+
+                resultados.innerHTML = clientes.map(c => {
+                    const nombre = (c.nombre || '') + ' ' + (c.apellido || '');
+                    const tel = c.telefono || c.celular || '';
+                    const dni = c.dni ? ' | DNI: ' + c.dni : '';
+                    return '<a href="#" class="dropdown-item" data-id="' + c.id + '" data-nombre="' + nombre.replace(/"/g, '"') + '" style="font-size:13px; padding:6px 10px;">' +
+                        '<div style="font-weight:600;">' + nombre + '</div>' +
+                        '<div style="font-size:11px; color:#9ca3af;">' + (tel ? '📞 ' + tel : '') + dni + '</div>' +
+                    '</a>';
+                }).join('');
+
+                resultados.style.display = 'block';
+
+                // Click en un resultado
+                resultados.querySelectorAll('.dropdown-item[data-id]').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const id = this.dataset.id;
+                        const nombre = this.dataset.nombre;
+                        input.value = nombre;
+                        hidden.value = id;
+                        seleccionado.innerHTML = '✅ ' + nombre;
+                        resultados.style.display = 'none';
+                    });
+                });
+            })
+            .catch(err => {
+                console.error('Error buscando clientes:', err);
+            });
+        }, 300);
+    });
+
+    // Cerrar resultados al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.cliente-buscador')) {
+            resultados.style.display = 'none';
+        }
+    });
+
+    // Limpiar selección si el usuario borra el texto
+    input.addEventListener('blur', function() {
+        setTimeout(function() {
+            if (!hidden.value) {
+                seleccionado.innerHTML = '';
+            }
+        }, 200);
+    });
 });
 
 // ── VALIDAR CUPÓN DE DESCUENTO ──
