@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Celulares - Gestión para tu tienda</title>
+    <title>CRM Celulares - GestiÃ³n para tu tienda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"><!-- NOSONAR -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
     <style>
         .pricing-card { transition: transform 0.3s, box-shadow 0.3s; border-radius: 16px; }
         .pricing-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
@@ -25,10 +25,10 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1b4b;">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">📱 CRM Celulares</a>
+            <a class="navbar-brand fw-bold" href="#">ðŸ“± CRM Celulares</a>
             <div class="ms-auto">
                 <a href="{{ route('registro.tenant') }}" class="btn btn-light me-2">Comenzar Gratis</a>
-                <a href="{{ route('login') }}" class="btn btn-outline-light">Iniciar Sesión</a>
+                <a href="{{ route('login') }}" class="btn btn-outline-light">Iniciar SesiÃ³n</a>
             </div>
         </div>
     </nav>
@@ -43,14 +43,14 @@
                     <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
                         <i class="bi bi-cart3 fs-2"></i>
                         <h5>Ventas</h5>
-                        <p class="small mb-0">Carrito, múltiples pagos, tickets</p>
+                        <p class="small mb-0">Carrito, mÃºltiples pagos, tickets</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
                         <i class="bi bi-tools fs-2"></i>
                         <h5>Reparaciones</h5>
-                        <p class="small mb-0">Órdenes, estados, WhatsApp</p>
+                        <p class="small mb-0">Ã“rdenes, estados, WhatsApp</p>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -64,15 +64,15 @@
                     <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
                         <i class="bi bi-graph-up fs-2"></i>
                         <h5>Reportes</h5>
-                        <p class="small mb-0">Dashboard, gráficos, PDF</p>
+                        <p class="small mb-0">Dashboard, grÃ¡ficos, PDF</p>
                     </div>
                 </div>
             </div>
-            <a href="{{ route('registro.tenant') }}" class="btn btn-light btn-lg mt-4">Comenzar gratis →</a>
+            <a href="{{ route('registro.tenant') }}" class="btn btn-light btn-lg mt-4">Comenzar gratis â†’</a>
         </div>
     </header>
 
-    <!-- ═══════════ PLANES Y PRECIOS ═══════════ -->
+    <!-- â•â•â•â•â•â•â•â•â•â•â• PLANES Y PRECIOS â•â•â•â•â•â•â•â•â•â•â• -->
     @php
         $planesPrecios = \App\Models\PlanPrecio::getPlanesActivos();
         $planGratis = $planesPrecios['gratis'] ?? null;
@@ -105,40 +105,40 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card pricing-card h-100 shadow-sm">
                         <div class="card-body text-center">
-                            <h5 class="fw-bold">🌱 {{ $planGratis->nombre ?? 'Gratis' }}</h5>
+                            <h5 class="fw-bold">ðŸŒ± {{ $planGratis->nombre ?? 'Gratis' }}</h5>
                             <p class="text-muted small">{{ $planGratis->descripcion ?? 'Para empezar' }}</p>
                             <div class="price">{{ $mostrarPrecio($planGratis, 'S/0') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <ul><li><span class="feature-yes">✅</span> Hasta 3 usuarios</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Hasta 50 productos</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Ventas básicas</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Reparaciones básicas</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Reportes básicos</li></ul>
-                                <ul><li><span class="feature-no">❌</span> <span class="text-muted">Exportar a Excel</span></li></ul>
-                                <ul><li><span class="feature-no">❌</span> <span class="text-muted">Notificaciones WhatsApp</span></li></ul>
-                                <ul><li><span class="feature-no">❌</span> <span class="text-muted">Soporte prioritario</span></li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Hasta 3 usuarios</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Hasta 50 productos</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Ventas bÃ¡sicas</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Reparaciones bÃ¡sicas</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Reportes bÃ¡sicos</li></ul>
+                                <ul><li><span class="feature-no">âŒ</span> <span class="text-muted">Exportar a Excel</span></li></ul>
+                                <ul><li><span class="feature-no">âŒ</span> <span class="text-muted">Notificaciones WhatsApp</span></li></ul>
+                                <ul><li><span class="feature-no">âŒ</span> <span class="text-muted">Soporte prioritario</span></li></ul>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Comenzar Gratis</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Plan BÁSICO -->
+                <!-- Plan BÃSICO -->
                 <div class="col-lg-3 col-md-6">
                     <div class="card pricing-card h-100 shadow-sm">
                         <div class="card-body text-center">
-                            <h5 class="fw-bold">🚀 {{ $planBasico->nombre ?? 'Básico' }}</h5>
-                            <p class="text-muted small">{{ $planBasico->descripcion ?? 'Para negocios pequeños' }}</p>
+                            <h5 class="fw-bold">ðŸš€ {{ $planBasico->nombre ?? 'BÃ¡sico' }}</h5>
+                            <p class="text-muted small">{{ $planBasico->descripcion ?? 'Para negocios pequeÃ±os' }}</p>
                             <div class="price">{{ $mostrarPrecio($planBasico, 'S/49') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <ul><li><span class="feature-yes">✅</span> Hasta 5 usuarios</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Hasta 200 productos</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Ventas completas</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Reparaciones completas</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Reportes avanzados</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Exportar a Excel</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Notificaciones WhatsApp</li></ul>
-                                <ul><li><span class="feature-no">❌</span> <span class="text-muted">Soporte prioritario</span></li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Hasta 5 usuarios</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Hasta 200 productos</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Ventas completas</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Reparaciones completas</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Reportes avanzados</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Exportar a Excel</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Notificaciones WhatsApp</li></ul>
+                                <ul><li><span class="feature-no">âŒ</span> <span class="text-muted">Soporte prioritario</span></li></ul>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Lo quiero</a>
                         </div>
@@ -149,19 +149,19 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card pricing-card h-100 shadow popular" style="border-color: #0d6efd;">
                         <div class="card-body text-center position-relative">
-                            <span class="badge bg-primary position-absolute" style="top: -12px; right: 20px; padding: 6px 16px;">MÁS POPULAR</span>
-                            <h5 class="fw-bold">⭐ {{ $planProfesional->nombre ?? 'Profesional' }}</h5>
+                            <span class="badge bg-primary position-absolute" style="top: -12px; right: 20px; padding: 6px 16px;">MÃS POPULAR</span>
+                            <h5 class="fw-bold">â­ {{ $planProfesional->nombre ?? 'Profesional' }}</h5>
                             <p class="text-muted small">{{ $planProfesional->descripcion ?? 'Para negocios en crecimiento' }}</p>
                             <div class="price">{{ $mostrarPrecio($planProfesional, 'S/99') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <ul><li><span class="feature-yes">✅</span> Hasta 15 usuarios</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Hasta 1,000 productos</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Ventas completas</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Reparaciones completas</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Reportes avanzados</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Exportar a Excel</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Notificaciones WhatsApp</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Soporte prioritario</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Hasta 15 usuarios</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Hasta 1,000 productos</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Ventas completas</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Reparaciones completas</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Reportes avanzados</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Exportar a Excel</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Notificaciones WhatsApp</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Soporte prioritario</li></ul>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-primary w-100 mt-3">Lo quiero</a>
                         </div>
@@ -172,18 +172,18 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card pricing-card h-100 shadow-sm">
                         <div class="card-body text-center">
-                            <h5 class="fw-bold">🏢 {{ $planEmpresarial->nombre ?? 'Empresarial' }}</h5>
+                            <h5 class="fw-bold">ðŸ¢ {{ $planEmpresarial->nombre ?? 'Empresarial' }}</h5>
                             <p class="text-muted small">{{ $planEmpresarial->descripcion ?? 'Para grandes tiendas' }}</p>
                             <div class="price">{{ $mostrarPrecio($planEmpresarial, 'S/199') }} <small>/mes</small></div>
                             <ul class="feature-list text-start mt-3">
-                                <ul><li><span class="feature-yes">✅</span> Usuarios ilimitados</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Productos ilimitados</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Todas las funcionalidades</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Múltiples sucursales</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> API personalizada</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Soporte 24/7</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Capacitación del equipo</li></ul>
-                                <ul><li><span class="feature-yes">✅</span> Dominio personalizado</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Usuarios ilimitados</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Productos ilimitados</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Todas las funcionalidades</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> MÃºltiples sucursales</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> API personalizada</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Soporte 24/7</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> CapacitaciÃ³n del equipo</li></ul>
+                                <ul><li><span class="feature-yes">âœ…</span> Dominio personalizado</li></ul>
                             </ul>
                             <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Contactar</a>
                         </div>
@@ -195,16 +195,16 @@
             <div class="text-center mt-4">
                 <p class="text-muted">
                     <i class="bi bi-info-circle"></i> 
-                    Al registrarse obtienes el plan <strong>Gratis</strong> automáticamente. 
-                    Puedes upgradear cuando quieras contactándonos.
+                    Al registrarse obtienes el plan <strong>Gratis</strong> automÃ¡ticamente. 
+                    Puedes upgradear cuando quieras contactÃ¡ndonos.
                 </p>
                 <p class="mt-2">
                     <i class="bi bi-whatsapp text-success"></i> 
-                    Contáctanos por WhatsApp: 
-                    <a href="https://wa.me/56982209690?text=Quiero%20información%20sobre%20los%20planes" target="_blank" class="text-success fw-bold">
+                    ContÃ¡ctanos por WhatsApp: 
+                    <a href="https://wa.me/56982209690?text=Quiero%20informaciÃ³n%20sobre%20los%20planes" target="_blank" class="text-success fw-bold">
                         +56982209690
                     </a>
-                    &nbsp;·&nbsp;
+                    &nbsp;Â·&nbsp;
                     <i class="bi bi-envelope text-primary"></i> 
                     <a href="mailto:luitechserena@gmail.com" class="text-primary fw-bold">luitechserena@gmail.com</a>
                 </p>
@@ -215,11 +215,11 @@
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-4">
         <div class="container">
-            <p class="mb-0">© {{ date('Y') }} CRM Celulares. Todos los derechos reservados.</p>
+            <p class="mb-0">Â© {{ date('Y') }} CRM Celulares. Todos los derechos reservados.</p>
             <p class="small text-muted mt-1">
-                <a href="#precios" class="text-muted">Planes</a> · 
-                <a href="{{ route('registro.tenant') }}" class="text-muted">Registro</a> · 
-                <a href="{{ route('login') }}" class="text-muted">Iniciar Sesión</a>
+                <a href="#precios" class="text-muted">Planes</a> Â· 
+                <a href="{{ route('registro.tenant') }}" class="text-muted">Registro</a> Â· 
+                <a href="{{ route('login') }}" class="text-muted">Iniciar SesiÃ³n</a>
             </p>
         </div>
     </footer>
