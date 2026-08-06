@@ -48,14 +48,16 @@
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-4">
+                <label for="buscar" class="visually-hidden">Buscar producto</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
-                    <input type="text" class="form-control" name="buscar"
+                    <input type="text" class="form-control" name="buscar" id="buscar"
                            placeholder="Nombre, código, modelo..." value="{{ request('buscar') }}">
                 </div>
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="categoria_id">
+                <label for="categoria_id" class="visually-hidden">Filtrar por categoría</label>
+                <select class="form-select" name="categoria_id" id="categoria_id">
                     <option value="">Todas las categorías</option>
                     @foreach($categorias as $cat)
                         <option value="{{ $cat->id }}" {{ request('categoria_id')==$cat->id?'selected':'' }}>
@@ -65,7 +67,8 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="marca_id">
+                <label for="marca_id" class="visually-hidden">Filtrar por marca</label>
+                <select class="form-select" name="marca_id" id="marca_id">
                     <option value="">Todas las marcas</option>
                     @foreach($marcas as $m)
                         <option value="{{ $m->id }}" {{ request('marca_id')==$m->id?'selected':'' }}>
@@ -75,7 +78,8 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="condicion">
+                <label for="condicion" class="visually-hidden">Filtrar por condición</label>
+                <select class="form-select" name="condicion" id="condicion">
                     <option value="">Condición</option>
                     <option value="nuevo" {{ request('condicion')=='nuevo'?'selected':'' }}>Nuevo</option>
                     <option value="reacondicionado" {{ request('condicion')=='reacondicionado'?'selected':'' }}>Reacondicionado</option>
@@ -127,6 +131,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 @if($producto->imagen)
                                     <img src="{{ asset('storage/'.$producto->imagen) }}"
+                                         alt="{{ $producto->nombre }}"
                                          style="width:44px; height:44px; border-radius:10px; object-fit:cover;">
                                 @else
                                     <div style="width:44px; height:44px; border-radius:10px;

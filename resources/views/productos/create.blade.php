@@ -189,7 +189,7 @@
                                     @error('precio_venta')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Margen de Ganancia</label>
+                                    <span class="form-label d-block">Margen de Ganancia</span>
                                     <div class="form-control d-flex align-items-center" style="background:#f9fafb;">
                                         <span id="margenValor" style="font-weight:600; color:#10b981;">0.0%</span>
                                         <span id="margenMonto" class="ms-2 text-muted" style="font-size:12px;"></span>
@@ -214,9 +214,9 @@
                         {{-- Columna derecha - imagen --}}
                         <div class="col-lg-4">
                             <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Imagen del Producto</h6>
-                            <div id="dropZone" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('imagenInput').click()"
+                            <label for="imagenInput" id="dropZone"
                                  style="border:2px dashed #d1d5db; border-radius:16px; padding:32px 20px;
-                                        text-align:center; cursor:pointer; background:#fafafa; transition:.2s;"
+                                        text-align:center; cursor:pointer; background:#fafafa; transition:.2s; display:block;"
                                  ondragover="event.preventDefault(); this.style.borderColor='#a855f7';"
                                  ondragleave="this.style.borderColor='#d1d5db';"
                                  ondrop="handleDrop(event)">
@@ -226,8 +226,8 @@
                                     <p class="mb-0" style="font-size:12px; color:#9ca3af;">o haz clic para seleccionar</p>
                                     <p class="mb-0 mt-2" style="font-size:11px; color:#d1d5db;">JPG, PNG, WebP · Máx 2MB</p>
                                 </div>
-                                <img id="previewImg" src="" style="display:none; width:100%; border-radius:10px; max-height:200px; object-fit:cover;">
-                            </div>
+                                <img id="previewImg" src="" alt="Vista previa del producto" style="display:none; width:100%; border-radius:10px; max-height:200px; object-fit:cover;">
+                            </label>
                             <input type="file" id="imagenInput" name="imagen" accept="image/*"
                                    style="display:none;" onchange="previewImage(this)">
 
@@ -277,7 +277,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Nombre de la Marca</label>
+                    <label for="nuevaMarcaInput" class="form-label">Nombre de la Marca</label>
                     <input type="text" id="nuevaMarcaInput" class="form-control" placeholder="Ej: Spigen, Anker, Ugreen..."
                            onkeypress="if(event.key==='Enter'){event.preventDefault();guardarMarca();}">
                     <div id="marcaError" class="text-danger mt-1" style="font-size:12px; display:none;"></div>
@@ -303,7 +303,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Nombre de la Categoría</label>
+                    <label for="nuevaCategoriaInput" class="form-label">Nombre de la Categoría</label>
                     <input type="text" id="nuevaCategoriaInput" class="form-control" placeholder="Ej: Fundas, Cargadores, Audífonos..."
                            onkeypress="if(event.key==='Enter'){event.preventDefault();guardarCategoria();}">
                     <div id="categoriaError" class="text-danger mt-1" style="font-size:12px; display:none;"></div>

@@ -15,6 +15,7 @@
             <div class="card-body p-4 text-center">
                 @if($producto->imagen)
                     <img src="{{ asset('storage/'.$producto->imagen) }}"
+                         alt="{{ $producto->nombre }}"
                          style="width:100%; max-height:240px; object-fit:cover; border-radius:14px; margin-bottom:16px;">
                 @else
                     <div style="width:100%; height:180px; background:linear-gradient(135deg,#a855f7,#ec4899);

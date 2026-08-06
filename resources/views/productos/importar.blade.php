@@ -36,7 +36,8 @@
                             <form action="{{ route('productos.importar.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
-                                    <input type="file" name="archivo" class="form-control" accept=".csv,.txt" required>
+                                    <label for="archivo" class="form-label">Archivo CSV</label>
+                                    <input type="file" name="archivo" id="archivo" class="form-control" accept=".csv,.txt" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">
                                     <i class="fas fa-upload me-2"></i>Importar Productos
