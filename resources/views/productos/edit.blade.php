@@ -218,21 +218,22 @@
                             @if($producto->imagen)
                                 <div class="mb-3">
                                     <img src="{{ asset('storage/'.$producto->imagen) }}" id="previewImg"
+                                         alt="{{ $producto->nombre }}"
                                          style="width:100%; border-radius:12px; max-height:220px; object-fit:cover;">
                                     <p class="text-muted mt-1" style="font-size:12px;">Imagen actual</p>
                                 </div>
                             @else
-                                <img id="previewImg" src="" style="display:none; width:100%; border-radius:12px; max-height:220px; object-fit:cover; margin-bottom:8px;">
+                                <img id="previewImg" src="" alt="Vista previa del producto" style="display:none; width:100%; border-radius:12px; max-height:220px; object-fit:cover; margin-bottom:8px;">
                             @endif
 
-                            <div role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('imagenInput').click()"
+                            <label for="imagenInput"
                                  style="border:2px dashed #d1d5db; border-radius:12px; padding:20px;
-                                        text-align:center; cursor:pointer; background:#fafafa;">
+                                        text-align:center; cursor:pointer; background:#fafafa; display:block;">
                                 <i class="fas fa-camera text-muted mb-2 d-block"></i>
                                 <span style="font-size:12px; color:#6b7280;">
                                     {{ $producto->imagen ? 'Cambiar imagen' : 'Subir imagen' }}
                                 </span>
-                            </div>
+                            </label>
                             <input type="file" id="imagenInput" name="imagen" accept="image/*"
                                    style="display:none;" onchange="previewImage(this)">
 
@@ -280,7 +281,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Nombre de la Marca</label>
+                    <label for="nuevaMarcaInput" class="form-label">Nombre de la Marca</label>
                     <input type="text" id="nuevaMarcaInput" class="form-control" placeholder="Ej: Spigen, Anker, Ugreen..."
                            onkeypress="if(event.key==='Enter'){event.preventDefault();guardarMarca();}">
                     <div id="marcaError" class="text-danger mt-1" style="font-size:12px; display:none;"></div>
@@ -306,7 +307,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Nombre de la Categoría</label>
+                    <label for="nuevaCategoriaInput" class="form-label">Nombre de la Categoría</label>
                     <input type="text" id="nuevaCategoriaInput" class="form-control" placeholder="Ej: Fundas, Cargadores, Audífonos..."
                            onkeypress="if(event.key==='Enter'){event.preventDefault();guardarCategoria();}">
                     <div id="categoriaError" class="text-danger mt-1" style="font-size:12px; display:none;"></div>
