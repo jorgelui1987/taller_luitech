@@ -117,8 +117,8 @@
                                                 @error('cliente_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">Técnico Asignado <span class="text-danger">*</span></label>
-                                                <select name="tecnico_id" class="form-select @error('tecnico_id') is-invalid @enderror" required>
+                                                <label for="tecnico_id" class="form-label">Técnico Asignado <span class="text-danger">*</span></label>
+                                                <select name="tecnico_id" id="tecnico_id" class="form-select @error('tecnico_id') is-invalid @enderror" required>
                                                     <option value="">— Seleccionar técnico —</option>
                                                     @foreach($tecnicos as $t)
                                                         <option value="{{ $t->id }}" {{ old('tecnico_id')==$t->id?'selected':'' }}>
@@ -129,8 +129,8 @@
                                                 @error('tecnico_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="form-label">Prioridad <span class="text-danger">*</span></label>
-                                                <select name="prioridad" class="form-select" required>
+                                                <label for="prioridad" class="form-label">Prioridad <span class="text-danger">*</span></label>
+                                                <select name="prioridad" id="prioridad" class="form-select" required>
                                                     <option value="baja" {{ old('prioridad')=='baja'?'selected':'' }}>🟢 Baja</option>
                                                     <option value="media" {{ old('prioridad','media')=='media'?'selected':'' }}>🟡 Media</option>
                                                     <option value="alta" {{ old('prioridad')=='alta'?'selected':'' }}>🟠 Alta</option>
@@ -152,8 +152,8 @@
                                     <div class="accordion-body show">
                                         <div class="row g-3">
                                             <div class="col-md-4">
-                                                <label class="form-label">📱 Tipo <span class="text-danger">*</span></label>
-                                                <select name="tipo_dispositivo" class="form-select @error('tipo_dispositivo') is-invalid @enderror" required>
+                                                <label for="tipo_dispositivo" class="form-label">📱 Tipo <span class="text-danger">*</span></label>
+                                                <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-select @error('tipo_dispositivo') is-invalid @enderror" required>
                                                     <option value="">— Seleccionar —</option>
                                                     <option value="celular" {{ old('tipo_dispositivo')=='celular'?'selected':'' }}>📱 Celular / Smartphone</option>
                                                     <option value="tablet" {{ old('tipo_dispositivo')=='tablet'?'selected':'' }}>📟 Tablet / iPad</option>
@@ -163,7 +163,7 @@
                                                 @error('tipo_dispositivo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">🏷️ Marca</label>
+                                                <label for="marca_select" class="form-label">🏷️ Marca</label>
                                                 @php
                                                     $marcasPrecargadas = [
                                                         'Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Motorola',
@@ -174,7 +174,7 @@
                                                     ];
                                                     $marcaSeleccionada = old('marca');
                                                 @endphp
-                                                <select name="marca_select" class="form-select marca-select" onchange="toggleMarcaInput(this)">
+                                                <select name="marca_select" id="marca_select" class="form-select marca-select" onchange="toggleMarcaInput(this)">
                                                     <option value="">— Seleccionar —</option>
                                                     @foreach($marcasPrecargadas as $m)
                                                         <option value="{{ $m }}" {{ $marcaSeleccionada==$m?'selected':'' }}>{{ $m }}</option>
@@ -182,40 +182,40 @@
                                                     <option value="__otra__" {{ $marcaSeleccionada && !in_array($marcaSeleccionada, $marcasPrecargadas) ? 'selected' : '' }}>✏️ Otra</option>
                                                 </select>
                                                 <input type="text" class="form-control marca-input mt-1 @error('marca') is-invalid @enderror"
-                                                       name="marca" value="{{ old('marca') }}"
+                                                       name="marca" id="marca" value="{{ old('marca') }}"
                                                        placeholder="Escribir marca..."
                                                        style="{{ $marcaSeleccionada && !in_array($marcaSeleccionada, $marcasPrecargadas) ? 'display:block;' : 'display:none;' }}">
                                                 @error('marca')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">📦 Modelo</label>
-                                                <input type="text" class="form-control" name="modelo"
+                                                <label for="modelo" class="form-label">📦 Modelo</label>
+                                                <input type="text" class="form-control" name="modelo" id="modelo"
                                                        value="{{ old('modelo') }}" placeholder="Galaxy, iPhone...">
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">🔢 IMEI / Serie</label>
-                                                <input type="text" class="form-control" name="imei"
+                                                <label for="imei" class="form-label">🔢 IMEI / Serie</label>
+                                                <input type="text" class="form-control" name="imei" id="imei"
                                                        value="{{ old('imei') }}" placeholder="123456789012345">
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">🎨 Color</label>
-                                                <input type="text" class="form-control" name="color"
+                                                <label for="color" class="form-label">🎨 Color</label>
+                                                <input type="text" class="form-control" name="color" id="color"
                                                        value="{{ old('color') }}" placeholder="Negro, Blanco...">
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">📅 Fecha Estimada</label>
-                                                <input type="date" class="form-control" name="fecha_estimada"
+                                                <label for="fecha_estimada" class="form-label">📅 Fecha Estimada</label>
+                                                <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada"
                                                        value="{{ old('fecha_estimada') }}" min="{{ date('Y-m-d') }}">
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">🔐 Patrón / PIN</label>
+                                                <label for="tipo_codigo" class="form-label">🔐 Patrón / PIN</label>
                                                 <div class="d-flex gap-2">
-                                                    <select name="tipo_codigo" class="form-select" style="flex:0 0 110px;" onchange="togglePatronInput(this)">
+                                                    <select name="tipo_codigo" id="tipo_codigo" class="form-select" style="flex:0 0 110px;" onchange="togglePatronInput(this)">
                                                         <option value="">—</option>
                                                         <option value="pin" {{ old('tipo_codigo')=='pin'?'selected':'' }}>🔢 PIN</option>
                                                         <option value="patron" {{ old('tipo_codigo')=='patron'?'selected':'' }}>🔓 Patrón</option>
                                                     </select>
-                                                    <input type="text" class="form-control patron-valor" name="codigo_equipo"
+                                                    <input type="text" class="form-control patron-valor" name="codigo_equipo" id="codigo_equipo"
                                                            value="{{ old('codigo_equipo') }}"
                                                            placeholder="PIN numérico" style="display:block;">
                                                 </div>
@@ -261,8 +261,8 @@
                                                 @error('falla_reportada')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
                                             <div class="col-12">
-                                                <label class="form-label">Notas Adicionales</label>
-                                                <textarea class="form-control" name="notas" rows="2"
+                                                <label for="notas" class="form-label">Notas Adicionales</label>
+                                                <textarea class="form-control" name="notas" id="notas" rows="2"
                                                           placeholder="Accesorios recibidos, observaciones al recibir el equipo...">{{ old('notas') }}</textarea>
                                             </div>
                                         </div>
@@ -287,25 +287,25 @@
                                     <div class="accordion-body show">
                                         <div class="d-flex flex-column gap-2">
                                             <div>
-                                                <label class="form-label" style="font-size:12px;">Presupuesto Estimado (S/)</label>
-                                                <input type="number" class="form-control" name="presupuesto"
+                                                <label for="presupuesto" class="form-label" style="font-size:12px;">Presupuesto Estimado (S/)</label>
+                                                <input type="number" class="form-control" name="presupuesto" id="presupuesto"
                                                        value="{{ old('presupuesto', 0) }}" min="0" step="0.01">
                                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Dejar en 0 si aún no se determinó</div>
                                             </div>
                                             <div>
-                                                <label class="form-label" style="font-size:12px;">Abono (S/)</label>
-                                                <input type="number" class="form-control" name="abono"
+                                                <label for="abono" class="form-label" style="font-size:12px;">Abono (S/)</label>
+                                                <input type="number" class="form-control" name="abono" id="abono"
                                                        value="{{ old('abono', 0) }}" min="0" step="0.01">
                                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Monto pagado por adelantado</div>
                                             </div>
                                              <div>
-                                                 <label class="form-label" style="font-size:12px;">Costo de Repuesto(s) (S/)</label>
-                                                 <input type="number" class="form-control" name="costo_repuesto"
+                                                 <label for="costo_repuesto" class="form-label" style="font-size:12px;">Costo de Repuesto(s) (S/)</label>
+                                                 <input type="number" class="form-control" name="costo_repuesto" id="costo_repuesto"
                                                         value="{{ old('costo_repuesto', 0) }}" min="0" step="0.01">
                                                  <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia del técnico</div>
                                              </div>
                                              <div>
-                                                 <label class="form-label" style="font-size:12px;">🎟️ Cupón de Descuento</label>
+                                                 <label for="cuponCodigoInput" class="form-label" style="font-size:12px;">🎟️ Cupón de Descuento</label>
                                                  <div class="input-group input-group-sm">
                                                      <input type="text" class="form-control" name="cupon_codigo" id="cuponCodigoInput"
                                                             value="{{ old('cupon_codigo', session('cupon_codigo')) }}" placeholder="Código del cupón (ej: CUP-XXXXXX-XXX)">
@@ -320,7 +320,8 @@
                                              </div>
                                              <div class="p-3 rounded-3" style="background:#fef3c7; border:2px solid #f59e0b;">
                                                 <div style="font-size:11px; color:#92400e; font-weight:600;">SALDO PENDIENTE</div>
-                                                <input type="number" class="form-control total-auto mt-1" name="total"
+                                                <label for="total" class="visually-hidden">Saldo pendiente</label>
+                                                <input type="number" class="form-control total-auto mt-1" name="total" id="total"
                                                        value="{{ old('total', 0) }}" min="0" step="0.01" readonly
                                                        style="background:#fff3cd; font-weight:700; font-size:18px; border:1px solid #f59e0b;">
                                                 <div style="font-size:11px; color:#92400e; margin-top:2px;">Presupuesto - Abono</div>
