@@ -20,6 +20,7 @@ RUN apt-get update -qq && apt-get install -y -qq \
     libwebp-dev \
     libicu-dev \
     gettext-base \
+    util-linux \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -72,10 +73,16 @@ COPY composer.lock /var/www/html/composer.lock
 COPY .htaccess /var/www/html/.htaccess
 COPY docker /var/www/html/docker
 
+# Crear usuario no-root dedicado para la aplicación
+RUN useradd -m -u 1001 -s /bin/bash appuser \
+    && usermod -aG www-data appuser
+
 # Configurar permisos
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+    && chmod -R 775 /var/www/html/bootstrap/cache \
+    && chown -R appuser:www-data /var/www/html/storage \
+    && chown -R appuser:www-data /var/www/html/bootstrap/cache
 
 # Instalar dependencias de Composer (solo producción)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
@@ -92,7 +99,9 @@ WORKDIR /var/www/html
 
 EXPOSE 80
 
-# NOSONAR - Apache 2 necesita iniciarse como root para enlazar al puerto 80
-# Luego Apache cambia automáticamente al usuario www-data para procesar las peticiones
+# Seguridad: El entrypoint se ejecuta como root solo para tareas de inicialización
+# (generar .env, permisos, migraciones). Luego Apache baja automáticamente a www-data
+# para procesar peticiones. El usuario appuser se usa para tareas de aplicación.
+# NOSONAR - Apache 2 necesita root para enlazar al puerto 80, luego baja a www-data
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]

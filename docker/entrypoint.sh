@@ -70,12 +70,13 @@ echo "✓ .env generado correctamente"
 # ── Configurar permisos ─────────────────────────────────────────────
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+chown -R appuser:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 
-# ── Limpiar caché ───────────────────────────────────────────────────
+# ── Limpiar caché (como appuser no-root) ────────────────────────────
 echo "Limpiando cachés..."
-php artisan config:clear 2>/dev/null || true
-php artisan cache:clear 2>/dev/null || true
-php artisan view:clear 2>/dev/null || true
+runuser -u appuser -- php artisan config:clear 2>/dev/null || true
+runuser -u appuser -- php artisan cache:clear 2>/dev/null || true
+runuser -u appuser -- php artisan view:clear 2>/dev/null || true
 
 # ── Crear .htaccess si no existe ────────────────────────────────────
 if [ ! -f /var/www/html/public/.htaccess ]; then
@@ -102,7 +103,7 @@ fi
 # ── Storage Link ────────────────────────────────────────────────────
 if [ ! -L /var/www/html/public/storage ]; then
     echo "Creando enlace simbólico de storage..."
-    php artisan storage:link --force 2>/dev/null || true
+    runuser -u appuser -- php artisan storage:link --force 2>/dev/null || true
 fi
 
 # ── Migraciones ─────────────────────────────────────────────────────
@@ -124,16 +125,16 @@ DB_CHECK=$(php -r "
 if [[ "$DB_CHECK" == "OK" ]]; then
     echo "✓ Conexión a BD exitosa"
     echo "Ejecutando migraciones..."
-    if php artisan migrate --force; then
+    if runuser -u appuser -- php artisan migrate --force; then
         echo "✓ Migraciones ejecutadas"
     else
         echo "⚠ Error en migraciones. Intentando de nuevo con migrar pendientes..."
-        php artisan migrate --force --pretend 2>&1 | head -20 || true
-        php artisan migrate --force 2>&1 || true
+        runuser -u appuser -- php artisan migrate --force --pretend 2>&1 | head -20 || true
+        runuser -u appuser -- php artisan migrate --force 2>&1 || true
     fi
 
     echo "Ejecutando seeders..."
-    php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
+    runuser -u appuser -- php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
 else
     echo "⚠ No se pudo conectar a la BD: $DB_CHECK"
     echo "  Las migraciones se ejecutarán manualmente después."
@@ -141,7 +142,7 @@ fi
 
 # ── Optimizar Laravel ───────────────────────────────────────────────
 echo "Optimizando Laravel..."
-php artisan optimize 2>/dev/null || true
+runuser -u appuser -- php artisan optimize 2>/dev/null || true
 
 echo "=========================================="
 echo "✅ Aplicación lista!"
