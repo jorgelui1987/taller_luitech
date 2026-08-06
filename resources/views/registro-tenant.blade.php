@@ -31,26 +31,26 @@
 
                             <h5 class="border-bottom pb-2">Datos de la empresa</h5>
                             <div class="mb-3">
-                                <label class="form-label">Nombre de tu tienda o empresa *</label>
-                                <input type="text" name="empresa" class="form-control @error('empresa') is-invalid @enderror" value="{{ old('empresa') }}" required placeholder="Ej: Celulares García">
+                                <label for="empresa" class="form-label">Nombre de tu tienda o empresa *</label>
+                                <input type="text" name="empresa" id="empresa" class="form-control @error('empresa') is-invalid @enderror" value="{{ old('empresa') }}" required placeholder="Ej: Celulares García">
                                 @error('empresa') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
 
                             <h5 class="border-bottom pb-2 mt-4">Datos del administrador</h5>
                             <div class="mb-3">
-                                <label class="form-label">Nombre completo *</label>
-                                <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre') }}" required placeholder="Ej: Juan Pérez">
+                                <label for="nombre" class="form-label">Nombre completo *</label>
+                                <input type="text" name="nombre" id="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre') }}" required placeholder="Ej: Juan Pérez">
                                 @error('nombre') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Correo electrónico *</label>
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required placeholder="tucorreo@ejemplo.com">
+                                <label for="email" class="form-label">Correo electrónico *</label>
+                                <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required placeholder="tucorreo@ejemplo.com">
                                 @error('email') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Contraseña *</label>
+                                <label for="password" class="form-label">Contraseña *</label>
                                 <div class="input-group">
                                     <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)" title="Mostrar/Ocultar contraseña">
@@ -64,7 +64,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Confirmar contraseña *</label>
+                                <label for="password_confirmation" class="form-label">Confirmar contraseña *</label>
                                 <div class="input-group">
                                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password_confirmation', this)" title="Mostrar/Ocultar contraseña">

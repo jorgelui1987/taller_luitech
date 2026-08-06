@@ -18,33 +18,33 @@
                     @csrf
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" name="nombre" value="{{ old('nombre') }}" placeholder="Nombre del proveedor" required>
+                            <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" name="nombre" id="nombre" value="{{ old('nombre') }}" placeholder="Nombre del proveedor" required>
                             @error('nombre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Contacto</label>
-                            <input type="text" class="form-control" name="contacto" value="{{ old('contacto') }}" placeholder="Persona de contacto">
+                            <label for="contacto" class="form-label">Contacto</label>
+                            <input type="text" class="form-control" name="contacto" id="contacto" value="{{ old('contacto') }}" placeholder="Persona de contacto">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" name="telefono" value="{{ old('telefono') }}" placeholder="+51 999 999 999">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" name="telefono" id="telefono" value="{{ old('telefono') }}" placeholder="+51 999 999 999">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="proveedor@email.com">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" value="{{ old('email') }}" placeholder="proveedor@email.com">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">RUC</label>
-                            <input type="text" class="form-control" name="ruc" value="{{ old('ruc') }}" placeholder="12345678901">
+                            <label for="ruc" class="form-label">RUC</label>
+                            <input type="text" class="form-control" name="ruc" id="ruc" value="{{ old('ruc') }}" placeholder="12345678901">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Dirección</label>
-                            <input type="text" class="form-control" name="direccion" value="{{ old('direccion') }}" placeholder="Dirección del proveedor">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" name="direccion" id="direccion" value="{{ old('direccion') }}" placeholder="Dirección del proveedor">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Notas</label>
-                            <textarea class="form-control" name="notas" rows="3" placeholder="Notas adicionales...">{{ old('notas') }}</textarea>
+                            <label for="notas" class="form-label">Notas</label>
+                            <textarea class="form-control" name="notas" id="notas" rows="3" placeholder="Notas adicionales...">{{ old('notas') }}</textarea>
                         </div>
                     </div>
                     <hr class="mt-4">

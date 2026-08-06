@@ -18,33 +18,33 @@
                     @csrf @method('PUT')
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" name="nombre" value="{{ old('nombre', $proveedor->nombre) }}" required>
+                            <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" name="nombre" id="nombre" value="{{ old('nombre', $proveedor->nombre) }}" required>
                             @error('nombre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Contacto</label>
-                            <input type="text" class="form-control" name="contacto" value="{{ old('contacto', $proveedor->contacto) }}">
+                            <label for="contacto" class="form-label">Contacto</label>
+                            <input type="text" class="form-control" name="contacto" id="contacto" value="{{ old('contacto', $proveedor->contacto) }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" name="telefono" value="{{ old('telefono', $proveedor->telefono) }}">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" name="telefono" id="telefono" value="{{ old('telefono', $proveedor->telefono) }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" value="{{ old('email', $proveedor->email) }}">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" value="{{ old('email', $proveedor->email) }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">RUC</label>
-                            <input type="text" class="form-control" name="ruc" value="{{ old('ruc', $proveedor->ruc) }}">
+                            <label for="ruc" class="form-label">RUC</label>
+                            <input type="text" class="form-control" name="ruc" id="ruc" value="{{ old('ruc', $proveedor->ruc) }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Dirección</label>
-                            <input type="text" class="form-control" name="direccion" value="{{ old('direccion', $proveedor->direccion) }}">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" name="direccion" id="direccion" value="{{ old('direccion', $proveedor->direccion) }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Notas</label>
-                            <textarea class="form-control" name="notas" rows="3">{{ old('notas', $proveedor->notas) }}</textarea>
+                            <label for="notas" class="form-label">Notas</label>
+                            <textarea class="form-control" name="notas" id="notas" rows="3">{{ old('notas', $proveedor->notas) }}</textarea>
                         </div>
                         <div class="col-12">
                             <div class="form-check">
