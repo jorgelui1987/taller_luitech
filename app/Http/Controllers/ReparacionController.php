@@ -58,7 +58,11 @@ class ReparacionController extends Controller
     public function create()
     {
         $clientes  = Cliente::where('activo', true)->orderBy('nombre')->get();
-        $tecnicos  = User::where('rol', 'tecnico')->where('activo', true)->orderBy('name')->get();
+        $tecnicos  = User::where('tenant_id', Auth::user()->tenant_id)
+            ->where('rol', 'tecnico')
+            ->where('activo', true)
+            ->orderBy('name')
+            ->get();
         return view('reparaciones.create', compact('clientes', 'tecnicos'));
     }
 
@@ -357,7 +361,11 @@ class ReparacionController extends Controller
     public function edit(Reparacion $reparacion)
     {
         $clientes = Cliente::where('activo', true)->orderBy('nombre')->get();
-        $tecnicos = User::where('rol', 'tecnico')->where('activo', true)->orderBy('name')->get();
+        $tecnicos = User::where('tenant_id', Auth::user()->tenant_id)
+            ->where('rol', 'tecnico')
+            ->where('activo', true)
+            ->orderBy('name')
+            ->get();
         return view('reparaciones.edit', compact('reparacion', 'clientes', 'tecnicos'));
     }
 
