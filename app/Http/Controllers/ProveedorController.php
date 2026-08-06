@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
+use App\Exceptions\ProveedorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -113,7 +114,7 @@ class ProveedorController extends Controller
             $proveedorId = (int) $id;
 
             if (!$proveedorId) {
-                throw new \Exception('No se pudo identificar el proveedor a eliminar.');
+                throw new ProveedorException('No se pudo identificar el proveedor a eliminar.');
             }
 
             // 1. Desvincular productos asociados a este proveedor (sin TenantScope)

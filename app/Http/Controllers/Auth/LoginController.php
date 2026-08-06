@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -42,28 +43,12 @@ class LoginController extends Controller
 
         $throttledKey = $this->rateLimitKey($credentials['email'], $request);
 
-        if ($this->isRateLimited($throttledKey)) {
-            return back()->withErrors([
-                'email' => 'Demasiados intentos. Intenta nuevamente en unos minutos.',
-            ])->onlyInput('email');
+        $error = $this->validarCredenciales($credentials, $throttledKey);
+        if ($error) {
+            return $error;
         }
 
         $user = Auth::getProvider()->retrieveByCredentials($credentials);
-
-        // Verificar credenciales SIN autenticar aún
-        if (!$user || !Auth::getProvider()->validateCredentials($user, $credentials)) {
-            $this->incrementRateLimit($throttledKey);
-            return back()->withErrors([
-                'email' => 'Las credenciales no coinciden con nuestros registros.',
-            ])->onlyInput('email');
-        }
-
-        // Verificar estado activo
-        if (!$user->activo) {
-            return back()->withErrors([
-                'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
-            ]);
-        }
 
         // Si el usuario tiene 2FA activado, no autenticar aún - mostrar challenge
         if ($user->two_factor_secret && $user->two_factor_confirmed_at) {
@@ -75,6 +60,32 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'));
+    }
+
+    private function validarCredenciales(array $credentials, string $throttledKey): ?RedirectResponse
+    {
+        if ($this->isRateLimited($throttledKey)) {
+            return back()->withErrors([
+                'email' => 'Demasiados intentos. Intenta nuevamente en unos minutos.',
+            ])->onlyInput('email');
+        }
+
+        $user = Auth::getProvider()->retrieveByCredentials($credentials);
+
+        if (!$user || !Auth::getProvider()->validateCredentials($user, $credentials)) {
+            $this->incrementRateLimit($throttledKey);
+            return back()->withErrors([
+                'email' => 'Las credenciales no coinciden con nuestros registros.',
+            ])->onlyInput('email');
+        }
+
+        if (!$user->activo) {
+            return back()->withErrors([
+                'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
+            ]);
+        }
+
+        return null;
     }
 
     public function logout(Request $request)

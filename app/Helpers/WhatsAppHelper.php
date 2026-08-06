@@ -6,6 +6,8 @@ use App\Models\Configuracion;
 
 class WhatsAppHelper
 {
+    private const REGEX_SOLO_DIGITOS = '/\D/';
+
     /**
      * Obtiene el código de país desde la configuración de la empresa.
      * Toma el código del número de WhatsApp configurado o del teléfono.
@@ -15,7 +17,7 @@ class WhatsAppHelper
         try {
             $empresa = Configuracion::empresa();
             $numeroBase = $empresa->whatsapp ?? $empresa->telefono ?? '51';
-            $numero = preg_replace('/[^0-9]/', '', $numeroBase);
+            $numero = preg_replace(self::REGEX_SOLO_DIGITOS, '', $numeroBase);
             // Si tiene más de 10 dígitos, los primeros son el código de país
             if (strlen($numero) > 10) {
                 return substr($numero, 0, strlen($numero) - 9);
@@ -40,7 +42,7 @@ class WhatsAppHelper
         }
 
         // Limpiar el número: solo dígitos
-        $numero = preg_replace('/[^0-9]/', '', $telefono);
+        $numero = preg_replace(self::REGEX_SOLO_DIGITOS, '', $telefono);
 
         if (empty($numero)) {
             return null;
@@ -131,6 +133,6 @@ class WhatsAppHelper
      */
     public static function limpiarNumero(?string $telefono): string
     {
-        return preg_replace('/[^0-9]/', '', $telefono ?? '');
+        return preg_replace(self::REGEX_SOLO_DIGITOS, '', $telefono ?? '');
     }
 }

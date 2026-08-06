@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Storage;
 
 class PwaController extends Controller
 {
+    private const CONTENT_TYPE_PNG = 'image/png';
+    private const ICON_SIZES = [192, 512];
+
     /**
      * Genera el manifest.json dinámico con el nombre y logo de la empresa.
      */
@@ -15,7 +18,6 @@ class PwaController extends Controller
     {
         $empresa = Configuracion::empresa();
         $nombre = $empresa?->nombre_tienda ?? 'CRM Celulares';
-        $logoUrl = $this->getLogoUrl($empresa);
 
         $manifest = [
             'name' => $nombre,
@@ -31,7 +33,7 @@ class PwaController extends Controller
             'scope' => '/',
             'lang' => 'es',
             'categories' => ['business', 'productivity'],
-            'icons' => $this->getIcons($logoUrl),
+            'icons' => $this->getIcons(),
             'shortcuts' => [
                 [
                     'name' => 'Nueva Reparación',
@@ -59,7 +61,7 @@ class PwaController extends Controller
      */
     public function icon(Request $request, int $size)
     {
-        $size = in_array($size, [192, 512]) ? $size : 192;
+        $size = in_array($size, self::ICON_SIZES) ? $size : 192;
         $tenant = Configuracion::empresa();
         $logoPath = $this->getLogoPath($tenant);
 
@@ -67,41 +69,25 @@ class PwaController extends Controller
         if ($logoPath && file_exists($logoPath)) {
             $img = $this->createIconFromLogo($logoPath, $size);
             if ($img) {
-                return response($img, 200, [
-                    'Content-Type' => 'image/png',
-                    'Cache-Control' => 'public, max-age=86400',
-                ]);
+                return $this->pngResponse($img);
             }
         }
 
         // Fallback: icono por defecto
         $default = public_path('icons/icon-' . $size . '.png');
         if (file_exists($default)) {
-            return response(file_get_contents($default), 200, [
-                'Content-Type' => 'image/png',
-                'Cache-Control' => 'public, max-age=86400',
-            ]);
+            return $this->pngResponse(file_get_contents($default));
         }
 
         abort(404);
     }
 
-    /**
-     * Obtiene la URL del logo de la empresa.
-     */
-    private function getLogoUrl($empresa): ?string
+    private function pngResponse(string $data)
     {
-        if (!$empresa || !$empresa->logo) {
-            return null;
-        }
-
-        $logoPath = str_replace('storage/', '', $empresa->logo);
-        $fullPath = storage_path('app/public/' . $logoPath);
-        if (file_exists($fullPath)) {
-            return route('storage.serve', ['path' => $logoPath]);
-        }
-
-        return null;
+        return response($data, 200, [
+            'Content-Type' => self::CONTENT_TYPE_PNG,
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
     }
 
     /**
@@ -121,21 +107,21 @@ class PwaController extends Controller
     /**
      * Genera los iconos del manifest.
      */
-    private function getIcons(?string $logoUrl): array
+    private function getIcons(): array
     {
         $icons = [];
 
-        foreach ([192, 512] as $size) {
+        foreach (self::ICON_SIZES as $size) {
             $icons[] = [
                 'src' => '/pwa/icon/' . $size,
                 'sizes' => $size . 'x' . $size,
-                'type' => 'image/png',
+                'type' => self::CONTENT_TYPE_PNG,
                 'purpose' => 'any',
             ];
             $icons[] = [
                 'src' => '/pwa/icon/' . $size,
                 'sizes' => $size . 'x' . $size,
-                'type' => 'image/png',
+                'type' => self::CONTENT_TYPE_PNG,
                 'purpose' => 'maskable',
             ];
         }
@@ -158,23 +144,7 @@ class PwaController extends Controller
             return null;
         }
 
-        switch ($info['mime']) {
-            case 'image/png':
-                $src = imagecreatefrompng($logoPath);
-                break;
-            case 'image/jpeg':
-                $src = imagecreatefromjpeg($logoPath);
-                break;
-            case 'image/webp':
-                $src = imagecreatefromwebp($logoPath);
-                break;
-            case 'image/gif':
-                $src = imagecreatefromgif($logoPath);
-                break;
-            default:
-                return null;
-        }
-
+        $src = $this->loadImageSource($logoPath, $info['mime']);
         if (!$src) {
             return null;
         }
@@ -218,5 +188,21 @@ class PwaController extends Controller
         imagedestroy($src);
 
         return $pngData;
+    }
+
+    private function loadImageSource(string $logoPath, string $mime)
+    {
+        switch ($mime) {
+            case self::CONTENT_TYPE_PNG:
+                return imagecreatefrompng($logoPath);
+            case 'image/jpeg':
+                return imagecreatefromjpeg($logoPath);
+            case 'image/webp':
+                return imagecreatefromwebp($logoPath);
+            case 'image/gif':
+                return imagecreatefromgif($logoPath);
+            default:
+                return null;
+        }
     }
 }

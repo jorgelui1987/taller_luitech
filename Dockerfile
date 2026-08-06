@@ -4,7 +4,7 @@ FROM php:8.3-apache AS base
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema y configurar/instalar extensiones PHP
 RUN apt-get update -qq && apt-get install -y -qq \
     git \
     curl \
@@ -22,11 +22,9 @@ RUN apt-get update -qq && apt-get install -y -qq \
     gettext-base \
     util-linux \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Configurar y instalar extensiones PHP
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-RUN docker-php-ext-install -j$(nproc) pdo_mysql pdo_pgsql mbstring exif bcmath gd zip intl
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) pdo_mysql pdo_pgsql mbstring exif bcmath gd zip intl
 
 # Habilitar mod_rewrite de Apache
 RUN a2enmod rewrite
@@ -48,7 +46,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:80/health || exit 1
 
 # ---- Stage de Composer ----
-FROM composer:latest AS composer-stage
+FROM composer:2.7.7 AS composer-stage
 
 # ---- Stage final ----
 # NOSONAR - Apache necesita root para el puerto 80, luego baja a www-data
@@ -73,23 +71,17 @@ COPY composer.lock /var/www/html/composer.lock
 COPY .htaccess /var/www/html/.htaccess
 COPY docker /var/www/html/docker
 
-# Crear usuario no-root dedicado para la aplicación
+# Crear usuario no-root, configurar permisos, instalar dependencias y limpiar caché
 RUN useradd -m -u 1001 -s /bin/bash appuser \
-    && usermod -aG www-data appuser
-
-# Configurar permisos
-RUN chown -R www-data:www-data /var/www/html \
+    && usermod -aG www-data appuser \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache \
     && chown -R appuser:www-data /var/www/html/storage \
-    && chown -R appuser:www-data /var/www/html/bootstrap/cache
-
-# Instalar dependencias de Composer (solo producción)
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
-    && composer run-script post-autoload-dump --no-interaction 2>/dev/null || true
-
-# Limpiar caché de Composer
-RUN composer clear-cache
+    && chown -R appuser:www-data /var/www/html/bootstrap/cache \
+    && composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
+    && composer run-script post-autoload-dump --no-interaction 2>/dev/null || true \
+    && composer clear-cache
 
 # Copiar entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

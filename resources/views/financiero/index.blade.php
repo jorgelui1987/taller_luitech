@@ -63,7 +63,7 @@
         </select>
         <label class="form-label mb-0" style="font-size:13px;">Año:</label>
         <select name="year" class="form-select form-select-sm" style="width:100px;">
-            @foreach($años as $a)
+            @foreach($anios as $a)
                 <option value="{{ $a }}" {{ $year == $a ? 'selected' : '' }}>{{ $a }}</option>
             @endforeach
         </select>

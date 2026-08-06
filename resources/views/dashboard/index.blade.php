@@ -47,11 +47,11 @@
     <div class="col-6 col-xl-3">
         <div class="kpi-card bg-grad-purple">
             <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">{{ formato_moneda_entero($ventasHoy) }}</div>
+            <div class="kpi-value">{{ formatoMonedaEntero($ventasHoy) }}</div>
             <div class="kpi-label">Ganancia de Hoy</div>
             <span class="kpi-badge">
                 <i class="fas fa-calendar-day fa-xs"></i>
-                {{ formato_moneda_entero($ventasMes) }} este mes
+                {{ formatoMonedaEntero($ventasMes) }} este mes
             </span>
         </div>
     </div>
@@ -104,11 +104,11 @@
     <div class="col-6 col-xl-3">
         <div class="kpi-card bg-grad-purple">
             <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">{{ formato_moneda_entero($ventasHoy) }}</div>
+            <div class="kpi-value">{{ formatoMonedaEntero($ventasHoy) }}</div>
             <div class="kpi-label">Mis Ventas de Hoy</div>
             <span class="kpi-badge">
                 <i class="fas fa-calendar-day fa-xs"></i>
-                {{ formato_moneda_entero($ventasMes) }} este mes
+                {{ formatoMonedaEntero($ventasMes) }} este mes
             </span>
         </div>
     </div>

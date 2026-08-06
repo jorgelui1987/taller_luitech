@@ -10,7 +10,7 @@
     <div>
         <h4 class="mb-1 fw-bold"><i class="fas fa-undo-alt me-2" style="color:#a855f7;"></i>Devoluciones</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Total del mes: <strong style="color:#a855f7;">{{ formato_moneda($totalMes) }}</strong>
+            Total del mes: <strong style="color:#a855f7;">{{ formatoMoneda($totalMes) }}</strong>
         </p>
     </div>
     <a href="{{ route('devoluciones.create') }}" class="btn btn-primary px-4">
@@ -134,7 +134,7 @@
                             {{ $motivos[$devolucion->motivo] ?? ucfirst($devolucion->motivo) }}
                         </td>
                         <td style="font-weight:700; color:#1e1b4b;">
-                            {{ formato_moneda($devolucion->total) }}
+                            {{ formatoMoneda($devolucion->total) }}
                         </td>
                         <td>
                             @if($devolucion->estado === 'anulada')

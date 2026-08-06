@@ -10,7 +10,7 @@
     <div>
         <h4 class="mb-1 fw-bold">Ventas</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Total del mes: <strong style="color:#a855f7;">{{ formato_moneda($totalMes) }}</strong>
+            Total del mes: <strong style="color:#a855f7;">{{ formatoMoneda($totalMes) }}</strong>
         </p>
     </div>
     <a href="{{ route('ventas.create') }}" class="btn btn-primary px-4">
@@ -93,7 +93,7 @@
                             </span>
                         </td>
                         <td style="font-weight:700; color:#1e1b4b;">
-                            {{ formato_moneda($venta->total) }}
+                            {{ formatoMoneda($venta->total) }}
                         </td>
                         <td>
                             @php

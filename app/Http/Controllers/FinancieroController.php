@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class FinancieroController extends Controller
 {
+    private const SQL_COSTO_VENTAS = 'productos.precio_compra * detalle_ventas.cantidad';
+    private const SQL_COUNT_CANTIDAD = 'COUNT(*) as cantidad';
+    private const RANGO_ANIOS = 3;
     /**
      * Dashboard financiero general
      */
@@ -43,7 +46,7 @@ class FinancieroController extends Controller
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
             ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw('productos.precio_compra * detalle_ventas.cantidad'));
+            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         // Costo de reparaciones (presupuesto como costo estimado)
         $costoReparaciones = Reparacion::whereBetween('fecha_recepcion', [$fechaInicio, $fechaFin])
@@ -92,7 +95,7 @@ class FinancieroController extends Controller
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
             ->where('ventas.fecha_venta', '>=', Carbon::now()->subYear())
-            ->sum(DB::raw('productos.precio_compra * detalle_ventas.cantidad'));
+            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         $rotacionInventario = $valorInventarioCompra > 0
             ? ($costoVentasAnual / $valorInventarioCompra)
@@ -116,7 +119,7 @@ class FinancieroController extends Controller
                     ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
                     ->where('ventas.estado', 'completada')
                     ->whereBetween('ventas.fecha_venta', [$inicio, $fin])
-                    ->sum(DB::raw('productos.precio_compra * detalle_ventas.cantidad'));
+                    ->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
             $serieMensual->push([
                 'mes'    => $m->format('M Y'),
@@ -135,7 +138,7 @@ class FinancieroController extends Controller
             ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
             ->select('categorias.nombre as categoria',
                 DB::raw('SUM(detalle_ventas.subtotal) as total'),
-                DB::raw('SUM(productos.precio_compra * detalle_ventas.cantidad) as costo'))
+                DB::raw('SUM(' . self::SQL_COSTO_VENTAS . ') as costo'))
             ->groupBy('categorias.id', 'categorias.nombre')
             ->orderByDesc('total')
             ->limit(8)
@@ -177,11 +180,11 @@ class FinancieroController extends Controller
             9 => 'Setiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre',
         ];
 
-        $años = range(Carbon::now()->year - 3, Carbon::now()->year);
+        $anios = range(Carbon::now()->year - self::RANGO_ANIOS, Carbon::now()->year);
 
         return view('financiero.index', compact(
             'kpis', 'serieMensual', 'ingresosPorCategoria', 'metodosPago',
-            'year', 'mes', 'meses', 'años', 'fechaInicio', 'fechaFin'
+            'year', 'mes', 'meses', 'anios', 'fechaInicio', 'fechaFin'
         ));
     }
 
@@ -204,7 +207,7 @@ class FinancieroController extends Controller
         // ── INGRESOS ────────────────────────────────────────────────────
         $ventas = Venta::whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
             ->where('estado', 'completada')
-            ->selectRaw('COUNT(*) as cantidad')
+            ->selectRaw(self::SQL_COUNT_CANTIDAD)
             ->selectRaw('SUM(subtotal) as subtotal')
             ->selectRaw('SUM(descuento) as descuento')
             ->selectRaw('SUM(impuesto) as impuesto')
@@ -225,7 +228,7 @@ class FinancieroController extends Controller
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
             ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw('productos.precio_compra * detalle_ventas.cantidad'));
+            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         $costoReparaciones = Reparacion::whereBetween('fecha_recepcion', [$fechaInicio, $fechaFin])
             ->whereIn('estado', ['entregado', 'completado'])
@@ -267,7 +270,7 @@ class FinancieroController extends Controller
         for ($i = 1; $i <= 12; $i++) {
             $meses[$i] = $this->nombreMes($i);
         }
-        $años = range(Carbon::now()->year - 3, Carbon::now()->year);
+        $anios = range(Carbon::now()->year - self::RANGO_ANIOS, Carbon::now()->year);
 
         return view('financiero.estado-resultados', compact(
             'ventas', 'reparaciones',
@@ -277,7 +280,7 @@ class FinancieroController extends Controller
             'utilidadOperativa', 'margenOperativo',
             'gastosFinancieros', 'utilidadNeta', 'margenNeto',
             'year', 'mes', 'periodo', 'fechaInicio', 'fechaFin',
-            'meses', 'años'
+            'meses', 'anios'
         ));
     }
 
@@ -334,7 +337,7 @@ class FinancieroController extends Controller
             : 0;
         $endeudamiento    = $totalActivos > 0 ? round(($totalPasivos / $totalActivos) * 100, 1) : 0;
 
-        $años = range(Carbon::now()->year - 3, Carbon::now()->year);
+        $anios = range(Carbon::now()->year - self::RANGO_ANIOS, Carbon::now()->year);
 
         return view('financiero.balance-general', compact(
             'efectivo', 'cuentasPorCobrar', 'inventario',
@@ -342,7 +345,7 @@ class FinancieroController extends Controller
             'cuentasPorPagar', 'pasivosCortoPlazo', 'pasivosLargoPlazo', 'totalPasivos',
             'capitalSocial', 'utilidadesRetenidas', 'totalPatrimonio',
             'razonCorriente', 'pruebaAcida', 'endeudamiento',
-            'fechaCorte', 'años'
+            'fechaCorte', 'anios'
         ));
     }
 
@@ -394,11 +397,11 @@ class FinancieroController extends Controller
         $totalEgresosAnual  = $mesesData->sum('egresos');
         $saldoFinal         = $mesesData->last()['saldo_acum'] ?? 0;
 
-        $años = range(Carbon::now()->year - 3, Carbon::now()->year);
+        $anios = range(Carbon::now()->year - self::RANGO_ANIOS, Carbon::now()->year);
 
         return view('financiero.flujo-caja', compact(
             'mesesData', 'totalIngresosAnual', 'totalEgresosAnual',
-            'saldoFinal', 'year', 'años'
+            'saldoFinal', 'year', 'anios'
         ));
     }
 
@@ -421,7 +424,7 @@ class FinancieroController extends Controller
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
             ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw('productos.precio_compra * detalle_ventas.cantidad'));
+            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         $gananciaBruta   = $totalVentas - $costoVentas;
         $margenBruto     = $totalVentas > 0 ? ($gananciaBruta / $totalVentas) * 100 : 0;
@@ -497,7 +500,7 @@ class FinancieroController extends Controller
                 ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
                 ->where('ventas.estado', 'completada')
                 ->whereBetween('ventas.fecha_venta', [$inicio, $fin])
-                ->sum(DB::raw('productos.precio_compra * detalle_ventas.cantidad'));
+                ->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
             $evolucionMensual->push([
                 'mes'      => $this->nombreMes($i),
@@ -506,7 +509,7 @@ class FinancieroController extends Controller
             ]);
         }
 
-        $años = range(Carbon::now()->year - 3, Carbon::now()->year);
+        $anios = range(Carbon::now()->year - self::RANGO_ANIOS, Carbon::now()->year);
 
         $indicadores = compact(
             'margenBruto', 'gananciaBruta',
@@ -519,7 +522,7 @@ class FinancieroController extends Controller
         );
 
         return view('financiero.indicadores', compact(
-            'indicadores', 'evolucionMensual', 'year', 'años'
+            'indicadores', 'evolucionMensual', 'year', 'anios'
         ));
     }
 

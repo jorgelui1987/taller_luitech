@@ -9,6 +9,7 @@ use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\MovimientoStock;
 use App\Models\Configuracion;
+use App\Exceptions\DevolucionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -111,7 +112,7 @@ class DevolucionController extends Controller
                 $detalleVenta = DetalleVenta::findOrFail($item['detalle_venta_id']);
 
                 if ($detalleVenta->venta_id !== $venta->id) {
-                    throw new \Exception('El producto no pertenece a la venta seleccionada.');
+                    throw new DevolucionException('El producto no pertenece a la venta seleccionada.');
                 }
 
                 // Verificar que no se devuelva más de lo vendido
@@ -121,7 +122,7 @@ class DevolucionController extends Controller
 
                 $disponible = $detalleVenta->cantidad - $yaDevuelto;
                 if ($item['cantidad'] > $disponible) {
-                    throw new \Exception("No puedes devolver más de {$disponible} unidad(es) de este producto.");
+                    throw new DevolucionException("No puedes devolver más de {$disponible} unidad(es) de este producto.");
                 }
 
                 $precioUnitario = $detalleVenta->precio_unitario;

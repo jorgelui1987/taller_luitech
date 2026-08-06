@@ -199,7 +199,7 @@ class ComboPublicidadController extends Controller
             $porcentaje = (float) ($config->cupon_descuento_porcentaje ?? 10);
             $diasValidez = (int) ($config->cupon_dias_validez ?? 30);
 
-            $cupon = Cupon::create([
+            return Cupon::create([
                 'tenant_id' => $reparacion->tenant_id,
                 'reparacion_id' => $reparacion->id,
                 'codigo' => Cupon::generarCodigo(),
@@ -210,8 +210,6 @@ class ComboPublicidadController extends Controller
                 'estado' => 'activo',
                 'compartible' => true,
             ]);
-
-            return $cupon;
         } catch (\Exception $e) {
             // Si falla la creación del cupón (ej: tabla no existe), no romper la entrega
             \Illuminate\Support\Facades\Log::warning('No se pudo generar cupón al entregar: ' . $e->getMessage());
@@ -314,8 +312,22 @@ class ComboPublicidadController extends Controller
 
         $reparacion->update($data);
 
+        $respuesta = $this->notificarCambioEstado($reparacion, $nuevoEstado, $estadoAnterior);
+        if ($respuesta) {
+            return $respuesta;
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    private function notificarCambioEstado(Reparacion $reparacion, string $nuevoEstado, string $estadoAnterior): ?\Illuminate\Http\JsonResponse
+    {
+        if ($nuevoEstado === $estadoAnterior) {
+            return null;
+        }
+
         // Si pasa a "listo", notificar por WhatsApp
-        if ($nuevoEstado === 'listo' && $nuevoEstado !== $estadoAnterior) {
+        if ($nuevoEstado === 'listo') {
             $reparacion->load('cliente');
             $config = Configuracion::empresa();
             $nombreTienda = $config?->nombre_tienda ?? 'CRM Celulares';
@@ -338,7 +350,7 @@ class ComboPublicidadController extends Controller
         }
 
         // Si pasa a "entregado", generar cupón automático
-        if ($nuevoEstado === 'entregado' && $nuevoEstado !== $estadoAnterior) {
+        if ($nuevoEstado === 'entregado') {
             $cupon = self::generarCuponAlEntregar($reparacion);
             if ($cupon) {
                 return response()->json([
@@ -349,6 +361,6 @@ class ComboPublicidadController extends Controller
             }
         }
 
-        return response()->json(['success' => true]);
+        return null;
     }
 }

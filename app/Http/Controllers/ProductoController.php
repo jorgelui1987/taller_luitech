@@ -162,7 +162,9 @@ class ProductoController extends Controller
         $validated = $request->validate($rules);
 
         if ($request->hasFile('imagen')) {
-            if ($producto->imagen) Storage::disk('public')->delete($producto->imagen);
+            if ($producto->imagen) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
             $validated['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
@@ -178,7 +180,9 @@ class ProductoController extends Controller
             return back()->with('error', 'No se puede eliminar: el producto tiene ventas registradas.');
         }
 
-        if ($producto->imagen) Storage::disk('public')->delete($producto->imagen);
+        if ($producto->imagen) {
+            Storage::disk('public')->delete($producto->imagen);
+        }
         $producto->delete();
 
         return redirect()->route('productos.index')

@@ -31,7 +31,7 @@ class DashboardController extends Controller
 
         // ── TÉCNICO: Solo sus reparaciones y comisiones ───────────────────
         if ($user->esTecnico()) {
-            return $this->dashboardTecnico($user, $hoy, $inicioMes);
+            return $this->dashboardTecnico($user, $inicioMes);
         }
 
         // Fallback: admin
@@ -159,7 +159,7 @@ class DashboardController extends Controller
     /**
      * Dashboard para TÉCNICO: solo sus reparaciones y comisiones
      */
-    private function dashboardTecnico($user, $hoy, $inicioMes)
+    private function dashboardTecnico($user, $inicioMes)
     {
         // Mis reparaciones activas (no entregadas)
         $misReparacionesActivas = Reparacion::where('tecnico_id', $user->id)
@@ -274,7 +274,7 @@ class DashboardController extends Controller
 
         return (clone $query)
             ->select(
-                DB::raw("$yearExpr as año"),
+                DB::raw("$yearExpr as anio"),
                 DB::raw("$monthExpr as mes"),
                 DB::raw('SUM(total) as total')
             )
@@ -285,7 +285,7 @@ class DashboardController extends Controller
             ->orderBy(DB::raw($monthExpr))
             ->get()
             ->map(fn($v) => [
-                'mes'   => Carbon::createFromDate($v->año, $v->mes, 1)->isoFormat('MMM YY'),
+                'mes'   => Carbon::createFromDate($v->anio, $v->mes, 1)->isoFormat('MMM YY'),
                 'total' => (float) $v->total,
             ]);
     }

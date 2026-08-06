@@ -17,6 +17,10 @@ use Illuminate\Support\Str;
 
 class ReparacionController extends Controller
 {
+    private const DATA_IMAGE_PNG_BASE64 = 'data:image/png;base64,';
+    private const DIR_FIRMAS = 'firmas/';
+    private const NOMBRE_TIENDA_DEFAULT = 'CRM Celulares';
+    private const REGEX_SOLO_DIGITOS = '/\D/';
     public function index(Request $request)
     {
         $query = Reparacion::with(['cliente', 'tecnico']);
@@ -120,12 +124,12 @@ class ReparacionController extends Controller
 
         // Guardar firma de recepción si fue dibujada
         if (!empty($request->firma_recepcion_data)) {
-            $firmaData = str_replace('data:image/png;base64,', '', $request->firma_recepcion_data);
+            $firmaData = str_replace(self::DATA_IMAGE_PNG_BASE64, '', $request->firma_recepcion_data);
             $firmaData = str_replace(' ', '+', $firmaData);
             $firmaData = base64_decode($firmaData);
             if ($firmaData !== false) {
                 $nombreArchivo = 'firma_recepcion_' . Str::random(12) . '.png';
-                $rutaFirma = 'firmas/' . $nombreArchivo;
+                $rutaFirma = self::DIR_FIRMAS . $nombreArchivo;
                 Storage::disk('public')->put($rutaFirma, $firmaData);
                 $validated['firma_recepcion'] = $rutaFirma;
             }
@@ -163,7 +167,7 @@ class ReparacionController extends Controller
 
         // Obtener nombre de la tienda
         $empresa = Configuracion::empresa();
-        $nombreTienda = $empresa?->nombre_tienda ?? 'CRM Celulares';
+        $nombreTienda = $empresa?->nombre_tienda ?? self::NOMBRE_TIENDA_DEFAULT;
 
         // Generar URL de WhatsApp para notificar al cliente
         $whatsappUrl = null;
@@ -230,7 +234,7 @@ class ReparacionController extends Controller
         }
 
         // Limpiar teléfono: solo dígitos
-        $telefono = preg_replace('/[^0-9]/', '', $telefono);
+        $telefono = preg_replace(self::REGEX_SOLO_DIGITOS, '', $telefono);
 
         // Si no tiene código de país, agregar el de la configuración
         $pais = $empresa?->pais ?? 'PE';
@@ -250,8 +254,12 @@ class ReparacionController extends Controller
 
         $texto = $lineaDoble . "\n";
         $texto .= str_pad($empresa?->nombre_tienda ?? 'CRM Celulares', 32, ' ', STR_PAD_BOTH) . "\n";
-        if ($empresa?->ruc) $texto .= str_pad('RUC: ' . $empresa->ruc, 32, ' ', STR_PAD_BOTH) . "\n";
-        if ($empresa?->direccion) $texto .= str_pad($empresa->direccion, 32, ' ', STR_PAD_BOTH) . "\n";
+        if ($empresa?->ruc) {
+            $texto .= str_pad('RUC: ' . $empresa->ruc, 32, ' ', STR_PAD_BOTH) . "\n";
+        }
+        if ($empresa?->direccion) {
+            $texto .= str_pad($empresa->direccion, 32, ' ', STR_PAD_BOTH) . "\n";
+        }
         $texto .= $lineaDoble . "\n";
         $texto .= str_pad($reparacion->numero_orden, 32, ' ', STR_PAD_BOTH) . "\n";
         $texto .= str_pad($estadoLabel, 32, ' ', STR_PAD_BOTH) . "\n";
@@ -259,29 +267,55 @@ class ReparacionController extends Controller
 
         // Cliente
         $texto .= 'CLIENTE: ' . ($reparacion->cliente->nombre_completo ?? '—') . "\n";
-        if ($reparacion->cliente?->telefono) $texto .= 'TEL: ' . $reparacion->cliente->telefono . "\n";
+        if ($reparacion->cliente?->telefono) {
+            $texto .= 'TEL: ' . $reparacion->cliente->telefono . "\n";
+        }
         $texto .= 'TECNICO: ' . ($reparacion->tecnico->name ?? '—') . "\n";
         $texto .= $linea . "\n";
 
         // Equipo
         $texto .= 'TIPO: ' . ($tipoDispositivo[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?? '—') . "\n";
-        if ($reparacion->marca) $texto .= 'MARCA: ' . $reparacion->marca . "\n";
-        if ($reparacion->modelo) $texto .= 'MODELO: ' . $reparacion->modelo . "\n";
-        if ($reparacion->imei) $texto .= 'IMEI: ' . $reparacion->imei . "\n";
-        if ($reparacion->color) $texto .= 'COLOR: ' . $reparacion->color . "\n";
-        if ($reparacion->fecha_recepcion) $texto .= 'RECIBIDO: ' . $reparacion->fecha_recepcion->format('d/m/Y H:i') . "\n";
-        if ($reparacion->fecha_estimada) $texto .= 'EST. ENTREGA: ' . $reparacion->fecha_estimada->format('d/m/Y') . "\n";
+        if ($reparacion->marca) {
+            $texto .= 'MARCA: ' . $reparacion->marca . "\n";
+        }
+        if ($reparacion->modelo) {
+            $texto .= 'MODELO: ' . $reparacion->modelo . "\n";
+        }
+        if ($reparacion->imei) {
+            $texto .= 'IMEI: ' . $reparacion->imei . "\n";
+        }
+        if ($reparacion->color) {
+            $texto .= 'COLOR: ' . $reparacion->color . "\n";
+        }
+        if ($reparacion->fecha_recepcion) {
+            $texto .= 'RECIBIDO: ' . $reparacion->fecha_recepcion->format('d/m/Y H:i') . "\n";
+        }
+        if ($reparacion->fecha_estimada) {
+            $texto .= 'EST. ENTREGA: ' . $reparacion->fecha_estimada->format('d/m/Y') . "\n";
+        }
         $texto .= $linea . "\n";
 
         // Falla y diagnóstico
-        if ($reparacion->falla_reportada) $texto .= 'FALLA: ' . $reparacion->falla_reportada . "\n";
-        if ($reparacion->diagnostico) $texto .= 'DIAGNOSTICO: ' . $reparacion->diagnostico . "\n";
-        if ($reparacion->solucion) $texto .= 'SOLUCION: ' . $reparacion->solucion . "\n";
+        if ($reparacion->falla_reportada) {
+            $texto .= 'FALLA: ' . $reparacion->falla_reportada . "\n";
+        }
+        if ($reparacion->diagnostico) {
+            $texto .= 'DIAGNOSTICO: ' . $reparacion->diagnostico . "\n";
+        }
+        if ($reparacion->solucion) {
+            $texto .= 'SOLUCION: ' . $reparacion->solucion . "\n";
+        }
 
         // Precios
-        if ($reparacion->presupuesto > 0) $texto .= 'PRESUPUESTO: S/ ' . number_format($reparacion->presupuesto, 2) . "\n";
-        if ($reparacion->costo_final > 0) $texto .= 'COSTO FINAL: S/ ' . number_format($reparacion->costo_final, 2) . "\n";
-        if ($reparacion->abono > 0) $texto .= 'ABONO: S/ ' . number_format($reparacion->abono, 2) . "\n";
+        if ($reparacion->presupuesto > 0) {
+            $texto .= 'PRESUPUESTO: S/ ' . number_format($reparacion->presupuesto, 2) . "\n";
+        }
+        if ($reparacion->costo_final > 0) {
+            $texto .= 'COSTO FINAL: S/ ' . number_format($reparacion->costo_final, 2) . "\n";
+        }
+        if ($reparacion->abono > 0) {
+            $texto .= 'ABONO: S/ ' . number_format($reparacion->abono, 2) . "\n";
+        }
         if ($reparacion->total > 0) {
             $texto .= $lineaDoble . "\n";
             $texto .= 'TOTAL: S/ ' . number_format($reparacion->total, 2) . "\n";
@@ -289,13 +323,17 @@ class ReparacionController extends Controller
         }
 
         // Garantía
-        if ($reparacion->garantia) $texto .= "\nGarantía: " . $reparacion->dias_garantia . " días\n";
+        if ($reparacion->garantia) {
+            $texto .= "\nGarantía: " . $reparacion->dias_garantia . " días\n";
+        }
         if ($empresa?->terminos_garantia) {
             $texto .= "\nGARANTÍA:\n" . $empresa->terminos_garantia . "\n";
         }
 
         // Notas
-        if ($reparacion->notas) $texto .= "\nNOTAS: " . $reparacion->notas . "\n";
+        if ($reparacion->notas) {
+            $texto .= "\nNOTAS: " . $reparacion->notas . "\n";
+        }
 
         $texto .= "\n" . str_pad('¡Gracias por su preferencia!', 32, ' ', STR_PAD_BOTH) . "\n";
 
@@ -423,13 +461,13 @@ class ReparacionController extends Controller
         // Procesar firma de entrega si viene desde el formulario
         if ($request->filled('firma_entrega_data')) {
             $firmaData = $request->firma_entrega_data;
-            $firmaData = str_replace('data:image/png;base64,', '', $firmaData);
+            $firmaData = str_replace(self::DATA_IMAGE_PNG_BASE64, '', $firmaData);
             $firmaData = str_replace(' ', '+', $firmaData);
             $firmaData = base64_decode($firmaData);
 
             if ($firmaData !== false) {
                 $nombreArchivo = 'firma_entrega_' . $reparacion->id . '_' . Str::random(8) . '.png';
-                $ruta = 'firmas/' . $nombreArchivo;
+                $ruta = self::DIR_FIRMAS . $nombreArchivo;
 
                 Storage::disk('public')->put($ruta, $firmaData);
 
@@ -592,7 +630,7 @@ class ReparacionController extends Controller
 
         // Decodificar la imagen base64 (data:image/png;base64,...
         $firmaData = $request->firma;
-        $firmaData = str_replace('data:image/png;base64,', '', $firmaData);
+        $firmaData = str_replace(self::DATA_IMAGE_PNG_BASE64, '', $firmaData);
         $firmaData = str_replace(' ', '+', $firmaData);
         $firmaData = base64_decode($firmaData);
 
@@ -601,7 +639,7 @@ class ReparacionController extends Controller
         }
 
         $nombreArchivo = 'firma_' . $request->tipo . '_' . $reparacion->id . '_' . Str::random(8) . '.png';
-        $ruta = 'firmas/' . $nombreArchivo;
+        $ruta = self::DIR_FIRMAS . $nombreArchivo;
 
         Storage::disk('public')->put($ruta, $firmaData);
 

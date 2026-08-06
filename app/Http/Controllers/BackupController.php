@@ -14,6 +14,11 @@ use PDO;
 
 class BackupController extends Controller
 {
+    private const SQL_PGSQL_REPLICA = 'SET session_replication_role = replica';
+    private const SQL_PGSQL_DEFAULT = 'SET session_replication_role = DEFAULT';
+    private const SQL_MYSQL_FK_OFF = 'SET FOREIGN_KEY_CHECKS=0';
+    private const SQL_MYSQL_FK_ON = 'SET FOREIGN_KEY_CHECKS=1';
+
     private string $backupDir;
 
     public function __construct()
@@ -46,7 +51,7 @@ class BackupController extends Controller
             'productos'   => Producto::count(),
             'reparaciones'=> Reparacion::count(),
             'backups'     => count($backups),
-            'ultimo'      => count($backups) > 0 ? $backups[0]['fecha'] : null,
+            'ultimo'      => empty($backups) ? null : $backups[0]['fecha'],
             'tamTotal'    => array_sum(array_column($backups, 'tamanio')),
         ];
 
@@ -117,30 +122,9 @@ class BackupController extends Controller
 
             $contenido = file_get_contents($request->file('archivo_sql')->getRealPath());
 
-            // Validar que el archivo contenga al menos una sentencia de backup esperada
-            $sentenciasPermitidas = [
-                'INSERT INTO', 'CREATE TABLE', 'SET NAMES', 'SET FOREIGN_KEY_CHECKS',
-                'SET session_replication_role', 'DROP TABLE IF EXISTS', 'ALTER TABLE',
-                'UPDATE ', 'DELETE FROM'
-            ];
+            $this->validarContenidoBackup($contenido);
 
-            $esBackupValido = false;
-            foreach ($sentenciasPermitidas as $permitida) {
-                if (stripos($contenido, $permitida) !== false) {
-                    $esBackupValido = true;
-                    break;
-                }
-            }
-
-            if (!$esBackupValido) {
-                throw new \RuntimeException('El archivo no contiene sentencias SQL válidas de backup.');
-            }
-
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = replica');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=0');
-            }
+            $this->desactivarFK($driver);
 
             // Dividir en sentencias individuales y validar cada una
             $statements = preg_split('/;\s*[\r\n]+/', $contenido);
@@ -148,46 +132,82 @@ class BackupController extends Controller
             $comandosBloqueados = ['DROP DATABASE', 'DROP USER', 'GRANT', 'REVOKE', 'ALTER USER', 'CREATE USER'];
 
             foreach ($statements as $stmt) {
-                $stmt = trim($stmt);
-                if (empty($stmt) || preg_match('/^--/', $stmt) || preg_match('/^\/\*/', $stmt)) {
-                    continue;
-                }
-
-                // Bloquear comandos peligrosos
-                $stmtUpper = strtoupper($stmt);
-                $comandoBloqueado = false;
-                foreach ($comandosBloqueados as $comando) {
-                    if (strpos($stmtUpper, $comando) !== false) {
-                        $comandoBloqueado = true;
-                        break;
-                    }
-                }
-
-                if ($comandoBloqueado) {
-                    continue;
-                }
-
-                try {
-                    DB::unprepared($stmt);
-                } catch (\Throwable $e) {
-                    // Continuar con las siguientes sentencias
-                }
+                $this->ejecutarSentencia($stmt, $comandosBloqueados);
             }
 
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = DEFAULT');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            }
+            $this->activarFK($driver);
 
             return back()->with('success', 'Base de datos restaurada correctamente. Se guardó un backup automático previo (<strong>' . $autoNombre . '</strong>).');
         } catch (\Throwable $e) {
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = DEFAULT');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            }
+            $this->activarFK($driver);
             return back()->with('error', 'Error al restaurar: ' . $e->getMessage());
+        }
+    }
+
+    private function validarContenidoBackup(string $contenido): void
+    {
+        $sentenciasPermitidas = [
+            'INSERT INTO', 'CREATE TABLE', 'SET NAMES', 'SET FOREIGN_KEY_CHECKS',
+            'SET session_replication_role', 'DROP TABLE IF EXISTS', 'ALTER TABLE',
+            'UPDATE ', 'DELETE FROM'
+        ];
+
+        $esBackupValido = false;
+        foreach ($sentenciasPermitidas as $permitida) {
+            if (stripos($contenido, $permitida) !== false) {
+                $esBackupValido = true;
+                break;
+            }
+        }
+
+        if (!$esBackupValido) {
+            throw new \RuntimeException('El archivo no contiene sentencias SQL válidas de backup.');
+        }
+    }
+
+    private function ejecutarSentencia(string $stmt, array $comandosBloqueados): void
+    {
+        $stmt = trim($stmt);
+        if (empty($stmt) || preg_match('/^--/', $stmt) || preg_match('/^\/\*/', $stmt)) {
+            return;
+        }
+
+        // Bloquear comandos peligrosos
+        $stmtUpper = strtoupper($stmt);
+        $comandoBloqueado = false;
+        foreach ($comandosBloqueados as $comando) {
+            if (strpos($stmtUpper, $comando) !== false) {
+                $comandoBloqueado = true;
+                break;
+            }
+        }
+
+        if ($comandoBloqueado) {
+            return;
+        }
+
+        try {
+            DB::unprepared($stmt);
+        } catch (\Throwable $e) {
+            // Continuar con las siguientes sentencias
+        }
+    }
+
+    private function desactivarFK(string $driver): void
+    {
+        if ($driver === 'pgsql') {
+            DB::statement(self::SQL_PGSQL_REPLICA);
+        } else {
+            DB::statement(self::SQL_MYSQL_FK_OFF);
+        }
+    }
+
+    private function activarFK(string $driver): void
+    {
+        if ($driver === 'pgsql') {
+            DB::statement(self::SQL_PGSQL_DEFAULT);
+        } else {
+            DB::statement(self::SQL_MYSQL_FK_ON);
         }
     }
 
@@ -226,76 +246,52 @@ class BackupController extends Controller
         ];
 
         try {
-            // Desactivar verificaciones de FK según driver
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = replica');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=0');
-            }
+            $this->desactivarFK($driver);
 
-            switch ($request->tipo_reset) {
-                case 'ventas':
-                    // Tablas hijas
-                    foreach ($tablasHijas as $tabla) {
-                        if (Schema::hasTable($tabla)) {
-                            DB::table($tabla)->delete();
-                        }
-                    }
-                    DB::table('ventas')->delete();
-                    DB::table('reparaciones')->delete();
-                    $msg = 'Ventas y reparaciones eliminadas. Clientes, productos y usuarios conservados.';
-                    break;
+            $msg = $this->ejecutarReset($request->tipo_reset, $tablasHijas);
 
-                case 'datos':
-                    // Tablas hijas
-                    foreach ($tablasHijas as $tabla) {
-                        if (Schema::hasTable($tabla)) {
-                            DB::table($tabla)->delete();
-                        }
-                    }
-                    DB::table('ventas')->delete();
-                    DB::table('reparaciones')->delete();
-                    DB::table('clientes')->delete();
-                    DB::table('productos')->delete();
-                    $msg = 'Datos comerciales eliminados. Usuarios, categorías y marcas conservados.';
-                    break;
-
-                case 'total':
-                    // Tablas hijas
-                    foreach ($tablasHijas as $tabla) {
-                        if (Schema::hasTable($tabla)) {
-                            DB::table($tabla)->delete();
-                        }
-                    }
-                    DB::table('ventas')->delete();
-                    DB::table('reparaciones')->delete();
-                    DB::table('clientes')->delete();
-                    DB::table('productos')->delete();
-                    DB::table('users')->where('rol', '!=', 'admin')->delete();
-                    $msg = 'Sistema reseteado a estado de fábrica. Solo el administrador fue conservado.';
-                    break;
-            }
-
-            // Reactivar verificaciones de FK
-            if ($driver === 'pgsql') {
-                DB::statement('SET session_replication_role = DEFAULT');
-            } else {
-                DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            }
+            $this->activarFK($driver);
         } catch (\Throwable $e) {
             // Asegurar reactivación de FK en caso de error
             try {
-                if ($driver === 'pgsql') {
-                    DB::statement('SET session_replication_role = DEFAULT');
-                } else {
-                    DB::statement('SET FOREIGN_KEY_CHECKS=1');
-                }
+                $this->activarFK($driver);
             } catch (\Throwable) {}
 
             return back()->with('error', 'Error durante el reset: ' . $e->getMessage());
         }
 
         return back()->with('success', $msg . ' Se generó un backup automático previo.');
+    }
+
+    private function ejecutarReset(string $tipo, array $tablasHijas): string
+    {
+        foreach ($tablasHijas as $tabla) {
+            if (Schema::hasTable($tabla)) {
+                DB::table($tabla)->delete();
+            }
+        }
+
+        DB::table('ventas')->delete();
+        DB::table('reparaciones')->delete();
+
+        switch ($tipo) {
+            case 'ventas':
+                return 'Ventas y reparaciones eliminadas. Clientes, productos y usuarios conservados.';
+
+            case 'datos':
+                DB::table('clientes')->delete();
+                DB::table('productos')->delete();
+                return 'Datos comerciales eliminados. Usuarios, categorías y marcas conservados.';
+
+            case 'total':
+                DB::table('clientes')->delete();
+                DB::table('productos')->delete();
+                DB::table('users')->where('rol', '!=', 'admin')->delete();
+                return 'Sistema reseteado a estado de fábrica. Solo el administrador fue conservado.';
+
+            default:
+                throw new \RuntimeException('Tipo de reset no válido.');
+        }
     }
 
     // ── Generador SQL puro PHP ───────────────────────────────────────────────
@@ -314,7 +310,7 @@ class BackupController extends Controller
         $sql .= "-- ==============================================================\n\n";
 
         if ($driver === 'pgsql') {
-            $sql .= "SET session_replication_role = replica;\n\n";
+            $sql .= self::SQL_PGSQL_REPLICA . ";\n\n";
         } else {
             $sql .= "SET NAMES utf8mb4;\n";
             $sql .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
@@ -329,7 +325,9 @@ class BackupController extends Controller
         $tablas = array_map(fn($fila) => $fila[0], $filas);
 
         foreach ($tablas as $tabla) {
-            if (in_array($tabla, ['migrations', 'personal_access_tokens'])) continue;
+            if (in_array($tabla, ['migrations', 'personal_access_tokens'])) {
+                continue;
+            }
 
             $sql .= "-- --------------------------------------------------------------\n";
             $sql .= "-- Tabla: {$tabla}\n";
@@ -337,41 +335,17 @@ class BackupController extends Controller
             $sql .= "DROP TABLE IF EXISTS {$tabla};\n";
 
             if ($driver === 'pgsql') {
-                $create = $pdo->query("SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '{$tabla}' ORDER BY ordinal_position")->fetchAll(PDO::FETCH_ASSOC);
-                $sql .= "CREATE TABLE {$tabla} (\n";
-                $cols = [];
-                foreach ($create as $col) {
-                    $cols[] = "  {$col['column_name']} " . strtoupper($col['data_type']) .
-                        ($col['is_nullable'] === 'NO' ? ' NOT NULL' : '') .
-                        ($col['column_default'] ? ' DEFAULT ' . $col['column_default'] : '');
-                }
-                $sql .= implode(",\n", $cols) . "\n);\n\n";
+                $sql .= $this->generarCreatePostgres($pdo, $tabla);
             } else {
                 $create = $pdo->query("SHOW CREATE TABLE `{$tabla}`")->fetch(PDO::FETCH_ASSOC);
                 $sql .= $create['Create Table'] . ";\n\n";
             }
 
-            $rows = $pdo->query("SELECT * FROM {$tabla}")->fetchAll(PDO::FETCH_ASSOC);
-
-            if (!empty($rows)) {
-                foreach (array_chunk($rows, 500) as $chunk) {
-                    $sql .= "INSERT INTO {$tabla} VALUES\n";
-                    $lines = [];
-                    foreach ($chunk as $row) {
-                        $vals = array_map(
-                            fn($v) => $v === null ? 'NULL' : $pdo->quote((string)$v),
-                            array_values($row)
-                        );
-                        $lines[] = '(' . implode(', ', $vals) . ')';
-                    }
-                    $sql .= implode(",\n", $lines) . ";\n";
-                }
-                $sql .= "\n";
-            }
+            $sql .= $this->generarDatosTabla($pdo, $tabla);
         }
 
         if ($driver === 'pgsql') {
-            $sql .= "SET session_replication_role = DEFAULT;\n";
+            $sql .= self::SQL_PGSQL_DEFAULT . ";\n";
         } else {
             $sql .= "SET FOREIGN_KEY_CHECKS = 1;\n";
         }
@@ -379,10 +353,56 @@ class BackupController extends Controller
         return $sql;
     }
 
+    private function generarCreatePostgres(PDO $pdo, string $tabla): string
+    {
+        $create = $pdo->query("SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '{$tabla}' ORDER BY ordinal_position")->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = "CREATE TABLE {$tabla} (\n";
+        $cols = [];
+        foreach ($create as $col) {
+            $cols[] = "  {$col['column_name']} " . strtoupper($col['data_type']) .
+                ($col['is_nullable'] === 'NO' ? ' NOT NULL' : '') .
+                ($col['column_default'] ? ' DEFAULT ' . $col['column_default'] : '');
+        }
+        $sql .= implode(",\n", $cols) . "\n);\n\n";
+
+        return $sql;
+    }
+
+    private function generarDatosTabla(PDO $pdo, string $tabla): string
+    {
+        $rows = $pdo->query("SELECT * FROM {$tabla}")->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($rows)) {
+            return '';
+        }
+
+        $sql = '';
+        foreach (array_chunk($rows, 500) as $chunk) {
+            $sql .= "INSERT INTO {$tabla} VALUES\n";
+            $lines = [];
+            foreach ($chunk as $row) {
+                $vals = array_map(
+                    fn($v) => $v === null ? 'NULL' : $pdo->quote((string)$v),
+                    array_values($row)
+                );
+                $lines[] = '(' . implode(', ', $vals) . ')';
+            }
+            $sql .= implode(",\n", $lines) . ";\n";
+        }
+        $sql .= "\n";
+
+        return $sql;
+    }
+
     private function formatBytes(int $bytes): string
     {
-        if ($bytes >= 1_048_576) return round($bytes / 1_048_576, 2) . ' MB';
-        if ($bytes >= 1_024)     return round($bytes / 1_024,     2) . ' KB';
+        if ($bytes >= 1_048_576) {
+            return round($bytes / 1_048_576, 2) . ' MB';
+        }
+        if ($bytes >= 1_024) {
+            return round($bytes / 1_024, 2) . ' KB';
+        }
         return $bytes . ' B';
     }
 }

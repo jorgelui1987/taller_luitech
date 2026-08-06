@@ -131,9 +131,7 @@ class ExportacionController extends Controller
 
         $valorTotal = 0;
         foreach ($productos as $p) {
-            $estado = $p->stock <= 0 ? '<span class="sin-stock">Sin stock</span>'
-                    : ($p->tieneStockBajo() ? '<span class="stock-bajo">Stock bajo (' . $p->stock . ')</span>'
-                    : '<span class="ok">OK (' . $p->stock . ')</span>');
+            $estado = $this->estadoStockHtml($p);
             $valorTotal += $p->stock * $p->precio_venta;
 
             $html .= '<tr>';
@@ -157,6 +155,19 @@ class ExportacionController extends Controller
             'Content-Type' => 'text/html; charset=utf-8',
             'Content-Disposition' => 'attachment; filename="inventario-' . date('Y-m-d') . '.html"',
         ]);
+    }
+
+    private function estadoStockHtml($producto): string
+    {
+        if ($producto->stock <= 0) {
+            return '<span class="sin-stock">Sin stock</span>';
+        }
+
+        if ($producto->tieneStockBajo()) {
+            return '<span class="stock-bajo">Stock bajo (' . $producto->stock . ')</span>';
+        }
+
+        return '<span class="ok">OK (' . $producto->stock . ')</span>';
     }
 
     public function productosPlantillaImportacion()

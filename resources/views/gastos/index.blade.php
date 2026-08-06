@@ -10,7 +10,7 @@
     <div>
         <h4 class="mb-1 fw-bold">Gastos Fijos</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Total mensual: <strong style="color:#dc2626;">{{ formato_moneda($totalMensual) }}</strong>
+            Total mensual: <strong style="color:#dc2626;">{{ formatoMoneda($totalMensual) }}</strong>
         </p>
     </div>
     <button class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#modalNuevoGasto">
@@ -57,7 +57,7 @@
                                 <span class="text-muted">—</span>
                             @endif
                         </td>
-                        <td style="font-weight:700; color:#dc2626;">{{ formato_moneda($gasto->monto) }}</td>
+                        <td style="font-weight:700; color:#dc2626;">{{ formatoMoneda($gasto->monto) }}</td>
                         <td style="font-size:12px;">{{ $gasto->fecha ? $gasto->fecha->format('d/m/Y') : '—' }}</td>
                         <td>
                             @if($gasto->activo)

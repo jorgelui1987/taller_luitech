@@ -29,97 +29,28 @@ class BackupAutomatico extends Command
             $dbName = config('database.connections.' . $driver . '.database') ?: 'database';
             $ahora = now()->format('Y-m-d_H-i-s');
 
-            $sql = "-- ==============================================================\n";
-            $sql .= "--  CRM Tienda Celulares — Backup Automático\n";
-            $sql .= "--  Generado  : " . now()->format('d/m/Y H:i:s') . "\n";
-            $sql .= "--  Base datos: {$dbName}\n";
-            $sql .= "--  Motor     : {$driver}\n";
-            $sql .= "-- ==============================================================\n\n";
+            $sql = $this->generarEncabezado($dbName, $driver);
+            $sql .= $this->generarInicioTransaccion($driver);
 
-            if ($driver === 'pgsql') {
-                $sql .= "SET session_replication_role = replica;\n\n";
-            } else {
-                $sql .= "SET NAMES utf8mb4;\n";
-                $sql .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
-            }
-
-            $queryTablas = $driver === 'pgsql'
-                ? "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
-                : "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()";
-
-            $filas = $pdo->query($queryTablas)->fetchAll(\PDO::FETCH_NUM);
-            $tablas = array_map(fn($fila) => $fila[0], $filas);
+            $tablas = $this->obtenerTablas($pdo, $driver);
 
             foreach ($tablas as $tabla) {
-                if (in_array($tabla, ['migrations', 'personal_access_tokens'])) continue;
-
-                $sql .= "-- --------------------------------------------------------------\n";
-                $sql .= "-- Tabla: {$tabla}\n";
-                $sql .= "-- --------------------------------------------------------------\n";
-                $sql .= "DROP TABLE IF EXISTS {$tabla};\n";
-
-                if ($driver === 'pgsql') {
-                    $create = $pdo->query("SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '{$tabla}' ORDER BY ordinal_position")->fetchAll(\PDO::FETCH_ASSOC);
-                    $sql .= "CREATE TABLE {$tabla} (\n";
-                    $cols = [];
-                    foreach ($create as $col) {
-                        $cols[] = "  {$col['column_name']} " . strtoupper($col['data_type']) .
-                            ($col['is_nullable'] === 'NO' ? ' NOT NULL' : '') .
-                            ($col['column_default'] ? ' DEFAULT ' . $col['column_default'] : '');
-                    }
-                    $sql .= implode(",\n", $cols) . "\n);\n\n";
-                } else {
-                    $create = $pdo->query("SHOW CREATE TABLE `{$tabla}`")->fetch(\PDO::FETCH_ASSOC);
-                    $sql .= $create['Create Table'] . ";\n\n";
+                if (in_array($tabla, ['migrations', 'personal_access_tokens'])) {
+                    continue;
                 }
 
-                $rows = $pdo->query("SELECT * FROM {$tabla}")->fetchAll(\PDO::FETCH_ASSOC);
-
-                if (!empty($rows)) {
-                    foreach (array_chunk($rows, 500) as $chunk) {
-                        $sql .= "INSERT INTO {$tabla} VALUES\n";
-                        $lines = [];
-                        foreach ($chunk as $row) {
-                            $vals = array_map(
-                                fn($v) => $v === null ? 'NULL' : $pdo->quote((string)$v),
-                                array_values($row)
-                            );
-                            $lines[] = '(' . implode(', ', $vals) . ')';
-                        }
-                        $sql .= implode(",\n", $lines) . ";\n";
-                    }
-                    $sql .= "\n";
-                }
+                $sql .= $this->generarEstructuraTabla($pdo, $driver, $tabla);
+                $sql .= $this->generarDatosTabla($pdo, $tabla);
             }
 
-            if ($driver === 'pgsql') {
-                $sql .= "SET session_replication_role = DEFAULT;\n";
-            } else {
-                $sql .= "SET FOREIGN_KEY_CHECKS = 1;\n";
-            }
+            $sql .= $this->generarFinTransaccion($driver);
 
             $nombre = 'backup_auto_' . $ahora . '.sql';
             file_put_contents($backupDir . '/' . $nombre, $sql);
 
             $this->info("✓ Backup creado: {$nombre} (" . $this->formatBytes(filesize($backupDir . '/' . $nombre)) . ")");
 
-            // Limpiar backups antiguos
-            $retencion = (int) $this->option('retencion');
-            $archivos = glob($backupDir . '/backup_auto_*.sql') ?: [];
-            $corte = Carbon::now()->subDays($retencion);
-
-            $eliminados = 0;
-            foreach ($archivos as $archivo) {
-                $fecha = Carbon::createFromTimestamp(filemtime($archivo));
-                if ($fecha->lt($corte)) {
-                    unlink($archivo);
-                    $eliminados++;
-                }
-            }
-
-            if ($eliminados > 0) {
-                $this->info("✓ Eliminados {$eliminados} backups antiguos (retención: {$retencion} días)");
-            }
+            $this->limpiarBackupsAntiguos($backupDir);
 
             return Command::SUCCESS;
 
@@ -129,10 +60,134 @@ class BackupAutomatico extends Command
         }
     }
 
+    private function generarEncabezado(string $dbName, string $driver): string
+    {
+        $sql = "-- ==============================================================\n";
+        $sql .= "--  CRM Tienda Celulares — Backup Automático\n";
+        $sql .= "--  Generado  : " . now()->format('d/m/Y H:i:s') . "\n";
+        $sql .= "--  Base datos: {$dbName}\n";
+        $sql .= "--  Motor     : {$driver}\n";
+        $sql .= "-- ==============================================================\n\n";
+
+        return $sql;
+    }
+
+    private function generarInicioTransaccion(string $driver): string
+    {
+        if ($driver === 'pgsql') {
+            return "SET session_replication_role = replica;\n\n";
+        }
+
+        return "SET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS = 0;\n\n";
+    }
+
+    private function obtenerTablas(\PDO $pdo, string $driver): array
+    {
+        $queryTablas = $driver === 'pgsql'
+            ? "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+            : "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()";
+
+        $filas = $pdo->query($queryTablas)->fetchAll(\PDO::FETCH_NUM);
+
+        return array_map(fn($fila) => $fila[0], $filas);
+    }
+
+    private function generarEstructuraTabla(\PDO $pdo, string $driver, string $tabla): string
+    {
+        $sql = "-- --------------------------------------------------------------\n";
+        $sql .= "-- Tabla: {$tabla}\n";
+        $sql .= "-- --------------------------------------------------------------\n";
+        $sql .= "DROP TABLE IF EXISTS {$tabla};\n";
+
+        if ($driver === 'pgsql') {
+            $sql .= $this->generarCreatePostgres($pdo, $tabla);
+        } else {
+            $create = $pdo->query("SHOW CREATE TABLE `{$tabla}`")->fetch(\PDO::FETCH_ASSOC);
+            $sql .= $create['Create Table'] . ";\n\n";
+        }
+
+        return $sql;
+    }
+
+    private function generarCreatePostgres(\PDO $pdo, string $tabla): string
+    {
+        $create = $pdo->query("SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '{$tabla}' ORDER BY ordinal_position")->fetchAll(\PDO::FETCH_ASSOC);
+
+        $sql = "CREATE TABLE {$tabla} (\n";
+        $cols = [];
+        foreach ($create as $col) {
+            $cols[] = "  {$col['column_name']} " . strtoupper($col['data_type']) .
+                ($col['is_nullable'] === 'NO' ? ' NOT NULL' : '') .
+                ($col['column_default'] ? ' DEFAULT ' . $col['column_default'] : '');
+        }
+        $sql .= implode(",\n", $cols) . "\n);\n\n";
+
+        return $sql;
+    }
+
+    private function generarDatosTabla(\PDO $pdo, string $tabla): string
+    {
+        $rows = $pdo->query("SELECT * FROM {$tabla}")->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (empty($rows)) {
+            return '';
+        }
+
+        $sql = '';
+        foreach (array_chunk($rows, 500) as $chunk) {
+            $sql .= "INSERT INTO {$tabla} VALUES\n";
+            $lines = [];
+            foreach ($chunk as $row) {
+                $vals = array_map(
+                    fn($v) => $v === null ? 'NULL' : $pdo->quote((string)$v),
+                    array_values($row)
+                );
+                $lines[] = '(' . implode(', ', $vals) . ')';
+            }
+            $sql .= implode(",\n", $lines) . ";\n";
+        }
+        $sql .= "\n";
+
+        return $sql;
+    }
+
+    private function generarFinTransaccion(string $driver): string
+    {
+        if ($driver === 'pgsql') {
+            return "SET session_replication_role = DEFAULT;\n";
+        }
+
+        return "SET FOREIGN_KEY_CHECKS = 1;\n";
+    }
+
+    private function limpiarBackupsAntiguos(string $backupDir): void
+    {
+        $retencion = (int) $this->option('retencion');
+        $archivos = glob($backupDir . '/backup_auto_*.sql') ?: [];
+        $corte = Carbon::now()->subDays($retencion);
+
+        $eliminados = 0;
+        foreach ($archivos as $archivo) {
+            $fecha = Carbon::createFromTimestamp(filemtime($archivo));
+            if ($fecha->lt($corte)) {
+                unlink($archivo);
+                $eliminados++;
+            }
+        }
+
+        if ($eliminados > 0) {
+            $this->info("✓ Eliminados {$eliminados} backups antiguos (retención: {$retencion} días)");
+        }
+    }
+
     private function formatBytes(int $bytes): string
     {
-        if ($bytes >= 1_048_576) return round($bytes / 1_048_576, 2) . ' MB';
-        if ($bytes >= 1_024)     return round($bytes / 1_024, 2) . ' KB';
+        if ($bytes >= 1_048_576) {
+            return round($bytes / 1_048_576, 2) . ' MB';
+        }
+        if ($bytes >= 1_024) {
+            return round($bytes / 1_024, 2) . ' KB';
+        }
         return $bytes . ' B';
     }
 }

@@ -37,21 +37,27 @@ class ComisionController extends Controller
         $reparaciones = $query->orderByDesc('fecha_entrega')->get();
 
         // Calcular totales por técnico
+        $totalesPorTecnico = $this->calcularTotalesPorTecnico($reparaciones);
+
+        return view('comisiones.index', compact(
+            'tecnicos', 'tecnicoId', 'fechaDesde', 'fechaHasta',
+            'reparaciones', 'totalesPorTecnico'
+        ));
+    }
+
+    private function calcularTotalesPorTecnico($reparaciones): array
+    {
         $totalesPorTecnico = [];
         foreach ($reparaciones as $rep) {
             $tid = $rep->tecnico_id;
-            if (!$tid) continue;
-
-            $tecnicoObj = $rep->tecnico;
-            $porcentaje = $rep->comision_porcentaje;
-
-            // Si la reparación no tiene porcentaje guardado pero el técnico si tiene % en su perfil
-            if (($porcentaje === null || $porcentaje == 0) && $tecnicoObj && $tecnicoObj->comision_porcentaje > 0) {
-                $porcentaje = (float)$tecnicoObj->comision_porcentaje;
+            if (!$tid) {
+                continue;
             }
 
+            $tecnicoObj = $rep->tecnico;
+            $porcentaje = $this->obtenerPorcentajeComision($rep, $tecnicoObj);
+
             // Base de comisión SIEMPRE = Presupuesto - Costo de Repuesto
-            // Ej: Presupuesto 50,000 - Repuesto 10,000 = Base 40,000
             $baseManoObra = $rep->baseComision();
 
             $comisionMonto = (float)($rep->comision_monto ?? 0);
@@ -94,10 +100,19 @@ class ComisionController extends Controller
             }
         }
 
-        return view('comisiones.index', compact(
-            'tecnicos', 'tecnicoId', 'fechaDesde', 'fechaHasta',
-            'reparaciones', 'totalesPorTecnico'
-        ));
+        return $totalesPorTecnico;
+    }
+
+    private function obtenerPorcentajeComision($rep, $tecnicoObj): float
+    {
+        $porcentaje = $rep->comision_porcentaje;
+
+        // Si la reparación no tiene porcentaje guardado pero el técnico si tiene % en su perfil
+        if (($porcentaje === null || $porcentaje == 0) && $tecnicoObj && $tecnicoObj->comision_porcentaje > 0) {
+            $porcentaje = (float)$tecnicoObj->comision_porcentaje;
+        }
+
+        return (float) $porcentaje;
     }
 
     /**
@@ -113,7 +128,6 @@ class ComisionController extends Controller
             // Asegurar que comision_monto esté calculado
             // Base SIEMPRE = Presupuesto - Costo de Repuesto
             if (!$reparacion->comision_monto || $reparacion->comision_monto <= 0) {
-                $porcentaje = $reparacion->comision_porcentaje ?? $reparacion->tecnico?->comision_porcentaje ?? 0;
                 $reparacion->comision_monto = $reparacion->montoComision();
             }
 
@@ -165,7 +179,6 @@ class ComisionController extends Controller
         foreach ($reparaciones as $rep) {
             $comisionMonto = (float)$rep->comision_monto;
             if ($comisionMonto <= 0) {
-                $porcentaje = $rep->comision_porcentaje ?? $tecnico->comision_porcentaje ?? 0;
                 // Base SIEMPRE = Presupuesto - Costo de Repuesto
                 $comisionMonto = $rep->montoComision();
                 $rep->comision_monto = $comisionMonto;

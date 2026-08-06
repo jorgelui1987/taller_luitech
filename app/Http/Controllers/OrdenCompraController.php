@@ -149,10 +149,10 @@ class OrdenCompraController extends Controller
             return back()->with('error', 'No se puede actualizar una orden ' . $ordenCompra->estado);
         }
 
-        // Similar a store pero actualizando
-        // Por simplicidad, redirect a show con mensaje
+        // La actualización completa se implementa en una próxima versión.
+        // Por ahora se redirige a la vista de detalle.
         return redirect()->route('compras.show', $ordenCompra)
-            ->with('info', 'Función de actualización disponible próximente.');
+            ->with('info', 'La edición completa estará disponible próximamente.');
     }
 
     public function destroy(OrdenCompra $ordenCompra)

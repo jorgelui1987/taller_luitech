@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class TwoFactorController extends Controller
 {
+    private const SESSION_2FA_USER_ID = '2fa_user_id';
+
     /**
      * Mostrar la configuración de 2FA.
      */
@@ -112,7 +114,7 @@ class TwoFactorController extends Controller
      */
     public function showChallenge()
     {
-        if (!session()->has('2fa_user_id')) {
+        if (!session()->has(self::SESSION_2FA_USER_ID)) {
             return redirect()->route('login');
         }
 
@@ -124,14 +126,14 @@ class TwoFactorController extends Controller
      */
     public function verifyChallenge(Request $request)
     {
-        $userId = session('2fa_user_id');
+        $userId = session(self::SESSION_2FA_USER_ID);
         if (!$userId) {
             return redirect()->route('login');
         }
 
         $user = \App\Models\User::find($userId);
         if (!$user || !$user->two_factor_secret) {
-            session()->forget('2fa_user_id');
+            session()->forget(self::SESSION_2FA_USER_ID);
             return redirect()->route('login');
         }
 
@@ -150,7 +152,7 @@ class TwoFactorController extends Controller
             return back()->with('error', 'El código ingresado no es válido. Intenta nuevamente.');
         }
 
-        session()->forget('2fa_user_id');
+        session()->forget(self::SESSION_2FA_USER_ID);
         Auth::login($user);
 
         $request->session()->regenerate();
