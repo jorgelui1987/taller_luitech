@@ -350,7 +350,7 @@
                 <form action="{{ route('backup.restaurar') }}" method="POST" enctype="multipart/form-data" id="formRestore">
                     @csrf
 
-                    <label for="archivoSql" class="drop-zone mb-3 d-block" id="dropZone" onclick="document.getElementById('archivoSql').click()">
+                    <label for="archivoSql" class="drop-zone mb-3 d-block" id="dropZone">
                         <input type="file" name="archivo_sql" id="archivoSql" accept=".sql,.txt">
                         <div class="dz-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                         <div id="dzText" style="font-size:13px;font-weight:600;color:#374151;">
@@ -393,7 +393,7 @@
         {{-- Opciones de reset --}}
         <div class="row g-3 mb-4">
             <div class="col-md-4">
-                <label class="reset-option d-block" id="opt_ventas" onclick="selectReset('ventas', this)">
+                <label class="reset-option d-block" id="opt_ventas">
                     <input type="radio" name="tipo_reset" value="ventas">
                     <div class="d-flex align-items-start gap-3">
                         <div style="width:40px;height:40px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
@@ -412,7 +412,7 @@
                 </label>
             </div>
             <div class="col-md-4">
-                <label class="reset-option d-block" id="opt_datos" onclick="selectReset('datos', this)">
+                <label class="reset-option d-block" id="opt_datos">
                     <input type="radio" name="tipo_reset" value="datos">
                     <div class="d-flex align-items-start gap-3">
                         <div style="width:40px;height:40px;background:#fee2e2;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
@@ -431,7 +431,7 @@
                 </label>
             </div>
             <div class="col-md-4">
-                <label class="reset-option d-block" id="opt_total" onclick="selectReset('total', this)">
+                <label class="reset-option d-block" id="opt_total">
                     <input type="radio" name="tipo_reset" value="total">
                     <div class="d-flex align-items-start gap-3">
                         <div style="width:40px;height:40px;background:#fecaca;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
@@ -552,17 +552,19 @@ function confirmarRestore() {
 /* ── Reset opciones ─────────────────────────────────────── */
 let resetSeleccionado = null;
 
-function selectReset(tipo, el) {
-    ['opt_ventas','opt_datos','opt_total'].forEach(id => {
-        document.getElementById(id).classList.remove('selected');
+document.querySelectorAll('input[name="tipo_reset"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const el = this.closest('.reset-option');
+        ['opt_ventas','opt_datos','opt_total'].forEach(id => {
+            document.getElementById(id).classList.remove('selected');
+        });
+        el.classList.add('selected');
+        resetSeleccionado = this.value;
+        document.getElementById('confirmBox').style.display = 'block';
+        document.getElementById('inputConfirm').value = '';
+        document.getElementById('btnReset').disabled = true;
     });
-    el.classList.add('selected');
-    el.querySelector('input[type=radio]').checked = true;
-    resetSeleccionado = tipo;
-    document.getElementById('confirmBox').style.display = 'block';
-    document.getElementById('inputConfirm').value = '';
-    document.getElementById('btnReset').disabled = true;
-}
+});
 
 function validarConfirmacion(val) {
     document.getElementById('btnReset').disabled = val !== 'RESETEAR';
