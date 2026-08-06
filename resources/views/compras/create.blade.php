@@ -40,7 +40,8 @@
                     <div id="productos-container">
                         <div class="row g-2 mb-2 producto-item">
                             <div class="col-md-5">
-                                <select name="productos[0][id]" class="form-select" required>
+                                <label for="producto_0" class="visually-hidden">Producto</label>
+                                <select name="productos[0][id]" id="producto_0" class="form-select" required>
                                     <option value="">— Producto —</option>
                                     @foreach($productos as $prod)
                                         <option value="{{ $prod->id }}">{{ $prod->nombre }} ({{ $prod->codigo }})</option>
@@ -48,13 +49,16 @@
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" name="productos[0][cantidad]" class="form-control" placeholder="Cant." min="1" value="1" required>
+                                <label for="cantidad_0" class="visually-hidden">Cantidad</label>
+                                <input type="number" name="productos[0][cantidad]" id="cantidad_0" class="form-control" placeholder="Cant." min="1" value="1" required>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" name="productos[0][precio]" class="form-control" placeholder="Precio" min="0" step="0.01" value="0" required>
+                                <label for="precio_0" class="visually-hidden">Precio</label>
+                                <input type="number" name="productos[0][precio]" id="precio_0" class="form-control" placeholder="Precio" min="0" step="0.01" value="0" required>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" name="productos[0][descuento]" class="form-control" placeholder="Dto." min="0" step="0.01" value="0">
+                                <label for="descuento_0" class="visually-hidden">Descuento</label>
+                                <input type="number" name="productos[0][descuento]" id="descuento_0" class="form-control" placeholder="Dto." min="0" step="0.01" value="0">
                             </div>
                             <div class="col-md-1">
                                 <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="this.closest('.producto-item').remove()" style="border-radius:8px;padding:6px;"><i class="fas fa-times"></i></button>

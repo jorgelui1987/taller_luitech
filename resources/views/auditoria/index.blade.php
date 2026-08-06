@@ -59,20 +59,20 @@
         <div class="card-body py-3">
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label mb-1">Acción</label>
-                    <input type="text" name="accion" class="form-control form-control-sm" placeholder="ej: activar_2fa" value="{{ request('accion') }}">
+                    <label for="filtro_accion" class="form-label mb-1">Acción</label>
+                    <input type="text" name="accion" id="filtro_accion" class="form-control form-control-sm" placeholder="ej: activar_2fa" value="{{ request('accion') }}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label mb-1">Usuario</label>
-                    <input type="text" name="usuario" class="form-control form-control-sm" placeholder="Nombre del usuario" value="{{ request('usuario') }}">
+                    <label for="filtro_usuario" class="form-label mb-1">Usuario</label>
+                    <input type="text" name="usuario" id="filtro_usuario" class="form-control form-control-sm" placeholder="Nombre del usuario" value="{{ request('usuario') }}">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label mb-1">Desde</label>
-                    <input type="date" name="desde" class="form-control form-control-sm" value="{{ request('desde') }}">
+                    <label for="filtro_desde" class="form-label mb-1">Desde</label>
+                    <input type="date" name="desde" id="filtro_desde" class="form-control form-control-sm" value="{{ request('desde') }}">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label mb-1">Hasta</label>
-                    <input type="date" name="hasta" class="form-control form-control-sm" value="{{ request('hasta') }}">
+                    <label for="filtro_hasta" class="form-label mb-1">Hasta</label>
+                    <input type="date" name="hasta" id="filtro_hasta" class="form-control form-control-sm" value="{{ request('hasta') }}">
                 </div>
                 <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-primary btn-sm flex-grow-1">

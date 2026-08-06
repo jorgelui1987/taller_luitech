@@ -26,8 +26,8 @@
         Balance General
     </h4>
     <form method="GET" class="d-flex gap-2 align-items-center">
-        <label class="form-label mb-0" style="font-size:13px;">Fecha de Corte:</label>
-        <input type="date" name="fecha" class="form-control form-control-sm"
+        <label for="fecha_corte" class="form-label mb-0" style="font-size:13px;">Fecha de Corte:</label>
+        <input type="date" name="fecha" id="fecha_corte" class="form-control form-control-sm"
                value="{{ $fechaCorte->format('Y-m-d') }}" style="width:160px;">
         <button type="submit" class="btn btn-sm btn-primary px-3">
             <i class="fas fa-filter me-1"></i>Actualizar

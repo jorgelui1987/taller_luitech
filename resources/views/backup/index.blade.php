@@ -350,7 +350,7 @@
                 <form action="{{ route('backup.restaurar') }}" method="POST" enctype="multipart/form-data" id="formRestore">
                     @csrf
 
-                    <label for="archivoSql" class="drop-zone mb-3 d-block" id="dropZone" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){document.getElementById('archivoSql').click();}" onclick="document.getElementById('archivoSql').click()">
+                    <label for="archivoSql" class="drop-zone mb-3 d-block" id="dropZone" onclick="document.getElementById('archivoSql').click()">
                         <input type="file" name="archivo_sql" id="archivoSql" accept=".sql,.txt">
                         <div class="dz-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                         <div id="dzText" style="font-size:13px;font-weight:600;color:#374151;">
@@ -393,7 +393,7 @@
         {{-- Opciones de reset --}}
         <div class="row g-3 mb-4">
             <div class="col-md-4">
-                <label class="reset-option d-block" id="opt_ventas" onclick="selectReset('ventas', this)" onkeypress="if(event.key==='Enter'||event.key===' '){selectReset('ventas', this);}" tabindex="0">
+                <label class="reset-option d-block" id="opt_ventas" onclick="selectReset('ventas', this)">
                     <input type="radio" name="tipo_reset" value="ventas">
                     <div class="d-flex align-items-start gap-3">
                         <div style="width:40px;height:40px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
@@ -412,7 +412,7 @@
                 </label>
             </div>
             <div class="col-md-4">
-                <label class="reset-option d-block" id="opt_datos" onclick="selectReset('datos', this)" onkeypress="if(event.key==='Enter'||event.key===' '){selectReset('datos', this);}" tabindex="0">
+                <label class="reset-option d-block" id="opt_datos" onclick="selectReset('datos', this)">
                     <input type="radio" name="tipo_reset" value="datos">
                     <div class="d-flex align-items-start gap-3">
                         <div style="width:40px;height:40px;background:#fee2e2;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
@@ -431,7 +431,7 @@
                 </label>
             </div>
             <div class="col-md-4">
-                <label class="reset-option d-block" id="opt_total" onclick="selectReset('total', this)" onkeypress="if(event.key==='Enter'||event.key===' '){selectReset('total', this);}" tabindex="0">
+                <label class="reset-option d-block" id="opt_total" onclick="selectReset('total', this)">
                     <input type="radio" name="tipo_reset" value="total">
                     <div class="d-flex align-items-start gap-3">
                         <div style="width:40px;height:40px;background:#fecaca;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">

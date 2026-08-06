@@ -48,7 +48,7 @@
                     <h6 class="fw-bold mb-3"><i class="fas fa-shopping-cart me-2" style="color:#a855f7;"></i>Venta Original</h6>
 
                     <div class="mb-3">
-                        <label class="form-label">Seleccionar venta <span class="text-danger">*</span></label>
+                        <label for="ventaSelect" class="form-label">Seleccionar venta <span class="text-danger">*</span></label>
                         <select name="venta_id" id="ventaSelect" class="form-select @error('venta_id') is-invalid @enderror" required>
                             <option value="">Seleccionar venta...</option>
                             @foreach($ventas as $v)
@@ -72,7 +72,7 @@
                     <h6 class="fw-bold mb-3"><i class="fas fa-tag me-2" style="color:#a855f7;"></i>Información de la Devolución</h6>
 
                     <div class="mb-3">
-                        <label class="form-label">Tipo de devolución <span class="text-danger">*</span></label>
+                        <span class="form-label d-block">Tipo de devolución <span class="text-danger">*</span></span>
                         <div class="d-flex gap-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="tipo" id="tipoDevolucion" value="devolucion"
@@ -92,8 +92,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Motivo <span class="text-danger">*</span></label>
-                        <select name="motivo" class="form-select @error('motivo') is-invalid @enderror" required>
+                        <label for="motivo" class="form-label">Motivo <span class="text-danger">*</span></label>
+                        <select name="motivo" id="motivo" class="form-select @error('motivo') is-invalid @enderror" required>
                             <option value="">Seleccionar motivo...</option>
                             <option value="garantia" {{ old('motivo')=='garantia'?'selected':'' }}>🛡️ Garantía</option>
                             <option value="defecto" {{ old('motivo')=='defecto'?'selected':'' }}>⚠️ Producto defectuoso</option>
@@ -107,8 +107,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Tipo de reembolso</label>
-                        <select name="tipo_reembolso" class="form-select">
+                        <label for="tipo_reembolso" class="form-label">Tipo de reembolso</label>
+                        <select name="tipo_reembolso" id="tipo_reembolso" class="form-select">
                             <option value="">Sin reembolso</option>
                             <option value="efectivo" {{ old('tipo_reembolso')=='efectivo'?'selected':'' }}>💵 Efectivo</option>
                             <option value="tarjeta" {{ old('tipo_reembolso')=='tarjeta'?'selected':'' }}>💳 Tarjeta</option>
@@ -118,8 +118,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Observación</label>
-                        <textarea name="observacion" class="form-control" rows="3" maxlength="1000"
+                        <label for="observacion" class="form-label">Observación</label>
+                        <textarea name="observacion" id="observacion" class="form-control" rows="3" maxlength="1000"
                                   placeholder="Ej: El cliente trae el equipo con falla en la pantalla...">{{ old('observacion') }}</textarea>
                     </div>
                 </div>

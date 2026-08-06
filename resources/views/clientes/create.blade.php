@@ -31,8 +31,7 @@
                         <div class="d-flex gap-3">
                             <label for="tipo_particular" class="d-flex align-items-center gap-2 cursor-pointer"
                                    style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:10px; cursor:pointer; flex:1; transition:.2s;"
-                                   onclick="this.style.borderColor='#a855f7'; document.getElementById('tipo_empresa').style.borderColor='#e5e7eb';"
-                                   onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" tabindex="0">
+                                   onclick="this.style.borderColor='#a855f7'; document.getElementById('tipo_empresa').style.borderColor='#e5e7eb';">
                                 <input type="radio" name="tipo" id="tipo_particular" value="particular"
                                        {{ old('tipo','particular')=='particular'?'checked':'' }}
                                        style="accent-color:#a855f7;">
@@ -42,8 +41,7 @@
                             </label>
                             <label id="tipo_empresa" for="tipo_empresa_radio" class="d-flex align-items-center gap-2"
                                    style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:10px; cursor:pointer; flex:1; transition:.2s;"
-                                   onclick="this.style.borderColor='#a855f7'; document.querySelector('[value=particular]').parentElement.style.borderColor='#e5e7eb';"
-                                   onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" tabindex="0">
+                                   onclick="this.style.borderColor='#a855f7'; document.querySelector('[value=particular]').parentElement.style.borderColor='#e5e7eb';">
                                 <input type="radio" name="tipo" id="tipo_empresa_radio" value="empresa"
                                        {{ old('tipo')=='empresa'?'checked':'' }}
                                        style="accent-color:#a855f7;">

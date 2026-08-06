@@ -122,16 +122,16 @@
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nombre del gasto <span class="text-danger">*</span></label>
-                            <input type="text" name="nombre" class="form-control" placeholder="Ej: Renta del local" required>
+                            <label for="nombre" class="form-label">Nombre del gasto <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ej: Renta del local" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Monto (S/) <span class="text-danger">*</span></label>
-                            <input type="number" name="monto" class="form-control" step="0.01" min="0" required>
+                            <label for="monto" class="form-label">Monto (S/) <span class="text-danger">*</span></label>
+                            <input type="number" name="monto" id="monto" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Categoría</label>
-                            <select name="categoria" class="form-select">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <select name="categoria" id="categoria" class="form-select">
                                 <option value="">— Seleccionar —</option>
                                 <option value="Alquiler">🏠 Alquiler</option>
                                 <option value="Servicios">💡 Servicios (Luz, Agua)</option>
@@ -143,12 +143,12 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Fecha</label>
-                            <input type="date" name="fecha" class="form-control" value="{{ now()->format('Y-m-d') }}">
+                            <label for="fecha" class="form-label">Fecha</label>
+                            <input type="date" name="fecha" id="fecha" class="form-control" value="{{ now()->format('Y-m-d') }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Descripción</label>
-                            <textarea name="descripcion" class="form-control" rows="2" placeholder="Detalle del gasto..."></textarea>
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea name="descripcion" id="descripcion" class="form-control" rows="2" placeholder="Detalle del gasto..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -178,15 +178,15 @@
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nombre del gasto <span class="text-danger">*</span></label>
+                            <label for="editNombre" class="form-label">Nombre del gasto <span class="text-danger">*</span></label>
                             <input type="text" name="nombre" id="editNombre" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Monto (S/) <span class="text-danger">*</span></label>
+                            <label for="editMonto" class="form-label">Monto (S/) <span class="text-danger">*</span></label>
                             <input type="number" name="monto" id="editMonto" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Categoría</label>
+                            <label for="editCategoria" class="form-label">Categoría</label>
                             <select name="categoria" id="editCategoria" class="form-select">
                                 <option value="">— Seleccionar —</option>
                                 <option value="Alquiler">🏠 Alquiler</option>
@@ -199,11 +199,11 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Fecha</label>
+                            <label for="editFecha" class="form-label">Fecha</label>
                             <input type="date" name="fecha" id="editFecha" class="form-control">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Descripción</label>
+                            <label for="editDescripcion" class="form-label">Descripción</label>
                             <textarea name="descripcion" id="editDescripcion" class="form-control" rows="2"></textarea>
                         </div>
                     </div>

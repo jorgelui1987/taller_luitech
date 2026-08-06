@@ -21,8 +21,8 @@
         Flujo de Caja
     </h4>
     <form method="GET" class="d-flex gap-2 align-items-center">
-        <label class="form-label mb-0" style="font-size:13px;">Año:</label>
-        <select name="year" class="form-select form-select-sm" style="width:100px;">
+        <label for="year" class="form-label mb-0" style="font-size:13px;">Año:</label>
+        <select name="year" id="year" class="form-select form-select-sm" style="width:100px;">
             @foreach($anios as $a)
                 <option value="{{ $a }}" {{ $year == $a ? 'selected' : '' }}>{{ $a }}</option>
             @endforeach
