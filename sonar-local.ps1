@@ -42,14 +42,3 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "=== El análisis falló con código de salida: $LASTEXITCODE ===" -ForegroundColor Red
     exit $LASTEXITCODE
 }
-</｜DSML｜tool>
-<task_progress>
-- [x] Revisar el workflow de SonarCloud
-- [x] Revisar sonar-project.properties
-- [x] Identificar la causa del error del escáner
-- [x] Corregir la configuración
-- [x] Verificar la estructura del repositorio
-- [x] Crear script de análisis local
-- [ ] Verificar estado final
-</task_progress>
-</｜DSML｜tool>
