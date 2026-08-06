@@ -7,7 +7,7 @@ param(
     [string]$Token
 )
 
-$ProjectKey = "servicio-tecnico"
+$ProjectKey = "taller_luitech-main"
 $HostUrl = "http://localhost:9000"
 
 Write-Host "=== Análisis SonarQube Local ===" -ForegroundColor Cyan
@@ -26,11 +26,10 @@ if (-not $scanner) {
 Write-Host "sonar-scanner encontrado: $($scanner.Source)" -ForegroundColor Green
 Write-Host ""
 
-# Ejecutar el análisis
+# Ejecutar el análisis (usa sonar-project.properties para fuentes y exclusiones)
 Write-Host "Ejecutando análisis..." -ForegroundColor Cyan
 sonar-scanner.bat `
     -D"sonar.projectKey=$ProjectKey" `
-    -D"sonar.sources=." `
     -D"sonar.host.url=$HostUrl" `
     -D"sonar.token=$Token"
 
