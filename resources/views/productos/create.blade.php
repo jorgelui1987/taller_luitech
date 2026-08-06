@@ -33,7 +33,7 @@
 
                                 {{-- TIPO DE PRODUCTO --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">Tipo de Producto <span class="text-danger">*</span></label>
+                                    <label for="tipoProducto" class="form-label">Tipo de Producto <span class="text-danger">*</span></label>
                                     <select name="tipo" id="tipoProducto" class="form-select @error('tipo') is-invalid @enderror" required>
                                         <option value="celular" {{ old('tipo', 'celular')=='celular'?'selected':'' }}>📱 Celular</option>
                                         <option value="accesorio" {{ old('tipo')=='accesorio'?'selected':'' }}>🔌 Accesorio</option>
@@ -43,32 +43,32 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label class="form-label">Código SKU <span class="text-danger">*</span></label>
+                                    <label for="codigo" class="form-label">Código SKU <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('codigo') is-invalid @enderror"
-                                           name="codigo" value="{{ old('codigo') }}" placeholder="SAM-A54-128">
+                                           name="codigo" id="codigo" value="{{ old('codigo') }}" placeholder="SAM-A54-128">
                                     @error('codigo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Código de Barras</label>
+                                    <label for="codigo_barras" class="form-label">Código de Barras</label>
                                     <input type="text" class="form-control @error('codigo_barras') is-invalid @enderror"
-                                           name="codigo_barras" value="{{ old('codigo_barras') }}" placeholder="1234567890123">
+                                           name="codigo_barras" id="codigo_barras" value="{{ old('codigo_barras') }}" placeholder="1234567890123">
                                     @error('codigo_barras')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Garantía (días)</label>
-                                    <input type="number" class="form-control" name="garantia_dias"
+                                    <label for="garantia_dias" class="form-label">Garantía (días)</label>
+                                    <input type="number" class="form-control" name="garantia_dias" id="garantia_dias"
                                            value="{{ old('garantia_dias', 0) }}" min="0" placeholder="30, 90, 365...">
                                 </div>
                                 <div class="col-md-8">
-                                    <label class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
+                                    <label for="nombre" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('nombre') is-invalid @enderror"
-                                           name="nombre" value="{{ old('nombre') }}" placeholder="Samsung Galaxy A54 128GB">
+                                           name="nombre" id="nombre" value="{{ old('nombre') }}" placeholder="Samsung Galaxy A54 128GB">
                                     @error('nombre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
 
                                 {{-- CATEGORÍA --}}
                                 <div class="col-md-6">
-                                    <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                                    <label for="categoriaSelect" class="form-label">Categoría <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="categoria_id" id="categoriaSelect" class="form-select @error('categoria_id') is-invalid @enderror" required>
                                             <option value="">— Seleccionar —</option>
@@ -87,7 +87,7 @@
 
                                 {{-- MARCA --}}
                                 <div class="col-md-6">
-                                    <label class="form-label">Marca <span class="text-danger">*</span></label>
+                                    <label for="marcaSelect" class="form-label">Marca <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="marca_id" id="marcaSelect" class="form-select @error('marca_id') is-invalid @enderror" required>
                                             <option value="">— Seleccionar —</option>
@@ -105,8 +105,8 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label">Proveedor</label>
-                                    <select name="proveedor_id" class="form-select @error('proveedor_id') is-invalid @enderror">
+                                    <label for="proveedor_id" class="form-label">Proveedor</label>
+                                    <select name="proveedor_id" id="proveedor_id" class="form-select @error('proveedor_id') is-invalid @enderror">
                                         <option value="">— Sin proveedor —</option>
                                         @foreach(\App\Models\Proveedor::where('activo', true)->orderBy('nombre')->get() as $prov)
                                             <option value="{{ $prov->id }}" {{ old('proveedor_id')==$prov->id?'selected':'' }}>
@@ -121,17 +121,17 @@
                                 <div id="camposCelular">
                                     <div class="row g-3">
                                         <div class="col-md-4">
-                                            <label class="form-label">Modelo</label>
-                                            <input type="text" class="form-control" name="modelo"
+                                            <label for="modelo" class="form-label">Modelo</label>
+                                            <input type="text" class="form-control" name="modelo" id="modelo"
                                                    value="{{ old('modelo') }}" placeholder="A54, iPhone 15...">
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Color</label>
-                                            <input type="text" class="form-control" name="color"
+                                            <label for="color" class="form-label">Color</label>
+                                            <input type="text" class="form-control" name="color" id="color"
                                                    value="{{ old('color') }}" placeholder="Negro, Blanco...">
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Condición <span class="text-danger" id="condReq">*</span></label>
+                                            <label for="condicionSelect" class="form-label">Condición <span class="text-danger" id="condReq">*</span></label>
                                             <select name="condicion" id="condicionSelect" class="form-select">
                                                 <option value="nuevo" {{ old('condicion','nuevo')=='nuevo'?'selected':'' }}>Nuevo</option>
                                                 <option value="reacondicionado" {{ old('condicion')=='reacondicionado'?'selected':'' }}>Reacondicionado</option>
@@ -139,8 +139,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">Almacenamiento</label>
-                                            <select name="almacenamiento" class="form-select">
+                                            <label for="almacenamiento" class="form-label">Almacenamiento</label>
+                                            <select name="almacenamiento" id="almacenamiento" class="form-select">
                                                 <option value="">— Sin especificar —</option>
                                                 @foreach(['32GB','64GB','128GB','256GB','512GB','1TB'] as $alm)
                                                     <option value="{{ $alm }}" {{ old('almacenamiento')==$alm?'selected':'' }}>{{ $alm }}</option>
@@ -148,8 +148,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">RAM</label>
-                                            <select name="ram" class="form-select">
+                                            <label for="ram" class="form-label">RAM</label>
+                                            <select name="ram" id="ram" class="form-select">
                                                 <option value="">— Sin especificar —</option>
                                                 @foreach(['2GB','3GB','4GB','6GB','8GB','12GB','16GB'] as $ram)
                                                     <option value="{{ $ram }}" {{ old('ram')==$ram?'selected':'' }}>{{ $ram }}</option>
@@ -157,16 +157,16 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label">IMEI</label>
-                                            <input type="text" class="form-control" name="imei"
+                                            <label for="imei" class="form-label">IMEI</label>
+                                            <input type="text" class="form-control" name="imei" id="imei"
                                                    value="{{ old('imei') }}" placeholder="123456789012345">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label">Descripción</label>
-                                    <textarea class="form-control" name="descripcion" rows="3"
+                                    <label for="descripcion" class="form-label">Descripción</label>
+                                    <textarea class="form-control" name="descripcion" id="descripcion" rows="3"
                                               placeholder="Características, detalles del producto...">{{ old('descripcion') }}</textarea>
                                 </div>
                             </div>
@@ -175,16 +175,16 @@
                             <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Precios y Stock</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">Precio de Compra (S/) <span class="text-danger">*</span></label>
+                                    <label for="precio_compra" class="form-label">Precio de Compra (S/) <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('precio_compra') is-invalid @enderror"
-                                           name="precio_compra" value="{{ old('precio_compra',0) }}"
+                                           name="precio_compra" id="precio_compra" value="{{ old('precio_compra',0) }}"
                                            min="0" step="0.01" oninput="calcularMargen()">
                                     @error('precio_compra')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Precio de Venta (S/) <span class="text-danger">*</span></label>
+                                    <label for="precio_venta" class="form-label">Precio de Venta (S/) <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('precio_venta') is-invalid @enderror"
-                                           name="precio_venta" value="{{ old('precio_venta',0) }}"
+                                           name="precio_venta" id="precio_venta" value="{{ old('precio_venta',0) }}"
                                            min="0" step="0.01" oninput="calcularMargen()">
                                     @error('precio_venta')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
@@ -196,16 +196,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Stock Inicial <span class="text-danger">*</span></label>
+                                    <label for="stock" class="form-label">Stock Inicial <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('stock') is-invalid @enderror"
-                                           name="stock" value="{{ old('stock',0) }}" min="0">
+                                           name="stock" id="stock" value="{{ old('stock',0) }}" min="0">
                                     @error('stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Stock Mínimo <span class="text-danger">*</span>
+                                    <label for="stock_minimo" class="form-label">Stock Mínimo <span class="text-danger">*</span>
                                         <i class="fas fa-info-circle text-muted fa-xs" title="Alerta cuando baje de este número"></i>
                                     </label>
-                                    <input type="number" class="form-control" name="stock_minimo"
+                                    <input type="number" class="form-control" name="stock_minimo" id="stock_minimo"
                                            value="{{ old('stock_minimo',5) }}" min="0">
                                 </div>
                             </div>

@@ -145,7 +145,7 @@
                             <table class="table table-hover align-middle" id="productosTable">
                                 <thead>
                                     <tr>
-                                        <th style="width:40px;"><input type="checkbox" id="checkAll" class="form-check-input"></th>
+                                        <th style="width:40px;"><label for="checkAll" class="visually-hidden">Seleccionar todos</label><input type="checkbox" id="checkAll" class="form-check-input"></th>
                                         <th>Producto</th>
                                         <th class="text-center" style="width:90px;">Vendido</th>
                                         <th class="text-center" style="width:90px;">Devuelto ya</th>

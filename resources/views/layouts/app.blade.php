@@ -994,8 +994,9 @@
         </button>
 
         <div class="search-box d-none d-md-block">
+            <label for="busquedaGlobal" class="visually-hidden">Buscar en el sistema</label>
             <i class="fas fa-search search-icon"></i>
-            <input type="text" placeholder="Buscar...">
+            <input type="text" id="busquedaGlobal" placeholder="Buscar...">
         </div>
 
         <div class="topbar-actions">
