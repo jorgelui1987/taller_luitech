@@ -55,11 +55,13 @@
         <div id="filtrosContent" class="filtros-collapse show">
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="buscar"
+                    <label for="buscar" class="visually-hidden">Buscar reparación</label>
+                    <input type="text" class="form-control" name="buscar" id="buscar"
                            placeholder="N° orden, dispositivo o cliente..." value="{{ request('buscar') }}">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="estado">
+                    <label for="estado" class="visually-hidden">Filtrar por estado</label>
+                    <select class="form-select" name="estado" id="estado">
                         <option value="">Todos los estados</option>
                         <option value="recibido" {{ request('estado')=='recibido'?'selected':'' }}>Recibido</option>
                         <option value="en_diagnostico" {{ request('estado')=='en_diagnostico'?'selected':'' }}>En Diagnóstico</option>
@@ -70,7 +72,8 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-select" name="prioridad">
+                    <label for="prioridad" class="visually-hidden">Filtrar por prioridad</label>
+                    <select class="form-select" name="prioridad" id="prioridad">
                         <option value="">Toda prioridad</option>
                         <option value="urgente" {{ request('prioridad')=='urgente'?'selected':'' }}>🔴 Urgente</option>
                         <option value="alta" {{ request('prioridad')=='alta'?'selected':'' }}>🟠 Alta</option>

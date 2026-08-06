@@ -43,8 +43,8 @@
                             </h6>
                             <div class="row g-3">
                                 <div class="col-md-5">
-                                    <label class="form-label">Estado Actual <span class="text-danger">*</span></label>
-                                    <select name="estado" class="form-select" required>
+                                    <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
+                                    <select name="estado" id="estado" class="form-select" required>
                                         @php $estados = ['recibido'=>'📥 Recibido','en_diagnostico'=>'🔍 En Diagnóstico','esperando_repuesto'=>'⏳ Esperando Repuesto','en_reparacion'=>'🔧 En Reparación','listo'=>'✅ Listo para Entregar','entregado'=>'📦 Entregado','no_reparable'=>'❌ No Reparable']; @endphp
                                         @foreach($estados as $val => $lbl)
                                             <option value="{{ $val }}" {{ old('estado',$reparacion->estado)==$val?'selected':'' }}>
@@ -54,8 +54,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Prioridad</label>
-                                    <select name="prioridad" class="form-select">
+                                    <label for="prioridad" class="form-label">Prioridad</label>
+                                    <select name="prioridad" id="prioridad" class="form-select">
                                         <option value="baja" {{ old('prioridad',$reparacion->prioridad)=='baja'?'selected':'' }}>🟢 Baja</option>
                                         <option value="media" {{ old('prioridad',$reparacion->prioridad)=='media'?'selected':'' }}>🟡 Media</option>
                                         <option value="alta" {{ old('prioridad',$reparacion->prioridad)=='alta'?'selected':'' }}>🟠 Alta</option>
@@ -63,8 +63,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Técnico Asignado</label>
-                                    <select name="tecnico_id" class="form-select">
+                                    <label for="tecnico_id" class="form-label">Técnico Asignado</label>
+                                    <select name="tecnico_id" id="tecnico_id" class="form-select">
                                         @foreach($tecnicos as $t)
                                             <option value="{{ $t->id }}" {{ old('tecnico_id',$reparacion->tecnico_id)==$t->id?'selected':'' }}>
                                                 {{ $t->name }}
@@ -83,8 +83,8 @@
                             <div class="row g-3">
                                 {{-- 1. Tipo de Dispositivo --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">📱 Tipo de Dispositivo <span class="text-danger">*</span></label>
-                                    <select name="tipo_dispositivo" class="form-select" required>
+                                    <label for="tipo_dispositivo" class="form-label">📱 Tipo de Dispositivo <span class="text-danger">*</span></label>
+                                    <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-select" required>
                                         <option value="">— Seleccionar tipo —</option>
                                         <option value="celular" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='celular'?'selected':'' }}>📱 Celular / Smartphone</option>
                                         <option value="tablet" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='tablet'?'selected':'' }}>📟 Tablet / iPad</option>
@@ -94,7 +94,7 @@
                                 </div>
                                 {{-- 2. Marca --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">🏷️ Marca</label>
+                                    <label for="marca_select" class="form-label">🏷️ Marca</label>
                                     @php
                                         $marcasPrecargadas = [
                                             'Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Motorola',
@@ -106,44 +106,44 @@
                                         $marcaActual = old('marca', $reparacion->marca ?? '');
                                         $esOtra = $marcaActual && !in_array($marcaActual, $marcasPrecargadas);
                                     @endphp
-                                    <select name="marca_select" class="form-select marca-select" onchange="toggleMarcaInputEdit(this)">
+                                    <select name="marca_select" id="marca_select" class="form-select marca-select" onchange="toggleMarcaInputEdit(this)">
                                         <option value="">— Seleccionar o escribir —</option>
                                         @foreach($marcasPrecargadas as $m)
                                             <option value="{{ $m }}" {{ $marcaActual==$m?'selected':'' }}>{{ $m }}</option>
                                         @endforeach
                                         <option value="__otra__" {{ $esOtra?'selected':'' }}>✏️ Otra (escribir manualmente)</option>
                                     </select>
-                                    <input type="text" class="form-control marca-input mt-1" name="marca"
+                                    <input type="text" class="form-control marca-input mt-1" name="marca" id="marca"
                                            value="{{ old('marca',$reparacion->marca) }}"
                                            placeholder="Escribir marca manualmente..."
                                            style="{{ $esOtra ? 'display:block;' : 'display:none;' }}">
                                 </div>
                                 {{-- 3. Modelo --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">📦 Modelo</label>
-                                    <input type="text" class="form-control" name="modelo"
+                                    <label for="modelo" class="form-label">📦 Modelo</label>
+                                    <input type="text" class="form-control" name="modelo" id="modelo"
                                            value="{{ old('modelo',$reparacion->modelo) }}">
                                 </div>
                                 {{-- 4. IMEI --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">🔢 IMEI / Serie</label>
-                                    <input type="text" class="form-control" name="imei"
+                                    <label for="imei" class="form-label">🔢 IMEI / Serie</label>
+                                    <input type="text" class="form-control" name="imei" id="imei"
                                            value="{{ old('imei',$reparacion->imei) }}">
                                 </div>
                                 {{-- 5. Tipo (Patrón/PIN) --}}
                                 <div class="col-md-4">
                                     <div class="d-flex gap-2 align-items-start">
                                         <div style="flex:0 0 100px;">
-                                            <label class="form-label">🔐 Tipo</label>
-                                            <select name="tipo_codigo" class="form-select" onchange="togglePatronInputEdit(this)">
+                                            <label for="tipo_codigo" class="form-label">🔐 Tipo</label>
+                                            <select name="tipo_codigo" id="tipo_codigo" class="form-select" onchange="togglePatronInputEdit(this)">
                                                 <option value="">—</option>
                                                 <option value="pin" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='pin'?'selected':'' }}>🔢 PIN</option>
                                                 <option value="patron" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'selected':'' }}>🔓 Patrón</option>
                                             </select>
                                         </div>
                                         <div style="flex:1;">
-                                            <label class="form-label">Valor</label>
-                                            <input type="text" class="form-control patron-valor" name="codigo_equipo"
+                                            <label for="codigo_equipo" class="form-label">Valor</label>
+                                            <input type="text" class="form-control patron-valor" name="codigo_equipo" id="codigo_equipo"
                                                    value="{{ old('codigo_equipo',$reparacion->codigo_equipo) }}"
                                                    placeholder="PIN numérico"
                                                    style="display:{{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'none':'block'}};">
@@ -173,14 +173,14 @@
                                 </div>
                                 {{-- 6. Color --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">🎨 Color</label>
-                                    <input type="text" class="form-control" name="color"
+                                    <label for="color" class="form-label">🎨 Color</label>
+                                    <input type="text" class="form-control" name="color" id="color"
                                            value="{{ old('color',$reparacion->color) }}">
                                 </div>
                                 {{-- 7. Fecha Estimada --}}
                                 <div class="col-md-4">
-                                    <label class="form-label">📅 Fecha Estimada de Entrega</label>
-                                    <input type="date" class="form-control" name="fecha_estimada"
+                                    <label for="fecha_estimada" class="form-label">📅 Fecha Estimada de Entrega</label>
+                                    <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada"
                                            value="{{ old('fecha_estimada', optional($reparacion->fecha_estimada)->format('Y-m-d')) }}">
                                 </div>
                             </div>
@@ -193,17 +193,17 @@
                             </h6>
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label class="form-label">Falla Reportada <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" name="falla_reportada" rows="3" required>{{ old('falla_reportada',$reparacion->falla_reportada) }}</textarea>
+                                    <label for="falla_reportada" class="form-label">Falla Reportada <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="falla_reportada" id="falla_reportada" rows="3" required>{{ old('falla_reportada',$reparacion->falla_reportada) }}</textarea>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Diagnóstico del Técnico</label>
-                                    <textarea class="form-control" name="diagnostico" rows="4"
+                                    <label for="diagnostico" class="form-label">Diagnóstico del Técnico</label>
+                                    <textarea class="form-control" name="diagnostico" id="diagnostico" rows="4"
                                               placeholder="Describe el diagnóstico técnico del equipo...">{{ old('diagnostico',$reparacion->diagnostico) }}</textarea>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Solución Aplicada</label>
-                                    <textarea class="form-control" name="solucion" rows="4"
+                                    <label for="solucion" class="form-label">Solución Aplicada</label>
+                                    <textarea class="form-control" name="solucion" id="solucion" rows="4"
                                               placeholder="Describe qué se hizo para solucionar la falla...">{{ old('solucion',$reparacion->solucion) }}</textarea>
                                 </div>
                             </div>
@@ -216,13 +216,13 @@
                             </h6>
                             <div class="row g-3">
                                 <div class="col-md-3">
-                                    <label class="form-label">Presupuesto (S/)</label>
-                                    <input type="number" class="form-control" name="presupuesto"
+                                    <label for="presupuesto" class="form-label">Presupuesto (S/)</label>
+                                    <input type="number" class="form-control" name="presupuesto" id="presupuesto"
                                            value="{{ old('presupuesto',$reparacion->presupuesto) }}" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Método de Pago (al entregar)</label>
-                                    <select name="metodo_pago" class="form-select">
+                                    <label for="metodo_pago" class="form-label">Método de Pago (al entregar)</label>
+                                    <select name="metodo_pago" id="metodo_pago" class="form-select">
                                         <option value="efectivo">💵 Efectivo</option>
                                         <option value="tarjeta">💳 Tarjeta</option>
                                         <option value="transferencia">🏦 Transferencia</option>
@@ -231,46 +231,46 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Costo Final (S/)</label>
-                                    <input type="number" class="form-control" name="costo_final"
+                                    <label for="costo_final" class="form-label">Costo Final (S/)</label>
+                                    <input type="number" class="form-control" name="costo_final" id="costo_final"
                                            value="{{ old('costo_final',$reparacion->costo_final) }}" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Costo de Repuesto(s) (S/)</label>
-                                    <input type="number" class="form-control" name="costo_repuesto"
+                                    <label for="costo_repuesto" class="form-label">Costo de Repuesto(s) (S/)</label>
+                                    <input type="number" class="form-control" name="costo_repuesto" id="costo_repuesto"
                                            value="{{ old('costo_repuesto',$reparacion->costo_repuesto) }}" min="0" step="0.01" placeholder="0.00">
                                     <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia</div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">% Comision del Tecnico</label>
+                                    <label for="comisionPorcentajeEdit" class="form-label">% Comision del Tecnico</label>
                                     <input type="number" class="form-control" name="comision_porcentaje" id="comisionPorcentajeEdit" value="@php echo old('comision_porcentaje', $reparacion->comision_porcentaje ?? $reparacion->tecnico->comision_porcentaje ?? ''); @endphp" min="0" max="100" step="0.01" placeholder="%">
                                     <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Se pre-rellena con el % del perfil del tecnico</div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Abono (S/)</label>
-                                    <input type="number" class="form-control" name="abono"
+                                    <label for="abono" class="form-label">Abono (S/)</label>
+                                    <input type="number" class="form-control" name="abono" id="abono"
                                            value="{{ old('abono',$reparacion->abono) }}" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Total (S/)</label>
-                                    <input type="number" class="form-control total-auto" name="total"
+                                    <label for="total" class="form-label">Total (S/)</label>
+                                    <input type="number" class="form-control total-auto" name="total" id="total"
                                            value="{{ old('total',$reparacion->total) }}" min="0" step="0.01" readonly
                                            style="background:#f3f4f6; font-weight:700;">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">¿Incluye Garantía?</label>
-                                    <select name="garantia" class="form-select">
+                                    <label for="garantia" class="form-label">¿Incluye Garantía?</label>
+                                    <select name="garantia" id="garantia" class="form-select">
                                         <option value="0" {{ !$reparacion->garantia?'selected':'' }}>No</option>
                                         <option value="1" {{ $reparacion->garantia?'selected':'' }}>Sí</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Días de Garantía</label>
-                                    <input type="number" class="form-control" name="dias_garantia"
+                                    <label for="dias_garantia" class="form-label">Días de Garantía</label>
+                                    <input type="number" class="form-control" name="dias_garantia" id="dias_garantia"
                                            value="{{ old('dias_garantia',$reparacion->dias_garantia) }}" min="0">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">🎟️ Cupón de Descuento</label>
+                                    <label for="cuponCodigoInput" class="form-label">🎟️ Cupón de Descuento</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="cupon_codigo" id="cuponCodigoInput"
                                                value="{{ old('cupon_codigo', session('cupon_codigo')) }}" placeholder="Ingresa el código del cupón (ej: CUP-XXXXXX-XXX)">
