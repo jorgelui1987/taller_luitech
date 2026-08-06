@@ -302,7 +302,7 @@
                     </h6>
 
                     <div class="mb-2 d-flex align-items-center justify-content-between">
-                        <label class="form-label mb-0">Generar cupón al entregar</label>
+                        <span class="form-label mb-0">Generar cupón al entregar</span>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="cupon_automatico_al_entregar" value="1"
                                    id="cuponAutomatico" {{ old('cupon_automatico_al_entregar', $empresa->cupon_automatico_al_entregar ?? true) ? 'checked' : '' }}>
@@ -312,14 +312,14 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Descuento (%)</label>
-                            <input type="number" name="cupon_descuento_porcentaje" class="form-control"
+                            <label for="cupon_descuento_porcentaje" class="form-label">Descuento (%)</label>
+                            <input type="number" name="cupon_descuento_porcentaje" id="cupon_descuento_porcentaje" class="form-control"
                                    min="0" max="100" step="0.5"
                                    value="{{ old('cupon_descuento_porcentaje', $empresa->cupon_descuento_porcentaje ?? 10) }}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Días de validez</label>
-                            <input type="number" name="cupon_dias_validez" class="form-control"
+                            <label for="cupon_dias_validez" class="form-label">Días de validez</label>
+                            <input type="number" name="cupon_dias_validez" id="cupon_dias_validez" class="form-control"
                                    min="1" max="365"
                                    value="{{ old('cupon_dias_validez', $empresa->cupon_dias_validez ?? 30) }}">
                         </div>
@@ -410,9 +410,7 @@
                     @endphp
                     <div class="col-12">
                         <div class="p-3 rounded-3 d-flex align-items-center gap-3"
-                             style="background:#f9fafb;border:1px solid #f3f4f6;transition:all .2s;"
-                             onmouseenter="this.style.borderColor='#e9d5ff'"
-                             onmouseleave="this.style.borderColor='#f3f4f6'">
+                             style="background:#f9fafb;border:1px solid #f3f4f6;transition:all .2s;">
 
                             <!-- Avatar -->
                             <div style="width:44px;height:44px;background:{{ $rolColor }};border-radius:12px;
@@ -542,17 +540,17 @@
 
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nombre completo <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" value="{{ old('name') }}"
+                            <label for="nuevoNombre" class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                            <input type="text" name="name" id="nuevoNombre" class="form-control" value="{{ old('name') }}"
                                    placeholder="Ej: María García" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Correo electrónico <span class="text-danger">*</span></label>
-                            <input type="email" name="email" class="form-control" value="{{ old('email') }}"
+                            <label for="nuevoEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                            <input type="email" name="email" id="nuevoEmail" class="form-control" value="{{ old('email') }}"
                                    placeholder="usuario@tienda.com" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Contraseña <span class="text-danger">*</span></label>
+                            <label for="nuevaPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="password" name="password" id="nuevaPassword" class="form-control" required minlength="8">
                                 <button type="button" class="btn btn-outline-secondary" onclick="togglePass('nuevaPassword','eyeNueva')">
@@ -561,7 +559,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
+                            <label for="confirmPassword" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="password" name="password_confirmation" id="confirmPassword" class="form-control" required>
                                 <button type="button" class="btn btn-outline-secondary" onclick="togglePass('confirmPassword','eyeConfirm')">
@@ -570,8 +568,8 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Rol <span class="text-danger">*</span></label>
-                            <select name="rol" class="form-select" required>
+                            <label for="nuevoRol" class="form-label">Rol <span class="text-danger">*</span></label>
+                            <select name="rol" id="nuevoRol" class="form-select" required>
                                 <option value="">Seleccionar rol...</option>
                                 <option value="admin"    {{ old('rol')=='admin'?'selected':'' }}>👑 Administrador</option>
                                 <option value="vendedor" {{ old('rol')=='vendedor'?'selected':'' }}>🛒 Vendedor</option>
@@ -579,8 +577,8 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Teléfono</label>
-                            <input type="text" name="telefono" class="form-control" value="{{ old('telefono') }}"
+                            <label for="nuevoTelefono" class="form-label">Teléfono</label>
+                            <input type="text" name="telefono" id="nuevoTelefono" class="form-control" value="{{ old('telefono') }}"
                                    placeholder="+51 999 999 999">
                         </div>
                     </div>
@@ -611,15 +609,15 @@
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                            <label for="editNombre" class="form-label">Nombre completo <span class="text-danger">*</span></label>
                             <input type="text" name="name" id="editNombre" class="form-control" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+                            <label for="editEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
                             <input type="email" name="email" id="editEmail" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Nueva contraseña</label>
+                            <label for="editPassword" class="form-label">Nueva contraseña</label>
                             <div class="input-group">
                                 <input type="password" name="password" id="editPassword" class="form-control" minlength="8"
                                        placeholder="Dejar vacío para no cambiar">
@@ -629,12 +627,12 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Confirmar contraseña</label>
-                            <input type="password" name="password_confirmation" class="form-control"
+                            <label for="editConfirmPassword" class="form-label">Confirmar contraseña</label>
+                            <input type="password" name="password_confirmation" id="editConfirmPassword" class="form-control"
                                    placeholder="Repetir nueva contraseña">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Rol <span class="text-danger">*</span></label>
+                            <label for="editRol" class="form-label">Rol <span class="text-danger">*</span></label>
                             <select name="rol" id="editRol" class="form-select" required>
                                 <option value="admin">👑 Administrador</option>
                                 <option value="vendedor">🛒 Vendedor</option>
@@ -642,11 +640,11 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Teléfono</label>
+                            <label for="editTelefono" class="form-label">Teléfono</label>
                             <input type="text" name="telefono" id="editTelefono" class="form-control">
                         </div>
                         <div class="col-12" id="comisionSection" style="display:none;">
-                            <label class="form-label">Comisión (%)</label>
+                            <label for="editComision" class="form-label">Comisión (%)</label>
                             <div class="input-group">
                                 <input type="number" name="comision_porcentaje" id="editComision" class="form-control" step="0.01" min="0" max="100" placeholder="Ej: 30">
                                 <span class="input-group-text">%</span>
