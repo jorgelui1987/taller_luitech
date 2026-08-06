@@ -106,12 +106,15 @@
 
         <form action="{{ route('two-factor.verify-challenge') }}" method="POST">
             @csrf
-            <div class="input-group mb-2">
-                <input type="text" name="recovery_code" class="form-control"
-                       placeholder="Código de recuperación" style="font-size:13px;">
-                <button type="submit" class="btn btn-outline-secondary" style="font-size:13px;">
-                    Usar
-                </button>
+            <div class="mb-2">
+                <label for="recovery_code" class="form-label visually-hidden">Código de recuperación</label>
+                <div class="input-group">
+                    <input type="text" id="recovery_code" name="recovery_code" class="form-control"
+                           placeholder="Código de recuperación" style="font-size:13px;">
+                    <button type="submit" class="btn btn-outline-secondary" style="font-size:13px;">
+                        Usar
+                    </button>
+                </div>
             </div>
         </form>
 

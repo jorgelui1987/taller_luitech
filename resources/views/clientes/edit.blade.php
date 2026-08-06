@@ -61,7 +61,7 @@
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="telefono" id="telefono"
                                    value="{{ old('telefono', $cliente->telefono) }}">
                         </div>
@@ -87,7 +87,7 @@
                                    value="{{ old('ciudad', $cliente->ciudad) }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Dirección</label>
+                            <label for="direccion" class="form-label">Dirección</label>
                             <input type="text" class="form-control" name="direccion" id="direccion"
                                    value="{{ old('direccion', $cliente->direccion) }}">
                         </div>
@@ -98,7 +98,7 @@
                         <h6 class="fw-600 mb-3" style="font-weight:600;">Datos de Empresa</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
-                                <label class="form-label">Razón Social</label>
+                                <label for="empresa" class="form-label">Razón Social</label>
                                 <input type="text" class="form-control" name="empresa" id="empresa"
                                        value="{{ old('empresa', $cliente->empresa) }}">
                             </div>
@@ -113,12 +113,12 @@
                     <hr>
                     <div class="row g-3 mb-3">
                         <div class="col-md-8">
-                            <label class="form-label">Notas</label>
+                            <label for="notas" class="form-label">Notas</label>
                             <textarea class="form-control" name="notas" id="notas" rows="3">{{ old('notas', $cliente->notas) }}</textarea>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Estado</label>
-                            <select name="activo" class="form-select">
+                            <label for="activo" class="form-label">Estado</label>
+                            <select name="activo" id="activo" class="form-select">
                                 <option value="1" {{ $cliente->activo?'selected':'' }}>Activo</option>
                                 <option value="0" {{ !$cliente->activo?'selected':'' }}>Inactivo</option>
                             </select>

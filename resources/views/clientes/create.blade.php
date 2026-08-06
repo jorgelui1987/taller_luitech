@@ -31,7 +31,8 @@
                         <div class="d-flex gap-3">
                             <label class="d-flex align-items-center gap-2 cursor-pointer"
                                    style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:10px; cursor:pointer; flex:1; transition:.2s;"
-                                   onclick="this.style.borderColor='#a855f7'; document.getElementById('tipo_empresa').style.borderColor='#e5e7eb';">
+                                   onclick="this.style.borderColor='#a855f7'; document.getElementById('tipo_empresa').style.borderColor='#e5e7eb';"
+                                   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" tabindex="0">
                                 <input type="radio" name="tipo" value="particular"
                                        {{ old('tipo','particular')=='particular'?'checked':'' }}
                                        style="accent-color:#a855f7;">
@@ -41,7 +42,8 @@
                             </label>
                             <label id="tipo_empresa" class="d-flex align-items-center gap-2"
                                    style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:10px; cursor:pointer; flex:1; transition:.2s;"
-                                   onclick="this.style.borderColor='#a855f7'; document.querySelector('[value=particular]').parentElement.style.borderColor='#e5e7eb';">
+                                   onclick="this.style.borderColor='#a855f7'; document.querySelector('[value=particular]').parentElement.style.borderColor='#e5e7eb';"
+                                   onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" tabindex="0">
                                 <input type="radio" name="tipo" value="empresa"
                                        {{ old('tipo')=='empresa'?'checked':'' }}
                                        style="accent-color:#a855f7;">
@@ -73,7 +75,7 @@
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('telefono') is-invalid @enderror"
                                    name="telefono" id="telefono" value="{{ old('telefono') }}" placeholder="999 999 999">
                             @error('telefono')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -100,7 +102,7 @@
                                    value="{{ old('ciudad') }}" placeholder="serena">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Dirección</label>
+                            <label for="direccion" class="form-label">Dirección</label>
                             <input type="text" class="form-control" name="direccion" id="direccion"
                                    value="{{ old('direccion') }}" placeholder="Av. Ejemplo 123">
                         </div>
@@ -112,7 +114,7 @@
                         <h6 class="fw-600 mb-3" style="font-weight:600;">Datos de Empresa</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
-                                <label class="form-label">Razón Social</label>
+                                <label for="empresa" class="form-label">Razón Social</label>
                                 <input type="text" class="form-control" name="empresa" id="empresa"
                                        value="{{ old('empresa') }}" placeholder="Empresa SAC">
                             </div>

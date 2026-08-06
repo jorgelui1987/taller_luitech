@@ -91,7 +91,8 @@
                         <form action="{{ route('two-factor.confirmar') }}" method="POST" class="row g-3">
                             @csrf
                             <div class="col-md-8 mx-auto text-center">
-                                <input type="text" name="codigo" class="form-control form-control-lg text-center"
+                                <label for="codigo-2fa" class="form-label visually-hidden">Código de verificación</label>
+                                <input type="text" id="codigo-2fa" name="codigo" class="form-control form-control-lg text-center"
                                        placeholder="000000" required pattern="\d{6}" maxlength="6"
                                        style="font-size:1.5rem; letter-spacing:8px;">
                                 <button type="submit" class="btn btn-primary btn-lg mt-3 w-100">
