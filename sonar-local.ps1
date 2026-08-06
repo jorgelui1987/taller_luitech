@@ -7,7 +7,7 @@ param(
     [string]$Token
 )
 
-$ProjectKey = "taller_luitech-main"
+$ProjectKey = "taller"
 $HostUrl = "http://localhost:9000"
 
 Write-Host "=== Análisis SonarQube Local ===" -ForegroundColor Cyan
