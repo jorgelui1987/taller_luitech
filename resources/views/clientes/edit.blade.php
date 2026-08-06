@@ -26,15 +26,15 @@
                     @csrf @method('PUT')
 
                     <div class="mb-4">
-                        <label class="form-label">Tipo de Cliente</label>
+                        <span class="form-label d-block">Tipo de Cliente</span>
                         <div class="d-flex gap-3">
-                            <label style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='particular'?'#a855f7':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
-                                <input type="radio" name="tipo" value="particular" style="accent-color:#a855f7;"
+                            <label for="tipo_particular" style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='particular'?'#a855f7':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
+                                <input type="radio" name="tipo" id="tipo_particular" value="particular" style="accent-color:#a855f7;"
                                        {{ old('tipo',$cliente->tipo)=='particular'?'checked':'' }}>
                                 <span style="font-size:13.5px; margin-left:6px;"><i class="fas fa-user me-1 text-muted"></i> Particular</span>
                             </label>
-                            <label style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='empresa'?'#a855f7':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
-                                <input type="radio" name="tipo" value="empresa" style="accent-color:#a855f7;"
+                            <label for="tipo_empresa" style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='empresa'?'#a855f7':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
+                                <input type="radio" name="tipo" id="tipo_empresa" value="empresa" style="accent-color:#a855f7;"
                                        {{ old('tipo',$cliente->tipo)=='empresa'?'checked':'' }}>
                                 <span style="font-size:13.5px; margin-left:6px;"><i class="fas fa-building me-1 text-muted"></i> Empresa</span>
                             </label>
@@ -61,7 +61,7 @@
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="telefono" id="telefono"
                                    value="{{ old('telefono', $cliente->telefono) }}">
                         </div>
@@ -87,7 +87,7 @@
                                    value="{{ old('ciudad', $cliente->ciudad) }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Dirección</label>
+                            <label for="direccion" class="form-label">Dirección</label>
                             <input type="text" class="form-control" name="direccion" id="direccion"
                                    value="{{ old('direccion', $cliente->direccion) }}">
                         </div>
@@ -98,7 +98,7 @@
                         <h6 class="fw-600 mb-3" style="font-weight:600;">Datos de Empresa</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
-                                <label class="form-label">Razón Social</label>
+                                <label for="empresa" class="form-label">Razón Social</label>
                                 <input type="text" class="form-control" name="empresa" id="empresa"
                                        value="{{ old('empresa', $cliente->empresa) }}">
                             </div>
@@ -113,12 +113,12 @@
                     <hr>
                     <div class="row g-3 mb-3">
                         <div class="col-md-8">
-                            <label class="form-label">Notas</label>
+                            <label for="notas" class="form-label">Notas</label>
                             <textarea class="form-control" name="notas" id="notas" rows="3">{{ old('notas', $cliente->notas) }}</textarea>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Estado</label>
-                            <select name="activo" class="form-select">
+                            <label for="activo" class="form-label">Estado</label>
+                            <select name="activo" id="activo" class="form-select">
                                 <option value="1" {{ $cliente->activo?'selected':'' }}>Activo</option>
                                 <option value="0" {{ !$cliente->activo?'selected':'' }}>Inactivo</option>
                             </select>

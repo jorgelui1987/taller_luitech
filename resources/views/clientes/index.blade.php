@@ -21,15 +21,17 @@
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-6">
+                <label for="buscar" class="visually-hidden">Buscar clientes</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
-                    <input type="text" class="form-control" name="buscar"
+                    <input type="text" class="form-control" name="buscar" id="buscar"
                            placeholder="Buscar por nombre, email, DNI, teléfono..."
                            value="{{ request('buscar') }}">
                 </div>
             </div>
             <div class="col-md-3">
-                <select class="form-select" name="tipo">
+                <label for="tipo" class="visually-hidden">Filtrar por tipo</label>
+                <select class="form-select" name="tipo" id="tipo">
                     <option value="">Todos los tipos</option>
                     <option value="particular" {{ request('tipo')=='particular'?'selected':'' }}>Particular</option>
                     <option value="empresa" {{ request('tipo')=='empresa'?'selected':'' }}>Empresa</option>

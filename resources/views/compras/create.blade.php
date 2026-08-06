@@ -18,8 +18,8 @@
                     @csrf
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label class="form-label">Proveedor <span class="text-danger">*</span></label>
-                            <select name="proveedor_id" class="form-select" required>
+                            <label for="proveedor_id" class="form-label">Proveedor <span class="text-danger">*</span></label>
+                            <select name="proveedor_id" id="proveedor_id" class="form-select" required>
                                 <option value="">— Seleccionar —</option>
                                 @foreach($proveedores as $p)
                                     <option value="{{ $p->id }}" {{ old('proveedor_id', request('proveedor_id'))==$p->id?'selected':'' }}>{{ $p->nombre }}</option>
@@ -27,12 +27,12 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Fecha estimada</label>
-                            <input type="date" class="form-control" name="fecha_estimada" value="{{ old('fecha_estimada') }}">
+                            <label for="fecha_estimada" class="form-label">Fecha estimada</label>
+                            <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada" value="{{ old('fecha_estimada') }}">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Descuento general (S/)</label>
-                            <input type="number" class="form-control" name="descuento_general" value="{{ old('descuento_general', 0) }}" min="0" step="0.01">
+                            <label for="descuento_general" class="form-label">Descuento general (S/)</label>
+                            <input type="number" class="form-control" name="descuento_general" id="descuento_general" value="{{ old('descuento_general', 0) }}" min="0" step="0.01">
                         </div>
                     </div>
 
@@ -66,8 +66,8 @@
                     </button>
 
                     <div class="col-12 mt-3">
-                        <label class="form-label">Notas</label>
-                        <textarea class="form-control" name="notas" rows="2" placeholder="Notas para la orden...">{{ old('notas') }}</textarea>
+                        <label for="notas" class="form-label">Notas</label>
+                        <textarea class="form-control" name="notas" id="notas" rows="2" placeholder="Notas para la orden...">{{ old('notas') }}</textarea>
                     </div>
 
                     <hr class="mt-4">

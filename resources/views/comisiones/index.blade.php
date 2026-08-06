@@ -20,8 +20,8 @@
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
-                <label class="form-label" style="font-size:12px;">Técnico</label>
-                <select name="tecnico_id" class="form-select">
+                <label for="tecnico_id" class="form-label" style="font-size:12px;">Técnico</label>
+                <select name="tecnico_id" id="tecnico_id" class="form-select">
                     <option value="">Todos los técnicos</option>
                     @foreach($tecnicos as $t)
                         <option value="{{ $t->id }}" {{ request('tecnico_id')==$t->id?'selected':'' }}>{{ $t->name }}</option>
@@ -29,12 +29,12 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="form-label" style="font-size:12px;">Desde</label>
-                <input type="date" name="fecha_desde" class="form-control" value="{{ $fechaDesde }}">
+                <label for="fecha_desde" class="form-label" style="font-size:12px;">Desde</label>
+                <input type="date" name="fecha_desde" id="fecha_desde" class="form-control" value="{{ $fechaDesde }}">
             </div>
             <div class="col-md-3">
-                <label class="form-label" style="font-size:12px;">Hasta</label>
-                <input type="date" name="fecha_hasta" class="form-control" value="{{ $fechaHasta }}">
+                <label for="fecha_hasta" class="form-label" style="font-size:12px;">Hasta</label>
+                <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control" value="{{ $fechaHasta }}">
             </div>
             <div class="col-md-3 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Filtrar</button>

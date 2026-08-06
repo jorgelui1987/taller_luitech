@@ -57,59 +57,59 @@
 
                     <!-- Subir logo -->
                     <div class="mb-3">
-                        <label class="form-label">Logo de la empresa</label>
-                        <input type="file" name="logo" class="form-control" accept="image/*">
+                        <label for="logo" class="form-label">Logo de la empresa</label>
+                        <input type="file" name="logo" id="logo" class="form-control" accept="image/*">
                         <div class="form-text">PNG, JPG, WEBP. Máx 2MB. Se actualizará al guardar.</div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Nombre de tienda <span class="text-danger">*</span></label>
-                        <input type="text" name="nombre_tienda" class="form-control"
+                        <label for="nombre_tienda" class="form-label">Nombre de tienda <span class="text-danger">*</span></label>
+                        <input type="text" name="nombre_tienda" id="nombre_tienda" class="form-control"
                                value="{{ old('nombre_tienda', $empresa->nombre_tienda ?? 'CRM Celulares') }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">RUC</label>
-                        <input type="text" name="ruc" class="form-control"
+                        <label for="ruc" class="form-label">RUC</label>
+                        <input type="text" name="ruc" id="ruc" class="form-control"
                                value="{{ old('ruc', $empresa->ruc ?? '') }}" maxlength="20">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Dirección</label>
-                        <input type="text" name="direccion" class="form-control"
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" name="direccion" id="direccion" class="form-control"
                                value="{{ old('direccion', $empresa->direccion ?? '') }}" maxlength="500">
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Teléfono</label>
-                            <input type="text" name="telefono" class="form-control"
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" name="telefono" id="telefono" class="form-control"
                                    value="{{ old('telefono', $empresa->telefono ?? '') }}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">WhatsApp</label>
-                            <input type="text" name="whatsapp" class="form-control"
+                            <label for="whatsapp" class="form-label">WhatsApp</label>
+                            <input type="text" name="whatsapp" id="whatsapp" class="form-control"
                                    value="{{ old('whatsapp', $empresa->whatsapp ?? '') }}"
                                    placeholder="+CODIGO_PAIS NÚMERO (ej: +51 999 999 999)">
                         </div>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control"
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control"
                                    value="{{ old('email', $empresa->email ?? '') }}">
                         </div>
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <label class="form-label">IGV (%)</label>
-                            <input type="number" name="igv" class="form-control" step="0.01" min="0" max="100"
+                            <label for="igv" class="form-label">IGV (%)</label>
+                            <input type="number" name="igv" id="igv" class="form-control" step="0.01" min="0" max="100"
                                    value="{{ old('igv', $empresa->igv ?? 18) }}" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Moneda</label>
-                            <select name="moneda" class="form-select" required>
+                            <label for="moneda" class="form-label">Moneda</label>
+                            <select name="moneda" id="moneda" class="form-select" required>
                                 <option value="">Seleccionar...</option>
                 {{-- Las monedas vienen del controlador como $monedas --}}
                                 @foreach($monedas as $cod => $datos)
@@ -121,7 +121,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Símbolo</label>
+                            <label for="simbolo_moneda" class="form-label">Símbolo</label>
                             <input type="text" name="simbolo_moneda" id="simbolo_moneda" class="form-control"
                                    value="{{ old('simbolo_moneda', $empresa->simbolo_moneda ?? 'S/.') }}" required readonly
                                    style="background:#f9fafb;cursor:default;">
@@ -129,8 +129,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Términos de garantía</label>
-                        <textarea name="terminos_garantia" class="form-control" rows="2" maxlength="1000"
+                        <label for="terminos_garantia" class="form-label">Términos de garantía</label>
+                        <textarea name="terminos_garantia" id="terminos_garantia" class="form-control" rows="2" maxlength="1000"
                                   placeholder="Ej: 30 días de garantía...">{{ old('terminos_garantia', $empresa->terminos_garantia ?? '') }}</textarea>
                     </div>
 
@@ -192,8 +192,8 @@
                 <form action="{{ route('configuracion.updateZonaHoraria') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">Zona horaria</label>
-                        <select name="zona_horaria" class="form-select @error('zona_horaria') is-invalid @enderror" required>
+                        <label for="zona_horaria" class="form-label">Zona horaria</label>
+                        <select name="zona_horaria" id="zona_horaria" class="form-select @error('zona_horaria') is-invalid @enderror" required>
                             @foreach($zonasHorarias as $codigo => $descripcion)
                                 <option value="{{ $codigo }}" {{ (old('zona_horaria', $empresa->zona_horaria ?? 'America/Lima') == $codigo) ? 'selected' : '' }}>
                                     {{ $descripcion }}
@@ -245,7 +245,7 @@
                     @csrf
 
                     <div class="mb-2 d-flex align-items-center justify-content-between">
-                        <label class="form-label mb-0">Activar página pública</label>
+                        <span class="form-label mb-0">Activar página pública</span>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="pagina_publica_activa" value="1"
                                    id="paginaPublicaActiva" {{ old('pagina_publica_activa', $empresa->pagina_publica_activa ?? true) ? 'checked' : '' }}>
@@ -254,21 +254,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Descripción corta</label>
-                        <textarea name="descripcion_corta" class="form-control" rows="2" maxlength="500"
+                        <label for="descripcion_corta" class="form-label">Descripción corta</label>
+                        <textarea name="descripcion_corta" id="descripcion_corta" class="form-control" rows="2" maxlength="500"
                                   placeholder="Ej: Expertos en reparación de celulares. Repuestos originales y garantía.">{{ old('descripcion_corta', $empresa->descripcion_corta ?? '') }}</textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Horario de atención</label>
-                        <input type="text" name="horario_atencion" class="form-control" maxlength="255"
+                        <label for="horario_atencion" class="form-label">Horario de atención</label>
+                        <input type="text" name="horario_atencion" id="horario_atencion" class="form-control" maxlength="255"
                                value="{{ old('horario_atencion', $empresa->horario_atencion ?? '') }}"
                                placeholder="Ej: Lun-Vie 9am-7pm, Sáb 9am-2pm">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label"><i class="fas fa-map-marker-alt me-1" style="color:#ef4444;"></i>Ubicación en Google Maps</label>
-                        <input type="text" name="mapa_url" class="form-control" maxlength="1000"
+                        <label for="mapa_url" class="form-label"><i class="fas fa-map-marker-alt me-1" style="color:#ef4444;"></i>Ubicación en Google Maps</label>
+                        <input type="text" name="mapa_url" id="mapa_url" class="form-control" maxlength="1000"
                                value="{{ old('mapa_url', $empresa->mapa_url ?? '') }}"
                                placeholder="Pega el link de Google Maps (ej: https://maps.app.goo.gl/...)">
                         <div class="form-text">
@@ -279,18 +279,18 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <label class="form-label"><i class="fab fa-instagram me-1" style="color:#e1306c;"></i>Instagram</label>
-                            <input type="text" name="instagram" class="form-control" maxlength="255"
+                            <label for="instagram" class="form-label"><i class="fab fa-instagram me-1" style="color:#e1306c;"></i>Instagram</label>
+                            <input type="text" name="instagram" id="instagram" class="form-control" maxlength="255"
                                    value="{{ old('instagram', $empresa->instagram ?? '') }}" placeholder="https://instagram.com/...">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label"><i class="fab fa-facebook me-1" style="color:#1877f2;"></i>Facebook</label>
-                            <input type="text" name="facebook" class="form-control" maxlength="255"
+                            <label for="facebook" class="form-label"><i class="fab fa-facebook me-1" style="color:#1877f2;"></i>Facebook</label>
+                            <input type="text" name="facebook" id="facebook" class="form-control" maxlength="255"
                                    value="{{ old('facebook', $empresa->facebook ?? '') }}" placeholder="https://facebook.com/...">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label"><i class="fab fa-tiktok me-1"></i>TikTok</label>
-                            <input type="text" name="tiktok" class="form-control" maxlength="255"
+                            <label for="tiktok" class="form-label"><i class="fab fa-tiktok me-1"></i>TikTok</label>
+                            <input type="text" name="tiktok" id="tiktok" class="form-control" maxlength="255"
                                    value="{{ old('tiktok', $empresa->tiktok ?? '') }}" placeholder="https://tiktok.com/...">
                         </div>
                     </div>
