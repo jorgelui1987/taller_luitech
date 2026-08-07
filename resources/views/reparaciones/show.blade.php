@@ -719,7 +719,7 @@
 </div>
 
 {{-- Lightbox --}}
-<dialog class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()">
+<dialog class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()" onkeydown="if(event.key==='Escape'){cerrarLightbox();}">
     <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
 </dialog>

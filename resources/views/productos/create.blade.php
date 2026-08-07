@@ -214,20 +214,22 @@
                         {{-- Columna derecha - imagen --}}
                         <div class="col-lg-4">
                             <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Imagen del Producto</h6>
-                            <label for="imagenInput" id="dropZone"
+                            <div id="dropZone"
                                  style="border:2px dashed #d1d5db; border-radius:16px; padding:32px 20px;
                                         text-align:center; cursor:pointer; background:#fafafa; transition:.2s; display:block;"
                                  ondragover="event.preventDefault(); this.style.borderColor='#a855f7';"
                                  ondragleave="this.style.borderColor='#d1d5db';"
                                  ondrop="handleDrop(event)">
-                                <div id="dropContent">
-                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color:#d1d5db;"></i>
-                                    <p class="mb-1" style="font-size:13px; color:#6b7280;">Arrastra la imagen aquí</p>
-                                    <p class="mb-0" style="font-size:12px; color:#9ca3af;">o haz clic para seleccionar</p>
-                                    <p class="mb-0 mt-2" style="font-size:11px; color:#d1d5db;">JPG, PNG, WebP · Máx 2MB</p>
-                                </div>
-                                <img id="previewImg" src="" alt="Vista previa del producto" style="display:none; width:100%; border-radius:10px; max-height:200px; object-fit:cover;">
-                            </label>
+                                <label for="imagenInput" style="display:block; cursor:pointer; margin:0;">
+                                    <div id="dropContent">
+                                        <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color:#d1d5db;"></i>
+                                        <p class="mb-1" style="font-size:13px; color:#6b7280;">Arrastra la imagen aquí</p>
+                                        <p class="mb-0" style="font-size:12px; color:#9ca3af;">o haz clic para seleccionar</p>
+                                        <p class="mb-0 mt-2" style="font-size:11px; color:#d1d5db;">JPG, PNG, WebP · Máx 2MB</p>
+                                    </div>
+                                    <img id="previewImg" src="" alt="Vista previa del producto" style="display:none; width:100%; border-radius:10px; max-height:200px; object-fit:cover;">
+                                </label>
+                            </div>
                             <input type="file" id="imagenInput" name="imagen" accept="image/*"
                                    style="display:none;" onchange="previewImage(this)">
 
