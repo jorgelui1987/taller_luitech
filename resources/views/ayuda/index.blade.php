@@ -446,7 +446,7 @@
             </div>
 
             <p class="paso-texto" style="font-size:14px; line-height:1.7; color:var(--text-muted);">
-                Este manual te guiará paso a paso por cada módulo de la aplicación. 
+                Este manual te guiará paso a paso por cada módulo de la aplicación.
                 Utiliza el <strong>índice lateral</strong> para navegar rápidamente entre las secciones.
             </p>
 
@@ -454,7 +454,7 @@
                 <i class="fas fa-lightbulb"></i>
                 <div>
                     <strong>Consejo:</strong> Si eres nuevo en la aplicación, te recomendamos seguir el orden de las secciones:
-                    primero <strong>Configuración</strong> para personalizar tu empresa, luego <strong>Clientes</strong>, 
+                    primero <strong>Configuración</strong> para personalizar tu empresa, luego <strong>Clientes</strong>,
                     <strong>Inventario</strong>, y finalmente <strong>Ventas</strong> y <strong>Reparaciones</strong>.
                 </div>
             </div>
@@ -504,11 +504,11 @@
                         Al iniciar sesión, verás el <strong>Dashboard</strong> con indicadores clave:
                         ventas del día, reparaciones pendientes, productos con stock bajo y más.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del Dashboard')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura del Dashboard')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del Dashboard</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -518,7 +518,7 @@
                     <div class="paso-titulo">Interpreta los indicadores</div>
                     <p class="paso-texto">
                         Cada tarjeta muestra una métrica importante:
-                        <strong>Ventas del día</strong>, <strong>Reparaciones en curso</strong>, 
+                        <strong>Ventas del día</strong>, <strong>Reparaciones en curso</strong>,
                         <strong>Productos con stock bajo</strong> y <strong>Clientes registrados</strong>.
                     </p>
                 </div>
@@ -560,11 +560,11 @@
                     <p class="paso-texto">
                         En el menú lateral, haz clic en <strong>Clientes</strong> para ver la lista completa.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura de Clientes')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura de Clientes')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura de la lista de Clientes</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -577,11 +577,11 @@
                         Completa los campos: <strong>nombre, teléfono, email, dirección</strong> y otros datos.
                         Luego presiona <strong>"Guardar"</strong>.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Cliente')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Cliente')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Cliente</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -600,7 +600,7 @@
             <div class="consejo">
                 <i class="fas fa-lightbulb"></i>
                 <div>
-                    <strong>Consejo:</strong> Registra el teléfono con el formato correcto para poder 
+                    <strong>Consejo:</strong> Registra el teléfono con el formato correcto para poder
                     enviar notificaciones por <strong>WhatsApp</strong> desde las ventas y reparaciones.
                 </div>
             </div>
@@ -645,8 +645,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Activar o desactivar proveedores</div>
                     <p class="paso-texto">
-                        Usa el botón de <strong>activar/desactivar</strong> para habilitar o inhabilitar 
-                        un proveedor sin eliminarlo. Los proveedores inactivos no aparecerán en las 
+                        Usa el botón de <strong>activar/desactivar</strong> para habilitar o inhabilitar
+                        un proveedor sin eliminarlo. Los proveedores inactivos no aparecerán en las
                         órdenes de compra.
                     </p>
                 </div>
@@ -693,7 +693,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Confirmar la compra</div>
                     <p class="paso-texto">
-                        Revisa los datos y presiona <strong>"Guardar"</strong>. 
+                        Revisa los datos y presiona <strong>"Guardar"</strong>.
                         Al confirmar, el <strong>stock de los productos se actualizará automáticamente</strong>.
                     </p>
                 </div>
@@ -722,14 +722,14 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Ver el inventario</div>
                     <p class="paso-texto">
-                        En el menú, haz clic en <strong>Inventario</strong> para ver todos tus productos 
+                        En el menú, haz clic en <strong>Inventario</strong> para ver todos tus productos
                         con su <strong>stock, precio de venta y estado</strong>.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del Inventario')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura del Inventario')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del Inventario</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -739,14 +739,14 @@
                     <div class="paso-titulo">Registrar un nuevo producto</div>
                     <p class="paso-texto">
                         Haz clic en <strong>"Nuevo Producto"</strong>. Completa:
-                        <strong>nombre, código, marca, categoría, precio de compra, precio de venta, 
+                        <strong>nombre, código, marca, categoría, precio de compra, precio de venta,
                         stock inicial y stock mínimo</strong>. Presiona <strong>"Guardar"</strong>.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Producto')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Producto')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Producto</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -755,7 +755,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Crear marcas y categorías</div>
                     <p class="paso-texto">
-                        Al registrar un producto, puedes <strong>crear una nueva marca o categoría</strong> 
+                        Al registrar un producto, puedes <strong>crear una nueva marca o categoría</strong>
                         directamente desde el formulario si no existe en la lista.
                     </p>
                 </div>
@@ -767,7 +767,7 @@
                     <div class="paso-titulo">Importar y exportar productos</div>
                     <p class="paso-texto">
                         Usa <strong>Exportar</strong> para descargar tu inventario en <strong>Excel (CSV)</strong> o <strong>PDF</strong>.
-                        Usa <strong>Importar</strong> para cargar productos desde un archivo CSV 
+                        Usa <strong>Importar</strong> para cargar productos desde un archivo CSV
                         (descarga primero la <strong>plantilla</strong> para ver el formato correcto).
                     </p>
                 </div>
@@ -776,7 +776,7 @@
             <div class="advertencia">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
-                    <strong>Importante:</strong> El <strong>stock mínimo</strong> es el nivel de alerta. 
+                    <strong>Importante:</strong> El <strong>stock mínimo</strong> es el nivel de alerta.
                     Cuando el stock de un producto baje de ese nivel, aparecerá en <strong>Alertas de Stock</strong>.
                 </div>
             </div>
@@ -799,7 +799,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Ver movimientos</div>
                     <p class="paso-texto">
-                        Ve a <strong>Movimientos Stock</strong> para ver el historial completo de 
+                        Ve a <strong>Movimientos Stock</strong> para ver el historial completo de
                         <strong>entradas, salidas y ajustes</strong> de cada producto.
                     </p>
                 </div>
@@ -810,8 +810,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Realizar un ajuste de stock</div>
                     <p class="paso-texto">
-                        Haz clic en <strong>"Ajuste de Stock"</strong>. Selecciona el <strong>producto</strong>, 
-                        el <strong>tipo de ajuste</strong> (entrada o salida), la <strong>cantidad</strong> 
+                        Haz clic en <strong>"Ajuste de Stock"</strong>. Selecciona el <strong>producto</strong>,
+                        el <strong>tipo de ajuste</strong> (entrada o salida), la <strong>cantidad</strong>
                         y el <strong>motivo</strong>. Presiona <strong>"Guardar"</strong>.
                     </p>
                 </div>
@@ -822,8 +822,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Alertas de stock bajo</div>
                     <p class="paso-texto">
-                        En <strong>Alertas de Stock</strong> verás los productos que están por debajo 
-                        de su <strong>stock mínimo</strong>. Puedes enviar una <strong>notificación por WhatsApp</strong> 
+                        En <strong>Alertas de Stock</strong> verás los productos que están por debajo
+                        de su <strong>stock mínimo</strong>. Puedes enviar una <strong>notificación por WhatsApp</strong>
                         al proveedor para reponer el inventario.
                     </p>
                 </div>
@@ -847,14 +847,14 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Crear una nueva venta</div>
                     <p class="paso-texto">
-                        Haz clic en <strong>"Nueva Venta"</strong> (botón en la barra superior) 
+                        Haz clic en <strong>"Nueva Venta"</strong> (botón en la barra superior)
                         o ve a <strong>Ventas → Nueva Venta</strong>.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Venta')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Venta')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Venta</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -863,7 +863,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Seleccionar cliente y productos</div>
                     <p class="paso-texto">
-                        Selecciona el <strong>cliente</strong> (o crea uno nuevo). 
+                        Selecciona el <strong>cliente</strong> (o crea uno nuevo).
                         Busca los <strong>productos</strong> por nombre o código y agrégalos al carrito.
                         El sistema calculará el <strong>total automáticamente</strong>.
                     </p>
@@ -875,7 +875,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Completar la venta</div>
                     <p class="paso-texto">
-                        Revisa el total, selecciona el <strong>método de pago</strong> y presiona 
+                        Revisa el total, selecciona el <strong>método de pago</strong> y presiona
                         <strong>"Registrar Venta"</strong>. El stock se descontará automáticamente.
                     </p>
                 </div>
@@ -898,8 +898,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Cancelar una venta</div>
                     <p class="paso-texto">
-                        Si necesitas cancelar una venta, ve a la lista de <strong>Ventas</strong>, 
-                        busca la venta y haz clic en <i class="fas fa-times-circle text-danger"></i> 
+                        Si necesitas cancelar una venta, ve a la lista de <strong>Ventas</strong>,
+                        busca la venta y haz clic en <i class="fas fa-times-circle text-danger"></i>
                         <strong>Cancelar</strong>. El stock se repondrá automáticamente.
                     </p>
                 </div>
@@ -908,7 +908,7 @@
             <div class="advertencia">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
-                    <strong>Importante:</strong> Solo el <strong>Administrador</strong> puede cancelar ventas. 
+                    <strong>Importante:</strong> Solo el <strong>Administrador</strong> puede cancelar ventas.
                     Los vendedores pueden registrar ventas pero no cancelarlas.
                 </div>
             </div>
@@ -941,8 +941,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Registrar una devolución</div>
                     <p class="paso-texto">
-                        Haz clic en <strong>"Nueva Devolución"</strong>. 
-                        Selecciona la <strong>venta original</strong> y el sistema cargará automáticamente 
+                        Haz clic en <strong>"Nueva Devolución"</strong>.
+                        Selecciona la <strong>venta original</strong> y el sistema cargará automáticamente
                         los productos vendidos. Indica qué productos se devuelven y el <strong>motivo</strong>.
                     </p>
                 </div>
@@ -953,7 +953,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Confirmar la devolución</div>
                     <p class="paso-texto">
-                        Revisa los datos y presiona <strong>"Guardar"</strong>. 
+                        Revisa los datos y presiona <strong>"Guardar"</strong>.
                         El <strong>stock se repondrá automáticamente</strong> con los productos devueltos.
                     </p>
                 </div>
@@ -983,14 +983,14 @@
                     <div class="paso-titulo">Crear una orden de reparación</div>
                     <p class="paso-texto">
                         Ve a <strong>Reparaciones</strong> y haz clic en <strong>"Nueva Reparación"</strong>.
-                        Selecciona el <strong>cliente</strong>, el <strong>técnico</strong> asignado, 
+                        Selecciona el <strong>cliente</strong>, el <strong>técnico</strong> asignado,
                         el <strong>equipo</strong> (marca, modelo, IMEI) y describe el <strong>problema reportado</strong>.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura del formulario de Reparación')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura del formulario de Reparación')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura del formulario de Reparación</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -1035,7 +1035,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">QR de seguimiento</div>
                     <p class="paso-texto">
-                        Cada orden de reparación genera un <strong>código QR</strong> que el cliente puede 
+                        Cada orden de reparación genera un <strong>código QR</strong> que el cliente puede
                         escanear para ver el <strong>estado de su reparación</strong> sin necesidad de iniciar sesión.
                     </p>
                 </div>
@@ -1044,7 +1044,7 @@
             <div class="consejo">
                 <i class="fas fa-lightbulb"></i>
                 <div>
-                    <strong>Consejo:</strong> Usa las <strong>fotos</strong> para documentar el estado del equipo 
+                    <strong>Consejo:</strong> Usa las <strong>fotos</strong> para documentar el estado del equipo
                     al recibirlo. Esto protege tu negocio ante reclamos de daños preexistentes.
                 </div>
             </div>
@@ -1091,7 +1091,7 @@
                     <div class="paso-titulo">Filtrar y exportar</div>
                     <p class="paso-texto">
                         Usa los <strong>filtros de fecha</strong> para acotar los resultados.
-                        Puedes <strong>exportar</strong> los reportes a <strong>Excel o PDF</strong> 
+                        Puedes <strong>exportar</strong> los reportes a <strong>Excel o PDF</strong>
                         para compartirlos o archivarlos.
                     </p>
                 </div>
@@ -1138,8 +1138,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Interpretar los datos</div>
                     <p class="paso-texto">
-                        Cada reporte se genera automáticamente con los datos de tus 
-                        <strong>ventas, compras, gastos y comisiones</strong>. 
+                        Cada reporte se genera automáticamente con los datos de tus
+                        <strong>ventas, compras, gastos y comisiones</strong>.
                         Usa los <strong>filtros de fecha</strong> para analizar períodos específicos.
                     </p>
                 </div>
@@ -1163,7 +1163,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Ver comisiones generadas</div>
                     <p class="paso-texto">
-                        Ve a <strong>Comisiones</strong> para ver las comisiones generadas por cada 
+                        Ve a <strong>Comisiones</strong> para ver las comisiones generadas por cada
                         <strong>técnico</strong> según las reparaciones completadas.
                     </p>
                 </div>
@@ -1174,8 +1174,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Registrar pago de comisión</div>
                     <p class="paso-texto">
-                        Cuando pagues una comisión a un técnico, haz clic en 
-                        <strong>"Pagar"</strong> junto a la reparación, o 
+                        Cuando pagues una comisión a un técnico, haz clic en
+                        <strong>"Pagar"</strong> junto a la reparación, o
                         <strong>"Pagar Todo"</strong> para liquidar todas las comisiones pendientes de un técnico.
                     </p>
                 </div>
@@ -1210,7 +1210,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Activar o desactivar gastos</div>
                     <p class="paso-texto">
-                        Usa el botón de <strong>activar/desactivar</strong> para incluir o excluir 
+                        Usa el botón de <strong>activar/desactivar</strong> para incluir o excluir
                         un gasto de los cálculos financieros sin eliminarlo.
                     </p>
                 </div>
@@ -1243,11 +1243,11 @@
                         <strong>nombre, RUC, teléfono, dirección, logo</strong> y otros datos.
                         Estos datos aparecerán en los <strong>tickets y reportes</strong>.
                     </p>
-                    <div class="captura-placeholder" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="alert('Aquí se insertará la captura de Configuración')">
+                    <button type="button" class="captura-placeholder" onclick="alert('Aquí se insertará la captura de Configuración')">
                         <i class="fas fa-camera"></i>
                         <div class="captura-texto">📸 Captura de Configuración</div>
                         <div class="captura-sub">Haz clic para reemplazar con tu captura</div>
-                    </div>
+                    </button>
                 </div>
             </div>
 
@@ -1256,7 +1256,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Zona horaria</div>
                     <p class="paso-texto">
-                        Selecciona tu <strong>zona horaria</strong> para que las fechas y horas 
+                        Selecciona tu <strong>zona horaria</strong> para que las fechas y horas
                         de ventas, reparaciones y reportes se muestren correctamente.
                     </p>
                 </div>
@@ -1279,8 +1279,8 @@
             <div class="advertencia">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
-                    <strong>Importante:</strong> Solo el <strong>Administrador</strong> puede acceder a Configuración. 
-                    Asigna roles con cuidado: los <strong>vendedores</strong> no pueden ver reportes financieros 
+                    <strong>Importante:</strong> Solo el <strong>Administrador</strong> puede acceder a Configuración.
+                    Asigna roles con cuidado: los <strong>vendedores</strong> no pueden ver reportes financieros
                     ni configuración.
                 </div>
             </div>
@@ -1374,8 +1374,8 @@
             <div class="consejo">
                 <i class="fas fa-lightbulb"></i>
                 <div>
-                    <strong>Consejo:</strong> Comparte el link de tu página pública en tus <strong>redes sociales</strong> 
-                    y en los <strong>tickets de venta y reparación</strong>. La URL también se incluye automáticamente 
+                    <strong>Consejo:</strong> Comparte el link de tu página pública en tus <strong>redes sociales</strong>
+                    y en los <strong>tickets de venta y reparación</strong>. La URL también se incluye automáticamente
                     en los <strong>mensajes de WhatsApp</strong> que envías a tus clientes.
                 </div>
             </div>
@@ -1383,8 +1383,8 @@
             <div class="nota">
                 <i class="fas fa-info-circle"></i>
                 <div>
-                    Cuando actualizas tu página pública, el <strong>logo</strong> que subas debe estar en formato 
-                    <strong>PNG, JPG o WEBP</strong> (máx 2MB). Asegúrate de <strong>subirlo nuevamente</strong> si 
+                    Cuando actualizas tu página pública, el <strong>logo</strong> que subas debe estar en formato
+                    <strong>PNG, JPG o WEBP</strong> (máx 2MB). Asegúrate de <strong>subirlo nuevamente</strong> si
                     actualizas el sistema, ya que los archivos se guardan localmente.
                 </div>
             </div>
@@ -1418,7 +1418,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Descargar el backup</div>
                     <p class="paso-texto">
-                        En la lista de backups, haz clic en <i class="fas fa-download text-primary"></i> 
+                        En la lista de backups, haz clic en <i class="fas fa-download text-primary"></i>
                         <strong>Descargar</strong> para guardar la copia en tu computadora.
                         <strong>Guarda los backups en un lugar seguro</strong> (disco externo, nube, etc.).
                     </p>
@@ -1430,8 +1430,8 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">Restaurar un backup</div>
                     <p class="paso-texto">
-                        Si necesitas recuperar datos, sube el archivo de backup y haz clic en 
-                        <strong>"Restaurar"</strong>. El sistema reemplazará los datos actuales 
+                        Si necesitas recuperar datos, sube el archivo de backup y haz clic en
+                        <strong>"Restaurar"</strong>. El sistema reemplazará los datos actuales
                         con los del backup.
                     </p>
                 </div>
@@ -1440,7 +1440,7 @@
             <div class="advertencia">
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
-                    <strong>Advertencia:</strong> Restaurar un backup <strong>reemplaza todos los datos actuales</strong>. 
+                    <strong>Advertencia:</strong> Restaurar un backup <strong>reemplaza todos los datos actuales</strong>.
                     Asegúrate de tener un backup reciente antes de restaurar.
                 </div>
             </div>
@@ -1448,7 +1448,7 @@
             <div class="consejo">
                 <i class="fas fa-lightbulb"></i>
                 <div>
-                    <strong>Recomendación:</strong> Crea un backup <strong>al menos una vez por semana</strong> 
+                    <strong>Recomendación:</strong> Crea un backup <strong>al menos una vez por semana</strong>
                     o después de cambios importantes en tu inventario o precios.
                 </div>
             </div>
@@ -1471,7 +1471,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">En Android (Chrome)</div>
                     <p class="paso-texto">
-                        Abre el sistema en <strong>Chrome</strong> y toca el menú 
+                        Abre el sistema en <strong>Chrome</strong> y toca el menú
                         <strong>⋮ (tres puntos)</strong> en la esquina superior derecha.
                         Busca y toca <strong>"Instalar app"</strong> o <strong>"Agregar a pantalla de inicio"</strong>.
                         Confirma tocando <strong>"Instalar"</strong>.
@@ -1484,7 +1484,7 @@
                 <div class="paso-contenido">
                     <div class="paso-titulo">En iPhone (Safari)</div>
                     <p class="paso-texto">
-                        Abre el sistema en <strong>Safari</strong> y toca el botón 
+                        Abre el sistema en <strong>Safari</strong> y toca el botón
                         <strong>Compartir</strong> (cuadrado con flecha hacia arriba).
                         Desliza hacia abajo y toca <strong>"Agregar a pantalla de inicio"</strong>.
                         Confirma tocando <strong>"Agregar"</strong>.
@@ -1507,7 +1507,7 @@
             <div class="nota">
                 <i class="fas fa-info-circle"></i>
                 <div>
-                    Si no aparece la opción de instalar, visita el sitio <strong>2 veces</strong> con al menos 
+                    Si no aparece la opción de instalar, visita el sitio <strong>2 veces</strong> con al menos
                     <strong>5 minutos</strong> de diferencia y verifica que la conexión sea <strong>HTTPS</strong> (candado 🔒).
                 </div>
             </div>

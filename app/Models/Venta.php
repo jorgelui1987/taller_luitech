@@ -54,7 +54,7 @@ class Venta extends Model
         $maxNumero = \Illuminate\Support\Facades\DB::table('ventas')
             ->where('numero_venta', 'like', 'VTA-%')
             ->max('numero_venta');
-            
+
         $numero = 1;
         if ($maxNumero) {
             $parte = substr($maxNumero, 4);
@@ -62,7 +62,7 @@ class Venta extends Model
                 $numero = (int)$parte + 1;
             }
         }
-        
+
         // Garantizar unicidad absoluta (por si hay huecos o colisiones)
         $nuevo = 'VTA-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
         $contador = 0;
@@ -72,7 +72,7 @@ class Venta extends Model
             $nuevo = 'VTA-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
             $contador++;
         }
-        
+
         return $nuevo;
     }
 }

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CRM') — Tienda Celulares</title>
 
@@ -566,7 +566,7 @@
 
         /* ── Touch targets mejorados ── */
         @media (max-width: 575.98px) {
-            .btn, 
+            .btn,
             .btn-sm,
             .btn-xs,
             button,
@@ -798,7 +798,7 @@
 <body>
 
 <!-- ══════════ SIDEBAR OVERLAY (mobile) ══════════ -->
-<div class="sidebar-overlay" id="sidebarOverlay" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="toggleSidebar()"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- ══════════ SIDEBAR ══════════ -->
 <aside class="sidebar" id="sidebar">
@@ -1111,6 +1111,11 @@
                 closeSidebarMobile();
             }
         }
+    });
+
+    // Cerrar sidebar al hacer click en el overlay
+    document.getElementById('sidebarOverlay').addEventListener('click', function() {
+        closeSidebarMobile();
     });
 
     // ── Acordeón para móvil ──

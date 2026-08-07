@@ -679,7 +679,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var monedaSelect = document.querySelector('select[name="moneda"]');
     var simboloInput = document.getElementById('simbolo_moneda');
-    
+
     if (monedaSelect && simboloInput) {
         monedaSelect.addEventListener('change', function() {
             var selected = monedaSelect.options[monedaSelect.selectedIndex];

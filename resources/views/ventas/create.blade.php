@@ -80,7 +80,7 @@
                                 <option value="efectivo">💵 Efectivo</option>
                                 <option value="tarjeta">💳 Tarjeta</option>
                                 <option value="transferencia">🏦 Transferencia</option>
-                                
+
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -90,8 +90,8 @@
                         <div class="col-md-6">
                             <label for="cuponInput" class="form-label">Cupón de Descuento</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="cupon_codigo" id="cuponInput" 
-                                       placeholder="Ingresa el código del cupón (ej: CUP-ABC123-456)" 
+                                <input type="text" class="form-control" name="cupon_codigo" id="cuponInput"
+                                       placeholder="Ingresa el código del cupón (ej: CUP-ABC123-456)"
                                        style="text-transform:uppercase;" autocomplete="off">
                                 <button type="button" class="btn btn-outline-success" id="btnValidarCupon" onclick="validarCupon()">
                                     <i class="fas fa-check me-1"></i>Validar
@@ -265,7 +265,7 @@ function validarCupon() {
         if (data.success) {
             cuponAplicado = data.cupon;
             document.getElementById('cuponInput').value = data.cupon.codigo;
-            msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Cupón válido: ' + 
+            msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Cupón válido: ' +
                 (data.cupon.tipo === 'porcentaje' ? data.cupon.valor + '% de descuento' : 'S/ ' + data.cupon.valor + ' de descuento') + '</span>';
             totales();
         } else {

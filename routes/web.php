@@ -67,7 +67,7 @@ Route::post('/api/cupon/validar', [ComboPublicidadController::class, 'validarCup
 Route::get('/storage/{path}', function ($path) {
     // Prevenir path traversal
     $path = str_replace(['..', '\\'], ['', '/'], $path);
-    
+
     $fullPath = storage_path('app/public/' . $path);
     if (!file_exists($fullPath) || !is_file($fullPath)) {
         abort(404);

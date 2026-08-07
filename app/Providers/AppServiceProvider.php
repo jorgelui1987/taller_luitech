@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
                     'terminos_garantia' => '',
                 ];
             }
-            
+
             // Si hay logo, usar una ruta directa al archivo (sin symlink)
             if ($empresa && $empresa->logo) {
                 $logoPath = str_replace('storage/', '', $empresa->logo);

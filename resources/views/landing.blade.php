@@ -194,18 +194,18 @@
             <!-- Nota: al registrarse obtienen plan Gratis -->
             <div class="text-center mt-4">
                 <p class="text-muted">
-                    <i class="bi bi-info-circle"></i> 
-                    Al registrarse obtienes el plan <strong>Gratis</strong> automáticamente. 
+                    <i class="bi bi-info-circle"></i>
+                    Al registrarse obtienes el plan <strong>Gratis</strong> automáticamente.
                     Puedes upgradear cuando quieras contactándonos.
                 </p>
                 <p class="mt-2">
-                    <i class="bi bi-whatsapp text-success"></i> 
-                    Contáctanos por WhatsApp: 
+                    <i class="bi bi-whatsapp text-success"></i>
+                    Contáctanos por WhatsApp:
                     <a href="https://wa.me/56982209690?text=Quiero%20información%20sobre%20los%20planes" target="_blank" class="text-success fw-bold">
                         +56982209690
                     </a>
                     &nbsp;·&nbsp;
-                    <i class="bi bi-envelope text-primary"></i> 
+                    <i class="bi bi-envelope text-primary"></i>
                     <a href="mailto:luitechserena@gmail.com" class="text-primary fw-bold">luitechserena@gmail.com</a>
                 </p>
             </div>
@@ -217,8 +217,8 @@
         <div class="container">
             <p class="mb-0">© {{ date('Y') }} CRM Celulares. Todos los derechos reservados.</p>
             <p class="small text-muted mt-1">
-                <a href="#precios" class="text-muted">Planes</a> · 
-                <a href="{{ route('registro.tenant') }}" class="text-muted">Registro</a> · 
+                <a href="#precios" class="text-muted">Planes</a> ·
+                <a href="{{ route('registro.tenant') }}" class="text-muted">Registro</a> ·
                 <a href="{{ route('login') }}" class="text-muted">Iniciar Sesión</a>
             </p>
         </div>
