@@ -28,6 +28,7 @@ class Configuracion extends Model
         'comuna_ciudad',
         'proveedor_dte',
         'dte_certificado',
+        'facturacion_electronica_activa',
         'zona_horaria',
         'terminos_garantia',
         'instagram',
@@ -48,6 +49,7 @@ class Configuracion extends Model
         'cupon_automatico_al_entregar' => 'boolean',
         'cupon_descuento_porcentaje' => 'decimal:2',
         'cupon_dias_validez' => 'integer',
+        'facturacion_electronica_activa' => 'boolean',
     ];
 
     protected static function booted(): void

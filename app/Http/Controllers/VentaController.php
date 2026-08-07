@@ -10,6 +10,7 @@ use App\Models\MovimientoStock;
 use App\Models\Configuracion;
 use App\Models\Cupon;
 use App\Helpers\PaisHelper;
+use App\Services\FacturacionElectronicaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -193,6 +194,15 @@ class VentaController extends Controller
             }
 
             DB::commit();
+
+            // ── Facturación Electrónica (solo si la empresa la tiene activa) ──
+            if (FacturacionElectronicaService::estaActiva()) {
+                try {
+                    app(FacturacionElectronicaService::class)->emitir($venta);
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error("Error facturación electrónica (venta #{$venta->id}): " . $e->getMessage());
+                }
+            }
 
             return redirect()->route('ventas.show', $venta)
                 ->with('success', "Venta {$venta->numero_venta} registrada correctamente.");

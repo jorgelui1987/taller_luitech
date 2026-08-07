@@ -166,6 +166,7 @@ class ConfiguracionController extends Controller
             'giro'          => 'nullable|string|max:255',
             'comuna_ciudad' => 'nullable|string|max:100',
             'proveedor_dte' => 'nullable|string|max:20',
+            'facturacion_electronica_activa' => 'boolean',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
             // ── Publicidad / Página pública ──
@@ -181,6 +182,7 @@ class ConfiguracionController extends Controller
         ]);
 
         $data = $validated;
+        $data['facturacion_electronica_activa'] = $request->boolean('facturacion_electronica_activa');
 
         // Si se cambió el país, aplicar configuración por defecto automáticamente
         if (!empty($data['pais'])) {

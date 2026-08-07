@@ -58,7 +58,7 @@
     <!-- ══════════ TAB: EMPRESA ══════════ -->
     <div class="tab-pane fade show active" id="tab-empresa" role="tabpanel">
         <div class="row g-4">
-            <div class="col-lg-5">
+            <div class="col-lg-12">
 
         <!-- ── Datos de la Empresa ── -->
         <div class="card mb-4">
@@ -88,62 +88,114 @@
                         <div class="form-text">PNG, JPG, WEBP. Máx 2MB. Se actualizará al guardar.</div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="nombre_tienda" class="form-label">Nombre de tienda <span class="text-danger">*</span></label>
-                        <input type="text" name="nombre_tienda" id="nombre_tienda" class="form-control"
-                               value="{{ old('nombre_tienda', $empresa->nombre_tienda ?? 'CRM Celulares') }}" required>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label for="nombre_tienda" class="form-label">Nombre de tienda <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre_tienda" id="nombre_tienda" class="form-control"
+                                   value="{{ old('nombre_tienda', $empresa->nombre_tienda ?? 'CRM Celulares') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="pais" class="form-label">País</label>
+                            <select name="pais" id="pais" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                @foreach($paises as $cod => $nombre)
+                                    <option value="{{ $cod }}" {{ (old('pais', $empresa->pais ?? 'PE') == $cod) ? 'selected' : '' }}>
+                                        {{ $nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="form-text">Al cambiar de país se ajustará moneda, impuesto y zona horaria.</div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="pais" class="form-label">País</label>
-                        <select name="pais" id="pais" class="form-select">
-                            <option value="">Seleccionar...</option>
-                            @foreach($paises as $cod => $nombre)
-                                <option value="{{ $cod }}" {{ (old('pais', $empresa->pais ?? 'PE') == $cod) ? 'selected' : '' }}>
-                                    {{ $nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="form-text">Al cambiar de país se ajustará automáticamente moneda, impuesto y zona horaria.</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="ruc" class="form-label">RUT</label>
-                        <input type="text" name="ruc" id="ruc" class="form-control"
-                               value="{{ old('ruc', $empresa->ruc ?? '') }}" maxlength="20">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label for="ruc" class="form-label">RUT</label>
+                            <input type="text" name="ruc" id="ruc" class="form-control"
+                                   value="{{ old('ruc', $empresa->ruc ?? '') }}" maxlength="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" name="direccion" id="direccion" class="form-control"
+                                   value="{{ old('direccion', $empresa->direccion ?? '') }}" maxlength="500">
+                        </div>
                     </div>
 
                     @if($empresa->pais == 'CL')
-                    <div class="mb-3">
-                        <label for="razon_social" class="form-label">Razón Social</label>
-                        <input type="text" name="razon_social" id="razon_social" class="form-control"
-                               value="{{ old('razon_social', $empresa->razon_social ?? '') }}" maxlength="255">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label for="razon_social" class="form-label">Razón Social</label>
+                            <input type="text" name="razon_social" id="razon_social" class="form-control"
+                                   value="{{ old('razon_social', $empresa->razon_social ?? '') }}" maxlength="255">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="giro" class="form-label">Giro</label>
+                            <input type="text" name="giro" id="giro" class="form-control"
+                                   value="{{ old('giro', $empresa->giro ?? '') }}" maxlength="255">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="giro" class="form-label">Giro</label>
-                        <input type="text" name="giro" id="giro" class="form-control"
-                               value="{{ old('giro', $empresa->giro ?? '') }}" maxlength="255">
-                    </div>
-                    <div class="mb-3">
-                        <label for="comuna_ciudad" class="form-label">Comuna / Ciudad</label>
-                        <input type="text" name="comuna_ciudad" id="comuna_ciudad" class="form-control"
-                               value="{{ old('comuna_ciudad', $empresa->comuna_ciudad ?? '') }}" maxlength="100">
-                    </div>
-                    <div class="mb-3">
-                        <label for="proveedor_dte" class="form-label">Proveedor DTE</label>
-                        <select name="proveedor_dte" id="proveedor_dte" class="form-select">
-                            <option value="">Seleccionar...</option>
-                            <option value="acepta" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
-                            <option value="fove" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
-                            <option value="tundra" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'tundra' ? 'selected' : '' }}>Tundra</option>
-                        </select>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label for="comuna_ciudad" class="form-label">Comuna / Ciudad</label>
+                            <input type="text" name="comuna_ciudad" id="comuna_ciudad" class="form-control"
+                                   value="{{ old('comuna_ciudad', $empresa->comuna_ciudad ?? '') }}" maxlength="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="proveedor_dte" class="form-label">Proveedor DTE</label>
+                            <select name="proveedor_dte" id="proveedor_dte" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="acepta" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
+                                <option value="fove" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
+                                <option value="tundra" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'tundra' ? 'selected' : '' }}>Tundra</option>
+                            </select>
+                        </div>
                     </div>
                     @endif
 
-                    <div class="mb-3">
-                        <label for="direccion" class="form-label">Dirección</label>
-                        <input type="text" name="direccion" id="direccion" class="form-control"
-                               value="{{ old('direccion', $empresa->direccion ?? '') }}" maxlength="500">
+                    <!-- ── Facturación Electrónica ── -->
+                    <div class="card mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="font-size:14px;">
+                                        <i class="fas fa-file-invoice me-2" style="color:#7c3aed;"></i>
+                                        Facturación Electrónica
+                                    </h6>
+                                    <p class="text-muted mb-0" style="font-size:12px;">
+                                        Emitir DTE (Chile) o Factura DIAN (Colombia) automáticamente al registrar ventas.
+                                    </p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" name="facturacion_electronica_activa"
+                                           id="facturacion_electronica_activa" value="1"
+                                           {{ ($empresa->facturacion_electronica_activa ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="facturacion_electronica_activa" id="label_facturacion">
+                                        {{ ($empresa->facturacion_electronica_activa ?? false) ? 'Activada' : 'Desactivada' }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Campos que solo se muestran si está activada -->
+                            <div id="campos-facturacion" style="display:{{ ($empresa->facturacion_electronica_activa ?? false) ? 'block' : 'none' }};">
+                                <hr>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label" style="font-size:12px;">RUT Emisor (Chile)</label>
+                                        <input type="text" name="rut_emisor" class="form-control form-control-sm"
+                                               value="{{ $empresa->rut_emisor ?? '' }}" placeholder="12.345.678-9">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" style="font-size:12px;">Proveedor DTE</label>
+                                        <select name="proveedor_dte" class="form-select form-select-sm">
+                                            <option value="">Seleccionar...</option>
+                                            <option value="acepta" {{ ($empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
+                                            <option value="fove"   {{ ($empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
+                                            <option value="tundra" {{ ($empresa->proveedor_dte ?? '') == 'tundra' ? 'selected' : '' }}>Tundra</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row g-2 mb-3">
@@ -805,6 +857,19 @@ document.addEventListener('DOMContentLoaded', function() {
         zonaSelect.addEventListener('change', actualizarHora);
         actualizarHora();
         setInterval(actualizarHora, 1000);
+    }
+
+    // ── Facturación Electrónica: mostrar/ocultar campos ──
+    var facturacionSwitch = document.getElementById('facturacion_electronica_activa');
+    var camposFacturacion = document.getElementById('campos-facturacion');
+    var labelFacturacion  = document.getElementById('label_facturacion');
+
+    if (facturacionSwitch && camposFacturacion && labelFacturacion) {
+        facturacionSwitch.addEventListener('change', function() {
+            var activa = this.checked;
+            camposFacturacion.style.display = activa ? 'block' : 'none';
+            labelFacturacion.textContent = activa ? 'Activada' : 'Desactivada';
+        });
     }
 });
 
