@@ -28,6 +28,7 @@ class Configuracion extends Model
         'comuna_ciudad',
         'proveedor_dte',
         'dte_certificado',
+        'certificado_password',
         'facturacion_electronica_activa',
         'zona_horaria',
         'terminos_garantia',

@@ -166,6 +166,9 @@ class ConfiguracionController extends Controller
             'giro'          => 'nullable|string|max:255',
             'comuna_ciudad' => 'nullable|string|max:100',
             'proveedor_dte' => 'nullable|string|max:20',
+            'rut_emisor'    => 'nullable|string|max:20',
+            'certificado_password' => 'nullable|string|max:255',
+            'dte_certificado' => 'nullable|file|mimes:pfx,p12|max:2048',
             'facturacion_electronica_activa' => 'boolean',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
@@ -183,6 +186,13 @@ class ConfiguracionController extends Controller
 
         $data = $validated;
         $data['facturacion_electronica_activa'] = $request->boolean('facturacion_electronica_activa');
+
+        // Solo actualizar certificado_password si se envía uno nuevo (evita borrarla al guardar)
+        $certificadoPassword = $data['certificado_password'] ?? null;
+        unset($data['certificado_password']);
+        if (!empty($certificadoPassword)) {
+            $data['certificado_password'] = $certificadoPassword;
+        }
 
         // Si se cambió el país, aplicar configuración por defecto automáticamente
         if (!empty($data['pais'])) {
@@ -210,6 +220,16 @@ class ConfiguracionController extends Controller
 
             $logoPath = $request->file('logo')->store('logos', 'public');
             $data['logo'] = 'storage/' . $logoPath;
+        }
+
+        // Subir certificado digital (.pfx / .p12) para facturación electrónica
+        if ($request->hasFile('dte_certificado')) {
+            $request->validate([
+                'dte_certificado' => 'required|file|mimes:pfx,p12|max:2048',
+            ]);
+
+            $certPath = $request->file('dte_certificado')->store('certificados', 'private');
+            $data['dte_certificado'] = $certPath;
         }
 
         $empresa = Configuracion::empresa();
