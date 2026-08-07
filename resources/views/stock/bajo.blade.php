@@ -43,15 +43,17 @@
 <div class="card mb-4">
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
-            <div class="col-md-4">
+                <div class="col-md-4">
+                <label for="buscar" class="visually-hidden">Buscar producto</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
-                    <input type="text" class="form-control" name="buscar"
+                    <input type="text" class="form-control" name="buscar" id="buscar"
                            placeholder="Nombre o código..." value="{{ request('buscar') }}">
                 </div>
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="categoria_id">
+                <label for="categoria_id" class="visually-hidden">Filtrar por categoría</label>
+                <select class="form-select" name="categoria_id" id="categoria_id">
                     <option value="">Todas las categorías</option>
                     @foreach($categorias as $cat)
                         <option value="{{ $cat->id }}" {{ request('categoria_id')==$cat->id?'selected':'' }}>
@@ -61,7 +63,8 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="marca_id">
+                <label for="marca_id" class="visually-hidden">Filtrar por marca</label>
+                <select class="form-select" name="marca_id" id="marca_id">
                     <option value="">Todas las marcas</option>
                     @foreach($marcas as $m)
                         <option value="{{ $m->id }}" {{ request('marca_id')==$m->id?'selected':'' }}>
@@ -119,6 +122,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 @if($producto->imagen)
                                     <img src="{{ asset('storage/'.$producto->imagen) }}"
+                                         alt="{{ $producto->nombre }}"
                                          style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
                                 @else
                                     <div style="width:40px; height:40px; border-radius:8px;

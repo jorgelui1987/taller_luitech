@@ -26,8 +26,8 @@
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
-                <label class="form-label">Producto</label>
-                <select class="form-select" name="producto_id">
+                <label for="producto_id" class="form-label">Producto</label>
+                <select class="form-select" name="producto_id" id="producto_id">
                     <option value="">Todos los productos</option>
                     @foreach($productos as $p)
                         <option value="{{ $p->id }}" {{ request('producto_id')==$p->id?'selected':'' }}>
@@ -37,8 +37,8 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Tipo</label>
-                <select class="form-select" name="tipo">
+                <label for="tipo" class="form-label">Tipo</label>
+                <select class="form-select" name="tipo" id="tipo">
                     <option value="">Todos</option>
                     <option value="entrada" {{ request('tipo')=='entrada'?'selected':'' }}>Entrada</option>
                     <option value="salida" {{ request('tipo')=='salida'?'selected':'' }}>Salida</option>
@@ -46,8 +46,8 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Motivo</label>
-                <select class="form-select" name="motivo">
+                <label for="motivo" class="form-label">Motivo</label>
+                <select class="form-select" name="motivo" id="motivo">
                     <option value="">Todos</option>
                     <option value="venta" {{ request('motivo')=='venta'?'selected':'' }}>Venta</option>
                     <option value="compra" {{ request('motivo')=='compra'?'selected':'' }}>Compra</option>
@@ -60,12 +60,12 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Desde</label>
-                <input type="date" class="form-control" name="fecha_desde" value="{{ request('fecha_desde') }}">
+                <label for="fecha_desde" class="form-label">Desde</label>
+                <input type="date" class="form-control" name="fecha_desde" id="fecha_desde" value="{{ request('fecha_desde') }}">
             </div>
             <div class="col-md-2">
-                <label class="form-label">Hasta</label>
-                <input type="date" class="form-control" name="fecha_hasta" value="{{ request('fecha_hasta') }}">
+                <label for="fecha_hasta" class="form-label">Hasta</label>
+                <input type="date" class="form-control" name="fecha_hasta" id="fecha_hasta" value="{{ request('fecha_hasta') }}">
             </div>
             <div class="col-md-1 d-flex gap-1">
                 <button type="submit" class="btn btn-primary flex-1" style="padding:6px 12px;">

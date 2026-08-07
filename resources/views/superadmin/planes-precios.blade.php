@@ -68,18 +68,19 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Precio Mensual</label>
+                                <label for="simbolo_{{ $plan->id }}" class="form-label">Precio Mensual</label>
                                 <div class="input-group">
-                                    <input type="text" name="simbolo" class="form-control" style="max-width:60px;"
+                                    <input type="text" name="simbolo" id="simbolo_{{ $plan->id }}" class="form-control" style="max-width:60px;"
                                            value="{{ $plan->simbolo }}" required>
-                                    <input type="number" name="precio_mensual" class="form-control"
+                                    <label for="precio_mensual_{{ $plan->id }}" class="visually-hidden">Precio mensual</label>
+                                    <input type="number" name="precio_mensual" id="precio_mensual_{{ $plan->id }}" class="form-control"
                                            value="{{ $plan->precio_mensual }}" step="0.01" min="0" required>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Moneda</label>
-                                <select name="moneda" class="form-select" required>
+                                <label for="moneda_{{ $plan->id }}" class="form-label">Moneda</label>
+                                <select name="moneda" id="moneda_{{ $plan->id }}" class="form-select" required>
                                     <option value="PEN" {{ $plan->moneda == 'PEN' ? 'selected' : '' }}>PEN (S/.)</option>
                                     <option value="USD" {{ $plan->moneda == 'USD' ? 'selected' : '' }}>USD ($)</option>
                                     <option value="CLP" {{ $plan->moneda == 'CLP' ? 'selected' : '' }}>CLP ($)</option>
@@ -89,8 +90,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Descripción</label>
-                                <input type="text" name="descripcion" class="form-control"
+                                <label for="descripcion_{{ $plan->id }}" class="form-label">Descripción</label>
+                                <input type="text" name="descripcion" id="descripcion_{{ $plan->id }}" class="form-control"
                                        value="{{ $plan->descripcion }}" maxlength="255">
                             </div>
 

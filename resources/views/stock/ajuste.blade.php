@@ -30,8 +30,8 @@
 
                     <div class="row g-4">
                         <div class="col-12">
-                            <label class="form-label">Producto <span class="text-danger">*</span></label>
-                            <select name="producto_id" class="form-select @error('producto_id') is-invalid @enderror" required
+                            <label for="producto_id" class="form-label">Producto <span class="text-danger">*</span></label>
+                            <select name="producto_id" id="producto_id" class="form-select @error('producto_id') is-invalid @enderror" required
                                     onchange="actualizarStockActual(this)">
                                 <option value="">— Seleccionar producto —</option>
                                 @foreach($productos as $p)
@@ -46,22 +46,22 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Stock Actual</label>
+                            <span class="form-label d-block">Stock Actual</span>
                             <div class="form-control" id="stockActualDisplay" style="background:#f9fafb; font-weight:600; font-size:18px;">
                                 —
                             </div>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Stock Resultante</label>
+                            <span class="form-label d-block">Stock Resultante</span>
                             <div class="form-control" id="stockResultanteDisplay" style="background:#f9fafb; font-weight:600; font-size:18px; color:#7c3aed;">
                                 —
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label">Tipo de Movimiento <span class="text-danger">*</span></label>
-                            <select name="tipo" class="form-select @error('tipo') is-invalid @enderror" required
+                            <label for="tipo" class="form-label">Tipo de Movimiento <span class="text-danger">*</span></label>
+                            <select name="tipo" id="tipo" class="form-select @error('tipo') is-invalid @enderror" required
                                     onchange="toggleMotivos()">
                                 <option value="">— Seleccionar —</option>
                                 <option value="entrada" {{ old('tipo')=='entrada'?'selected':'' }}>📦 Entrada (agregar stock)</option>
@@ -72,7 +72,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label">Motivo <span class="text-danger">*</span></label>
+                            <label for="motivoSelect" class="form-label">Motivo <span class="text-danger">*</span></label>
                             <select name="motivo" class="form-select @error('motivo') is-invalid @enderror" required id="motivoSelect">
                                 <option value="">— Seleccionar —</option>
                                 <optgroup label="Entradas" id="motivosEntrada">
@@ -92,7 +92,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+                            <label for="cantidadInput" class="form-label">Cantidad <span class="text-danger">*</span></label>
                             <input type="number" class="form-control @error('cantidad') is-invalid @enderror"
                                    name="cantidad" value="{{ old('cantidad', 1) }}"
                                    min="1" step="1" id="cantidadInput"
@@ -104,8 +104,8 @@
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label">Observación</label>
-                            <textarea class="form-control" name="observacion" rows="2"
+                            <label for="observacion" class="form-label">Observación</label>
+                            <textarea class="form-control" name="observacion" id="observacion" rows="2"
                                       placeholder="Detalla el motivo del ajuste...">{{ old('observacion') }}</textarea>
                         </div>
                     </div>
