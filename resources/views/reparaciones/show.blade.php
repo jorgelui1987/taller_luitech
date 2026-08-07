@@ -55,6 +55,15 @@
     aspect-ratio: 1;
     background: #f3f4f6;
 }
+.foto-item .foto-ver {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
 .foto-item img {
     width: 100%;
     height: 100%;
@@ -330,9 +339,9 @@
                         @forelse($reparacion->fotos as $foto)
                         <div class="col-3" data-foto-id="{{ $foto->id }}">
                             <div class="foto-item">
-                                <img src="{{ asset('storage/'.$foto->ruta) }}" alt="Foto {{ $foto->tipo }}"
-                                     onclick="abrirLightbox(this.src)" style="cursor:pointer;"
-                                     onkeypress="if(event.key==='Enter'||event.key===' '){abrirLightbox(this.src);}" tabindex="0">
+                                <button type="button" class="foto-ver" onclick="abrirLightbox('{{ asset('storage/'.$foto->ruta) }}')" aria-label="Ver foto {{ $foto->tipo }}">
+                                    <img src="{{ asset('storage/'.$foto->ruta) }}" alt="Foto {{ $foto->tipo }}" style="cursor:pointer;">
+                                </button>
                                 <span class="foto-tipo">{{ ucfirst($foto->tipo) }}</span>
                                 <button class="foto-delete" onclick="eliminarFoto({{ $foto->id }})" title="Eliminar foto">
                                     <i class="fas fa-times"></i>
@@ -701,8 +710,8 @@
 </div>
 
 {{-- Lightbox --}}
-<div class="lightbox-overlay" id="lightbox" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="cerrarLightbox()">
-    <button class="close">&times;</button>
+<div class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()">
+    <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
 </div>
 @endsection
@@ -830,7 +839,9 @@ function subirFoto(input) {
             col.dataset.fotoId = data.id;
             col.innerHTML = `
                 <div class="foto-item">
-                    <img src="${data.url}" alt="Foto" onclick="abrirLightbox(this.src)" style="cursor:pointer;">
+                    <button type="button" class="foto-ver" onclick="abrirLightbox('${data.url}')" aria-label="Ver foto ${tipo}">
+                        <img src="${data.url}" alt="Foto ${tipo}" style="cursor:pointer;">
+                    </button>
                     <span class="foto-tipo">${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</span>
                     <button class="foto-delete" onclick="eliminarFoto(${data.id})" title="Eliminar foto">
                         <i class="fas fa-times"></i>

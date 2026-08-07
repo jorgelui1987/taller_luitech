@@ -34,27 +34,27 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Nombre de empresa *</label>
-                            <input type="text" name="empresa" class="form-control" value="{{ old('empresa', $tenant->empresa ?? '') }}" required>
+                            <label for="empresa" class="form-label">Nombre de empresa *</label>
+                            <input type="text" name="empresa" id="empresa" class="form-control" value="{{ old('empresa', $tenant->empresa ?? '') }}" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Subdominio *</label>
-                            <input type="text" name="subdominio" class="form-control" value="{{ old('subdominio', $tenant->subdominio ?? '') }}" required placeholder="mitienda">
+                            <label for="subdominio" class="form-label">Subdominio *</label>
+                            <input type="text" name="subdominio" id="subdominio" class="form-control" value="{{ old('subdominio', $tenant->subdominio ?? '') }}" required placeholder="mitienda">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Email contacto *</label>
-                            <input type="email" name="email_contacto" class="form-control" value="{{ old('email_contacto', $tenant->email_contacto ?? '') }}" required>
+                            <label for="email_contacto" class="form-label">Email contacto *</label>
+                            <input type="email" name="email_contacto" id="email_contacto" class="form-control" value="{{ old('email_contacto', $tenant->email_contacto ?? '') }}" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Teléfono contacto</label>
-                            <input type="text" name="telefono_contacto" class="form-control" value="{{ old('telefono_contacto', $tenant->telefono_contacto ?? '') }}">
+                            <label for="telefono_contacto" class="form-label">Teléfono contacto</label>
+                            <input type="text" name="telefono_contacto" id="telefono_contacto" class="form-control" value="{{ old('telefono_contacto', $tenant->telefono_contacto ?? '') }}">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Plan *</label>
+                            <label for="planSelect" class="form-label">Plan *</label>
                             <select name="plan" class="form-select" id="planSelect" required onchange="actualizarLimites()">
                                 @foreach(['gratis'=>'🌱 Gratis (3 usuarios, 50 prod.)','basico'=>'🚀 Básico (5 usuarios, 200 prod.)','profesional'=>'⭐ Profesional (15 usuarios, 1000 prod.)','empresarial'=>'🏢 Empresarial (Ilimitado)'] as $val => $label)
                                     <option value="{{ $val }}" {{ (old('plan', $tenant->plan ?? '') === $val) ? 'selected' : '' }}>{{ $label }}</option>
@@ -62,25 +62,25 @@
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Máx. Usuarios (auto según plan)</label>
+                            <label for="maxUsuariosDisplay" class="form-label">Máx. Usuarios (auto según plan)</label>
                             <input type="text" class="form-control" id="maxUsuariosDisplay" value="{{ $limitesPorPlan[$tenant->plan ?? 'gratis']['max_usuarios'] ?? 3 }}" readonly style="background:#f0f0f0; font-weight:bold;">
                             <input type="hidden" name="max_usuarios" id="maxUsuariosHidden" value="{{ $limitesPorPlan[$tenant->plan ?? 'gratis']['max_usuarios'] ?? 3 }}">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Máx. Productos (auto según plan)</label>
+                            <label for="maxProductosDisplay" class="form-label">Máx. Productos (auto según plan)</label>
                             <input type="text" class="form-control" id="maxProductosDisplay" value="{{ $limitesPorPlan[$tenant->plan ?? 'gratis']['max_productos'] ?? 50 }}" readonly style="background:#f0f0f0; font-weight:bold;">
                             <input type="hidden" name="max_productos" id="maxProductosHidden" value="{{ $limitesPorPlan[$tenant->plan ?? 'gratis']['max_productos'] ?? 50 }}">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Fecha expiración</label>
-                            <input type="date" name="fecha_expiracion" class="form-control" value="{{ old('fecha_expiracion', isset($tenant) && $tenant->fecha_expiracion ? $tenant->fecha_expiracion->format('Y-m-d') : '') }}">
+                            <label for="fecha_expiracion" class="form-label">Fecha expiración</label>
+                            <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" value="{{ old('fecha_expiracion', isset($tenant) && $tenant->fecha_expiracion ? $tenant->fecha_expiracion->format('Y-m-d') : '') }}">
                         </div>
                         @if(isset($tenant))
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Estado *</label>
-                            <select name="estado" class="form-select" required>
+                            <label for="estado" class="form-label">Estado *</label>
+                            <select name="estado" id="estado" class="form-select" required>
                                 @foreach(['activo','suspendido','cancelado'] as $est)
                                     <option value="{{ $est }}" {{ $tenant->estado === $est ? 'selected' : '' }}>{{ ucfirst($est) }}</option>
                                 @endforeach
@@ -97,22 +97,22 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Nombre *</label>
-                            <input type="text" name="nombre_admin" class="form-control" value="{{ old('nombre_admin') }}" required>
+                            <label for="nombre_admin" class="form-label">Nombre *</label>
+                            <input type="text" name="nombre_admin" id="nombre_admin" class="form-control" value="{{ old('nombre_admin') }}" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Email *</label>
-                            <input type="email" name="email_admin" class="form-control" value="{{ old('email_admin') }}" required>
+                            <label for="email_admin" class="form-label">Email *</label>
+                            <input type="email" name="email_admin" id="email_admin" class="form-control" value="{{ old('email_admin') }}" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Contraseña *</label>
-                            <input type="password" name="password_admin" class="form-control" required>
+                            <label for="password_admin" class="form-label">Contraseña *</label>
+                            <input type="password" name="password_admin" id="password_admin" class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Confirmar contraseña *</label>
-                            <input type="password" name="password_admin_confirmation" class="form-control" required>
+                            <label for="password_admin_confirmation" class="form-label">Confirmar contraseña *</label>
+                            <input type="password" name="password_admin_confirmation" id="password_admin_confirmation" class="form-control" required>
                         </div>
                     </div>
                 </div>

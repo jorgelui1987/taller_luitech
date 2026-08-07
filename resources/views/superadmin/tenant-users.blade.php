@@ -103,12 +103,12 @@
                     <div class="modal-body">
                         <p>Usuario: <strong id="userNamePass"></strong> (<span id="userEmailPass"></span>)</p>
                         <div class="mb-3">
-                            <label class="form-label">Nueva contraseña *</label>
-                            <input type="password" name="password" class="form-control" required minlength="8">
+                            <label for="password" class="form-label">Nueva contraseña *</label>
+                            <input type="password" name="password" id="password" class="form-control" required minlength="8">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Confirmar contraseña *</label>
-                            <input type="password" name="password_confirmation" class="form-control" required>
+                            <label for="password_confirmation" class="form-label">Confirmar contraseña *</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -25,7 +25,7 @@
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-auto">
-                <label class="form-label mb-1" style="font-size:12px;">Período rápido</label>
+                <span class="form-label mb-1 d-block" style="font-size:12px;">Período rápido</span>
                 <div class="d-flex gap-2">
                     @php
                         $periodos = [

@@ -23,11 +23,13 @@
     <div class="card-body p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
-                <input type="text" class="form-control" name="buscar"
+                <label for="buscar" class="visually-hidden">Buscar venta o cliente</label>
+                <input type="text" class="form-control" name="buscar" id="buscar"
                        placeholder="N° venta o cliente..." value="{{ request('buscar') }}">
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="estado">
+                <label for="estado" class="visually-hidden">Estado</label>
+                <select class="form-select" name="estado" id="estado">
                     <option value="">Todos los estados</option>
                     <option value="completada" {{ request('estado')=='completada'?'selected':'' }}>Completada</option>
                     <option value="pendiente"  {{ request('estado')=='pendiente'?'selected':'' }}>Pendiente</option>
@@ -36,10 +38,12 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="date" class="form-control" name="fecha_desde" value="{{ request('fecha_desde') }}">
+                <label for="fecha_desde" class="visually-hidden">Fecha desde</label>
+                <input type="date" class="form-control" name="fecha_desde" id="fecha_desde" value="{{ request('fecha_desde') }}">
             </div>
             <div class="col-md-2">
-                <input type="date" class="form-control" name="fecha_hasta" value="{{ request('fecha_hasta') }}">
+                <label for="fecha_hasta" class="visually-hidden">Fecha hasta</label>
+                <input type="date" class="form-control" name="fecha_hasta" id="fecha_hasta" value="{{ request('fecha_hasta') }}">
             </div>
             <div class="col-md-3 d-flex gap-2">
                 <button type="submit" class="btn btn-primary flex-1">

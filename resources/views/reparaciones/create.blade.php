@@ -100,7 +100,7 @@
                                     <div class="accordion-body show">
                                         <div class="row g-3">
                                             <div class="col-md-5">
-                                                <label class="form-label">Cliente <span class="text-danger">*</span></label>
+                                                <label for="clienteBuscarInput" class="form-label">Cliente <span class="text-danger">*</span></label>
                                                 <div class="cliente-buscador" style="position:relative;">
                                                     <input type="text"
                                                            id="clienteBuscarInput"
@@ -181,7 +181,8 @@
                                                     @endforeach
                                                     <option value="__otra__" {{ $marcaSeleccionada && !in_array($marcaSeleccionada, $marcasPrecargadas) ? 'selected' : '' }}>✏️ Otra</option>
                                                 </select>
-                                                <input type="text" class="form-control marca-input mt-1 @error('marca') is-invalid @enderror"
+                                                <label for="marca" class="form-label mt-1">Otra marca</label>
+                                                <input type="text" class="form-control marca-input @error('marca') is-invalid @enderror"
                                                        name="marca" id="marca" value="{{ old('marca') }}"
                                                        placeholder="Escribir marca..."
                                                        style="{{ $marcaSeleccionada && !in_array($marcaSeleccionada, $marcasPrecargadas) ? 'display:block;' : 'display:none;' }}">
@@ -215,6 +216,7 @@
                                                         <option value="pin" {{ old('tipo_codigo')=='pin'?'selected':'' }}>🔢 PIN</option>
                                                         <option value="patron" {{ old('tipo_codigo')=='patron'?'selected':'' }}>🔓 Patrón</option>
                                                     </select>
+                                                    <label for="codigo_equipo" class="visually-hidden">PIN numérico</label>
                                                     <input type="text" class="form-control patron-valor" name="codigo_equipo" id="codigo_equipo"
                                                            value="{{ old('codigo_equipo') }}"
                                                            placeholder="PIN numérico" style="display:block;">
@@ -223,14 +225,14 @@
                                                     <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">Toca los puntos en orden:</div>
                                                     <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:130px;">
                                                         @for($i=1;$i<=9;$i++)
-                                                        <div class="patron-punto" data-pos="{{ $i }}"
-                                                             style="width:36px; height:36px; border-radius:50%; border:2px solid #a855f7;
-                                                                    display:flex; align-items:center; justify-content:center;
-                                                                    font-size:12px; color:#a855f7; cursor:pointer; background:#f8f5ff;
-                                                                    transition:all .2s; user-select:none;"
-                                                             role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="togglePunto(this)">
+                                                        <button type="button" class="patron-punto" data-pos="{{ $i }}"
+                                                                style="width:36px; height:36px; border-radius:50%; border:2px solid #a855f7;
+                                                                       display:flex; align-items:center; justify-content:center;
+                                                                       font-size:12px; color:#a855f7; cursor:pointer; background:#f8f5ff;
+                                                                       transition:all .2s; user-select:none; padding:0;"
+                                                                onclick="togglePunto(this)" aria-label="Punto {{ $i }} del patrón">
                                                             {{ $i }}
-                                                        </div>
+                                                        </button>
                                                         @endfor
                                                     </div>
                                                     <input type="hidden" name="patron_secuencia" class="patron-secuencia" value="{{ old('patron_secuencia') }}">
@@ -255,8 +257,9 @@
                                     <div class="accordion-body show">
                                         <div class="row g-3">
                                             <div class="col-12">
+                                                <label for="falla_reportada" class="form-label">Falla Reportada <span class="text-danger">*</span></label>
                                                 <textarea class="form-control @error('falla_reportada') is-invalid @enderror"
-                                                          name="falla_reportada" rows="3"
+                                                          name="falla_reportada" id="falla_reportada" rows="3"
                                                           placeholder="Describe exactamente qué problema reporta el cliente...">{{ old('falla_reportada') }}</textarea>
                                                 @error('falla_reportada')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                             </div>
@@ -341,6 +344,7 @@
                                     <div class="accordion-body show">
                                         <p class="text-muted mb-2" style="font-size:11px;">Captura el estado actual del equipo al recibirlo.</p>
                                         <div class="mb-2">
+                                            <label for="selectTipoFoto" class="form-label">Tipo de foto</label>
                                             <select id="selectTipoFoto" class="form-select form-select-sm">
                                                 <option value="frontal">📱 Pantalla / Frontal</option>
                                                 <option value="trasero">🔍 Tapa / Trasero</option>
@@ -350,6 +354,7 @@
                                             </select>
                                         </div>
                                         <div class="mb-2">
+                                            <label for="inputFotoCamara" class="form-label">Capturar foto</label>
                                             <input type="file" id="inputFotoCamara" class="form-control form-control-sm" accept="image/*" capture="environment" onchange="agregarEvidenciaFoto(this)">
                                         </div>
                                         <div class="row g-1" id="galeriaEvidenciasPrevias"></div>

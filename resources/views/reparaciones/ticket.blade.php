@@ -39,8 +39,8 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.25;colo
 .section{font-weight:700;font-size:11px;margin:2px 0 0 0}
 .det{font-size:11px;font-weight:600}
 .eq-table{width:100%;border-collapse:collapse;margin:1px 0}
-.eq-table td{padding:0 2px;font-size:11px;vertical-align:top}
-.eq-table .lbl{font-size:9px;font-weight:700;color:#000;width:28%}
+.eq-table td,.eq-table th{padding:0 2px;font-size:11px;vertical-align:top}
+.eq-table .lbl{font-size:9px;font-weight:700;color:#000;width:28%;text-align:left}
 .eq-table .val{font-weight:700;font-size:11px;width:72%}
 .bx{font-size:11px;font-weight:600;word-break:break-word;overflow-wrap:break-word}
 .gar{font-size:11px;text-align:center;font-weight:700}
@@ -72,16 +72,20 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 <hr>
 <div class="section">EQUIPO</div>
 <table class="eq-table">
-<tr><td class="lbl">TIPO</td><td class="val">{{ $tipoDispositivo[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?? '—' }}</td></tr>
-<tr><td class="lbl">MARCA</td><td class="val">{{ $reparacion->marca ?: '—' }}</td></tr>
-<tr><td class="lbl">MODELO</td><td class="val">{{ $reparacion->modelo ?: '—' }}</td></tr>
-@if($reparacion->imei)<tr><td class="lbl">IMEI</td><td class="val">{{ $reparacion->imei }}</td></tr>@endif
-@if($reparacion->color)<tr><td class="lbl">COLOR</td><td class="val">{{ $reparacion->color }}</td></tr>@endif
-<tr><td class="lbl">RECIBIDO</td><td class="val">{{ optional($reparacion->fecha_recepcion)->format('d/m/Y H:i') }}</td></tr>
-@if($reparacion->fecha_estimada)<tr><td class="lbl">EST.ENTREGA</td><td class="val">{{ $reparacion->fecha_estimada->format('d/m/Y') }}</td></tr>@endif
-@if($reparacion->fecha_entrega)<tr><td class="lbl">ENTREGADO</td><td class="val">{{ $reparacion->fecha_entrega->format('d/m/Y') }}</td></tr>@endif
+<thead>
+<tr><th scope="col" class="lbl">CAMPO</th><th scope="col" class="val">VALOR</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row" class="lbl">TIPO</th><td class="val">{{ $tipoDispositivo[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?? '—' }}</td></tr>
+<tr><th scope="row" class="lbl">MARCA</th><td class="val">{{ $reparacion->marca ?: '—' }}</td></tr>
+<tr><th scope="row" class="lbl">MODELO</th><td class="val">{{ $reparacion->modelo ?: '—' }}</td></tr>
+@if($reparacion->imei)<tr><th scope="row" class="lbl">IMEI</th><td class="val">{{ $reparacion->imei }}</td></tr>@endif
+@if($reparacion->color)<tr><th scope="row" class="lbl">COLOR</th><td class="val">{{ $reparacion->color }}</td></tr>@endif
+<tr><th scope="row" class="lbl">RECIBIDO</th><td class="val">{{ optional($reparacion->fecha_recepcion)->format('d/m/Y H:i') }}</td></tr>
+@if($reparacion->fecha_estimada)<tr><th scope="row" class="lbl">EST.ENTREGA</th><td class="val">{{ $reparacion->fecha_estimada->format('d/m/Y') }}</td></tr>@endif
+@if($reparacion->fecha_entrega)<tr><th scope="row" class="lbl">ENTREGADO</th><td class="val">{{ $reparacion->fecha_entrega->format('d/m/Y') }}</td></tr>@endif
 @if($reparacion->tipo_codigo)
-<tr><td class="lbl">{{ $tipoCodigoMostrar }}</td><td class="val">
+<tr><th scope="row" class="lbl">{{ $tipoCodigoMostrar }}</th><td class="val">
 @if($reparacion->tipo_codigo==='patron' && $reparacion->patron_secuencia)
 @php $nums = explode('-', $reparacion->patron_secuencia); $p = ''; foreach(range(1,9) as $i) { $p .= in_array($i,$nums) ? '#' : 'O'; if($i%3==0&&$i<9) $p.=' '; } @endphp
 {{ $p }} {{ $reparacion->patron_secuencia }}
@@ -90,6 +94,7 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 @endif
 </td></tr>
 @endif
+</tbody>
 </table>
 <hr>
 <div class="section">FALLA</div>

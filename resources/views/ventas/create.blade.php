@@ -24,7 +24,7 @@
                 <form action="{{ route('ventas.store') }}" method="POST">
                     @csrf
                     <div class="mb-4">
-                        <label class="form-label">Cliente <span class="text-muted">(opcional)</span></label>
+                        <label for="clienteSelect" class="form-label">Cliente <span class="text-muted">(opcional)</span></label>
                         <select name="cliente_id" id="clienteSelect" class="form-select">
                             <option value="">— Sin cliente (venta general) —</option>
                             @foreach($clientes as $c)
@@ -33,12 +33,14 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Agregar Producto</label>
+                        <span class="form-label d-block">Agregar Producto</span>
                         <div class="row g-2">
                             <div class="col-md-5">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
+                                    <label for="buscador" class="visually-hidden">Buscar producto</label>
                                     <input type="text" id="buscador" class="form-control" placeholder="Buscar nombre o código..." oninput="filtrar()">
+                                    <label for="selectProd" class="visually-hidden">Seleccionar producto</label>
                                     <select id="selectProd" class="form-select">
                                         <option value="">— Seleccionar —</option>
                                         @foreach($productos as $p)
@@ -48,6 +50,7 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
+                                <label for="codBarras" class="visually-hidden">Código de barras</label>
                                 <input type="text" id="codBarras" class="form-control" placeholder="📷 Escanea código de barras..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
                             </div>
                             <div class="col-md-2">
@@ -72,8 +75,8 @@
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Método de Pago <span class="text-danger">*</span></label>
-                            <select name="metodo_pago" class="form-select" required>
+                            <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
+                            <select name="metodo_pago" id="metodo_pago" class="form-select" required>
                                 <option value="efectivo">💵 Efectivo</option>
                                 <option value="tarjeta">💳 Tarjeta</option>
                                 <option value="transferencia">🏦 Transferencia</option>
@@ -81,11 +84,11 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Descuento General</label>
+                            <label for="descGen" class="form-label">Descuento General</label>
                             <input type="number" class="form-control" name="descuento_general" id="descGen" min="0" step="0.01" value="0" oninput="totales()">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Cupón de Descuento</label>
+                            <label for="cuponInput" class="form-label">Cupón de Descuento</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" name="cupon_codigo" id="cuponInput" 
                                        placeholder="Ingresa el código del cupón (ej: CUP-ABC123-456)" 
@@ -97,8 +100,8 @@
                             <div id="cuponMsg" class="form-text mt-1" style="font-size:12px;"></div>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Notas</label>
-                            <textarea class="form-control" name="notas" rows="2"></textarea>
+                            <label for="notas" class="form-label">Notas</label>
+                            <textarea class="form-control" name="notas" id="notas" rows="2"></textarea>
                         </div>
                     </div>
                     <hr>

@@ -113,7 +113,8 @@
                                         @endforeach
                                         <option value="__otra__" {{ $esOtra?'selected':'' }}>✏️ Otra (escribir manualmente)</option>
                                     </select>
-                                    <input type="text" class="form-control marca-input mt-1" name="marca" id="marca"
+                                    <label for="marca" class="form-label mt-1">Otra marca</label>
+                                    <input type="text" class="form-control marca-input" name="marca" id="marca"
                                            value="{{ old('marca',$reparacion->marca) }}"
                                            placeholder="Escribir marca manualmente..."
                                            style="{{ $esOtra ? 'display:block;' : 'display:none;' }}">
@@ -154,14 +155,14 @@
                                         <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">Dibuja el patrón (toca los puntos en orden):</div>
                                         <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:140px; margin:0 auto;">
                                             @for($i=1;$i<=9;$i++)
-                                            <div class="patron-punto" data-pos="{{ $i }}"
+                                            <button type="button" class="patron-punto" data-pos="{{ $i }}"
                                                  style="width:40px; height:40px; border-radius:50%; border:2px solid #a855f7;
                                                         display:flex; align-items:center; justify-content:center;
                                                         font-size:13px; color:#a855f7; cursor:pointer; background:#f8f5ff;
-                                                        transition:all .2s; user-select:none;"
-                                                 role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="togglePuntoEdit(this)">
+                                                        transition:all .2s; user-select:none; padding:0;"
+                                                 onclick="togglePuntoEdit(this)" aria-label="Punto {{ $i }} del patrón">
                                                 {{ $i }}
-                                            </div>
+                                            </button>
                                             @endfor
                                         </div>
                                         <input type="hidden" name="patron_secuencia" class="patron-secuencia" value="{{ old('patron_secuencia') }}">
@@ -314,8 +315,8 @@
                                 </div>
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Notas adicionales</label>
-                                    <textarea class="form-control" name="notas" rows="2">{{ old('notas',$reparacion->notas) }}</textarea>
+                                    <label for="notas" class="form-label">Notas adicionales</label>
+                                    <textarea class="form-control" name="notas" id="notas" rows="2">{{ old('notas',$reparacion->notas) }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -337,9 +338,9 @@
                     @endphp
                     @if($urlRecibido)
                     <div class="mb-3">
-                        <label class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
+                        <div class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
                             <i class="fab fa-whatsapp me-1" style="color:#25D366;"></i>Notificar al Cliente por WhatsApp
-                        </label>
+                        </div>
                         <div class="d-flex gap-2">
                             <a href="{{ $urlRecibido }}" target="_blank"
                                class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
@@ -358,9 +359,9 @@
 
                     {{-- ✍️ FIRMA DE ENTREGA (solo si se marca como entregado) --}}
                     <div class="mb-3" id="firmaEntregaSection" style="display:none;">
-                        <label class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
+                        <div class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
                             <i class="fas fa-pen me-1" style="color:#a855f7;"></i>Firma de Entrega
-                        </label>
+                        </div>
                         <p class="text-muted" style="font-size:12px;">Haz que el cliente firme al entregar el equipo.</p>
                         @if($reparacion->firma_entrega)
                             <div class="text-center mb-2" id="firmaEntregaExistente">
