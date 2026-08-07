@@ -54,8 +54,8 @@ class ConfiguracionController extends Controller
 
         // 3.5. Lista de países disponibles
         $paises = [
-            'PE' => '🇵🇪 Perú',
             'CL' => '🇨🇱 Chile',
+            'PE' => '🇵🇪 Perú',
             'AR' => '🇦🇷 Argentina',
             'MX' => '🇲🇽 México',
             'CO' => '🇨🇴 Colombia',

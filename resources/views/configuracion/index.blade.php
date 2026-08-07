@@ -169,7 +169,7 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <label for="igv" class="form-label">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} (%)</label>
+                            <label for="igv" class="form-label">IVA (%)</label>
                             <input type="number" name="igv" id="igv" class="form-control" step="0.01" min="0" max="100"
                                    value="{{ old('igv', $empresa->igv ?? 18) }}" required>
                         </div>
