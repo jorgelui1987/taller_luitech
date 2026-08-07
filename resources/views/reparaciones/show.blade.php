@@ -127,11 +127,17 @@
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.9);
     z-index: 9999;
-    display: none;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: none;
     align-items: center;
     justify-content: center;
 }
-.lightbox-overlay.show {
+.lightbox-overlay[open] {
     display: flex;
 }
 .lightbox-overlay img {
@@ -148,6 +154,9 @@
     cursor: pointer;
     background: none;
     border: none;
+}
+.lightbox-overlay::backdrop {
+    background: rgba(0,0,0,0.9);
 }
 /* Info badges */
 .info-badge {
@@ -710,10 +719,10 @@
 </div>
 
 {{-- Lightbox --}}
-<div class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()">
+<dialog class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()">
     <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
-</div>
+</dialog>
 @endsection
 
 @push('scripts')
@@ -891,11 +900,11 @@ function eliminarFoto(fotoId) {
 // ── LIGHTBOX ──
 function abrirLightbox(src) {
     document.getElementById('lightboxImg').src = src;
-    document.getElementById('lightbox').classList.add('show');
+    document.getElementById('lightbox').showModal();
 }
 
 function cerrarLightbox() {
-    document.getElementById('lightbox').classList.remove('show');
+    document.getElementById('lightbox').close();
 }
 
 // ── Inicializar al cargar ──
