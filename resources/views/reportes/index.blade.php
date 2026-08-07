@@ -46,13 +46,13 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <label class="form-label mb-1" style="font-size:12px;">Desde</label>
-                <input type="date" class="form-control form-control-sm" name="desde"
+                <label for="desde" class="form-label mb-1" style="font-size:12px;">Desde</label>
+                <input type="date" class="form-control form-control-sm" name="desde" id="desde"
                        value="{{ request('desde', $desde->format('Y-m-d')) }}">
             </div>
             <div class="col-md-2">
-                <label class="form-label mb-1" style="font-size:12px;">Hasta</label>
-                <input type="date" class="form-control form-control-sm" name="hasta"
+                <label for="hasta" class="form-label mb-1" style="font-size:12px;">Hasta</label>
+                <input type="date" class="form-control form-control-sm" name="hasta" id="hasta"
                        value="{{ request('hasta', $hasta->format('Y-m-d')) }}">
             </div>
             <div class="col-auto">

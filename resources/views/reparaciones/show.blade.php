@@ -331,7 +331,8 @@
                         <div class="col-3" data-foto-id="{{ $foto->id }}">
                             <div class="foto-item">
                                 <img src="{{ asset('storage/'.$foto->ruta) }}" alt="Foto {{ $foto->tipo }}"
-                                     onclick="abrirLightbox(this.src)" style="cursor:pointer;">
+                                     onclick="abrirLightbox(this.src)" style="cursor:pointer;"
+                                     onkeypress="if(event.key==='Enter'||event.key===' '){abrirLightbox(this.src);}" tabindex="0">
                                 <span class="foto-tipo">{{ ucfirst($foto->tipo) }}</span>
                                 <button class="foto-delete" onclick="eliminarFoto({{ $foto->id }})" title="Eliminar foto">
                                     <i class="fas fa-times"></i>
@@ -347,14 +348,15 @@
                         </div>
                         @endforelse
                         <div class="col-3">
-                            <div class="foto-upload-box" role="button" tabindex="0" onkeypress="if(event.key==='Enter'||event.key===' '){this.click();}" onclick="document.getElementById('fotoInput').click()">
+                            <label for="fotoInput" class="foto-upload-box" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;">
                                 <i class="fas fa-plus" style="font-size:20px;"></i>
                                 <span style="font-size:10px; margin-top:3px;">Agregar</span>
-                            </div>
+                            </label>
                             <form id="fotoUploadForm" enctype="multipart/form-data" style="display:none;">
                                 @csrf
                                 <input type="file" id="fotoInput" name="foto" accept="image/*" capture="environment"
                                        onchange="subirFoto(this)">
+                                <label for="fotoTipo" class="visually-hidden">Tipo de foto</label>
                                 <select id="fotoTipo" name="tipo">
                                     <option value="frontal">Frontal</option>
                                     <option value="trasero">Trasero</option>
