@@ -710,7 +710,7 @@
 </div>
 
 {{-- Lightbox --}}
-<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de fotos">
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de fotos" tabindex="-1">
     <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
 </div>
@@ -911,6 +911,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (lightbox) {
         lightbox.addEventListener('click', function(e) {
             if (e.target === lightbox) {
+                cerrarLightbox();
+            }
+        });
+        // Soporte de teclado: Escape para cerrar
+        lightbox.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
                 cerrarLightbox();
             }
         });
