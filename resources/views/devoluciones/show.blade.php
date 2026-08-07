@@ -136,8 +136,8 @@
                         <strong>-{{ number_format($devolucion->descuento, 2) }}</strong>
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">IGV</span>
-                        <strong>{{ number_format($devolucion->impuesto, 2) }}</strong>
+                        <span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }}</span>
+                        <strong>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($devolucion->impuesto, 2) }}</strong>
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-top:2px solid #e9d5ff;margin-top:4px;">
                         <span style="font-weight:600;">Total devuelto</span>

@@ -164,8 +164,8 @@
                                     <strong id="resumenSubtotal">S/ 0.00</strong>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size:12px;margin-top:4px;">
-                                    <span class="text-muted">IGV</span>
-                                    <strong id="resumenImpuesto">S/ 0.00</strong>
+                                    <span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }}</span>
+                                    <strong id="resumenImpuesto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</strong>
                                 </div>
                                 <hr style="margin:8px 0;">
                                 <div class="d-flex justify-content-between">

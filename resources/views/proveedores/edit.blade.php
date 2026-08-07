@@ -35,7 +35,7 @@
                             <input type="email" class="form-control" name="email" id="email" value="{{ old('email', $proveedor->email) }}">
                         </div>
                         <div class="col-md-4">
-                            <label for="ruc" class="form-label">RUC</label>
+                            <label for="ruc" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}</label>
                             <input type="text" class="form-control" name="ruc" id="ruc" value="{{ old('ruc', $proveedor->ruc) }}">
                         </div>
                         <div class="col-12">

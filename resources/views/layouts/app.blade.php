@@ -814,7 +814,7 @@
         @endif
         <div>
             <div class="brand-name">{{ $empresa->nombre_tienda ?? 'CRM Celulares' }}</div>
-            <div class="brand-sub">{{ $empresa->ruc ? 'RUC: '.$empresa->ruc : 'Panel de gestión' }}</div>
+            <div class="brand-sub">{{ $empresa->ruc ? ($empresa->pais == 'CL' ? 'RUT: '.$empresa->ruc : 'RUC: '.$empresa->ruc) : 'Panel de gestión' }}</div>
         </div>
     </div>
 

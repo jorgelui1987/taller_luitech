@@ -75,8 +75,8 @@
                 @endif
                 @if($ventas->impuesto > 0)
                 <div class="pl-line pl-indent">
-                    <span class="pl-label">IGV / Impuesto</span>
-                    <span class="pl-value">S/ {{ number_format($ventas->impuesto, 2) }}</span>
+                    <span class="pl-label">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} / Impuesto</span>
+                    <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ventas->impuesto, 2) }}</span>
                 </div>
                 @endif
 

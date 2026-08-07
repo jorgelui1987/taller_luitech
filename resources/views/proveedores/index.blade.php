@@ -10,7 +10,7 @@
 </div>
 <div class="card"><div class="card-body p-0"><div class="table-responsive">
 <table class="table table-hover align-middle mb-0"><thead><tr>
-    <th class="ps-4">Nombre</th><th>Contacto</th><th>Teléfono</th><th>Email</th><th>RUC</th><th>Órdenes</th><th>Estado</th><th class="text-end pe-4">Acciones</th>
+    <th class="ps-4">Nombre</th><th>Contacto</th><th>Teléfono</th><th>Email</th><th>{{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}</th><th>Órdenes</th><th>Estado</th><th class="text-end pe-4">Acciones</th>
 </tr></thead><tbody>
 @forelse($proveedores as $p)
 <tr>

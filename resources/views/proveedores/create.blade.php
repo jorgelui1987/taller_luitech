@@ -35,8 +35,8 @@
                             <input type="email" class="form-control" name="email" id="email" value="{{ old('email') }}" placeholder="proveedor@email.com">
                         </div>
                         <div class="col-md-4">
-                            <label for="ruc" class="form-label">RUC</label>
-                            <input type="text" class="form-control" name="ruc" id="ruc" value="{{ old('ruc') }}" placeholder="12345678901">
+                            <label for="ruc" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}</label>
+                            <input type="text" class="form-control" name="ruc" id="ruc" value="{{ old('ruc') }}" placeholder="{{ $empresa->pais == 'CL' ? '76543210' : '12345678901' }}">
                         </div>
                         <div class="col-12">
                             <label for="direccion" class="form-label">Dirección</label>

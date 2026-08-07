@@ -62,7 +62,7 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 <div class="hdr">
 @if($logoSrc)<img src="{{ $logoSrc }}" alt="" class="logo">@endif
 <div class="tienda">{{ $empresa->nombre_tienda ?? 'CRM Celulares' }}</div>
-<div class="inf">RUC: {{ $empresa->ruc ?? '' }}@if($empresa->ruc && $empresa->direccion) | @endif{{ $empresa->direccion ?? '' }}</div>
+<div class="inf">{{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}: {{ $empresa->ruc ?? '' }}@if($empresa->ruc && $empresa->direccion) | @endif{{ $empresa->direccion ?? '' }}</div>
 <div class="nro">{{ $reparacion->numero_orden }}</div>
 <div class="det">{{ $estadoLabel }} @if($reparacion->prioridad!='baja'){{ $prioridadIcon[$reparacion->prioridad]??'' }}@endif | Téc: {{ $reparacion->tecnico->name ?? '—' }}</div>
 </div>
@@ -103,10 +103,10 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 @if($reparacion->solucion)<div class="section">SOLUCIÓN</div><div class="bx">{{ $reparacion->solucion }}</div>@endif
 @if($reparacion->presupuesto>0||$reparacion->costo_final>0||$reparacion->abono>0||$reparacion->total>0)
 <div class="prices">
-@if($reparacion->presupuesto>0)<div class="price-box"><div class="lbl">PRESUPUESTO</div>S/{{ number_format($reparacion->presupuesto,2) }}</div>@endif
-@if($reparacion->costo_final>0)<div class="price-box"><div class="lbl">COSTO FINAL</div>S/{{ number_format($reparacion->costo_final,2) }}</div>@endif
-@if($reparacion->abono>0)<div class="price-box"><div class="lbl">ABONO</div>S/{{ number_format($reparacion->abono,2) }}</div>@endif
-@if($reparacion->total>0)<div class="price-box"><div class="lbl">TOTAL</div>S/{{ number_format($reparacion->total,2) }}</div>@endif
+@if($reparacion->presupuesto>0)<div class="price-box"><div class="lbl">PRESUPUESTO</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->presupuesto,2) }}</div>@endif
+@if($reparacion->costo_final>0)<div class="price-box"><div class="lbl">COSTO FINAL</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->costo_final,2) }}</div>@endif
+@if($reparacion->abono>0)<div class="price-box"><div class="lbl">ABONO</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->abono,2) }}</div>@endif
+@if($reparacion->total>0)<div class="price-box"><div class="lbl">TOTAL</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->total,2) }}</div>@endif
 </div>
 @endif
 @if($reparacion->garantia)<div class="gar">Garantía: {{ $reparacion->dias_garantia }} días</div>@endif

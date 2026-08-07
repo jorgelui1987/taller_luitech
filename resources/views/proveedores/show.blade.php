@@ -33,7 +33,7 @@
                         <strong>{{ $proveedor->email ?: '—' }}</strong>
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
-                        <span class="text-muted">RUC</span>
+                        <span class="text-muted">{{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}</span>
                         <strong>{{ $proveedor->ruc ?: '—' }}</strong>
                     </div>
                     <div class="d-flex justify-content-between py-2">

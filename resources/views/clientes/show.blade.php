@@ -65,7 +65,7 @@
                     @if($cliente->empresa)
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <i class="fas fa-building" style="color:#a855f7; width:16px;"></i>
-                        <span>{{ $cliente->empresa }} @if($cliente->ruc)(RUC: {{ $cliente->ruc }})@endif</span>
+                        <span>{{ $cliente->empresa }} @if($cliente->ruc)({{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}: {{ $cliente->ruc }})@endif</span>
                     </div>
                     @endif
                 </div>
