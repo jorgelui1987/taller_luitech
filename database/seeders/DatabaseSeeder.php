@@ -96,19 +96,19 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // ── Clientes de ejemplo ──────────────────────────────────────────
+        // ── Clientes de ejemplo (multi-país: Perú y Chile) ───────────────
         $clientes = [
-            ['nombre'=>'María',   'apellido'=>'García',   'email'=>'maria.garcia@gmail.com',   'telefono'=>'987654321', 'dni'=>'45123456'],
-            ['nombre'=>'Carlos',  'apellido'=>'López',    'email'=>'carlos.lopez@gmail.com',    'telefono'=>'965432187', 'dni'=>'32145678'],
-            ['nombre'=>'Ana',     'apellido'=>'Martínez', 'email'=>'ana.martinez@hotmail.com',  'telefono'=>'974561230', 'dni'=>'56789012'],
-            ['nombre'=>'Pedro',   'apellido'=>'Sánchez',  'email'=>'pedro.sanchez@outlook.com', 'telefono'=>'912345678', 'dni'=>'78901234'],
-            ['nombre'=>'Lucía',   'apellido'=>'Torres',   'email'=>null,                         'telefono'=>'998765432', 'dni'=>'89012345'],
+            ['nombre'=>'María',   'apellido'=>'García',   'email'=>'maria.garcia@gmail.com',   'telefono'=>'987654321', 'dni'=>'45123456', 'rut'=>'12345678', 'rut_dv'=>'5', 'ciudad'=>'Lima'],
+            ['nombre'=>'Carlos',  'apellido'=>'López',    'email'=>'carlos.lopez@gmail.com',    'telefono'=>'965432187', 'dni'=>'32145678', 'rut'=>'87654321', 'rut_dv'=>'0', 'ciudad'=>'Lima'],
+            ['nombre'=>'Ana',     'apellido'=>'Martínez', 'email'=>'ana.martinez@hotmail.com',  'telefono'=>'974561230', 'dni'=>'56789012', 'rut'=>'11111111', 'rut_dv'=>'1', 'ciudad'=>'Santiago'],
+            ['nombre'=>'Pedro',   'apellido'=>'Sánchez',  'email'=>'pedro.sanchez@outlook.com', 'telefono'=>'912345678', 'dni'=>'78901234', 'rut'=>'22222222', 'rut_dv'=>'2', 'ciudad'=>'Santiago'],
+            ['nombre'=>'Lucía',   'apellido'=>'Torres',   'email'=>null,                         'telefono'=>'998765432', 'dni'=>'89012345', 'rut'=>'33333333', 'rut_dv'=>'3', 'ciudad'=>'Valparaíso'],
         ];
 
         foreach ($clientes as $c) {
             Cliente::firstOrCreate(
                 ['dni' => $c['dni']],
-                array_merge($c, ['tipo'=>'particular', 'ciudad'=>'Lima'])
+                array_merge($c, ['tipo'=>'particular'])
             );
         }
 

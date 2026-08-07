@@ -9,6 +9,7 @@ use App\Models\DetalleVenta;
 use App\Models\MovimientoStock;
 use App\Models\Configuracion;
 use App\Models\Cupon;
+use App\Helpers\PaisHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -63,9 +64,10 @@ class VentaController extends Controller
 
     public function store(Request $request)
     {
+        $paisConfig = PaisHelper::configuracionActual();
         $request->validate([
             'cliente_id'          => 'nullable|exists:clientes,id',
-            'metodo_pago'         => 'required|in:efectivo,tarjeta,transferencia,cuotas,yape,plin',
+            'metodo_pago'         => 'required|in:' . implode(',', $paisConfig['metodos_pago']),
             'productos'           => 'required|array|min:1|max:100',
             'productos.*.id'      => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1|max:1000',
@@ -161,8 +163,8 @@ class VentaController extends Controller
             }
 
             $base      = $subtotal - $descuento;
-            $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
-            $impuesto  = round($base * ($igvPorcentaje / 100), 2);
+            $impuestoPorcentaje = Configuracion::empresa()->igv ?? ($paisConfig['impuesto'] ?? 18);
+            $impuesto  = round($base * ($impuestoPorcentaje / 100), 2);
             $total     = $base + $impuesto;
 
             $venta = Venta::create([
@@ -237,8 +239,10 @@ class VentaController extends Controller
 
         // Si no tiene código de país, agregar el de la configuración
         $pais = $empresa?->pais ?? 'PE';
-        $codigos = ['PE' => '51', 'CL' => '56', 'AR' => '54', 'MX' => '52', 'CO' => '57', 'EC' => '593', 'BO' => '591', 'US' => '1'];
-        $codigoPais = $codigos[$pais] ?? '51';
+        $paisConfig = PaisHelper::configuracionPorPais($pais);
+        $codigoPais = $paisConfig['codigo_whatsapp'];
+        $simbolo    = $empresa?->simbolo_moneda ?? $paisConfig['simbolo_moneda'];
+        $nombreImpuesto = $paisConfig['nombre_impuesto'];
 
         if (strlen($telefono) <= 9) {
             $telefono = $codigoPais . $telefono;
@@ -277,13 +281,13 @@ class VentaController extends Controller
         $texto .= $linea . "\n";
 
         // Totales
-        $texto .= str_pad('Subtotal', 24) . str_pad('S/ ' . number_format($venta->subtotal, 2), 8, ' ', STR_PAD_LEFT) . "\n";
+        $texto .= str_pad('Subtotal', 24) . str_pad($simbolo . ' ' . number_format($venta->subtotal, 2), 8, ' ', STR_PAD_LEFT) . "\n";
         if ($venta->descuento > 0) {
-            $texto .= str_pad('Descuento', 24) . str_pad('-S/ ' . number_format($venta->descuento, 2), 8, ' ', STR_PAD_LEFT) . "\n";
+            $texto .= str_pad('Descuento', 24) . str_pad('-' . $simbolo . ' ' . number_format($venta->descuento, 2), 8, ' ', STR_PAD_LEFT) . "\n";
         }
-        $texto .= str_pad('IGV (' . ($empresa?->igv ?? 18) . '%)', 24) . str_pad('S/ ' . number_format($venta->impuesto, 2), 8, ' ', STR_PAD_LEFT) . "\n";
+        $texto .= str_pad($nombreImpuesto . ' (' . ($empresa?->igv ?? 18) . '%)', 24) . str_pad($simbolo . ' ' . number_format($venta->impuesto, 2), 8, ' ', STR_PAD_LEFT) . "\n";
         $texto .= $lineaDoble . "\n";
-        $texto .= str_pad('TOTAL', 24) . str_pad('S/ ' . number_format($venta->total, 2), 8, ' ', STR_PAD_LEFT) . "\n";
+        $texto .= str_pad('TOTAL', 24) . str_pad($simbolo . ' ' . number_format($venta->total, 2), 8, ' ', STR_PAD_LEFT) . "\n";
         $texto .= $lineaDoble . "\n";
 
         // Garantía

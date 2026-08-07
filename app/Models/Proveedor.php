@@ -14,7 +14,7 @@ class Proveedor extends Model
 
     protected $fillable = [
         'nombre', 'contacto', 'telefono', 'email', 'direccion',
-        'ruc', 'notas', 'activo', 'tenant_id',
+        'ruc', 'rut', 'notas', 'activo', 'tenant_id',
     ];
 
     protected $casts = ['activo' => 'boolean'];

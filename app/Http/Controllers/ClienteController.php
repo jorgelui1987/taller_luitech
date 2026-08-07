@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Helpers\PaisHelper;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
@@ -17,7 +18,8 @@ class ClienteController extends Controller
                   ->orWhere('apellido', 'like', "%{$request->buscar}%")
                   ->orWhere('email', 'like', "%{$request->buscar}%")
                   ->orWhere('telefono', 'like', "%{$request->buscar}%")
-                  ->orWhere('dni', 'like', "%{$request->buscar}%");
+                  ->orWhere('dni', 'like', "%{$request->buscar}%")
+                  ->orWhere('rut', 'like', "%{$request->buscar}%");
             });
         }
 
@@ -46,6 +48,8 @@ class ClienteController extends Controller
             'telefono'        => 'required|string|max:20',
             'celular'         => 'nullable|string|max:20',
             'dni'             => 'nullable|string|max:15|unique:clientes,dni',
+            'rut'             => 'nullable|string|max:12',
+            'rut_dv'          => 'nullable|string|max:1',
             'direccion'       => 'nullable|string|max:255',
             'ciudad'          => 'nullable|string|max:100',
             'fecha_nacimiento' => 'nullable|date',
@@ -54,6 +58,17 @@ class ClienteController extends Controller
             'ruc'             => 'nullable|string|max:15',
             'notas'           => 'nullable|string',
         ]);
+
+        // Validar RUT chileno si se proporcionó
+        if (!empty($validated['rut'])) {
+            $paisConfig = PaisHelper::configuracionActual();
+            if ($paisConfig['pais'] === 'CL') {
+                $rutCompleto = $validated['rut'] . ($validated['rut_dv'] ?? '');
+                if (!PaisHelper::validarRut($rutCompleto)) {
+                    return back()->with('error', 'El RUT ingresado no es válido.')->withInput();
+                }
+            }
+        }
 
         // Forzar tenant_id
         $tenantId = auth()->user()->tenant_id;
@@ -96,6 +111,8 @@ class ClienteController extends Controller
             'telefono'        => 'required|string|max:20',
             'celular'         => 'nullable|string|max:20',
             'dni'             => 'nullable|string|max:15|unique:clientes,dni,' . $cliente->id,
+            'rut'             => 'nullable|string|max:12',
+            'rut_dv'          => 'nullable|string|max:1',
             'direccion'       => 'nullable|string|max:255',
             'ciudad'          => 'nullable|string|max:100',
             'fecha_nacimiento' => 'nullable|date',
@@ -105,6 +122,17 @@ class ClienteController extends Controller
             'notas'           => 'nullable|string',
             'activo'          => 'boolean',
         ]);
+
+        // Validar RUT chileno si se proporcionó
+        if (!empty($validated['rut'])) {
+            $paisConfig = PaisHelper::configuracionActual();
+            if ($paisConfig['pais'] === 'CL') {
+                $rutCompleto = $validated['rut'] . ($validated['rut_dv'] ?? '');
+                if (!PaisHelper::validarRut($rutCompleto)) {
+                    return back()->with('error', 'El RUT ingresado no es válido.')->withInput();
+                }
+            }
+        }
 
         $cliente->update($validated);
 

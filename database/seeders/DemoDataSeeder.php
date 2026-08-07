@@ -36,11 +36,11 @@ class DemoDataSeeder extends Seeder
 
         // ── Clientes adicionales (firstOrCreate para evitar duplicados) ──
         $nuevosClientes = [
-            ['nombre'=>'Roberto', 'apellido'=>'Flores',  'email'=>'roberto.flores@gmail.com',    'telefono'=>'945678901', 'dni'=>'12345671', 'tipo'=>'particular', 'ciudad'=>'Lima'],
-            ['nombre'=>'Elena',   'apellido'=>'Vásquez', 'email'=>'elena.vasquez@techcorp.pe',    'telefono'=>'934567890', 'dni'=>'23456782', 'tipo'=>'empresa',   'ciudad'=>'Lima', 'empresa'=>'TechCorp SAC',   'ruc'=>'20512345671'],
-            ['nombre'=>'Miguel',  'apellido'=>'Quispe',  'email'=>'miguel.quispe@outlook.com',    'telefono'=>'923456789', 'dni'=>'34567893', 'tipo'=>'particular', 'ciudad'=>'Lima'],
-            ['nombre'=>'Sofía',   'apellido'=>'Mendoza', 'email'=>'sofia.mendoza@gmail.com',      'telefono'=>'912345670', 'dni'=>'45678904', 'tipo'=>'particular', 'ciudad'=>'Lima'],
-            ['nombre'=>'Diego',   'apellido'=>'Herrera', 'email'=>'diego.herrera@movilstore.pe',  'telefono'=>'901234567', 'dni'=>'56789015', 'tipo'=>'empresa',   'ciudad'=>'Lima', 'empresa'=>'MovilStore EIRL','ruc'=>'20612345672'],
+            ['nombre'=>'Roberto', 'apellido'=>'Flores',  'email'=>'roberto.flores@gmail.com',    'telefono'=>'945678901', 'dni'=>'12345671', 'rut'=>'12345678', 'rut_dv'=>'5', 'tipo'=>'particular', 'ciudad'=>'Lima'],
+            ['nombre'=>'Elena',   'apellido'=>'Vásquez', 'email'=>'elena.vasquez@techcorp.pe',    'telefono'=>'934567890', 'dni'=>'23456782', 'rut'=>'87654321', 'rut_dv'=>'0', 'tipo'=>'empresa',   'ciudad'=>'Lima', 'empresa'=>'TechCorp SAC',   'ruc'=>'20512345671'],
+            ['nombre'=>'Miguel',  'apellido'=>'Quispe',  'email'=>'miguel.quispe@outlook.com',    'telefono'=>'923456789', 'dni'=>'34567893', 'rut'=>'11111111', 'rut_dv'=>'1', 'tipo'=>'particular', 'ciudad'=>'Santiago'],
+            ['nombre'=>'Sofía',   'apellido'=>'Mendoza', 'email'=>'sofia.mendoza@gmail.com',      'telefono'=>'912345670', 'dni'=>'45678904', 'rut'=>'22222222', 'rut_dv'=>'2', 'tipo'=>'particular', 'ciudad'=>'Santiago'],
+            ['nombre'=>'Diego',   'apellido'=>'Herrera', 'email'=>'diego.herrera@movilstore.pe',  'telefono'=>'901234567', 'dni'=>'56789015', 'rut'=>'33333333', 'rut_dv'=>'3', 'tipo'=>'empresa',   'ciudad'=>'Valparaíso', 'empresa'=>'MovilStore EIRL','ruc'=>'20612345672'],
         ];
         foreach ($nuevosClientes as $c) {
             Cliente::firstOrCreate(['dni' => $c['dni']], $c);

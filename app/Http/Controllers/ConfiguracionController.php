@@ -9,6 +9,7 @@ use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\Reparacion;
 use App\Models\Configuracion;
+use App\Helpers\PaisHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -49,6 +50,22 @@ class ConfiguracionController extends Controller
             ['icon' => 'box',            'color' => '#10b981', 'label' => 'Productos en inventario',   'value' => Producto::where('tenant_id', $tenantId)->where('activo', true)->count()],
             ['icon' => 'shopping-cart',  'color' => '#ec4899', 'label' => 'Ventas registradas',        'value' => Venta::where('tenant_id', $tenantId)->count()],
             ['icon' => 'tools',          'color' => '#f59e0b', 'label' => 'Órdenes de reparación',     'value' => Reparacion::where('tenant_id', $tenantId)->count()],
+        ];
+
+        // 3.5. Lista de países disponibles
+        $paises = [
+            'PE' => '🇵🇪 Perú',
+            'CL' => '🇨🇱 Chile',
+            'AR' => '🇦🇷 Argentina',
+            'MX' => '🇲🇽 México',
+            'CO' => '🇨🇴 Colombia',
+            'EC' => '🇪🇨 Ecuador',
+            'BO' => '🇧🇴 Bolivia',
+            'UY' => '🇺🇾 Uruguay',
+            'PY' => '🇵🇾 Paraguay',
+            'US' => '🇺🇸 Estados Unidos',
+            'ES' => '🇪🇸 España',
+            'BR' => '🇧🇷 Brasil',
         ];
 
         // 4. Lista de monedas disponibles
@@ -126,7 +143,7 @@ class ConfiguracionController extends Controller
         ];
 
         return view('configuracion.index', compact(
-            'usuarios', 'empresa', 'stats', 'monedas',
+            'usuarios', 'empresa', 'stats', 'monedas', 'paises',
             'planes', 'coloresPlan', 'badgeColor', 'zonasHorarias'
         ));
     }
@@ -144,6 +161,11 @@ class ConfiguracionController extends Controller
             'igv'           => 'required|numeric|min:0|max:100',
             'moneda'        => 'required|string|max:10',
             'simbolo_moneda'=> 'required|string|max:5',
+            'pais'          => 'nullable|string|max:2',
+            'razon_social'  => 'nullable|string|max:255',
+            'giro'          => 'nullable|string|max:255',
+            'comuna_ciudad' => 'nullable|string|max:100',
+            'proveedor_dte' => 'nullable|string|max:20',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
             // ── Publicidad / Página pública ──
@@ -159,6 +181,24 @@ class ConfiguracionController extends Controller
         ]);
 
         $data = $validated;
+
+        // Si se cambió el país, aplicar configuración por defecto automáticamente
+        if (!empty($data['pais'])) {
+            $paisConfig = PaisHelper::configuracionPorPais($data['pais']);
+            $empresaActual = Configuracion::empresa();
+
+            // Solo auto-configurar si es un país con definición
+            $paisesDefinidos = ['PE', 'CL', 'AR', 'MX', 'CO', 'EC', 'BO', 'UY', 'PY'];
+            if (in_array($data['pais'], $paisesDefinidos)) {
+                // Si el país cambió respecto al anterior, aplicar defaults
+                if (!$empresaActual || ($empresaActual->pais ?? null) !== $data['pais']) {
+                    $data['moneda']         = $paisConfig['moneda'];
+                    $data['simbolo_moneda'] = $paisConfig['simbolo_moneda'];
+                    $data['igv']            = $paisConfig['impuesto'];
+                    $data['zona_horaria']   = $paisConfig['zona_horaria'];
+                }
+            }
+        }
 
         // Subir logo si se envió uno nuevo
         if ($request->hasFile('logo')) {

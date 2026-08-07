@@ -70,7 +70,7 @@
                     @endif
                     <div>
                         <div style="font-weight:700; font-size:16px;">{{ $empresa->nombre_tienda ?? 'CRM Tienda Celulares' }}</div>
-                        @if($empresa->ruc)<div style="font-size:11px; color:#9ca3af;">RUC: {{ $empresa->ruc }}</div>@endif
+                        @if($empresa->ruc)<div style="font-size:11px; color:#9ca3af;">{{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}: {{ $empresa->ruc }}</div>@endif
                         <div style="font-size:12px; color:#9ca3af;">Comprobante de Venta</div>
                     </div>
                 </div>
@@ -132,11 +132,11 @@
                                     @endif
                                 </td>
                                 <td style="padding:10px 0; text-align:center;">{{ $det->cantidad }}</td>
-                                <td style="padding:10px 0; text-align:right;">S/ {{ number_format($det->precio_unitario, 2) }}</td>
+                                <td style="padding:10px 0; text-align:right;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->precio_unitario, 2) }}</td>
                                 <td style="padding:10px 0; text-align:right; color:#dc2626;">
-                                    {{ $det->descuento > 0 ? '— S/ '.number_format($det->descuento,2) : '—' }}
+                                    {{ $det->descuento > 0 ? '— '.($empresa->simbolo_moneda ?? '$').' '.number_format($det->descuento,2) : '—' }}
                                 </td>
-                                <td style="padding:10px 0; text-align:right; font-weight:600;">S/ {{ number_format($det->subtotal, 2) }}</td>
+                                <td style="padding:10px 0; text-align:right; font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->subtotal, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -148,22 +148,22 @@
                     <div class="col-md-5">
                         <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
                             <span class="text-muted">Subtotal</span>
-                            <span>S/ {{ number_format($venta->subtotal, 2) }}</span>
+                            <span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->subtotal, 2) }}</span>
                         </div>
                         @if($venta->descuento > 0)
                         <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
                             <span class="text-muted">Descuento</span>
-                            <span class="text-danger">— S/ {{ number_format($venta->descuento, 2) }}</span>
+                            <span class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->descuento, 2) }}</span>
                         </div>
                         @endif
                         <div class="d-flex justify-content-between mb-3" style="font-size:13.5px;">
-                            <span class="text-muted">IGV ({{ $empresa->igv ?? 18 }}%)</span>
-                            <span>S/ {{ number_format($venta->impuesto, 2) }}</span>
+                            <span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span>
+                            <span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->impuesto, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between p-3 rounded-3"
                              style="background:linear-gradient(135deg,#a855f7,#ec4899);">
                             <span style="color:#fff; font-weight:700; font-size:16px;">TOTAL</span>
-                            <span style="color:#fff; font-weight:700; font-size:20px;">S/ {{ number_format($venta->total, 2) }}</span>
+                            <span style="color:#fff; font-weight:700; font-size:20px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total, 2) }}</span>
                         </div>
                     </div>
                 </div>

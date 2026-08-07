@@ -82,11 +82,18 @@
                                    value="{{ old('celular') }}" placeholder="999 999 999">
                         </div>
                         <div class="col-md-4">
-                            <label for="dni" class="form-label">DNI / Documento</label>
+                            <label for="dni" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT' : 'DNI / Documento' }}</label>
                             <input type="text" class="form-control @error('dni') is-invalid @enderror"
-                                   name="dni" id="dni" value="{{ old('dni') }}" placeholder="12345678">
+                                   name="dni" id="dni" value="{{ old('dni') }}" placeholder="{{ $empresa->pais == 'CL' ? '12345678' : '12345678' }}">
                             @error('dni')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
+                        @if($empresa->pais == 'CL')
+                        <div class="col-md-2">
+                            <label for="rut_dv" class="form-label">DV</label>
+                            <input type="text" class="form-control" name="rut_dv" id="rut_dv" maxlength="1"
+                                   value="{{ old('rut_dv') }}" placeholder="K">
+                        </div>
+                        @endif
                         <div class="col-md-4">
                             <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
                             <input type="date" class="form-control" name="fecha_nacimiento" id="fecha_nacimiento"
@@ -115,9 +122,9 @@
                                        value="{{ old('empresa') }}" placeholder="Empresa SAC">
                             </div>
                             <div class="col-md-4">
-                                <label for="ruc" class="form-label">RUC</label>
+                                <label for="ruc" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT Empresa' : 'RUC' }}</label>
                                 <input type="text" class="form-control" name="ruc" id="ruc"
-                                       value="{{ old('ruc') }}" placeholder="20123456789">
+                                       value="{{ old('ruc') }}" placeholder="{{ $empresa->pais == 'CL' ? '76543210' : '20123456789' }}">
                             </div>
                         </div>
                     </div>

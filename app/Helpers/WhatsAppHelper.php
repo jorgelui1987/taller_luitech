@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Configuracion;
+use App\Helpers\PaisHelper;
 
 class WhatsAppHelper
 {
@@ -25,7 +26,7 @@ class WhatsAppHelper
         } catch (\Exception $e) {
             // Si falla, usar código por defecto
         }
-        return '51'; // Default: Perú
+        return PaisHelper::codigoWhatsapp();
     }
 
     /**
@@ -51,7 +52,7 @@ class WhatsAppHelper
         // Obtener código de país de la configuración
         $codigoPais = self::obtenerCodigoPais();
 
-        // Si el número es solo local (9 dígitos para Perú), anteponer código de país
+        // Si el número es solo local, anteponer código de país
         if (strlen($numero) <= 10) {
             $numero = $codigoPais . $numero;
         }
@@ -109,11 +110,13 @@ class WhatsAppHelper
     {
         $costo = number_format($reparacion->costo_final ?: $reparacion->presupuesto ?: 0, 2);
 
+        $simbolo = PaisHelper::simboloMoneda();
+
         $mensaje = "🔧 *{$nombreTienda} - Orden de Reparación*\n\n" .
             "📋 N° Orden: {$reparacion->numero_orden}\n" .
             "📱 Equipo: {$reparacion->dispositivo} {$reparacion->marca} {$reparacion->modelo}\n" .
             "✅ *¡Su equipo está listo para recoger!*\n" .
-            "💰 Costo: S/ {$costo}\n\n" .
+            "💰 Costo: {$simbolo} {$costo}\n\n" .
             "📍 Lo esperamos en nuestro local para realizar la entrega. ¡Gracias por su preferencia!";
 
         if ($urlEstado) {

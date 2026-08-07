@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Configuracion;
+use App\Helpers\PaisHelper;
 use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
 
             // Si no hay configuración, crear un objeto con valores por defecto
             if (!$empresa) {
+                $paisConfig = PaisHelper::configuracionActual();
                 $empresa = (object) [
                     'nombre_tienda'    => 'CRM Celulares',
                     'ruc'              => '',
@@ -50,9 +52,10 @@ class AppServiceProvider extends ServiceProvider
                     'whatsapp'         => '',
                     'email'            => '',
                     'logo'             => null,
-                    'igv'              => 18,
-                    'moneda'           => 'PEN',
-                    'simbolo_moneda'   => 'S/.',
+                    'igv'              => $paisConfig['impuesto'],
+                    'moneda'           => $paisConfig['moneda'],
+                    'simbolo_moneda'   => $paisConfig['simbolo_moneda'],
+                    'pais'             => $paisConfig['pais'],
                     'terminos_garantia' => '',
                 ];
             }

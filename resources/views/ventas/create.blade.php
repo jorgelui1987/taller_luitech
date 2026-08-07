@@ -105,15 +105,15 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">S/ 0.00</span></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— S/ 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <div class="d-flex justify-content-between mb-2" id="cuponRow" style="display:none;">
                         <span>Cupón <span id="lblCuponCodigo" class="text-success"></span></span>
-                        <span id="lblCuponDescuento" class="text-danger">— S/ 0.00</span>
+                        <span id="lblCuponDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2"><span>IGV ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">S/ 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <hr>
-                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#a855f7;">S/ 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#a855f7;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <button type="submit" class="btn btn-primary w-100 py-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
                 </form>
             </div>
@@ -176,9 +176,9 @@ function agregar() {
         let tr = document.createElement('tr'); tr.id = 'fila-' + id;
         tr.innerHTML = `<td><input type="hidden" name="productos[${idx}][id]" value="${id}"><strong>${nombre}</strong><br><small style="color:#999;">Stock: ${stock}</small></td>
             <td><input type="number" name="productos[${idx}][cantidad]" value="1" min="1" max="${stock}" class="form-control form-control-sm cant" style="width:65px;" onchange="recalc('${id}')"></td>
-            <td>S/ ${precio.toFixed(2)}</td>
+            <td>{{ $empresa->simbolo_moneda ?? '$' }} ${precio.toFixed(2)}</td>
             <td><input type="number" name="productos[${idx}][descuento]" value="0" min="0" step="0.01" class="form-control form-control-sm" style="width:80px;" onchange="recalc('${id}')"></td>
-            <td id="sub-${id}"><strong>S/ ${precio.toFixed(2)}</strong></td>
+            <td id="sub-${id}"><strong>{{ $empresa->simbolo_moneda ?? '$' }} ${precio.toFixed(2)}</strong></td>
             <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="quitar('${id}')"><i class="fas fa-times"></i></button></td>`;
         cuerpo.appendChild(tr); idx++;
     }
@@ -190,7 +190,7 @@ function recalc(id) {
     if (!tr) return;
     let cant = parseInt(tr.querySelector('.cant').value) || 0;
     let desc = parseFloat(tr.querySelectorAll('input')[2].value) || 0;
-    document.getElementById('sub-' + id).innerHTML = '<strong>S/ ' + Math.max((items[id].precio * cant) - desc, 0).toFixed(2) + '</strong>';
+    document.getElementById('sub-' + id).innerHTML = '<strong>{{ $empresa->simbolo_moneda ?? '$' }} ' + Math.max((items[id].precio * cant) - desc, 0).toFixed(2) + '</strong>';
     totales();
 }
 
@@ -223,18 +223,19 @@ function totales() {
         }
     }
     let base = Math.max(sub - dg - descCupon, 0);
-    document.getElementById('lblSubtotal').textContent = 'S/ ' + sub.toFixed(2);
-    document.getElementById('lblDescuento').textContent = '— S/ ' + dg.toFixed(2);
+    let simbolo = '{{ $empresa->simbolo_moneda ?? '$' }}';
+    document.getElementById('lblSubtotal').textContent = simbolo + ' ' + sub.toFixed(2);
+    document.getElementById('lblDescuento').textContent = '— ' + simbolo + ' ' + dg.toFixed(2);
     if (cuponAplicado) {
         document.getElementById('cuponRow').style.display = 'flex';
         document.getElementById('lblCuponCodigo').textContent = cuponAplicado.codigo;
-        document.getElementById('lblCuponDescuento').textContent = '— S/ ' + descCupon.toFixed(2);
+        document.getElementById('lblCuponDescuento').textContent = '— ' + simbolo + ' ' + descCupon.toFixed(2);
     } else {
         document.getElementById('cuponRow').style.display = 'none';
     }
     let igvPct = {{ $empresa->igv ?? 18 }};
-    document.getElementById('lblIgv').textContent = 'S/ ' + (base * (igvPct / 100)).toFixed(2);
-    document.getElementById('lblTotal').textContent = 'S/ ' + (base * (1 + igvPct / 100)).toFixed(2);
+    document.getElementById('lblIgv').textContent = simbolo + ' ' + (base * (igvPct / 100)).toFixed(2);
+    document.getElementById('lblTotal').textContent = simbolo + ' ' + (base * (1 + igvPct / 100)).toFixed(2);
     btnReg.disabled = Object.keys(items).length === 0;
 }
 

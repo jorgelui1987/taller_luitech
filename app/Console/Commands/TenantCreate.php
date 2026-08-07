@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Configuracion;
+use App\Helpers\PaisHelper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,8 @@ class TenantCreate extends Command
         . ' {--password= : Contraseña del admin}' // NOSONAR - Entrada CLI segura, no credencial hardcodeada
         . ' {--plan=gratis : Plan (gratis, basico, profesional, empresarial)}'
         . ' {--max-usuarios=3 : Máximo de usuarios permitidos}'
-        . ' {--max-productos=50 : Máximo de productos permitidos}';
+        . ' {--max-productos=50 : Máximo de productos permitidos}'
+        . ' {--pais=PE : País (PE, CL, AR, MX, CO, EC, BO, UY, PY)}';
 
     protected $description = 'Crea un nuevo tenant (cliente SaaS) con su administrador y configuración inicial';
 
@@ -33,6 +35,7 @@ class TenantCreate extends Command
             'plan'          => $this->option('plan'),
             'max_usuarios'  => (int) $this->option('max-usuarios'),
             'max_productos' => (int) $this->option('max-productos'),
+            'pais'          => $this->option('pais'),
         ];
 
         // Auto-generar subdominio si no se proporcionó
@@ -57,6 +60,7 @@ class TenantCreate extends Command
             'plan'          => 'required|in:gratis,basico,profesional,empresarial',
             'max_usuarios'  => 'required|integer|min:1',
             'max_productos' => 'required|integer|min:1',
+            'pais'          => 'nullable|string|max:2',
         ]);
 
         if ($validator->fails()) {
@@ -66,8 +70,12 @@ class TenantCreate extends Command
             return Command::FAILURE;
         }
 
+        // Configuración por país
+        $pais = $data['pais'] ?? 'PE';
+        $paisConfig = PaisHelper::configuracionPorPais($pais);
+
         try {
-            DB::transaction(function () use ($data) {
+            DB::transaction(function () use ($data, $pais, $paisConfig) {
                 $tenant = Tenant::create([
                     'empresa'          => $data['empresa'],
                     'subdominio'       => $data['subdominio'],
@@ -76,6 +84,10 @@ class TenantCreate extends Command
                     'estado'           => 'activo',
                     'max_usuarios'     => $data['max_usuarios'],
                     'max_productos'    => $data['max_productos'],
+                    'pais'             => $pais,
+                    'moneda'           => $paisConfig['moneda'],
+                    'simbolo_moneda'   => $paisConfig['simbolo_moneda'],
+                    'impuesto'         => $paisConfig['impuesto'],
                 ]);
 
                 // Admin del tenant
@@ -91,9 +103,11 @@ class TenantCreate extends Command
                 // Configuración inicial
                 Configuracion::create([
                     'nombre_tienda'  => $data['empresa'],
-                    'igv'            => 18.00,
-                    'moneda'         => 'PEN',
-                    'simbolo_moneda' => 'S/',
+                    'igv'            => $paisConfig['impuesto'],
+                    'moneda'         => $paisConfig['moneda'],
+                    'simbolo_moneda' => $paisConfig['simbolo_moneda'],
+                    'pais'           => $pais,
+                    'zona_horaria'   => $paisConfig['zona_horaria'],
                     'tenant_id'      => $tenant->id,
                 ]);
 

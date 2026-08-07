@@ -15,6 +15,7 @@ class Venta extends Model
         'subtotal', 'descuento', 'impuesto', 'total',
         'comision_monto', 'comision_pagada',
         'metodo_pago', 'estado', 'notas', 'tenant_id',
+        'dte_tipo', 'dte_folio', 'dte_token', 'dte_pdf_url', 'dte_estado',
     ];
 
     protected $casts = [

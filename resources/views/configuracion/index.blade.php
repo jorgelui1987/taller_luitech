@@ -69,10 +69,50 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="ruc" class="form-label">RUC</label>
+                        <label for="pais" class="form-label">País</label>
+                        <select name="pais" id="pais" class="form-select">
+                            <option value="">Seleccionar...</option>
+                            @foreach($paises as $cod => $nombre)
+                                <option value="{{ $cod }}" {{ (old('pais', $empresa->pais ?? 'PE') == $cod) ? 'selected' : '' }}>
+                                    {{ $nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="form-text">Al cambiar de país se ajustará automáticamente moneda, impuesto y zona horaria.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ruc" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT Emisor' : 'RUC' }}</label>
                         <input type="text" name="ruc" id="ruc" class="form-control"
                                value="{{ old('ruc', $empresa->ruc ?? '') }}" maxlength="20">
                     </div>
+
+                    @if($empresa->pais == 'CL')
+                    <div class="mb-3">
+                        <label for="razon_social" class="form-label">Razón Social</label>
+                        <input type="text" name="razon_social" id="razon_social" class="form-control"
+                               value="{{ old('razon_social', $empresa->razon_social ?? '') }}" maxlength="255">
+                    </div>
+                    <div class="mb-3">
+                        <label for="giro" class="form-label">Giro</label>
+                        <input type="text" name="giro" id="giro" class="form-control"
+                               value="{{ old('giro', $empresa->giro ?? '') }}" maxlength="255">
+                    </div>
+                    <div class="mb-3">
+                        <label for="comuna_ciudad" class="form-label">Comuna / Ciudad</label>
+                        <input type="text" name="comuna_ciudad" id="comuna_ciudad" class="form-control"
+                               value="{{ old('comuna_ciudad', $empresa->comuna_ciudad ?? '') }}" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label for="proveedor_dte" class="form-label">Proveedor DTE</label>
+                        <select name="proveedor_dte" id="proveedor_dte" class="form-select">
+                            <option value="">Seleccionar...</option>
+                            <option value="acepta" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
+                            <option value="fove" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
+                            <option value="tundra" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'tundra' ? 'selected' : '' }}>Tundra</option>
+                        </select>
+                    </div>
+                    @endif
 
                     <div class="mb-3">
                         <label for="direccion" class="form-label">Dirección</label>
@@ -103,7 +143,7 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <label for="igv" class="form-label">IGV (%)</label>
+                            <label for="igv" class="form-label">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} (%)</label>
                             <input type="number" name="igv" id="igv" class="form-control" step="0.01" min="0" max="100"
                                    value="{{ old('igv', $empresa->igv ?? 18) }}" required>
                         </div>

@@ -6,6 +6,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Configuracion;
 use App\Models\PlanPrecio;
+use App\Helpers\PaisHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -170,12 +171,17 @@ class SuperAdminController extends Controller
             'max_usuarios'     => 'required|integer|min:1',
             'max_productos'    => 'required|integer|min:1',
             'fecha_expiracion' => 'nullable|date',
+            'pais'             => 'nullable|string|max:2',
             'nombre_admin'     => 'required|string|max:100',
             'email_admin'      => 'required|email|max:255|unique:users,email',
             'password_admin'   => 'required|string|min:8|confirmed',
         ]);
 
-        DB::transaction(function () use ($validated) {
+        // Configuración por país
+        $pais = $validated['pais'] ?? 'PE';
+        $paisConfig = PaisHelper::configuracionPorPais($pais);
+
+        DB::transaction(function () use ($validated, $pais, $paisConfig) {
             // 1. Crear el tenant
             $tenant = Tenant::create([
                 'empresa'          => $validated['empresa'],
@@ -187,6 +193,10 @@ class SuperAdminController extends Controller
                 'max_usuarios'     => $validated['max_usuarios'],
                 'max_productos'    => $validated['max_productos'],
                 'fecha_expiracion' => $validated['fecha_expiracion'],
+                'pais'             => $pais,
+                'moneda'           => $paisConfig['moneda'],
+                'simbolo_moneda'   => $paisConfig['simbolo_moneda'],
+                'impuesto'         => $paisConfig['impuesto'],
             ]);
 
             // 2. Crear el usuario admin del tenant
@@ -202,9 +212,11 @@ class SuperAdminController extends Controller
             // 3. Crear configuración inicial para el tenant
             Configuracion::create([
                 'nombre_tienda'    => $validated['empresa'],
-                'igv'              => 18.00,
-                'moneda'           => 'PEN',
-                'simbolo_moneda'   => 'S/',
+                'igv'              => $paisConfig['impuesto'],
+                'moneda'           => $paisConfig['moneda'],
+                'simbolo_moneda'   => $paisConfig['simbolo_moneda'],
+                'pais'             => $pais,
+                'zona_horaria'     => $paisConfig['zona_horaria'],
                 'tenant_id'        => $tenant->id,
             ]);
         });
@@ -340,7 +352,12 @@ class SuperAdminController extends Controller
             'email'          => 'required|email|max:255|unique:users,email',
             'password'       => 'required|string|min:8|confirmed',
             'terminos'       => 'accepted',
+            'pais'           => 'nullable|string|max:2',
         ]);
+
+        // Configuración por país
+        $pais = $validated['pais'] ?? 'PE';
+        $paisConfig = PaisHelper::configuracionPorPais($pais);
 
         // Generar subdominio automáticamente a partir del nombre de la empresa
         $subdominio = Str::slug($validated['empresa'], '-');
@@ -355,7 +372,7 @@ class SuperAdminController extends Controller
             $counter++;
         }
 
-        DB::transaction(function () use ($validated, $subdominio) {
+        DB::transaction(function () use ($validated, $subdominio, $pais, $paisConfig) {
             $tenant = Tenant::create([
                 'empresa'          => $validated['empresa'],
                 'subdominio'       => $subdominio,
@@ -364,6 +381,10 @@ class SuperAdminController extends Controller
                 'estado'           => 'activo',
                 'max_usuarios'     => 3,
                 'max_productos'    => 50,
+                'pais'             => $pais,
+                'moneda'           => $paisConfig['moneda'],
+                'simbolo_moneda'   => $paisConfig['simbolo_moneda'],
+                'impuesto'         => $paisConfig['impuesto'],
             ]);
 
             User::create([
@@ -377,9 +398,11 @@ class SuperAdminController extends Controller
 
             Configuracion::create([
                 'nombre_tienda'  => $validated['empresa'],
-                'igv'            => 18.00,
-                'moneda'         => 'PEN',
-                'simbolo_moneda' => 'S/',
+                'igv'            => $paisConfig['impuesto'],
+                'moneda'         => $paisConfig['moneda'],
+                'simbolo_moneda' => $paisConfig['simbolo_moneda'],
+                'pais'           => $pais,
+                'zona_horaria'   => $paisConfig['zona_horaria'],
                 'tenant_id'      => $tenant->id,
             ]);
         });

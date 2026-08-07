@@ -55,7 +55,7 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 <span class="n">{{ $det->producto->nombre ?? '—' }}</span>
 @if($det->producto && $det->producto->marca)<span class="d"> {{ $det->producto->marca->nombre }}</span>@endif
 @if($det->imei_vendido)<span class="d"> IMEI:{{ $det->imei_vendido }}</span>@endif
-@if($det->descuento > 0)<span class="d"> Desc:-S/{{ number_format($det->descuento,2) }}</span>@endif
+@if($det->descuento > 0)<span class="d"> Desc:-{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($det->descuento,2) }}</span>@endif
 </td>
 <td class="c">{{ $det->cantidad }}</td>
 <td class="p">{{ number_format($det->precio_unitario,2) }}</td>
@@ -65,10 +65,10 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 </tbody>
 </table>
 <div class="tot">
-<div class="l"><span>Subtotal</span><span>S/ {{ number_format($venta->subtotal,2) }}</span></div>
-@if($venta->descuento > 0)<div class="l"><span>Descuento</span><span>-S/ {{ number_format($venta->descuento,2) }}</span></div>@endif
-<div class="l"><span>IGV ({{ $empresa->igv ?? 18 }}%)</span><span>S/ {{ number_format($venta->impuesto,2) }}</span></div>
-<div class="lt"><span>TOTAL</span><span>S/ {{ number_format($venta->total,2) }}</span></div>
+<div class="l"><span>Subtotal</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->subtotal,2) }}</span></div>
+@if($venta->descuento > 0)<div class="l"><span>Descuento</span><span>-{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->descuento,2) }}</span></div>@endif
+<div class="l"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->impuesto,2) }}</span></div>
+<div class="lt"><span>TOTAL</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total,2) }}</span></div>
 </div>
 @if($venta->notas)<div class="not">Notas: {{ $venta->notas }}</div>@endif
 @if($empresa && $empresa->terminos_garantia)
