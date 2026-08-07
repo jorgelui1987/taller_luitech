@@ -51,8 +51,12 @@ class Cupon extends Model
 
     public function esValido(): bool
     {
-        if ($this->estado !== 'activo') return false;
-        if ($this->fecha_expiracion && $this->fecha_expiracion->isPast()) return false;
+        if ($this->estado !== 'activo') {
+            return false;
+        }
+        if ($this->fecha_expiracion && $this->fecha_expiracion->isPast()) {
+            return false;
+        }
         return true;
     }
 

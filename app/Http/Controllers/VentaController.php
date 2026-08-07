@@ -233,7 +233,7 @@ class VentaController extends Controller
         }
 
         // Limpiar teléfono: solo dígitos
-        $telefono = preg_replace('/[^0-9]/', '', $telefono);
+        $telefono = preg_replace('/\D/', '', $telefono);
 
         // Si no tiene código de país, agregar el de la configuración
         $pais = $empresa?->pais ?? 'PE';

@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void {}
+    public function register(): void
+    {
+        // No hay servicios que registrar en este provider.
+    }
 
     public function boot(): void
     {

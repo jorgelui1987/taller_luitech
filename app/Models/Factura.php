@@ -42,7 +42,7 @@ class Factura extends Model
         $max = static::max('numero_factura');
         $numero = 1;
         if ($max) {
-            $parte = (int) preg_replace('/[^0-9]/', '', $max);
+            $parte = (int) preg_replace('/\D/', '', $max);
             $numero = $parte + 1;
         }
         return 'FAC-' . str_pad($numero, 6, '0', STR_PAD_LEFT);

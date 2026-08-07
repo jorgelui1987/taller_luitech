@@ -24,10 +24,8 @@ RUN apt-get update -qq && apt-get install -y -qq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) pdo_mysql pdo_pgsql mbstring exif bcmath gd zip intl
-
-# Habilitar mod_rewrite de Apache
-RUN a2enmod rewrite
+    && docker-php-ext-install -j$(nproc) pdo_mysql pdo_pgsql mbstring exif bcmath gd zip intl \
+    && a2enmod rewrite
 
 # Configurar el DocumentRoot de Apache para Laravel
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf && \

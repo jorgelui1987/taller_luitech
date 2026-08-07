@@ -114,7 +114,9 @@ class Tenant extends Model
 
     public function getUrlPublicaAttribute(): ?string
     {
-        if (!$this->slug_publico) return null;
+        if (!$this->slug_publico) {
+            return null;
+        }
         return url('/t/' . $this->slug_publico);
     }
 

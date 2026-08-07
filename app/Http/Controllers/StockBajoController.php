@@ -73,7 +73,7 @@ class StockBajoController extends Controller
             return back()->with('error', 'No hay número configurado para notificaciones de WhatsApp. Configúralo en Ajustes.');
         }
 
-        $url = "https://wa.me/" . preg_replace('/[^0-9]/', '', $telefono) . "?text=" . urlencode($mensaje);
+        $url = "https://wa.me/" . preg_replace('/\D/', '', $telefono) . "?text=" . urlencode($mensaje);
 
         return redirect()->away($url);
     }

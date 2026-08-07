@@ -65,12 +65,6 @@ class Devolucion extends Model
 
     public static function generarNumero(): string
     {
-        $tenantId = auth()->check() ? auth()->user()->tenant_id : null;
-        if (!$tenantId) {
-            $tenant = \App\Models\Tenant::first();
-            $tenantId = $tenant ? $tenant->id : 1;
-        }
-
         $maxNumero = \Illuminate\Support\Facades\DB::table('devoluciones')
             ->where('numero_devolucion', 'like', 'DEV-%')
             ->max('numero_devolucion');

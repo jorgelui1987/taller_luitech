@@ -49,12 +49,6 @@ class Venta extends Model
 
     public static function generarNumero(): string
     {
-        $tenantId = auth()->check() ? auth()->user()->tenant_id : null;
-        if (!$tenantId) {
-            $tenant = \App\Models\Tenant::first();
-            $tenantId = $tenant ? $tenant->id : 1;
-        }
-        
         // Buscar el número más alto existente (sin importar tenant_id)
         // Esto evita el problema de que el último registro tenga otro tenant
         $maxNumero = \Illuminate\Support\Facades\DB::table('ventas')

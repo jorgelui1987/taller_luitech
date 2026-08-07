@@ -14,7 +14,10 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        // Los listeners se registran automáticamente desde la propiedad $listen.
+    }
 
     public function shouldDiscoverEvents(): bool
     {

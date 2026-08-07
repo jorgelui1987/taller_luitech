@@ -136,7 +136,7 @@ class Reparacion extends Model
 
         $numero = 1;
         if ($maxNumero) {
-            $numExtraido = (int) preg_replace('/[^0-9]/', '', $maxNumero);
+            $numExtraido = (int) preg_replace('/\D/', '', $maxNumero);
             if ($numExtraido > 0) {
                 $numero = $numExtraido + 1;
             }

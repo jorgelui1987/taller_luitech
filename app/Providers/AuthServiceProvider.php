@@ -8,5 +8,8 @@ class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [];
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        // No hay políticas personalizadas que registrar en este provider.
+    }
 }
