@@ -35,6 +35,21 @@
                                 <input type="text" name="empresa" id="empresa" class="form-control @error('empresa') is-invalid @enderror" value="{{ old('empresa') }}" required placeholder="Ej: Celulares García">
                                 @error('empresa') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
+                            <div class="mb-3">
+                                <label for="pais" class="form-label">País</label>
+                                <select name="pais" id="pais" class="form-select @error('pais') is-invalid @enderror">
+                                    <option value="CL" {{ old('pais', 'CL') == 'CL' ? 'selected' : '' }}>🇨🇱 Chile</option>
+                                    <option value="PE" {{ old('pais') == 'PE' ? 'selected' : '' }}>🇵🇪 Perú</option>
+                                    <option value="AR" {{ old('pais') == 'AR' ? 'selected' : '' }}>🇦🇷 Argentina</option>
+                                    <option value="MX" {{ old('pais') == 'MX' ? 'selected' : '' }}>🇲🇽 México</option>
+                                    <option value="CO" {{ old('pais') == 'CO' ? 'selected' : '' }}>🇨🇴 Colombia</option>
+                                    <option value="EC" {{ old('pais') == 'EC' ? 'selected' : '' }}>🇪🇨 Ecuador</option>
+                                    <option value="BO" {{ old('pais') == 'BO' ? 'selected' : '' }}>🇧🇴 Bolivia</option>
+                                    <option value="UY" {{ old('pais') == 'UY' ? 'selected' : '' }}>🇺🇾 Uruguay</option>
+                                    <option value="PY" {{ old('pais') == 'PY' ? 'selected' : '' }}>🇵🇾 Paraguay</option>
+                                </select>
+                                @error('pais') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                            </div>
 
                             <h5 class="border-bottom pb-2 mt-4">Datos del administrador</h5>
                             <div class="mb-3">

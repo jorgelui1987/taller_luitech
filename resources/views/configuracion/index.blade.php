@@ -108,7 +108,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="ruc" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT Emisor' : 'RUC' }}</label>
+                        <label for="ruc" class="form-label">RUT</label>
                         <input type="text" name="ruc" id="ruc" class="form-control"
                                value="{{ old('ruc', $empresa->ruc ?? '') }}" maxlength="20">
                     </div>

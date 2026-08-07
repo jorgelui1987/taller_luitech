@@ -355,8 +355,8 @@ class SuperAdminController extends Controller
             'pais'           => 'nullable|string|max:2',
         ]);
 
-        // Configuración por país
-        $pais = $validated['pais'] ?? 'PE';
+        // Configuración por país (default: Chile)
+        $pais = $validated['pais'] ?? 'CL';
         $paisConfig = PaisHelper::configuracionPorPais($pais);
 
         // Generar subdominio automáticamente a partir del nombre de la empresa
