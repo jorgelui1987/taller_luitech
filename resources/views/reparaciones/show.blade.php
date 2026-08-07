@@ -127,17 +127,11 @@
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.9);
     z-index: 9999;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100vw;
-    max-height: 100vh;
-    margin: 0;
-    padding: 0;
-    border: none;
+    display: none;
     align-items: center;
     justify-content: center;
 }
-.lightbox-overlay[open] {
+.lightbox-overlay.show {
     display: flex;
 }
 .lightbox-overlay img {
@@ -154,9 +148,6 @@
     cursor: pointer;
     background: none;
     border: none;
-}
-.lightbox-overlay::backdrop {
-    background: rgba(0,0,0,0.9);
 }
 /* Info badges */
 .info-badge {
@@ -719,10 +710,10 @@
 </div>
 
 {{-- Lightbox --}}
-<dialog class="lightbox-overlay" id="lightbox">
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de fotos">
     <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
-</dialog>
+</div>
 @endsection
 
 @push('scripts')
@@ -900,11 +891,11 @@ function eliminarFoto(fotoId) {
 // ── LIGHTBOX ──
 function abrirLightbox(src) {
     document.getElementById('lightboxImg').src = src;
-    document.getElementById('lightbox').showModal();
+    document.getElementById('lightbox').classList.add('show');
 }
 
 function cerrarLightbox() {
-    document.getElementById('lightbox').close();
+    document.getElementById('lightbox').classList.remove('show');
 }
 
 // ── Inicializar al cargar ──
@@ -913,9 +904,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Lightbox: cerrar al hacer clic fuera de la imagen o en el botón cerrar
     const lightbox = document.getElementById('lightbox');
+    const closeBtn = lightbox ? lightbox.querySelector('.close') : null;
+    if (closeBtn) {
+        closeBtn.addEventListener('click', cerrarLightbox);
+    }
     if (lightbox) {
         lightbox.addEventListener('click', function(e) {
-            if (e.target === lightbox || e.target.classList.contains('close')) {
+            if (e.target === lightbox) {
                 cerrarLightbox();
             }
         });
