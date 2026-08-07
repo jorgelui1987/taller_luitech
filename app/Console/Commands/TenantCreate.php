@@ -21,7 +21,7 @@ class TenantCreate extends Command
         . ' {--plan=gratis : Plan (gratis, basico, profesional, empresarial)}'
         . ' {--max-usuarios=3 : Máximo de usuarios permitidos}'
         . ' {--max-productos=50 : Máximo de productos permitidos}'
-        . ' {--pais=PE : País (PE, CL, AR, MX, CO, EC, BO, UY, PY)}';
+        . ' {--pais=CL : País (PE, CL, AR, MX, CO, EC, BO, UY, PY)}';
 
     protected $description = 'Crea un nuevo tenant (cliente SaaS) con su administrador y configuración inicial';
 
@@ -71,7 +71,7 @@ class TenantCreate extends Command
         }
 
         // Configuración por país
-        $pais = $data['pais'] ?? 'PE';
+        $pais = $data['pais'] ?? 'CL';
         $paisConfig = PaisHelper::configuracionPorPais($pais);
 
         try {

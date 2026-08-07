@@ -136,9 +136,9 @@ class PaisHelper
     {
         try {
             $empresa = Configuracion::empresa();
-            $pais = $empresa?->pais ?? 'PE';
+            $pais = $empresa?->pais ?? 'CL';
         } catch (\Exception $e) {
-            $pais = 'PE';
+            $pais = 'CL';
         }
 
         return self::configuracionPorPais($pais);

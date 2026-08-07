@@ -99,7 +99,7 @@
                             <select name="pais" id="pais" class="form-select">
                                 <option value="">Seleccionar...</option>
                                 @foreach($paises as $cod => $nombre)
-                                    <option value="{{ $cod }}" {{ (old('pais', $empresa->pais ?? 'PE') == $cod) ? 'selected' : '' }}>
+                                    <option value="{{ $cod }}" {{ (old('pais', $empresa->pais ?? 'CL') == $cod) ? 'selected' : '' }}>
                                         {{ $nombre }}
                                     </option>
                                 @endforeach
