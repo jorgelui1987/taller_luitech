@@ -719,7 +719,7 @@
 </div>
 
 {{-- Lightbox --}}
-<dialog class="lightbox-overlay" id="lightbox" onclick="cerrarLightbox()" onkeydown="if(event.key==='Escape'){cerrarLightbox();}">
+<dialog class="lightbox-overlay" id="lightbox">
     <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
 </dialog>
@@ -910,6 +910,16 @@ function cerrarLightbox() {
 // ── Inicializar al cargar ──
 document.addEventListener('DOMContentLoaded', function() {
     initSignaturePads();
+
+    // Lightbox: cerrar al hacer clic fuera de la imagen o en el botón cerrar
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox || e.target.classList.contains('close')) {
+                cerrarLightbox();
+            }
+        });
+    }
 });
 </script>
 @endpush
