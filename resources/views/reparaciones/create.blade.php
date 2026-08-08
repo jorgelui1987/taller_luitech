@@ -54,6 +54,11 @@
     cursor:pointer; font-size:10px; padding:0;
 }
 .foto-preview-item .btn-remove:hover { background:#dc2626; transform:scale(1.1); }
+/* Buscador de clientes: permitir salto de línea en los resultados */
+#clienteResultados .dropdown-item {
+    white-space: normal;
+    word-break: break-word;
+}
 </style>
 @endpush
 
@@ -697,7 +702,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const nombre = (c.nombre || '') + ' ' + (c.apellido || '');
                     const tel = c.telefono || c.celular || '';
                     const dni = c.dni ? ' | DNI: ' + c.dni : '';
-                    return '<a href="#" class="dropdown-item" data-id="' + c.id + '" data-nombre="' + nombre.replace(/"/g, '"') + '" style="font-size:13px; padding:6px 10px;">' +
+                    return '<a href="#" class="dropdown-item" data-id="' + c.id + '" data-nombre="' + nombre.replace(/"/g, '"') + '" style="font-size:13px; padding:6px 10px; white-space:normal; word-break:break-word;">' +
                         '<div style="font-weight:600;">' + nombre + '</div>' +
                         '<div style="font-size:11px; color:#9ca3af;">' + (tel ? '📞 ' + tel : '') + dni + '</div>' +
                     '</a>';
