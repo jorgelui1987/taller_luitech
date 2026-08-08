@@ -182,14 +182,14 @@
                                 <!-- RUT Emisor y Razón Social -->
                                 <div class="row g-2 mb-2">
                                     <div class="col-md-6">
-                                        <label for="rut_emisor" class="form-label" style="font-size:12px;">RUT Emisor <span style="color:#dc2626;">*</span></label>
-                                        <input type="text" name="rut_emisor" id="rut_emisor" class="form-control form-control-sm"
-                                               value="{{ $empresa->rut_emisor ?? '' }}" placeholder="12.345.678-9" required>
+                                        <label for="fe_rut_emisor" class="form-label" style="font-size:12px;">RUT Emisor</label>
+                                        <input type="text" name="rut_emisor" id="fe_rut_emisor" class="form-control form-control-sm"
+                                               value="{{ $empresa->rut_emisor ?? '' }}" placeholder="12.345.678-9">
                                         <div class="form-text" style="font-size:10px;">Tu RUT de empresa, ej: 76.123.456-7</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="razon_social" class="form-label" style="font-size:12px;">Razón Social</label>
-                                        <input type="text" name="razon_social" id="razon_social" class="form-control form-control-sm"
+                                        <label for="fe_razon_social" class="form-label" style="font-size:12px;">Razón Social</label>
+                                        <input type="text" name="razon_social" id="fe_razon_social" class="form-control form-control-sm"
                                                value="{{ $empresa->razon_social ?? '' }}" placeholder="Nombre legal de tu empresa">
                                     </div>
                                 </div>
@@ -197,13 +197,13 @@
                                 <!-- Giro y Comuna -->
                                 <div class="row g-2 mb-2">
                                     <div class="col-md-6">
-                                        <label for="giro" class="form-label" style="font-size:12px;">Giro</label>
-                                        <input type="text" name="giro" id="giro" class="form-control form-control-sm"
+                                        <label for="fe_giro" class="form-label" style="font-size:12px;">Giro</label>
+                                        <input type="text" name="giro" id="fe_giro" class="form-control form-control-sm"
                                                value="{{ $empresa->giro ?? '' }}" placeholder="Ej: Venta de celulares">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="comuna_ciudad" class="form-label" style="font-size:12px;">Comuna / Ciudad</label>
-                                        <input type="text" name="comuna_ciudad" id="comuna_ciudad" class="form-control form-control-sm"
+                                        <label for="fe_comuna_ciudad" class="form-label" style="font-size:12px;">Comuna / Ciudad</label>
+                                        <input type="text" name="comuna_ciudad" id="fe_comuna_ciudad" class="form-control form-control-sm"
                                                value="{{ $empresa->comuna_ciudad ?? '' }}" placeholder="Ej: Santiago">
                                     </div>
                                 </div>
@@ -211,8 +211,8 @@
                                 <!-- Proveedor DTE -->
                                 <div class="row g-2 mb-2">
                                     <div class="col-md-6">
-                                        <label for="proveedor_dte" class="form-label" style="font-size:12px;">Proveedor DTE <span style="color:#dc2626;">*</span></label>
-                                        <select name="proveedor_dte" id="proveedor_dte" class="form-select form-select-sm" required>
+                                        <label for="fe_proveedor_dte" class="form-label" style="font-size:12px;">Proveedor DTE</label>
+                                        <select name="proveedor_dte" id="fe_proveedor_dte" class="form-select form-select-sm">
                                             <option value="">Seleccionar...</option>
                                             <option value="acepta" {{ ($empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
                                             <option value="fove"   {{ ($empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
@@ -221,8 +221,8 @@
                                         <div class="form-text" style="font-size:10px;">Proveedor autorizado que envía tus facturas al SII</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="dte_certificado" class="form-label" style="font-size:12px;">Certificado Digital (.pfx / .p12)</label>
-                                        <input type="file" name="dte_certificado" id="dte_certificado" class="form-control form-control-sm" accept=".pfx,.p12">
+                                        <label for="fe_dte_certificado" class="form-label" style="font-size:12px;">Certificado Digital (.pfx / .p12)</label>
+                                        <input type="file" name="dte_certificado" id="fe_dte_certificado" class="form-control form-control-sm" accept=".pfx,.p12">
                                         @if($empresa->dte_certificado)
                                             <div class="form-text" style="font-size:10px;color:#059669;">
                                                 <i class="fas fa-check-circle me-1"></i>Certificado cargado: {{ basename($empresa->dte_certificado) }}
