@@ -419,6 +419,12 @@
         <a class="indice-item" data-target="configuracion">
             <i class="fas fa-cog"></i> Configuración
         </a>
+        <a class="indice-item" data-target="facturacion-electronica">
+            <i class="fas fa-file-invoice"></i> Facturación Electrónica
+        </a>
+        <a class="indice-item" data-target="mercadopago">
+            <i class="fab fa-mercadopago"></i> Mercado Pago
+        </a>
         <a class="indice-item" data-target="pagina-publica">
             <i class="fas fa-globe"></i> Página Pública (Mini Web)
         </a>
@@ -1282,6 +1288,171 @@
                     <strong>Importante:</strong> Solo el <strong>Administrador</strong> puede acceder a Configuración.
                     Asigna roles con cuidado: los <strong>vendedores</strong> no pueden ver reportes financieros
                     ni configuración.
+                </div>
+            </div>
+        </section>
+
+        {{-- ── FACTURACIÓN ELECTRÓNICA ── --}}
+        <section class="ayuda-seccion" id="facturacion-electronica">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Facturación Electrónica</h2>
+                    <p class="seccion-desc">Emite DTE (Chile) o Facturas DIAN (Colombia) automáticamente</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Activar la facturación electrónica</div>
+                    <p class="paso-texto">
+                        Ve a <strong>Configuración → Empresa</strong> y activa el interruptor
+                        <strong>"Facturación Electrónica"</strong>. Al activarlo, se mostrarán los campos
+                        necesarios para configurar tu empresa.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Completar los datos de la empresa</div>
+                    <p class="paso-texto">
+                        Completa los siguientes campos:
+                        <br>• <strong>RUT Emisor</strong> - tu RUT de empresa (ej: 76.123.456-7).
+                        <br>• <strong>Razón Social</strong> - el nombre legal de tu empresa.
+                        <br>• <strong>Giro</strong> - tu giro comercial (ej: "Venta de celulares").
+                        <br>• <strong>Comuna / Ciudad</strong> - tu comuna (ej: "Santiago").
+                        <br>• <strong>Proveedor DTE</strong> - Acepta, Fove o Tundra.
+                        <br>• <strong>Certificado Digital (.pfx)</strong> - el archivo que te emitió el SII.
+                        <br>• <strong>Contraseña del certificado</strong> - la clave que protege tu archivo .pfx.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Obtener el certificado digital</div>
+                    <p class="paso-texto">
+                        El certificado digital <strong>no se obtiene dentro del sistema</strong>. Debes obtenerlo:
+                        <br>• <strong>Chile:</strong> En el SII (siiclave.cl) o en proveedores como Certisur o Acepta.
+                        <br>• <strong>Colombia:</strong> En la DIAN o en entidades de certificación como Certicámara.
+                        <br><br>El certificado es un archivo <strong>.pfx</strong> o <strong>.p12</strong> que funciona
+                        como la firma digital de tu empresa.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Contratar un proveedor DTE (Chile)</div>
+                    <p class="paso-texto">
+                        Para Chile, necesitas un <strong>proveedor DTE autorizado</strong> que envíe tus facturas al SII:
+                        <br>• <strong>Acepta</strong> (acepta.cl) - recomendado para PyMEs.
+                        <br>• <strong>Fove</strong> (fove.cl).
+                        <br>• <strong>Tundra</strong> (tundra.cl).
+                        <br><br>Estos proveedores se encargan de firmar el XML, enviarlo al SII y generar el PDF con sello.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">5</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Cómo funciona al registrar ventas</div>
+                    <p class="paso-texto">
+                        Cuando la facturación electrónica está <strong>activada</strong>, cada venta registrada
+                        intentará emitir el documento electrónico automáticamente:
+                        <br>• <strong>Chile:</strong> Factura (tipo 33) si hay cliente, o Boleta (tipo 39) si es venta general.
+                        <br>• <strong>Colombia:</strong> Factura Electrónica de Venta (FEV) con CUFE.
+                        <br><br>Si la facturación está <strong>desactivada</strong>, las ventas se registran normalmente
+                        sin emitir documentos electrónicos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="nota">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    Cada empresa puede <strong>activar o desactivar</strong> la facturación electrónica cuando quiera.
+                    Las empresas que no la activan no necesitan certificado digital ni proveedor DTE.
+                </div>
+            </div>
+        </section>
+
+        {{-- ── MERCADO PAGO ── --}}
+        <section class="ayuda-seccion" id="mercadopago">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#00b1ea,#0090c0);">
+                    <i class="fab fa-mercadopago"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Mercado Pago</h2>
+                    <p class="seccion-desc">Cobra con QR y la boleta se envía al SII automáticamente</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Activar Mercado Pago</div>
+                    <p class="paso-texto">
+                        Ve a <strong>Configuración → Empresa</strong> y activa el interruptor
+                        <strong>"Mercado Pago"</strong>. Al activarlo, se mostrarán los campos
+                        para ingresar tus credenciales.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Obtener tus credenciales</div>
+                    <p class="paso-texto">
+                        Para obtener tus credenciales:
+                        <br>1. Crea una cuenta en <strong>Mercado Pago Developers</strong> (developers.mercadopago.com).
+                        <br>2. Crea una aplicación.
+                        <br>3. Copia tu <strong>Public Key</strong> y tu <strong>Access Token</strong>.
+                        <br><br>Pégalos en los campos correspondientes en Configuración.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Cobrar con QR</div>
+                    <p class="paso-texto">
+                        Cuando Mercado Pago está <strong>activado</strong>, en la vista de cada venta
+                        aparecerá un botón <strong>"Pagar con Mercado Pago"</strong>.
+                        Al hacer clic, se genera un <strong>código QR</strong> que el cliente puede escanear
+                        con su celular para pagar.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Boleta al SII automática</div>
+                    <p class="paso-texto">
+                        Cuando el cliente paga con Mercado Pago, la <strong>boleta se envía al SII automáticamente</strong>
+                        (si tu plan de Mercado Pago lo incluye). El sistema recibe la confirmación del pago
+                        y marca la venta como <strong>"pagada"</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="nota">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    La boleta que emite Mercado Pago sale con el <strong>RUT de tu empresa</strong> que configuraste
+                    en Mercado Pago. No necesitas certificado digital ni proveedor DTE para estas boletas.
                 </div>
             </div>
         </section>
