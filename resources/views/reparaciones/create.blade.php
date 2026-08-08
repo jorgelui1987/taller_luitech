@@ -102,12 +102,14 @@
                                             <div class="col-md-5">
                                                 <label for="clienteBuscarInput" class="form-label">Cliente <span class="text-danger">*</span></label>
                                                 <div class="cliente-buscador" style="position:relative;">
-                                                    <input type="text"
+                                                    <textarea
                                                            id="clienteBuscarInput"
                                                            class="form-control @error('cliente_id') is-invalid @enderror"
                                                            placeholder="🔍 Escribe nombre, teléfono o DNI..."
                                                            autocomplete="off"
-                                                           value="{{ old('cliente_id', request('cliente')) ? optional($clientes->firstWhere('id', old('cliente_id', request('cliente'))))->nombre_completo : '' }}">
+                                                           rows="1"
+                                                           style="resize:none; overflow:hidden; min-height:38px; line-height:1.4;"
+                                                           oninput="autoAjustarClienteInput(this)">{{ old('cliente_id', request('cliente')) ? optional($clientes->firstWhere('id', old('cliente_id', request('cliente'))))->nombre_completo : '' }}</textarea>
                                                     <input type="hidden" name="cliente_id" id="clienteIdHidden"
                                                            value="{{ old('cliente_id', request('cliente')) }}">
                                                     <div id="clienteResultados" class="dropdown-menu"
@@ -276,7 +278,7 @@
                         </div>
 
                         {{-- ============================================================ --}}
-                        {{-- COLUMNA LATERAL (COSTOS + FOTOS + FIRMA) --}}
+                        {{-- COLUMNA LATERAL (COSTOS + FOTOS) --}}
                         {{-- ============================================================ --}}
                         <div class="col-lg-4">
 
@@ -363,9 +365,14 @@
                                 </div>
                             </div>
 
-                            {{-- Acordeón móvil: Firma del Cliente --}}
+                        </div>
+                    </div>
+
+                    {{-- Acordeón móvil: Firma del Cliente (ancho completo) --}}
+                    <div class="row g-3">
+                        <div class="col-12">
                             <div class="accordion-mobile">
-                                <div class="accordion-item mb-3">
+                                <div class="accordion-item">
                                     <div class="accordion-header active">
                                         <span><i class="fas fa-pen me-2" style="color:#a855f7;"></i>Firma del Cliente</span>
                                         <i class="fas fa-chevron-down"></i>
@@ -387,7 +394,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -640,6 +646,13 @@ document.addEventListener('input', function(e) {
 // ── BUSCADOR DE CLIENTES (AUTOCOMPLETADO) ──
 let clienteTimer = null;
 
+// Auto-ajustar la altura del textarea para mostrar el nombre completo
+function autoAjustarClienteInput(el) {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight < 38 ? 38 : el.scrollHeight) + 'px';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('clienteBuscarInput');
     const resultados = document.getElementById('clienteResultados');
@@ -653,6 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const nombre = input.value;
         if (nombre) {
             seleccionado.innerHTML = '✅ ' + nombre;
+            autoAjustarClienteInput(input);
         }
     }
 
@@ -701,6 +715,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         hidden.value = id;
                         seleccionado.innerHTML = '✅ ' + nombre;
                         resultados.style.display = 'none';
+                        autoAjustarClienteInput(input);
                     });
                 });
             })
