@@ -26,7 +26,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1b4b;">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#" style="text-decoration:none;">
-                <span style="width:40px;height:40px;background:linear-gradient(135deg,#a855f7,#ec4899);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 12px rgba(168,85,247,0.4);">📱</span>
+                <img src="{{ asset('logo-luitech.webp') }}" alt="LUITECH Logo" style="width:40px;height:40px;border-radius:12px;object-fit:contain;">
                 <span style="font-size:22px;font-weight:800;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;">LUITECH</span>
             </a>
             <div class="ms-auto">
