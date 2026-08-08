@@ -121,37 +121,6 @@
                         </div>
                     </div>
 
-                    @if($empresa->pais == 'CL')
-                    <div class="row g-2 mb-3">
-                        <div class="col-md-6">
-                            <label for="razon_social" class="form-label">Razón Social</label>
-                            <input type="text" name="razon_social" id="razon_social" class="form-control"
-                                   value="{{ old('razon_social', $empresa->razon_social ?? '') }}" maxlength="255">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="giro" class="form-label">Giro</label>
-                            <input type="text" name="giro" id="giro" class="form-control"
-                                   value="{{ old('giro', $empresa->giro ?? '') }}" maxlength="255">
-                        </div>
-                    </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-md-6">
-                            <label for="comuna_ciudad" class="form-label">Comuna / Ciudad</label>
-                            <input type="text" name="comuna_ciudad" id="comuna_ciudad" class="form-control"
-                                   value="{{ old('comuna_ciudad', $empresa->comuna_ciudad ?? '') }}" maxlength="100">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="proveedor_dte" class="form-label">Proveedor DTE</label>
-                            <select name="proveedor_dte" id="proveedor_dte" class="form-select">
-                                <option value="">Seleccionar...</option>
-                                <option value="acepta" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
-                                <option value="fove" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
-                                <option value="tundra" {{ old('proveedor_dte', $empresa->proveedor_dte ?? '') == 'tundra' ? 'selected' : '' }}>Tundra</option>
-                            </select>
-                        </div>
-                    </div>
-                    @endif
-
                     <!-- ── Facturación Electrónica ── -->
                     <div class="card mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
                         <div class="card-body p-3">
