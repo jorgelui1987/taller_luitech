@@ -119,6 +119,10 @@ class MercadoPagoService
 
         // Crear intención de pago en el dispositivo Point
         $response = Http::withToken($config->mercadopago_access_token)
+            ->withHeaders([
+                'X-Idempotency-Key' => 'venta-' . $venta->id . '-' . now()->timestamp,
+                'X-Site-Id'         => $siteId,
+            ])
             ->post("https://api.mercadopago.com/point/integration-api/devices/{$config->mercadopago_device_id}/payment-intents", [
                 'amount'      => (float) $venta->total,
                 'description' => "Venta {$venta->numero_venta}",
@@ -126,7 +130,6 @@ class MercadoPagoService
                     'installments' => 1,
                     'type'         => 'credit_card',
                 ],
-                'site_id' => $siteId,
                 'additional_info' => [
                     'external_reference' => $venta->numero_venta,
                 ],
