@@ -25,7 +25,10 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1b4b;">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">📱 CRM Celulares</a>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#" style="text-decoration:none;">
+                <span style="width:40px;height:40px;background:linear-gradient(135deg,#a855f7,#ec4899);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 12px rgba(168,85,247,0.4);">📱</span>
+                <span style="font-size:22px;font-weight:800;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;">LUITECH</span>
+            </a>
             <div class="ms-auto">
                 <a href="{{ route('registro.tenant') }}" class="btn btn-light me-2">Comenzar Gratis</a>
                 <a href="{{ route('login') }}" class="btn btn-outline-light">Iniciar Sesión</a>
@@ -37,34 +40,33 @@
     <header class="hero-section text-white text-center py-5">
         <div class="container">
             <h1 class="display-4 fw-bold">Gestiona tu tienda de celulares como nunca antes</h1>
-            <p class="lead mb-4">El CRM todo-en-uno para ventas, reparaciones, inventario y clientes</p>
             <div class="row justify-content-center g-3">
                 <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
-                        <i class="bi bi-cart3 fs-2"></i>
-                        <h5>Ventas</h5>
-                        <p class="small mb-0">Carrito, múltiples pagos, tickets</p>
+                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
+                        <div style="font-size:2.5rem;">🛒</div>
+                        <h5 class="mt-2 fw-bold">Ventas</h5>
+                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Carrito, múltiples pagos, tickets</p>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
-                        <i class="bi bi-tools fs-2"></i>
-                        <h5>Reparaciones</h5>
-                        <p class="small mb-0">Órdenes, estados, WhatsApp</p>
+                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
+                        <div style="font-size:2.5rem;">🔧</div>
+                        <h5 class="mt-2 fw-bold">Reparaciones</h5>
+                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Órdenes, estados, WhatsApp</p>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
-                        <i class="bi bi-box-seam fs-2"></i>
-                        <h5>Inventario</h5>
-                        <p class="small mb-0">Stock, IMEI, alertas</p>
+                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
+                        <div style="font-size:2.5rem;">📦</div>
+                        <h5 class="mt-2 fw-bold">Inventario</h5>
+                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Stock, IMEI, alertas</p>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.1);border-radius:12px;">
-                        <i class="bi bi-graph-up fs-2"></i>
-                        <h5>Reportes</h5>
-                        <p class="small mb-0">Dashboard, gráficos, PDF</p>
+                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
+                        <div style="font-size:2.5rem;">📈</div>
+                        <h5 class="mt-2 fw-bold">Reportes</h5>
+                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Dashboard, gráficos, PDF</p>
                     </div>
                 </div>
             </div>
@@ -194,18 +196,18 @@
             <!-- Nota: al registrarse obtienen plan Gratis -->
             <div class="text-center mt-4">
                 <p class="text-muted">
-                    <i class="bi bi-info-circle"></i>
+                    ℹ️
                     Al registrarse obtienes el plan <strong>Gratis</strong> automáticamente.
                     Puedes upgradear cuando quieras contactándonos.
                 </p>
                 <p class="mt-2">
-                    <i class="bi bi-whatsapp text-success"></i>
+                    💬
                     Contáctanos por WhatsApp:
                     <a href="https://wa.me/56982209690?text=Quiero%20información%20sobre%20los%20planes" target="_blank" class="text-success fw-bold">
                         +56982209690
                     </a>
                     &nbsp;·&nbsp;
-                    <i class="bi bi-envelope text-primary"></i>
+                    ✉️
                     <a href="mailto:luitechserena@gmail.com" class="text-primary fw-bold">luitechserena@gmail.com</a>
                 </p>
             </div>
