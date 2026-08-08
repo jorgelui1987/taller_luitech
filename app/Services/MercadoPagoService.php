@@ -81,7 +81,8 @@ class MercadoPagoService
     }
 
     /**
-     * Crea una intención de pago para cobrar con Point (terminal físico).
+     * Crea una order de pago para cobrar con Point (terminal físico).
+     * Usa la nueva Orders API de Mercado Pago.
      *
      * @param Venta $venta
      * @return array
@@ -105,38 +106,52 @@ class MercadoPagoService
             throw new FacturacionException('Falta el Device ID del Point. Configúralo en Configuración → Empresa → Mercado Pago.');
         }
 
-        // Crear intención de pago en el dispositivo Point
-        // El site_id se infiere automáticamente del Access Token (NO se envía manualmente)
+        // Monto entero sin decimales (como string)
+        $monto = (string) round((float) $venta->total, 0);
+
+        // Crear order de pago para el dispositivo Point (Orders API)
         $response = Http::withToken($config->mercadopago_access_token)
             ->withHeaders([
                 'X-Idempotency-Key' => 'venta-' . $venta->id . '-' . now()->timestamp,
             ])
-            ->post("https://api.mercadopago.com/point/integration-api/devices/{$config->mercadopago_device_id}/payment-intents", [
-                'amount'      => (float) $venta->total,
-                'description' => "Venta {$venta->numero_venta}",
-                'payment'     => [
-                    'installments' => 1,
-                    'type'         => 'credit_card',
+            ->post('https://api.mercadopago.com/v1/orders', [
+                'type'              => 'point',
+                'external_reference' => 'VENTA-' . $venta->numero_venta,
+                'expiration_time'   => 'PT16M',
+                'transactions'      => [
+                    'payments' => [
+                        [
+                            'amount' => $monto,
+                        ],
+                    ],
                 ],
-                'additional_info' => [
-                    'external_reference' => $venta->numero_venta,
+                'config'            => [
+                    'point' => [
+                        'terminal_id'       => $config->mercadopago_device_id,
+                        'print_on_terminal' => 'no_ticket',
+                    ],
+                    'payment_method' => [
+                        'default_type' => 'credit_card',
+                    ],
                 ],
+                'description'       => "Venta {$venta->numero_venta}",
             ]);
 
         if (!$response->successful()) {
             $errorBody = $response->json();
             $mensajeError = $errorBody['message'] ?? $errorBody['error'] ?? $response->body();
-            Log::error('Error Mercado Pago Point al crear intención: ' . $response->body());
+            Log::error('Error Mercado Pago Point al crear order: ' . $response->body());
             throw new FacturacionException('Error Point: ' . $mensajeError);
         }
 
         $data = $response->json();
 
         return [
-            'estado'           => 'pendiente',
-            'payment_intent_id' => $data['id'] ?? null,
-            'device_id'        => $config->mercadopago_device_id,
-            'mensaje'          => 'Pago enviado al Point. Espera la confirmación del dispositivo.',
+            'estado'       => 'pendiente',
+            'order_id'     => $data['id'] ?? null,
+            'payment_id'   => $data['transactions']['payments'][0]['id'] ?? null,
+            'device_id'    => $config->mercadopago_device_id,
+            'mensaje'      => 'Order enviada al Point. Espera la confirmación del dispositivo.',
         ];
     }
 
