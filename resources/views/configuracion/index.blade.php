@@ -30,23 +30,23 @@
 </div>
 
 <!-- ══════════ PESTAÑAS DE CONFIGURACIÓN ══════════ -->
-<ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="configTabs" role="tablist" style="border-bottom:2px solid #f3f4f6; padding-bottom:12px;">
-    <li class="nav-item" role="presentation">
+<ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="configTabs" style="border-bottom:2px solid #f3f4f6; padding-bottom:12px;">
+    <li class="nav-item">
         <button class="nav-link active px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-empresa" type="button" role="tab">
             <i class="fas fa-store me-1" style="color:#a855f7;"></i> Empresa
         </button>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-usuarios" type="button" role="tab">
             <i class="fas fa-users me-1" style="color:#06b6d4;"></i> Usuarios
         </button>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-publicidad" type="button" role="tab">
             <i class="fas fa-bullhorn me-1" style="color:#f59e0b;"></i> Publicidad
         </button>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-sistema" type="button" role="tab">
             <i class="fas fa-cog me-1" style="color:#10b981;"></i> Sistema
         </button>
@@ -182,14 +182,14 @@
                                 <!-- RUT Emisor y Razón Social -->
                                 <div class="row g-2 mb-2">
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">RUT Emisor <span style="color:#dc2626;">*</span></label>
-                                        <input type="text" name="rut_emisor" class="form-control form-control-sm"
+                                        <label for="rut_emisor" class="form-label" style="font-size:12px;">RUT Emisor <span style="color:#dc2626;">*</span></label>
+                                        <input type="text" name="rut_emisor" id="rut_emisor" class="form-control form-control-sm"
                                                value="{{ $empresa->rut_emisor ?? '' }}" placeholder="12.345.678-9" required>
                                         <div class="form-text" style="font-size:10px;">Tu RUT de empresa, ej: 76.123.456-7</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Razón Social</label>
-                                        <input type="text" name="razon_social" class="form-control form-control-sm"
+                                        <label for="razon_social" class="form-label" style="font-size:12px;">Razón Social</label>
+                                        <input type="text" name="razon_social" id="razon_social" class="form-control form-control-sm"
                                                value="{{ $empresa->razon_social ?? '' }}" placeholder="Nombre legal de tu empresa">
                                     </div>
                                 </div>
@@ -197,13 +197,13 @@
                                 <!-- Giro y Comuna -->
                                 <div class="row g-2 mb-2">
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Giro</label>
-                                        <input type="text" name="giro" class="form-control form-control-sm"
+                                        <label for="giro" class="form-label" style="font-size:12px;">Giro</label>
+                                        <input type="text" name="giro" id="giro" class="form-control form-control-sm"
                                                value="{{ $empresa->giro ?? '' }}" placeholder="Ej: Venta de celulares">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Comuna / Ciudad</label>
-                                        <input type="text" name="comuna_ciudad" class="form-control form-control-sm"
+                                        <label for="comuna_ciudad" class="form-label" style="font-size:12px;">Comuna / Ciudad</label>
+                                        <input type="text" name="comuna_ciudad" id="comuna_ciudad" class="form-control form-control-sm"
                                                value="{{ $empresa->comuna_ciudad ?? '' }}" placeholder="Ej: Santiago">
                                     </div>
                                 </div>
@@ -211,8 +211,8 @@
                                 <!-- Proveedor DTE -->
                                 <div class="row g-2 mb-2">
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Proveedor DTE <span style="color:#dc2626;">*</span></label>
-                                        <select name="proveedor_dte" class="form-select form-select-sm" required>
+                                        <label for="proveedor_dte" class="form-label" style="font-size:12px;">Proveedor DTE <span style="color:#dc2626;">*</span></label>
+                                        <select name="proveedor_dte" id="proveedor_dte" class="form-select form-select-sm" required>
                                             <option value="">Seleccionar...</option>
                                             <option value="acepta" {{ ($empresa->proveedor_dte ?? '') == 'acepta' ? 'selected' : '' }}>Acepta</option>
                                             <option value="fove"   {{ ($empresa->proveedor_dte ?? '') == 'fove' ? 'selected' : '' }}>Fove</option>
@@ -221,8 +221,8 @@
                                         <div class="form-text" style="font-size:10px;">Proveedor autorizado que envía tus facturas al SII</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Certificado Digital (.pfx / .p12)</label>
-                                        <input type="file" name="dte_certificado" class="form-control form-control-sm" accept=".pfx,.p12">
+                                        <label for="dte_certificado" class="form-label" style="font-size:12px;">Certificado Digital (.pfx / .p12)</label>
+                                        <input type="file" name="dte_certificado" id="dte_certificado" class="form-control form-control-sm" accept=".pfx,.p12">
                                         @if($empresa->dte_certificado)
                                             <div class="form-text" style="font-size:10px;color:#059669;">
                                                 <i class="fas fa-check-circle me-1"></i>Certificado cargado: {{ basename($empresa->dte_certificado) }}
@@ -236,8 +236,8 @@
                                 <!-- Contraseña del certificado -->
                                 <div class="row g-2">
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Contraseña del certificado</label>
-                                        <input type="password" name="certificado_password" class="form-control form-control-sm"
+                                        <label for="certificado_password" class="form-label" style="font-size:12px;">Contraseña del certificado</label>
+                                        <input type="password" name="certificado_password" id="certificado_password" class="form-control form-control-sm"
                                                placeholder="Clave del archivo .pfx" autocomplete="off">
                                         <div class="form-text" style="font-size:10px;">La contraseña que protege tu certificado digital</div>
                                     </div>
@@ -274,15 +274,15 @@
                                 <hr>
                                 <div class="row g-2">
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Public Key</label>
-                                        <input type="text" name="mercadopago_public_key" class="form-control form-control-sm"
+                                        <label for="mercadopago_public_key" class="form-label" style="font-size:12px;">Public Key</label>
+                                        <input type="text" name="mercadopago_public_key" id="mercadopago_public_key" class="form-control form-control-sm"
                                                value="{{ $empresa->mercadopago_public_key ?? '' }}"
                                                placeholder="APP_USR-xxxx-xxxx-xxxx-xxxx">
                                         <div class="form-text" style="font-size:10px;">La encuentras en developers.mercadopago.com</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label" style="font-size:12px;">Access Token</label>
-                                        <input type="password" name="mercadopago_access_token" class="form-control form-control-sm"
+                                        <label for="mercadopago_access_token" class="form-label" style="font-size:12px;">Access Token</label>
+                                        <input type="password" name="mercadopago_access_token" id="mercadopago_access_token" class="form-control form-control-sm"
                                                value="{{ $empresa->mercadopago_access_token ?? '' }}"
                                                placeholder="APP_USR-xxxx-xxxx-xxxx-xxxx" autocomplete="off">
                                         <div class="form-text" style="font-size:10px;">Token secreto para procesar pagos</div>
