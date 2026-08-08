@@ -201,21 +201,49 @@
             </div>
         </div>
 
-        @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
+        @if(($empresa->mercadopago_activo ?? false) && in_array($venta->estado, ['completada', 'pendiente']))
         <div class="card mb-3" style="border:1px solid #00b1ea;">
             <div class="card-body p-4">
                 <h6 class="fw-bold mb-3" style="color:#00b1ea;">
                     <i class="fab fa-mercadopago me-2"></i>Mercado Pago
                 </h6>
                 <p class="text-muted mb-3" style="font-size:12px;">
-                    Genera el QR de pago para que el cliente escanee y pague.
+                    Cobra esta venta con tu terminal Point o genera un QR de pago.
                 </p>
-                <form action="{{ route('ventas.mercadopago', $venta) }}" method="POST">
+
+                {{-- Botón Cobrar con Point --}}
+                <form action="{{ route('ventas.point', $venta) }}" method="POST" class="mb-2">
                     @csrf
                     <button type="submit" class="btn w-100" style="background:#00b1ea; color:#fff;">
+                        <i class="fas fa-credit-card me-2"></i>Cobrar con Point
+                    </button>
+                </form>
+
+                {{-- Botón Generar QR (solo si la venta está pendiente de pago MP) --}}
+                @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
+                <form action="{{ route('ventas.mercadopago', $venta) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-qrcode me-2"></i>Generar QR de Pago
                     </button>
                 </form>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        @if(session('point'))
+        <div class="card mb-3" style="border:1px solid #00b1ea;">
+            <div class="card-body p-4 text-center">
+                <h6 class="fw-bold mb-3" style="color:#00b1ea;">
+                    <i class="fab fa-mercadopago me-2"></i>Cobro enviado al Point
+                </h6>
+                <div class="mb-2" style="font-size:12px; color:#6b7280;">
+                    {{ session('point.mensaje') ?? 'Esperando confirmación del dispositivo...' }}
+                </div>
+                <div style="font-size:12px; color:#6b7280;">
+                    El estado de la venta se actualizará automáticamente al confirmarse el pago.
+                </div>
             </div>
         </div>
         @endif

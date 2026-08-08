@@ -205,6 +205,7 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/ventas/{venta}/ticket', [VentaController::class, 'printTicket'])->name('ventas.ticket');
             Route::get('/ventas/{venta}/whatsapp', [VentaController::class, 'enviarWhatsApp'])->name('ventas.whatsapp');
             Route::post('/ventas/{venta}/mercadopago', [MercadoPagoController::class, 'generarPago'])->name('ventas.mercadopago');
+            Route::post('/ventas/{venta}/point', [MercadoPagoController::class, 'cobrarPoint'])->name('ventas.point');
         });
 
         // Devoluciones (solo admin y vendedor)

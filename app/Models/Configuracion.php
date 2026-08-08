@@ -33,6 +33,7 @@ class Configuracion extends Model
         'mercadopago_activo',
         'mercadopago_public_key',
         'mercadopago_access_token',
+        'mercadopago_device_id',
         'zona_horaria',
         'terminos_garantia',
         'instagram',

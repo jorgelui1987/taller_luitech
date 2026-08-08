@@ -173,6 +173,7 @@ class ConfiguracionController extends Controller
             'mercadopago_activo' => 'boolean',
             'mercadopago_public_key' => 'nullable|string|max:255',
             'mercadopago_access_token' => 'nullable|string|max:255',
+            'mercadopago_device_id' => 'nullable|string|max:255',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
             // ── Publicidad / Página pública ──

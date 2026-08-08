@@ -256,6 +256,13 @@
                                                placeholder="APP_USR-xxxx-xxxx-xxxx-xxxx" autocomplete="off">
                                         <div class="form-text" style="font-size:10px;">Token secreto para procesar pagos</div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="mercadopago_device_id" class="form-label" style="font-size:12px;">Device ID (Point)</label>
+                                        <input type="text" name="mercadopago_device_id" id="mercadopago_device_id" class="form-control form-control-sm"
+                                               value="{{ $empresa->mercadopago_device_id ?? '' }}"
+                                               placeholder="PREFIX-1234-1234-1234">
+                                        <div class="form-text" style="font-size:10px;">ID del dispositivo Point (lo encuentras en la app Point)</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

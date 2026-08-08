@@ -57,6 +57,7 @@ class AppServiceProvider extends ServiceProvider
                     'simbolo_moneda'   => $paisConfig['simbolo_moneda'],
                     'pais'             => $paisConfig['pais'],
                     'terminos_garantia' => '',
+                    'mercadopago_activo' => false,
                 ];
             }
 

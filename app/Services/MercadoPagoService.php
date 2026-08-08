@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Servicio de integración con Mercado Pago.
- * Permite generar QR de pago y consultar pagos.
+ * Permite generar QR de pago y cobrar con Point (terminal físico).
  */
 class MercadoPagoService
 {
@@ -77,6 +77,91 @@ class MercadoPagoService
             'init_point'  => $data['init_point'] ?? null,
             'qr_code'     => $data['qr_code'] ?? null,
             'preference_id' => $data['id'] ?? null,
+        ];
+    }
+
+    /**
+     * Crea una intención de pago para cobrar con Point (terminal físico).
+     *
+     * @param Venta $venta
+     * @return array
+     */
+    public function crearPagoPoint(Venta $venta): array
+    {
+        $config = Configuracion::empresa();
+
+        if (!$config || !$config->mercadopago_activo) {
+            return [
+                'estado'  => 'desactivado',
+                'mensaje' => 'Mercado Pago desactivado para esta empresa.',
+            ];
+        }
+
+        if (!$config->mercadopago_access_token) {
+            throw new FacturacionException('Falta el Access Token de Mercado Pago. Configúralo en Configuración → Empresa.');
+        }
+
+        if (!$config->mercadopago_device_id) {
+            throw new FacturacionException('Falta el Device ID del Point. Configúralo en Configuración → Empresa → Mercado Pago.');
+        }
+
+        // Crear intención de pago en el dispositivo Point
+        $response = Http::withToken($config->mercadopago_access_token)
+            ->post("https://api.mercadopago.com/point/integration-api/devices/{$config->mercadopago_device_id}/payment-intents", [
+                'amount'      => (float) $venta->total,
+                'description' => "Venta {$venta->numero_venta}",
+                'payment'     => [
+                    'installments' => 1,
+                    'type'         => 'credit_card',
+                ],
+                'additional_info' => [
+                    'external_reference' => $venta->numero_venta,
+                ],
+            ]);
+
+        if (!$response->successful()) {
+            Log::error('Error Mercado Pago Point al crear intención: ' . $response->body());
+            throw new FacturacionException('Error al crear el pago en el Point. Verifica que el dispositivo esté conectado.');
+        }
+
+        $data = $response->json();
+
+        return [
+            'estado'           => 'pendiente',
+            'payment_intent_id' => $data['id'] ?? null,
+            'device_id'        => $config->mercadopago_device_id,
+            'mensaje'          => 'Pago enviado al Point. Espera la confirmación del dispositivo.',
+        ];
+    }
+
+    /**
+     * Consulta el estado de una intención de pago Point.
+     *
+     * @param string $paymentIntentId
+     * @return array
+     */
+    public function consultarPagoPoint(string $paymentIntentId): array
+    {
+        $config = Configuracion::empresa();
+
+        if (!$config || !$config->mercadopago_access_token) {
+            return ['estado' => 'error', 'mensaje' => 'Mercado Pago no configurado.'];
+        }
+
+        $response = Http::withToken($config->mercadopago_access_token)
+            ->get("https://api.mercadopago.com/point/integration-api/payment-intents/{$paymentIntentId}");
+
+        if (!$response->successful()) {
+            Log::error('Error Mercado Pago Point al consultar intención: ' . $response->body());
+            return ['estado' => 'error', 'mensaje' => 'Error al consultar el pago Point.'];
+        }
+
+        $data = $response->json();
+
+        return [
+            'estado'  => $data['state'] ?? 'unknown',
+            'monto'   => $data['amount'] ?? null,
+            'referencia' => $data['additional_info']['external_reference'] ?? null,
         ];
     }
 

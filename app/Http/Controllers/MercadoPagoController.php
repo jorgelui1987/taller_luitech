@@ -29,6 +29,25 @@ class MercadoPagoController extends Controller
     }
 
     /**
+     * Envía el cobro al terminal Point (dispositivo físico).
+     */
+    public function cobrarPoint(Venta $venta)
+    {
+        try {
+            $pago = app(MercadoPagoService::class)->crearPagoPoint($venta);
+
+            if ($pago['estado'] === 'desactivado') {
+                return back()->with('error', 'Mercado Pago no está activado para esta empresa.');
+            }
+
+            return back()->with('point', $pago);
+        } catch (\Exception $e) {
+            Log::error('Error cobrando con Point: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
      * Webhook de Mercado Pago - recibe notificaciones de pago.
      */
     public function webhook(Request $request)
