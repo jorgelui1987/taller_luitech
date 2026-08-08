@@ -170,6 +170,9 @@ class ConfiguracionController extends Controller
             'certificado_password' => 'nullable|string|max:255',
             'dte_certificado' => 'nullable|file|mimes:pfx,p12|max:2048',
             'facturacion_electronica_activa' => 'boolean',
+            'mercadopago_activo' => 'boolean',
+            'mercadopago_public_key' => 'nullable|string|max:255',
+            'mercadopago_access_token' => 'nullable|string|max:255',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
             // ── Publicidad / Página pública ──
@@ -186,6 +189,7 @@ class ConfiguracionController extends Controller
 
         $data = $validated;
         $data['facturacion_electronica_activa'] = $request->boolean('facturacion_electronica_activa');
+        $data['mercadopago_activo'] = $request->boolean('mercadopago_activo');
 
         // Solo actualizar certificado_password si se envía uno nuevo (evita borrarla al guardar)
         $certificadoPassword = $data['certificado_password'] ?? null;

@@ -30,6 +30,9 @@ class Configuracion extends Model
         'dte_certificado',
         'certificado_password',
         'facturacion_electronica_activa',
+        'mercadopago_activo',
+        'mercadopago_public_key',
+        'mercadopago_access_token',
         'zona_horaria',
         'terminos_garantia',
         'instagram',
@@ -51,6 +54,7 @@ class Configuracion extends Model
         'cupon_descuento_porcentaje' => 'decimal:2',
         'cupon_dias_validez' => 'integer',
         'facturacion_electronica_activa' => 'boolean',
+        'mercadopago_activo' => 'boolean',
     ];
 
     protected static function booted(): void

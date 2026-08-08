@@ -246,6 +246,52 @@
                         </div>
                     </div>
 
+                    <!-- ── Mercado Pago ── -->
+                    <div class="card mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="font-size:14px;">
+                                        <i class="fab fa-mercadopago me-2" style="color:#00b1ea;"></i>
+                                        Mercado Pago
+                                    </h6>
+                                    <p class="text-muted mb-0" style="font-size:12px;">
+                                        Cobra con QR y la boleta se envía al SII automáticamente.
+                                    </p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" name="mercadopago_activo"
+                                           id="mercadopago_activo" value="1"
+                                           {{ ($empresa->mercadopago_activo ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="mercadopago_activo" id="label_mercadopago">
+                                        {{ ($empresa->mercadopago_activo ?? false) ? 'Activado' : 'Desactivado' }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Campos que solo se muestran si está activado -->
+                            <div id="campos-mercadopago" style="display:{{ ($empresa->mercadopago_activo ?? false) ? 'block' : 'none' }};">
+                                <hr>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label" style="font-size:12px;">Public Key</label>
+                                        <input type="text" name="mercadopago_public_key" class="form-control form-control-sm"
+                                               value="{{ $empresa->mercadopago_public_key ?? '' }}"
+                                               placeholder="APP_USR-xxxx-xxxx-xxxx-xxxx">
+                                        <div class="form-text" style="font-size:10px;">La encuentras en developers.mercadopago.com</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" style="font-size:12px;">Access Token</label>
+                                        <input type="password" name="mercadopago_access_token" class="form-control form-control-sm"
+                                               value="{{ $empresa->mercadopago_access_token ?? '' }}"
+                                               placeholder="APP_USR-xxxx-xxxx-xxxx-xxxx" autocomplete="off">
+                                        <div class="form-text" style="font-size:10px;">Token secreto para procesar pagos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label for="telefono" class="form-label">Teléfono</label>
@@ -917,6 +963,19 @@ document.addEventListener('DOMContentLoaded', function() {
             var activa = this.checked;
             camposFacturacion.style.display = activa ? 'block' : 'none';
             labelFacturacion.textContent = activa ? 'Activada' : 'Desactivada';
+        });
+    }
+
+    // ── Mercado Pago: mostrar/ocultar campos ──
+    var mercadopagoSwitch = document.getElementById('mercadopago_activo');
+    var camposMercadopago = document.getElementById('campos-mercadopago');
+    var labelMercadopago  = document.getElementById('label_mercadopago');
+
+    if (mercadopagoSwitch && camposMercadopago && labelMercadopago) {
+        mercadopagoSwitch.addEventListener('change', function() {
+            var activo = this.checked;
+            camposMercadopago.style.display = activo ? 'block' : 'none';
+            labelMercadopago.textContent = activo ? 'Activado' : 'Desactivado';
         });
     }
 });

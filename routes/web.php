@@ -16,6 +16,7 @@ use App\Http\Controllers\PwaController;
 use App\Http\Controllers\AyudaController;
 use App\Http\Controllers\ComboPublicidadController;
 use App\Http\Controllers\AuditoriaController;
+use App\Http\Controllers\MercadoPagoController;
 use Illuminate\Support\Facades\Storage;
 
 // ── PANEL SUPERADMIN (SIN tenant) ──────────────────────────────────────────
@@ -91,6 +92,10 @@ Route::get('/health', function () {
         'timestamp' => now()->toIso8601String(),
     ]);
 });
+
+// ── WEBHOOK MERCADO PAGO (público, sin autenticación) ─────────────────
+Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook'])
+    ->name('webhooks.mercadopago');
 
 // ── RUTAS PÚBLICAS (Landing page para registrar nuevo tenant) ──────────────
 Route::get('/', function () {
@@ -199,6 +204,7 @@ Route::middleware(['tenant'])->group(function () {
             Route::patch('/ventas/{venta}/cancelar', [VentaController::class, 'cancelar'])->name('ventas.cancelar');
             Route::get('/ventas/{venta}/ticket', [VentaController::class, 'printTicket'])->name('ventas.ticket');
             Route::get('/ventas/{venta}/whatsapp', [VentaController::class, 'enviarWhatsApp'])->name('ventas.whatsapp');
+            Route::post('/ventas/{venta}/mercadopago', [MercadoPagoController::class, 'generarPago'])->name('ventas.mercadopago');
         });
 
         // Devoluciones (solo admin y vendedor)
