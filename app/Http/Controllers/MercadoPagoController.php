@@ -48,6 +48,7 @@ class MercadoPagoController extends Controller
 
                     if ($venta) {
                         $venta->update([
+                            'estado'      => 'completada',
                             'estado_pago' => 'pagado',
                             'metodo_pago' => 'mercadopago',
                         ]);

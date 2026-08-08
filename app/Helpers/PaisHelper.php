@@ -26,7 +26,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '51',
                 'zona_horaria'   => 'America/Lima',
                 'documento'      => 'DNI/RUC',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'cuotas', 'yape', 'plin'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'cuotas', 'yape', 'plin', 'mercadopago'],
             ],
             'CL' => [
                 'pais'           => 'CL',
@@ -38,7 +38,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '56',
                 'zona_horaria'   => 'America/Santiago',
                 'documento'      => 'RUT',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'debito', 'credito'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'debito', 'credito', 'mercadopago'],
             ],
             'AR' => [
                 'pais'           => 'AR',
@@ -50,7 +50,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '54',
                 'zona_horaria'   => 'America/Argentina/Buenos_Aires',
                 'documento'      => 'CUIL/CUIT',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
             'MX' => [
                 'pais'           => 'MX',
@@ -62,7 +62,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '52',
                 'zona_horaria'   => 'America/Mexico_City',
                 'documento'      => 'RFC',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
             'CO' => [
                 'pais'           => 'CO',
@@ -74,7 +74,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '57',
                 'zona_horaria'   => 'America/Bogota',
                 'documento'      => 'Cédula/NIT',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
             'EC' => [
                 'pais'           => 'EC',
@@ -86,7 +86,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '593',
                 'zona_horaria'   => 'America/Guayaquil',
                 'documento'      => 'Cédula/RUC',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
             'BO' => [
                 'pais'           => 'BO',
@@ -98,7 +98,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '591',
                 'zona_horaria'   => 'America/La_Paz',
                 'documento'      => 'CI/NIT',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
             'UY' => [
                 'pais'           => 'UY',
@@ -110,7 +110,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '598',
                 'zona_horaria'   => 'America/Montevideo',
                 'documento'      => 'CI/RUT',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
             'PY' => [
                 'pais'           => 'PY',
@@ -122,7 +122,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '595',
                 'zona_horaria'   => 'America/Asuncion',
                 'documento'      => 'CI/RUC',
-                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia'],
+                'metodos_pago'   => ['efectivo', 'tarjeta', 'transferencia', 'mercadopago'],
             ],
         ];
 

@@ -80,7 +80,9 @@
                                 <option value="efectivo">💵 Efectivo</option>
                                 <option value="tarjeta">💳 Tarjeta</option>
                                 <option value="transferencia">🏦 Transferencia</option>
-
+                                @if(($empresa->mercadopago_activo ?? false))
+                                <option value="mercadopago">🟦 Mercado Pago</option>
+                                @endif
                             </select>
                         </div>
                         <div class="col-md-6">

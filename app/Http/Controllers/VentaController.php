@@ -168,6 +168,8 @@ class VentaController extends Controller
             $impuesto  = round($base * ($impuestoPorcentaje / 100), 2);
             $total     = $base + $impuesto;
 
+            $esMercadoPago = $request->metodo_pago === 'mercadopago';
+
             $venta = Venta::create([
                 'numero_venta' => Venta::generarNumero(),
                 'cliente_id'   => $request->cliente_id,
@@ -178,7 +180,8 @@ class VentaController extends Controller
                 'impuesto'     => $impuesto,
                 'total'        => $total,
                 'metodo_pago'  => $request->metodo_pago,
-                'estado'       => 'completada',
+                'estado'       => $esMercadoPago ? 'pendiente' : 'completada',
+                'estado_pago'  => $esMercadoPago ? 'pendiente' : 'pagado',
                 'notas'        => $request->notas,
                 'tenant_id'    => $tenantId,
             ]);
@@ -202,6 +205,11 @@ class VentaController extends Controller
                 } catch (\Exception $e) {
                     \Illuminate\Support\Facades\Log::error("Error facturación electrónica (venta #{$venta->id}): " . $e->getMessage());
                 }
+            }
+
+            if ($esMercadoPago) {
+                return redirect()->route('ventas.show', $venta)
+                    ->with('success', "Venta {$venta->numero_venta} registrada. Genera el pago con Mercado Pago.");
             }
 
             return redirect()->route('ventas.show', $venta)
@@ -327,8 +335,8 @@ class VentaController extends Controller
 
     public function cancelar(Venta $venta)
     {
-        if ($venta->estado !== 'completada') {
-            return back()->with('error', 'Solo se pueden cancelar ventas completadas.');
+        if (!in_array($venta->estado, ['completada', 'pendiente'])) {
+            return back()->with('error', 'Solo se pueden cancelar ventas completadas o pendientes.');
         }
 
         DB::transaction(function () use ($venta) {

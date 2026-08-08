@@ -39,7 +39,7 @@
             <i class="fab fa-whatsapp me-2"></i>Enviar por WhatsApp
         </a>
         @endif
-        @if($venta->estado === 'completada')
+        @if(in_array($venta->estado, ['completada', 'pendiente']))
         <form action="{{ route('ventas.cancelar', $venta) }}" method="POST"
               onsubmit="return confirm('¿Cancelar esta venta y restaurar el stock?')">
             @csrf @method('PATCH')
@@ -100,7 +100,7 @@
                     <div class="col-md-6">
                         <div class="p-3 rounded-3" style="background:#f8f5ff;">
                             <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">PAGO</div>
-                            @php $iconos=['efectivo'=>'💵','tarjeta'=>'💳','transferencia'=>'🏦','cuotas'=>'📅','yape'=>'📱','plin'=>'📲']; @endphp
+                            @php $iconos=['efectivo'=>'💵','tarjeta'=>'💳','transferencia'=>'🏦','cuotas'=>'📅','yape'=>'📱','plin'=>'📲','mercadopago'=>'🟦']; @endphp
                             <div style="font-weight:600;">{{ $iconos[$venta->metodo_pago] ?? '' }} {{ ucfirst($venta->metodo_pago) }}</div>
                             <div style="font-size:12px; color:#6b7280;">Vendedor: {{ $venta->vendedor->name ?? '—' }}</div>
                         </div>
@@ -200,6 +200,46 @@
                 </div>
             </div>
         </div>
+
+        @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
+        <div class="card mb-3" style="border:1px solid #00b1ea;">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3" style="color:#00b1ea;">
+                    <i class="fab fa-mercadopago me-2"></i>Mercado Pago
+                </h6>
+                <p class="text-muted mb-3" style="font-size:12px;">
+                    Genera el QR de pago para que el cliente escanee y pague.
+                </p>
+                <form action="{{ route('ventas.mercadopago', $venta) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn w-100" style="background:#00b1ea; color:#fff;">
+                        <i class="fas fa-qrcode me-2"></i>Generar QR de Pago
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        @if(session('mercadopago'))
+        <div class="card mb-3" style="border:1px solid #00b1ea;">
+            <div class="card-body p-4 text-center">
+                <h6 class="fw-bold mb-3" style="color:#00b1ea;">
+                    <i class="fab fa-mercadopago me-2"></i>Pago con Mercado Pago
+                </h6>
+                @if(session('mercadopago.init_point'))
+                <div class="mb-3">
+                    <div style="font-size:12px; color:#6b7280; margin-bottom:8px;">Escanea el QR o haz clic para pagar:</div>
+                    <a href="{{ session('mercadopago.init_point') }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-external-link-alt me-1"></i>Abrir enlace de pago
+                    </a>
+                </div>
+                @endif
+                <div style="font-size:12px; color:#6b7280;">
+                    El estado de la venta se actualizará automáticamente al confirmarse el pago.
+                </div>
+            </div>
+        </div>
+        @endif
 
         <div class="card">
             <div class="card-body p-4">

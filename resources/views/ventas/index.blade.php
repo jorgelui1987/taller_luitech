@@ -91,7 +91,7 @@
                         <td>
                             <span style="font-size:12px;">
                                 @php
-                                    $iconos = ['efectivo'=>'💵','tarjeta'=>'💳','transferencia'=>'🏦','cuotas'=>'📅'];
+                                    $iconos = ['efectivo'=>'💵','tarjeta'=>'💳','transferencia'=>'🏦','cuotas'=>'📅','mercadopago'=>'🟦'];
                                 @endphp
                                 {{ $iconos[$venta->metodo_pago] ?? '' }} {{ ucfirst($venta->metodo_pago) }}
                             </span>
@@ -120,7 +120,7 @@
                                    class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;">
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
-                                @if($venta->estado === 'completada')
+                                @if(in_array($venta->estado, ['completada', 'pendiente']))
                                 <form action="{{ route('ventas.cancelar', $venta) }}" method="POST"
                                       onsubmit="return confirm('¿Cancelar esta venta?')">
                                     @csrf @method('PATCH')
