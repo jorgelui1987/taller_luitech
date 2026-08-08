@@ -54,7 +54,9 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.25;colo
 .cupon-box{border:2px dashed #000;padding:4px;margin:2px 0;text-align:center}
 .cupon-box .cod{font-size:15px;font-weight:700;letter-spacing:2px}
 .cupon-box .val{font-size:12px;font-weight:700;margin-top:1px}
-.cupon-box .link{font-size:9px;font-weight:700;word-break:break-all;margin-top:2px}
+.cupon-box .link{font-size:12px;font-weight:700;word-break:break-all;margin-top:2px}
+.cupon-box .url-miniweb{font-size:13px;font-weight:800;word-break:break-all;margin-top:3px;color:#0000EE;text-decoration:underline}
+.ftr .url-miniweb{font-size:12px;font-weight:800;word-break:break-all;margin-top:2px;color:#0000EE;text-decoration:underline}
 hr{border:none;border-top:1px solid #000;margin:2px 0}
 </style>
 </head>
@@ -139,7 +141,7 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
     @endif
     @if($urlMiniWeb)
     <div class="link">🔗 Ingresa a este link y reclama tu descuento:</div>
-    <div class="link" style="color:#0000EE;">{{ $urlMiniWeb }}</div>
+    <div class="url-miniweb">{{ $urlMiniWeb }}</div>
     @endif
 </div>
 @endif
@@ -151,7 +153,7 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
     <div style="font-size:9px;font-weight:700;">Escanea para ver estado</div>
 </div>
 @if($urlMiniWeb)
-<div style="font-size:8px;margin-top:1px;">🌐 {{ $urlMiniWeb }}</div>
+<div class="url-miniweb">🌐 {{ $urlMiniWeb }}</div>
 @endif
 <div class="gr">¡Gracias por su preferencia!</div>
 <div style="font-size:9px;">{{ $reparacion->created_at->format('d/m/Y H:i') }} | {{ $reparacion->numero_orden }}</div>
