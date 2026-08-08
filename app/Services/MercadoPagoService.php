@@ -120,8 +120,10 @@ class MercadoPagoService
             ]);
 
         if (!$response->successful()) {
+            $errorBody = $response->json();
+            $mensajeError = $errorBody['message'] ?? $errorBody['error'] ?? $response->body();
             Log::error('Error Mercado Pago Point al crear intención: ' . $response->body());
-            throw new FacturacionException('Error al crear el pago en el Point. Verifica que el dispositivo esté conectado.');
+            throw new FacturacionException('Error Point: ' . $mensajeError);
         }
 
         $data = $response->json();
