@@ -31,11 +31,9 @@ class FacturacionColombiaService
             throw new FacturacionException('Falta el NIT de la empresa. Configúralo en Configuración → Empresa.');
         }
 
-        // TODO: Integración real con la DIAN
-        // 1. Construir XML de la factura
-        // 2. Calcular CUFE (hash SHA-384 con llave técnica)
-        // 3. Enviar a la DIAN o proveedor tecnológico
-        // 4. Guardar CUFE, resolución y estado
+        // Nota de implementación: Cuando se integre la DIAN o proveedor tecnológico,
+        // aquí se construirá el XML de la factura, se calculará el CUFE (hash SHA-384),
+        // se enviará a la DIAN y se guardarán CUFE, resolución y estado de respuesta.
 
         Log::info("Facturación Colombia (stub): Venta #{$venta->id}, NIT {$config->ruc}");
 

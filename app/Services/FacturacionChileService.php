@@ -38,11 +38,9 @@ class FacturacionChileService
         // Determinar tipo de documento: 33 = Factura, 39 = Boleta
         $tipoDte = $venta->cliente_id ? '33' : '39';
 
-        // TODO: Integración real con el proveedor DTE
-        // 1. Construir XML del DTE
-        // 2. Firmar con certificado digital
-        // 3. Enviar al proveedor (Acepta/Fove/Tundra)
-        // 4. Guardar folio, token, PDF y estado
+        // Nota de implementación: Cuando se integre el proveedor DTE real (Acepta/Fove/Tundra),
+        // aquí se construirá el XML, se firmará con el certificado digital configurado,
+        // se enviará al proveedor y se guardarán folio, token, PDF y estado de respuesta.
 
         Log::info("Facturación Chile (stub): Venta #{$venta->id}, tipo DTE {$tipoDte}, proveedor {$config->proveedor_dte}");
 
