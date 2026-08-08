@@ -26,7 +26,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1b4b;">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#" style="text-decoration:none;">
-                <img src="{{ asset('logo-luitech.webp') }}" alt="LUITECH Logo" style="width:40px;height:40px;border-radius:12px;object-fit:contain;">
+                <img src="{{ asset('logo-luitech.png') }}" alt="LUITECH Logo" style="width:40px;height:40px;border-radius:12px;object-fit:contain;">
                 <span style="font-size:22px;font-weight:800;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;">LUITECH</span>
             </a>
             <div class="ms-auto">
