@@ -105,6 +105,18 @@ class MercadoPagoService
             throw new FacturacionException('Falta el Device ID del Point. Configúralo en Configuración → Empresa → Mercado Pago.');
         }
 
+        // Mapear país de la empresa al site_id de Mercado Pago
+        $siteIds = [
+            'AR' => 'MLA',
+            'BR' => 'MLB',
+            'MX' => 'MLM',
+            'CL' => 'MLC',
+            'CO' => 'MCO',
+            'PE' => 'MPE',
+            'UY' => 'MLU',
+        ];
+        $siteId = $siteIds[$config->pais ?? ''] ?? 'MPE';
+
         // Crear intención de pago en el dispositivo Point
         $response = Http::withToken($config->mercadopago_access_token)
             ->post("https://api.mercadopago.com/point/integration-api/devices/{$config->mercadopago_device_id}/payment-intents", [
@@ -114,6 +126,7 @@ class MercadoPagoService
                     'installments' => 1,
                     'type'         => 'credit_card',
                 ],
+                'site_id' => $siteId,
                 'additional_info' => [
                     'external_reference' => $venta->numero_venta,
                 ],
