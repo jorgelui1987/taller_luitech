@@ -201,7 +201,7 @@
             </div>
         </div>
 
-        @if(in_array($venta->estado, ['completada', 'pendiente']))
+        @if(($empresa->mercadopago_activo ?? false) && in_array($venta->estado, ['completada', 'pendiente']))
         <div class="card mb-3" style="border:1px solid #00b1ea;">
             <div class="card-body p-4">
                 <h6 class="fw-bold mb-3" style="color:#00b1ea;">
