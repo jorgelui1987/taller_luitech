@@ -59,6 +59,13 @@
     white-space: normal;
     word-break: break-word;
 }
+/* Asignación: cuadro más grande y espacioso */
+.accordion-mobile .accordion-item .accordion-header {
+    padding: 1.25rem 2rem;
+}
+.accordion-mobile .accordion-item .accordion-body {
+    padding: 1.75rem 2rem;
+}
 </style>
 @endpush
 
@@ -103,7 +110,7 @@
                                         <i class="fas fa-chevron-down"></i>
                                     </div>
                                     <div class="accordion-body show">
-                                        <div class="row g-3">
+                                        <div class="row g-4">
                                             <div class="col-md-5">
                                                 <label for="clienteBuscarInput" class="form-label">Cliente <span class="text-danger">*</span></label>
                                                 <div class="cliente-buscador" style="position:relative;">
