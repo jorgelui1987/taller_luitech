@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Configuracion;
 use App\Models\Venta;
+use App\Exceptions\FacturacionException;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -27,11 +28,11 @@ class FacturacionChileService
 
         // Validar que la empresa tenga los datos necesarios
         if (!$config->rut_emisor) {
-            throw new \Exception('Falta el RUT del emisor. Configúralo en Configuración → Empresa.');
+            throw new FacturacionException('Falta el RUT del emisor. Configúralo en Configuración → Empresa.');
         }
 
         if (!$config->proveedor_dte) {
-            throw new \Exception('Falta seleccionar el proveedor DTE (Acepta, Fove o Tundra).');
+            throw new FacturacionException('Falta seleccionar el proveedor DTE (Acepta, Fove o Tundra).');
         }
 
         // Determinar tipo de documento: 33 = Factura, 39 = Boleta

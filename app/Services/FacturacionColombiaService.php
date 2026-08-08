@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Configuracion;
 use App\Models\Venta;
+use App\Exceptions\FacturacionException;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -27,7 +28,7 @@ class FacturacionColombiaService
 
         // Validar que la empresa tenga los datos necesarios
         if (!$config->ruc) {
-            throw new \Exception('Falta el NIT de la empresa. Configúralo en Configuración → Empresa.');
+            throw new FacturacionException('Falta el NIT de la empresa. Configúralo en Configuración → Empresa.');
         }
 
         // TODO: Integración real con la DIAN

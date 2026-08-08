@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Configuracion;
 use App\Models\Venta;
+use App\Exceptions\FacturacionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -40,7 +41,7 @@ class MercadoPagoService
         }
 
         if (!$config->mercadopago_access_token) {
-            throw new \Exception('Falta el Access Token de Mercado Pago. Configúralo en Configuración → Empresa.');
+            throw new FacturacionException('Falta el Access Token de Mercado Pago. Configúralo en Configuración → Empresa.');
         }
 
         $moneda = $config->moneda ?? 'CLP';
@@ -66,7 +67,7 @@ class MercadoPagoService
 
         if (!$response->successful()) {
             Log::error('Error Mercado Pago al crear preferencia: ' . $response->body());
-            throw new \Exception('Error al crear el pago en Mercado Pago.');
+            throw new FacturacionException('Error al crear el pago en Mercado Pago.');
         }
 
         $data = $response->json();

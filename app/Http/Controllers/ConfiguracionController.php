@@ -203,16 +203,13 @@ class ConfiguracionController extends Controller
             $paisConfig = PaisHelper::configuracionPorPais($data['pais']);
             $empresaActual = Configuracion::empresa();
 
-            // Solo auto-configurar si es un país con definición
+            // Solo auto-configurar si es un país con definición y el país cambió
             $paisesDefinidos = ['PE', 'CL', 'AR', 'MX', 'CO', 'EC', 'BO', 'UY', 'PY'];
-            if (in_array($data['pais'], $paisesDefinidos)) {
-                // Si el país cambió respecto al anterior, aplicar defaults
-                if (!$empresaActual || ($empresaActual->pais ?? null) !== $data['pais']) {
-                    $data['moneda']         = $paisConfig['moneda'];
-                    $data['simbolo_moneda'] = $paisConfig['simbolo_moneda'];
-                    $data['igv']            = $paisConfig['impuesto'];
-                    $data['zona_horaria']   = $paisConfig['zona_horaria'];
-                }
+            if (in_array($data['pais'], $paisesDefinidos) && (!$empresaActual || ($empresaActual->pais ?? null) !== $data['pais'])) {
+                $data['moneda']         = $paisConfig['moneda'];
+                $data['simbolo_moneda'] = $paisConfig['simbolo_moneda'];
+                $data['igv']            = $paisConfig['impuesto'];
+                $data['zona_horaria']   = $paisConfig['zona_horaria'];
             }
         }
 
