@@ -117,7 +117,7 @@
                                                     <textarea
                                                            id="clienteBuscarInput"
                                                            class="form-control @error('cliente_id') is-invalid @enderror"
-                                                           placeholder="🔍 Escribe nombre, teléfono o DNI..."
+placeholder="🔍 Escribe el nombre del cliente..."
                                                            autocomplete="off"
                                                            rows="1"
                                                            style="resize:none; overflow:hidden; min-height:38px; line-height:1.4;"
