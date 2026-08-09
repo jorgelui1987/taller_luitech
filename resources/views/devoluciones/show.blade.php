@@ -65,6 +65,42 @@
     </div>
 </div>
 
+{{-- Tarjeta de Resumen --}}
+<div class="card mb-4">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Devolución</div>
+                <div style="font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $devolucion->numero_devolucion }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Motivo</div>
+                <span style="background:{{ $mot[1] }};color:{{ $mot[2] }};border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;display:inline-block;">{{ $mot[0] }}</span>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Venta</div>
+                <div style="font-weight:600; font-size:13px;">{{ $devolucion->venta->numero_venta ?? '—' }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Cliente</div>
+                <div style="font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $devolucion->cliente->nombre_completo ?? 'Venta general' }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total devuelto</div>
+                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ number_format($devolucion->total, 2) }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Estado</div>
+                @if($esAnulada)
+                    <span class="badge" style="background:#fee2e2;color:#991b1b;font-size:12px;">Anulada</span>
+                @else
+                    <span class="badge" style="background:#d1fae5;color:#065f46;font-size:12px;">Completada</span>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
     <!-- ════════ COLUMNA IZQUIERDA: Información ════════ -->
     <div class="col-lg-4">
