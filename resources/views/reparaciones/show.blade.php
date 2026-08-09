@@ -520,6 +520,40 @@
                             <i class="fas fa-user me-1"></i>Ver Cliente
                         </a>
                     </div>
+
+                    {{-- Cobro con Mercado Pago (si la venta automática de la reparación está pendiente) --}}
+                    @if(isset($ventaReparacion) && $ventaReparacion && $ventaReparacion->estado === 'pendiente' && $ventaReparacion->metodo_pago === 'mercadopago')
+                    <hr class="my-3">
+                    <div class="card mb-3" style="border:1px solid #00b1ea;">
+                        <div class="card-body p-3">
+                            <h6 class="fw-bold mb-2" style="color:#00b1ea; font-size:13px;">
+                                <i class="fab fa-mercadopago me-1"></i>Mercado Pago
+                            </h6>
+                            <p class="text-muted mb-2" style="font-size:11px;">
+                                La venta automática ({{ $ventaReparacion->numero_venta }}) está pendiente de pago.
+                            </p>
+                            <div class="d-grid gap-2">
+                                {{-- Cobrar con Point --}}
+                                <form action="{{ route('ventas.point', $ventaReparacion) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm w-100" style="background:#00b1ea; color:#fff;">
+                                        <i class="fas fa-credit-card me-1"></i>Cobrar con Point
+                                    </button>
+                                </form>
+                                {{-- Generar QR de Pago --}}
+                                <form action="{{ route('ventas.mercadopago', $ventaReparacion) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">
+                                        <i class="fas fa-qrcode me-1"></i>Generar QR de Pago
+                                    </button>
+                                </form>
+                            </div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">
+                                La ganancia se sumará al confirmarse el pago.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

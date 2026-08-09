@@ -204,7 +204,14 @@ class ReparacionController extends Controller
     public function show(Reparacion $reparacion)
     {
         $reparacion->load(['cliente', 'tecnico', 'fotos']);
-        return view('reparaciones.show', compact('reparacion'));
+
+        // Buscar la venta automática asociada a esta reparación
+        // (la venta se crea con la nota "Pago por reparación {numero_orden}")
+        $ventaReparacion = Venta::where('notas', 'like', "%{$reparacion->numero_orden}%")
+            ->orderByDesc('id')
+            ->first();
+
+        return view('reparaciones.show', compact('reparacion', 'ventaReparacion'));
     }
 
     public function printTicket(Reparacion $reparacion)
