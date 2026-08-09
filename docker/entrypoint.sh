@@ -133,8 +133,19 @@ if [[ "$DB_CHECK" == "OK" ]]; then
         runuser -u appuser -- php artisan migrate --force 2>&1 || true
     fi
 
-    echo "Ejecutando seeders (solo si no hay datos)..."
-    runuser -u appuser -- php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
+    # Ejecutar seeders SOLO si la base de datos no tiene datos reales
+    # (evita borrar ventas, reparaciones u otros datos de empresas en cada deploy)
+    echo "Verificando si hay datos existentes..."
+    HAY_DATOS=$(runuser -u appuser -- php artisan tinker --execute="echo (App\\Models\\Venta::exists() || App\\Models\\Reparacion::exists()) ? 'SI' : 'NO';" 2>/dev/null || echo "ERROR")
+
+    if [ "$HAY_DATOS" == "SI" ]; then
+        echo "⚠ Se detectaron datos existentes. SE OMITEN los seeders para no borrar información."
+    elif [ "$HAY_DATOS" == "NO" ]; then
+        echo "Base de datos vacía. Ejecutando seeders iniciales..."
+        runuser -u appuser -- php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Error en seeders"
+    else
+        echo "⚠ No se pudo verificar. Se omiten los seeders por seguridad."
+    fi
 else
     echo "⚠ No se pudo conectar a la BD: $DB_CHECK"
     echo "  Las migraciones se ejecutarán manualmente después."
