@@ -74,11 +74,6 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 <div class="lt"><span>TOTAL</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total,2) }}</span></div>
 </div>
 @if($venta->notas)<div class="not">Notas: {{ $venta->notas }}</div>@endif
-@if($empresa && $empresa->terminos_garantia)
-<hr>
-<div class="section">GARANTÍA</div>
-<div style="font-size:11px;font-weight:700;text-align:justify;">{{ $empresa->terminos_garantia }}</div>
-@endif
 
 @if($urlMiniWeb)
 <hr>

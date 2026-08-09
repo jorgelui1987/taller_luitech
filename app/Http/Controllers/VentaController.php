@@ -319,11 +319,6 @@ class VentaController extends Controller
         $texto .= str_pad('TOTAL', 24) . str_pad($simbolo . ' ' . number_format($venta->total, 2), 8, ' ', STR_PAD_LEFT) . "\n";
         $texto .= $lineaDoble . "\n";
 
-        // Garantía
-        if ($empresa?->terminos_garantia) {
-            $texto .= "\nGARANTÍA:\n" . $empresa->terminos_garantia . "\n";
-        }
-
         // Notas
         if ($venta->notas) {
             $texto .= "\nNOTAS: " . $venta->notas . "\n";
