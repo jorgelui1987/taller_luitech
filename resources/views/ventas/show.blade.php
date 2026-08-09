@@ -327,4 +327,45 @@
     </div>
 </div>
 @endif
+
+{{-- Impresión automática al confirmarse el pago con Mercado Pago --}}
+@if($venta->estado === 'pendiente' && $venta->metodo_pago === 'mercadopago')
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const ventaId = {{ $venta->id }};
+    const urlEstado = "{{ route('ventas.estado', $venta) }}";
+    const urlTicket = "{{ route('ventas.ticket', $venta) }}";
+    let impreso = false;
+
+    // Polling cada 5 segundos para detectar el pago confirmado
+    const intervalo = setInterval(async () => {
+        try {
+            const res = await fetch(urlEstado, {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await res.json();
+
+            // Cuando la venta pasa a completada, imprimir el ticket automáticamente
+            if (data.estado === 'completada' && !impreso) {
+                impreso = true;
+                clearInterval(intervalo);
+
+                // Abrir el ticket en una ventana nueva y disparar la impresión
+                const win = window.open(urlTicket, '_blank');
+                if (win) {
+                    win.onload = function () {
+                        win.focus();
+                        win.print();
+                    };
+                }
+            }
+        } catch (e) {
+            // Ignorar errores de red temporales
+        }
+    }, 5000);
+});
+</script>
+@endpush
+@endif
 @endsection

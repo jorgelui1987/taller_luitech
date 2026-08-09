@@ -202,6 +202,7 @@ Route::middleware(['tenant'])->group(function () {
         Route::middleware('check.ventas')->group(function () {
             Route::resource('ventas', VentaController::class)->except(['edit', 'update', 'destroy']);
             Route::patch('/ventas/{venta}/cancelar', [VentaController::class, 'cancelar'])->name('ventas.cancelar');
+            Route::get('/ventas/{venta}/estado', [VentaController::class, 'estado'])->name('ventas.estado');
             Route::get('/ventas/{venta}/ticket', [VentaController::class, 'printTicket'])->name('ventas.ticket');
             Route::get('/ventas/{venta}/whatsapp', [VentaController::class, 'enviarWhatsApp'])->name('ventas.whatsapp');
             Route::post('/ventas/{venta}/mercadopago', [MercadoPagoController::class, 'generarPago'])->name('ventas.mercadopago');

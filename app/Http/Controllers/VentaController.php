@@ -227,6 +227,17 @@ class VentaController extends Controller
         return view('ventas.show', compact('venta'));
     }
 
+    /**
+     * Devuelve el estado actual de la venta (para polling de impresión automática).
+     */
+    public function estado(Venta $venta)
+    {
+        return response()->json([
+            'estado'      => $venta->estado,
+            'estado_pago' => $venta->estado_pago,
+        ]);
+    }
+
     public function printTicket(Venta $venta)
     {
         $venta->load(['cliente', 'vendedor', 'detalles.producto.marca']);
