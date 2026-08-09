@@ -169,6 +169,12 @@
                     <i class="fas fa-sticky-note me-1"></i><strong>Notas:</strong> {{ $venta->notas }}
                 </div>
                 @endif
+
+                @if($venta->estado === 'cancelada' && $venta->motivo_cancelacion)
+                <div class="mt-3 p-3 rounded-3" style="background:#fee2e2; font-size:13px; color:#991b1b; border:1px solid #fecaca;">
+                    <i class="fas fa-ban me-1"></i><strong>Motivo de cancelación:</strong> {{ $venta->motivo_cancelacion }}
+                </div>
+                @endif
             </div>
         </div>
     </div>
