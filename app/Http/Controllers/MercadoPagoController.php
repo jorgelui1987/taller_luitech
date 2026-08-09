@@ -49,20 +49,22 @@ class MercadoPagoController extends Controller
 
     /**
      * Webhook de Mercado Pago - recibe notificaciones de pago.
+     * Soporta tanto type=payment como type=order (Point).
      */
     public function webhook(Request $request)
     {
         Log::info('Webhook Mercado Pago recibido', $request->all());
 
         $tipo = $request->input('type');
-        $paymentId = $request->input('data.id');
+        $action = $request->input('action');
+        $data = $request->input('data', []);
 
-        if ($tipo === 'payment' && $paymentId) {
+        // ── Caso 1: Notificación de pago (type=payment) ──
+        if ($tipo === 'payment' && isset($data['id'])) {
             try {
-                $pago = app(MercadoPagoService::class)->consultarPago($paymentId);
+                $pago = app(MercadoPagoService::class)->consultarPago($data['id']);
 
                 if ($pago['estado'] === 'approved' && $pago['referencia']) {
-                    // Buscar la venta por número de referencia
                     $venta = Venta::where('numero_venta', $pago['referencia'])->first();
 
                     if ($venta) {
@@ -76,6 +78,29 @@ class MercadoPagoController extends Controller
                 }
             } catch (\Exception $e) {
                 Log::error('Error procesando webhook Mercado Pago: ' . $e->getMessage());
+            }
+        }
+
+        // ── Caso 2: Notificación de order Point (type=order) ──
+        if ($tipo === 'order' && $action === 'order.processed' && isset($data['external_reference'])) {
+            try {
+                $referencia = $data['external_reference'];
+                $status = $data['status'] ?? '';
+
+                // Buscar la venta por referencia (VENTA-VTA-000XXX)
+                $numeroVenta = str_replace('VENTA-', '', $referencia);
+                $venta = Venta::where('numero_venta', $numeroVenta)->first();
+
+                if ($venta && $status === 'processed') {
+                    $venta->update([
+                        'estado'      => 'completada',
+                        'estado_pago' => 'pagado',
+                        'metodo_pago' => 'mercadopago',
+                    ]);
+                    Log::info("Venta {$venta->numero_venta} marcada como pagada vía Point.");
+                }
+            } catch (\Exception $e) {
+                Log::error('Error procesando webhook Point: ' . $e->getMessage());
             }
         }
 
