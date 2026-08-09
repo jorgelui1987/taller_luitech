@@ -14,7 +14,7 @@ class Venta extends Model
         'numero_venta', 'cliente_id', 'user_id', 'fecha_venta',
         'subtotal', 'descuento', 'impuesto', 'total',
         'comision_monto', 'comision_pagada',
-        'metodo_pago', 'estado', 'estado_pago', 'notas', 'tenant_id',
+        'metodo_pago', 'estado', 'estado_pago', 'notas', 'motivo_cancelacion', 'tenant_id',
         'dte_tipo', 'dte_folio', 'dte_token', 'dte_pdf_url', 'dte_estado',
     ];
 

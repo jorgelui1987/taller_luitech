@@ -40,13 +40,9 @@
         </a>
         @endif
         @if(in_array($venta->estado, ['completada', 'pendiente']))
-        <form action="{{ route('ventas.cancelar', $venta) }}" method="POST"
-              onsubmit="return confirm('¿Cancelar esta venta y restaurar el stock?')">
-            @csrf @method('PATCH')
-            <button type="submit" class="btn btn-outline-danger px-4">
-                <i class="fas fa-ban me-2"></i>Cancelar Venta
-            </button>
-        </form>
+        <button type="button" class="btn btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#modalCancelarVenta">
+            <i class="fas fa-ban me-2"></i>Cancelar Venta
+        </button>
         @endif
     </div>
 </div>
@@ -296,4 +292,39 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Cancelar Venta --}}
+@if(in_array($venta->estado, ['completada', 'pendiente']))
+<div class="modal fade" id="modalCancelarVenta" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;border:none;">
+            <div class="modal-header" style="border-bottom:1px solid #f3f4f6;padding:20px 24px;">
+                <h6 class="modal-title fw-bold" style="color:#dc2626;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Cancelar Venta
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('ventas.cancelar', $venta) }}" method="POST">
+                @csrf @method('PATCH')
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-3" style="font-size:13px;">
+                        Se restaurará el stock de los productos y la venta quedará marcada como cancelada.
+                    </p>
+                    <label for="motivo_cancelacion" class="form-label">
+                        Motivo de cancelación <span class="text-danger">*</span>
+                    </label>
+                    <textarea name="motivo_cancelacion" id="motivo_cancelacion" class="form-control" rows="3"
+                              required maxlength="500" placeholder="Ej: Error al registrar, devolución, cliente no pagó..."></textarea>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f3f4f6;padding:16px 24px;">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fas fa-ban me-2"></i>Confirmar Cancelación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 @endsection

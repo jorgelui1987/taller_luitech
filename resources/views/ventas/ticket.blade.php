@@ -41,6 +41,9 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 <div class="inf">{{ $empresa->telefono ?? '' }}{{ ($empresa->telefono??'') && ($empresa->email??'') ? ' | ' : '' }}{{ $empresa->email ?? '' }}</div>
 <div class="nro">{{ $venta->numero_venta }}</div>
 <div>{{ ucfirst($venta->estado) }} | {{ $venta->fecha_venta->format('d/m/Y H:i') }}</div>
+@if($venta->estado === 'cancelada')
+<div style="font-size:16px;font-weight:700;color:#000; border:2px solid #000; padding:4px 0; margin-top:4px;">*** VENTA CANCELADA ***</div>
+@endif
 </div>
 <hr>
 <div class="det"><span class="etq">CLIENTE </span>{{ $venta->cliente?->nombre_completo ?? 'VENTA GENERAL' }}{{ $venta->cliente?->telefono ? ' T:'.$venta->cliente->telefono : '' }}{{ $venta->cliente?->email ? ' E:'.$venta->cliente->email : '' }}</div>

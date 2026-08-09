@@ -333,13 +333,22 @@ class VentaController extends Controller
         return redirect()->away($url);
     }
 
-    public function cancelar(Venta $venta)
+    public function cancelar(Request $request, Venta $venta)
     {
         if (!in_array($venta->estado, ['completada', 'pendiente'])) {
             return back()->with('error', 'Solo se pueden cancelar ventas completadas o pendientes.');
         }
 
-        DB::transaction(function () use ($venta) {
+        $validated = $request->validate([
+            'motivo_cancelacion' => 'required|string|max:500',
+        ]);
+
+        DB::transaction(function () use ($venta, $validated) {
+            $venta->update([
+                'estado'             => 'cancelada',
+                'motivo_cancelacion' => $validated['motivo_cancelacion'],
+            ]);
+
             foreach ($venta->detalles as $detalle) {
                 $producto = $detalle->producto;
                 $stockAnterior = $producto->stock;
@@ -357,7 +366,6 @@ class VentaController extends Controller
                     'tenant_id'      => Auth::user()->tenant_id,
                 ]);
             }
-            $venta->update(['estado' => 'cancelada']);
         });
 
         return back()->with('success', 'Venta cancelada y stock restaurado.');
