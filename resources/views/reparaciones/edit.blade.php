@@ -227,8 +227,7 @@
                                         <option value="efectivo">💵 Efectivo</option>
                                         <option value="tarjeta">💳 Tarjeta</option>
                                         <option value="transferencia">🏦 Transferencia</option>
-                                        <option value="yape">📱 Yape</option>
-                                        <option value="plin">📲 Plin</option>
+                                        <option value="mercadopago">🟦 Mercado Pago</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
