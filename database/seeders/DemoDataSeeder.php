@@ -16,18 +16,12 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── Limpiar tablas transaccionales (compatible MySQL y PostgreSQL) ──
-        $driver = DB::connection()->getDriverName();
-        if ($driver === 'pgsql') {
-            DB::table('reparaciones')->delete();
-            DB::table('detalle_ventas')->delete();
-            DB::table('ventas')->delete();
-        } else {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-            DB::table('detalle_ventas')->truncate();
-            DB::table('ventas')->truncate();
-            DB::table('reparaciones')->truncate();
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        // ── NO borrar datos existentes ─────────────────────────────────────
+        // Si ya hay ventas o reparaciones registradas, no ejecutar el seeder
+        // para evitar perder datos reales en cada despliegue.
+        if (Venta::exists() || Reparacion::exists()) {
+            $this->command->info('⚠ DemoDataSeeder omitido: ya existen ventas o reparaciones registradas.');
+            return;
         }
 
         $admin    = User::where('rol', 'admin')->first();

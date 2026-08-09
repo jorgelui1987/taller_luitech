@@ -133,7 +133,7 @@ if [[ "$DB_CHECK" == "OK" ]]; then
         runuser -u appuser -- php artisan migrate --force 2>&1 || true
     fi
 
-    echo "Ejecutando seeders..."
+    echo "Ejecutando seeders (solo si no hay datos)..."
     runuser -u appuser -- php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Seeders ya ejecutados o no necesarios"
 else
     echo "⚠ No se pudo conectar a la BD: $DB_CHECK"
