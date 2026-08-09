@@ -7,6 +7,50 @@
 @endsection
 
 @section('content')
+
+@php
+    $stats = [
+        'compras' => $cliente->ventas->count(),
+        'total' => $cliente->totalCompras(),
+        'reparaciones' => $cliente->reparaciones->count(),
+        'desde' => $cliente->created_at->format('M Y'),
+    ];
+@endphp
+
+{{-- Tarjeta de Resumen --}}
+<div class="card mb-4">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Nombre</div>
+                <div style="font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $cliente->nombre_completo }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Tipo</div>
+                <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; display:inline-block;">
+                    {{ ucfirst($cliente->tipo) }}
+                </span>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Compras</div>
+                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $stats['compras'] }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total gastado</div>
+                <div style="font-weight:700; font-size:16px; color:#059669;">S/ {{ number_format($stats['total'], 0) }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Reparaciones</div>
+                <div style="font-weight:700; font-size:16px; color:#d97706;">{{ $stats['reparaciones'] }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Teléfono</div>
+                <div style="font-weight:600; font-size:13px;">{{ $cliente->telefono }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
 
     {{-- Perfil --}}
@@ -134,87 +178,103 @@
 
     {{-- Historial --}}
     <div class="col-lg-8">
-        {{-- Ventas --}}
         <div class="card mb-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3">Historial de Compras</h6>
-                @if($cliente->ventas->count())
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" style="font-size:13px;">
-                        <thead>
-                            <tr>
-                                <th>N° Venta</th>
-                                <th>Fecha</th>
-                                <th>Productos</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($cliente->ventas->sortByDesc('fecha_venta') as $v)
-                            <tr>
-                                <td style="color:#a855f7; font-weight:600;">{{ $v->numero_venta }}</td>
-                                <td>{{ $v->fecha_venta->format('d/m/Y') }}</td>
-                                <td>{{ $v->detalles->count() }} ítem(s)</td>
-                                <td style="font-weight:600;">S/ {{ number_format($v->total, 2) }}</td>
-                                <td>
-                                    @php $cfg=['completada'=>['#d1fae5','#065f46'],'cancelada'=>['#fee2e2','#991b1b'],'pendiente'=>['#fef3c7','#92400e']]; $c=$cfg[$v->estado]??['#f3f4f6','#374151']; @endphp
-                                    <span style="background:{{ $c[0] }}; color:{{ $c[1] }}; border-radius:20px; padding:3px 8px; font-size:11px;">{{ ucfirst($v->estado) }}</span>
-                                </td>
-                                <td><a href="{{ route('ventas.show', $v) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @else
-                <div class="text-center py-4 text-muted" style="font-size:13px;">
-                    <i class="fas fa-shopping-cart fa-2x mb-2 d-block opacity-40"></i>Sin compras registradas
-                </div>
-                @endif
+            <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
+                <ul class="nav nav-tabs card-header-tabs" id="clienteTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-ventas-tab" data-bs-toggle="tab" data-bs-target="#tab-ventas" type="button" role="tab" aria-controls="tab-ventas" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
+                            <i class="fas fa-shopping-cart me-1" style="color:#a855f7;"></i>🛒 Compras
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tab-reparaciones-tab" data-bs-toggle="tab" data-bs-target="#tab-reparaciones" type="button" role="tab" aria-controls="tab-reparaciones" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
+                            <i class="fas fa-tools me-1" style="color:#a855f7;"></i>🔧 Reparaciones
+                        </button>
+                    </li>
+                </ul>
             </div>
-        </div>
-
-        {{-- Reparaciones --}}
-        <div class="card">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3">Historial de Reparaciones</h6>
-                @if($cliente->reparaciones->count())
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" style="font-size:13px;">
-                        <thead>
-                            <tr>
-                                <th>N° Orden</th>
-                                <th>Dispositivo</th>
-                                <th>Falla</th>
-                                <th>Estado</th>
-                                <th>Costo</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($cliente->reparaciones->sortByDesc('fecha_recepcion') as $r)
-                            <tr>
-                                <td style="color:#a855f7; font-weight:600;">{{ $r->numero_orden }}</td>
-                                <td>{{ $r->dispositivo }}<div style="font-size:11px;color:#9ca3af;">{{ $r->marca }} {{ $r->modelo }}</div></td>
-                                <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $r->falla_reportada }}</td>
-                                <td>
-                                    @php $label=str_replace('_',' ',ucfirst($r->estado)); @endphp
-                                    <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 8px; font-size:11px;">{{ $label }}</span>
-                                </td>
-                                <td style="font-weight:600;">{{ $r->costo_final > 0 ? 'S/ '.number_format($r->costo_final,2) : '—' }}</td>
-                                <td><a href="{{ route('reparaciones.show', $r) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="tab-content" id="clienteTabsContent">
+
+                    {{-- Pestaña: Ventas --}}
+                    <div class="tab-pane fade show active" id="tab-ventas" role="tabpanel" aria-labelledby="tab-ventas-tab">
+                        @if($cliente->ventas->count())
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size:13px;">
+                                <thead>
+                                    <tr>
+                                        <th>N° Venta</th>
+                                        <th>Fecha</th>
+                                        <th>Productos</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($cliente->ventas->sortByDesc('fecha_venta') as $v)
+                                    <tr>
+                                        <td style="color:#a855f7; font-weight:600;">{{ $v->numero_venta }}</td>
+                                        <td>{{ $v->fecha_venta->format('d/m/Y') }}</td>
+                                        <td>{{ $v->detalles->count() }} ítem(s)</td>
+                                        <td style="font-weight:600;">S/ {{ number_format($v->total, 2) }}</td>
+                                        <td>
+                                            @php $cfg=['completada'=>['#d1fae5','#065f46'],'cancelada'=>['#fee2e2','#991b1b'],'pendiente'=>['#fef3c7','#92400e']]; $c=$cfg[$v->estado]??['#f3f4f6','#374151']; @endphp
+                                            <span style="background:{{ $c[0] }}; color:{{ $c[1] }}; border-radius:20px; padding:3px 8px; font-size:11px;">{{ ucfirst($v->estado) }}</span>
+                                        </td>
+                                        <td><a href="{{ route('ventas.show', $v) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                        <div class="text-center py-4 text-muted" style="font-size:13px;">
+                            <i class="fas fa-shopping-cart fa-2x mb-2 d-block opacity-40"></i>Sin compras registradas
+                        </div>
+                        @endif
+                    </div>
+
+                    {{-- Pestaña: Reparaciones --}}
+                    <div class="tab-pane fade" id="tab-reparaciones" role="tabpanel" aria-labelledby="tab-reparaciones-tab">
+                        @if($cliente->reparaciones->count())
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" style="font-size:13px;">
+                                <thead>
+                                    <tr>
+                                        <th>N° Orden</th>
+                                        <th>Dispositivo</th>
+                                        <th>Falla</th>
+                                        <th>Estado</th>
+                                        <th>Costo</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($cliente->reparaciones->sortByDesc('fecha_recepcion') as $r)
+                                    <tr>
+                                        <td style="color:#a855f7; font-weight:600;">{{ $r->numero_orden }}</td>
+                                        <td>{{ $r->dispositivo }}<div style="font-size:11px;color:#9ca3af;">{{ $r->marca }} {{ $r->modelo }}</div></td>
+                                        <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $r->falla_reportada }}</td>
+                                        <td>
+                                            @php $label=str_replace('_',' ',ucfirst($r->estado)); @endphp
+                                            <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 8px; font-size:11px;">{{ $label }}</span>
+                                        </td>
+                                        <td style="font-weight:600;">{{ $r->costo_final > 0 ? 'S/ '.number_format($r->costo_final,2) : '—' }}</td>
+                                        <td><a href="{{ route('reparaciones.show', $r) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                        <div class="text-center py-4 text-muted" style="font-size:13px;">
+                            <i class="fas fa-tools fa-2x mb-2 d-block opacity-40"></i>Sin reparaciones registradas
+                        </div>
+                        @endif
+                    </div>
+
                 </div>
-                @else
-                <div class="text-center py-4 text-muted" style="font-size:13px;">
-                    <i class="fas fa-tools fa-2x mb-2 d-block opacity-40"></i>Sin reparaciones registradas
-                </div>
-                @endif
             </div>
         </div>
     </div>
