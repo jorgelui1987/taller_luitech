@@ -390,7 +390,7 @@ class ReparacionController extends Controller
     {
         $validated = $request->validate([
             'tecnico_id'      => 'required|exists:users,id',
-            'metodo_pago'     => 'nullable|in:efectivo,tarjeta,transferencia,mercadopago',
+            'metodo_pago'     => 'nullable|in:efectivo,transferencia,mercadopago',
             'tipo_dispositivo'=> 'required|in:celular,tablet,portatil,otros',
             'dispositivo'     => 'nullable|string|max:150',
             'codigo_equipo'   => 'nullable|string|max:80',

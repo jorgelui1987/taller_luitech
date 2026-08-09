@@ -225,7 +225,6 @@
                                     <label for="metodo_pago" class="form-label">Método de Pago (al entregar)</label>
                                     <select name="metodo_pago" id="metodo_pago" class="form-select">
                                         <option value="efectivo">💵 Efectivo</option>
-                                        <option value="tarjeta">💳 Tarjeta</option>
                                         <option value="transferencia">🏦 Transferencia</option>
                                         <option value="mercadopago">🟦 Mercado Pago</option>
                                     </select>
