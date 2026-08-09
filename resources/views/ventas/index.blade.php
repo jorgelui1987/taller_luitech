@@ -121,14 +121,13 @@
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 @if(in_array($venta->estado, ['completada', 'pendiente']))
-                                <form action="{{ route('ventas.cancelar', $venta) }}" method="POST"
-                                      onsubmit="return confirm('¿Cancelar esta venta?')">
-                                    @csrf @method('PATCH')
-                                    <button type="submit" class="btn btn-sm"
-                                            style="background:#fee2e2; color:#dc2626; border-radius:8px; padding:5px 10px;">
-                                        <i class="fas fa-ban fa-sm"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-cancelar-venta"
+                                        style="background:#fee2e2; color:#dc2626; border-radius:8px; padding:5px 10px;"
+                                        data-numero="{{ $venta->numero_venta }}"
+                                        data-url="{{ route('ventas.cancelar', $venta) }}"
+                                        data-bs-toggle="modal" data-bs-target="#modalCancelarVentaIndex">
+                                    <i class="fas fa-ban fa-sm"></i>
+                                </button>
                                 @endif
                             </div>
                         </td>
@@ -158,4 +157,53 @@
         @endif
     </div>
 </div>
+
+{{-- Modal Cancelar Venta (desde listado) --}}
+<div class="modal fade" id="modalCancelarVentaIndex" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;border:none;">
+            <div class="modal-header" style="border-bottom:1px solid #f3f4f6;padding:20px 24px;">
+                <h6 class="modal-title fw-bold" style="color:#dc2626;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Cancelar Venta <span id="lblNumeroVenta"></span>
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formCancelarVentaIndex" action="" method="POST">
+                @csrf @method('PATCH')
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-3" style="font-size:13px;">
+                        Se restaurará el stock de los productos y la venta quedará marcada como cancelada.
+                    </p>
+                    <label for="motivo_cancelacion_index" class="form-label">
+                        Motivo de cancelación <span class="text-danger">*</span>
+                    </label>
+                    <textarea name="motivo_cancelacion" id="motivo_cancelacion_index" class="form-control" rows="3"
+                              required maxlength="500" placeholder="Ej: Error al registrar, devolución, cliente no pagó..."></textarea>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f3f4f6;padding:16px 24px;">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fas fa-ban me-2"></i>Confirmar Cancelación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-cancelar-venta').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var numero = this.dataset.numero;
+            var url = this.dataset.url;
+            document.getElementById('lblNumeroVenta').textContent = '— ' + numero;
+            document.getElementById('formCancelarVentaIndex').action = url;
+            document.getElementById('motivo_cancelacion_index').value = '';
+        });
+    });
+});
+</script>
+@endpush
 @endsection
