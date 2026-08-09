@@ -207,6 +207,8 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/ventas/{venta}/whatsapp', [VentaController::class, 'enviarWhatsApp'])->name('ventas.whatsapp');
             Route::post('/ventas/{venta}/mercadopago', [MercadoPagoController::class, 'generarPago'])->name('ventas.mercadopago');
             Route::post('/ventas/{venta}/point', [MercadoPagoController::class, 'cobrarPoint'])->name('ventas.point');
+            Route::post('/reparaciones/{reparacion}/mercadopago', [MercadoPagoController::class, 'generarPagoReparacion'])->name('reparaciones.mercadopago');
+            Route::post('/reparaciones/{reparacion}/point', [MercadoPagoController::class, 'cobrarPointReparacion'])->name('reparaciones.point');
         });
 
         // Devoluciones (solo admin y vendedor)

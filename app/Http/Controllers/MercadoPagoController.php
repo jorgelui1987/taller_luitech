@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reparacion;
 use App\Models\Venta;
 use App\Services\MercadoPagoService;
 use Illuminate\Http\Request;
@@ -48,6 +49,44 @@ class MercadoPagoController extends Controller
     }
 
     /**
+     * Genera el QR de pago para una reparación.
+     */
+    public function generarPagoReparacion(Reparacion $reparacion)
+    {
+        try {
+            $pago = app(MercadoPagoService::class)->crearPagoReparacion($reparacion);
+
+            if ($pago['estado'] === 'desactivado') {
+                return back()->with('error', 'Mercado Pago no está activado para esta empresa.');
+            }
+
+            return back()->with('mercadopago_reparacion', $pago);
+        } catch (\Exception $e) {
+            Log::error('Error generando pago reparacion Mercado Pago: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Envía el cobro al terminal Point para una reparación.
+     */
+    public function cobrarPointReparacion(Reparacion $reparacion)
+    {
+        try {
+            $pago = app(MercadoPagoService::class)->crearPagoPointReparacion($reparacion);
+
+            if ($pago['estado'] === 'desactivado') {
+                return back()->with('error', 'Mercado Pago no está activado para esta empresa.');
+            }
+
+            return back()->with('point_reparacion', $pago);
+        } catch (\Exception $e) {
+            Log::error('Error cobrando reparación con Point: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
      * Webhook de Mercado Pago - recibe notificaciones de pago.
      * Soporta tanto type=payment como type=order (Point).
      *
@@ -80,15 +119,47 @@ class MercadoPagoController extends Controller
                 $pago = app(MercadoPagoService::class)->consultarPago($data['id']);
 
                 if ($pago['estado'] === 'approved' && $pago['referencia']) {
-                    $venta = Venta::where('numero_venta', $pago['referencia'])->first();
+                    $referencia = $pago['referencia'];
 
-                    if ($venta) {
-                        $venta->update([
-                            'estado'      => 'completada',
-                            'estado_pago' => 'pagado',
-                            'metodo_pago' => 'mercadopago',
-                        ]);
-                        Log::info("Venta {$venta->numero_venta} marcada como pagada vía Mercado Pago.");
+                    // Si la referencia es de una REPARACIÓN (REP-...), crear la venta automática
+                    if (str_starts_with($referencia, 'REP-')) {
+                        $reparacion = Reparacion::where('numero_orden', $referencia)->first();
+                        if ($reparacion) {
+                            // Crear la venta automática de la reparación (Opción B)
+                            $totalReparacion = (float) $reparacion->total;
+                            $comisionMonto = (float) $reparacion->comision_monto ?? 0;
+
+                            Venta::create([
+                                'numero_venta'   => Venta::generarNumero(),
+                                'cliente_id'     => $reparacion->cliente_id,
+                                'user_id'        => $reparacion->tecnico_id,
+                                'fecha_venta'    => now(),
+                                'subtotal'       => $totalReparacion,
+                                'descuento'      => 0,
+                                'impuesto'       => 0,
+                                'total'          => $totalReparacion,
+                                'comision_monto' => $comisionMonto,
+                                'comision_pagada'=> false,
+                                'metodo_pago'    => 'mercadopago',
+                                'estado'         => 'completada',
+                                'estado_pago'    => 'pagado',
+                                'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+                                'tenant_id'      => $reparacion->tenant_id,
+                            ]);
+                            Log::info("Venta creada por reparación {$reparacion->numero_orden} vía Mercado Pago.");
+                        }
+                    } else {
+                        // Es una venta normal
+                        $venta = Venta::where('numero_venta', $referencia)->first();
+
+                        if ($venta) {
+                            $venta->update([
+                                'estado'      => 'completada',
+                                'estado_pago' => 'pagado',
+                                'metodo_pago' => 'mercadopago',
+                            ]);
+                            Log::info("Venta {$venta->numero_venta} marcada como pagada vía Mercado Pago.");
+                        }
                     }
                 }
             }
@@ -98,17 +169,45 @@ class MercadoPagoController extends Controller
                 $referencia = $data['external_reference'];
                 $status = $data['status'] ?? '';
 
-                // Buscar la venta por referencia (VENTA-VTA-000XXX)
-                $numeroVenta = str_replace('VENTA-', '', $referencia);
-                $venta = Venta::where('numero_venta', $numeroVenta)->first();
+                // Si la referencia es de una REPARACIÓN (REP-...), crear la venta automática
+                if (str_starts_with($referencia, 'REP-')) {
+                    $reparacion = Reparacion::where('numero_orden', $referencia)->first();
+                    if ($reparacion && $status === 'processed') {
+                        $totalReparacion = (float) $reparacion->total;
+                        $comisionMonto = (float) $reparacion->comision_monto ?? 0;
 
-                if ($venta && $status === 'processed') {
-                    $venta->update([
-                        'estado'      => 'completada',
-                        'estado_pago' => 'pagado',
-                        'metodo_pago' => 'mercadopago',
-                    ]);
-                    Log::info("Venta {$venta->numero_venta} marcada como pagada vía Point.");
+                        Venta::create([
+                            'numero_venta'   => Venta::generarNumero(),
+                            'cliente_id'     => $reparacion->cliente_id,
+                            'user_id'        => $reparacion->tecnico_id,
+                            'fecha_venta'    => now(),
+                            'subtotal'       => $totalReparacion,
+                            'descuento'      => 0,
+                            'impuesto'       => 0,
+                            'total'          => $totalReparacion,
+                            'comision_monto' => $comisionMonto,
+                            'comision_pagada'=> false,
+                            'metodo_pago'    => 'mercadopago',
+                            'estado'         => 'completada',
+                            'estado_pago'    => 'pagado',
+                            'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+                            'tenant_id'      => $reparacion->tenant_id,
+                        ]);
+                        Log::info("Venta creada por reparación {$reparacion->numero_orden} vía Point.");
+                    }
+                } else {
+                    // Es una venta normal
+                    $numeroVenta = str_replace('VENTA-', '', $referencia);
+                    $venta = Venta::where('numero_venta', $numeroVenta)->first();
+
+                    if ($venta && $status === 'processed') {
+                        $venta->update([
+                            'estado'      => 'completada',
+                            'estado_pago' => 'pagado',
+                            'metodo_pago' => 'mercadopago',
+                        ]);
+                        Log::info("Venta {$venta->numero_venta} marcada como pagada vía Point.");
+                    }
                 }
             }
         } catch (\Exception $e) {

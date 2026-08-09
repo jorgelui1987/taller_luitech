@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\Configuracion;
+use App\Models\Reparacion;
 use App\Models\Venta;
 use App\Exceptions\FacturacionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Servicio de integración con Mercado Pago.
@@ -141,6 +143,139 @@ class MercadoPagoService
             $errorBody = $response->json();
             $mensajeError = $errorBody['message'] ?? $errorBody['error'] ?? $response->body();
             Log::error('Error Mercado Pago Point al crear order: ' . $response->body());
+            throw new FacturacionException('Error Point: ' . $mensajeError);
+        }
+
+        $data = $response->json();
+
+        return [
+            'estado'       => 'pendiente',
+            'order_id'     => $data['id'] ?? null,
+            'payment_id'   => $data['transactions']['payments'][0]['id'] ?? null,
+            'device_id'    => $config->mercadopago_device_id,
+            'mensaje'      => 'Order enviada al Point. Espera la confirmación del dispositivo.',
+        ];
+    }
+
+    /**
+     * Crea una preferencia de pago (QR) para una reparación.
+     * Usa la referencia REP-{numero_orden} para que el webhook la identifique.
+     *
+     * @param Reparacion $reparacion
+     * @return array
+     */
+    public function crearPagoReparacion(Reparacion $reparacion): array
+    {
+        $config = Configuracion::empresa();
+
+        if (!$config || !$config->mercadopago_activo) {
+            return [
+                'estado'  => 'desactivado',
+                'mensaje' => 'Mercado Pago desactivado para esta empresa.',
+            ];
+        }
+
+        if (!$config->mercadopago_access_token) {
+            throw new FacturacionException('Falta el Access Token de Mercado Pago. Configúralo en Configuración → Empresa.');
+        }
+
+        $moneda = $config->moneda ?? 'CLP';
+        $monto = (float) $reparacion->total;
+
+        // Crear preferencia de pago
+        $response = Http::withToken($config->mercadopago_access_token)
+            ->post('https://api.mercadopago.com/checkout/preferences', [
+                'items' => [[
+                    'title'       => "Reparación {$reparacion->numero_orden}",
+                    'quantity'    => 1,
+                    'unit_price'  => $monto,
+                    'currency_id' => $moneda,
+                ]],
+                'external_reference' => $reparacion->numero_orden,
+                'notification_url'   => url('/webhooks/mercadopago'),
+                'back_urls' => [
+                    'success' => route('reparaciones.show', $reparacion),
+                    'pending' => route('reparaciones.show', $reparacion),
+                    'failure' => route('reparaciones.show', $reparacion),
+                ],
+                'auto_return' => 'approved',
+            ]);
+
+        if (!$response->successful()) {
+            Log::error('Error Mercado Pago al crear preferencia reparación: ' . $response->body());
+            throw new FacturacionException('Error al crear el pago en Mercado Pago.');
+        }
+
+        $data = $response->json();
+
+        return [
+            'estado'      => 'pendiente',
+            'init_point'  => $data['init_point'] ?? null,
+            'qr_code'     => $data['qr_code'] ?? null,
+            'preference_id' => $data['id'] ?? null,
+        ];
+    }
+
+    /**
+     * Crea una order de pago Point para una reparación.
+     *
+     * @param Reparacion $reparacion
+     * @return array
+     */
+    public function crearPagoPointReparacion(Reparacion $reparacion): array
+    {
+        $config = Configuracion::empresa();
+
+        if (!$config || !$config->mercadopago_activo) {
+            return [
+                'estado'  => 'desactivado',
+                'mensaje' => 'Mercado Pago desactivado para esta empresa.',
+            ];
+        }
+
+        if (!$config->mercadopago_access_token) {
+            throw new FacturacionException('Falta el Access Token de Mercado Pago. Configúralo en Configuración → Empresa.');
+        }
+
+        if (!$config->mercadopago_device_id) {
+            throw new FacturacionException('Falta el Device ID del Point. Configúralo en Configuración → Empresa → Mercado Pago.');
+        }
+
+        // Monto entero sin decimales (como string)
+        $monto = (string) round((float) $reparacion->total, 0);
+
+        // Crear order de pago para el dispositivo Point (Orders API)
+        $response = Http::withToken($config->mercadopago_access_token)
+            ->withHeaders([
+                'X-Idempotency-Key' => 'rep-' . $reparacion->id . '-' . now()->timestamp,
+            ])
+            ->post('https://api.mercadopago.com/v1/orders', [
+                'type'              => 'point',
+                'external_reference' => $reparacion->numero_orden,
+                'expiration_time'   => 'PT16M',
+                'transactions'      => [
+                    'payments' => [
+                        [
+                            'amount' => $monto,
+                        ],
+                    ],
+                ],
+                'config'            => [
+                    'point' => [
+                        'terminal_id'       => $config->mercadopago_device_id,
+                        'print_on_terminal' => 'no_ticket',
+                    ],
+                    'payment_method' => [
+                        'default_type' => 'credit_card',
+                    ],
+                ],
+                'description'       => "Reparación {$reparacion->numero_orden}",
+            ]);
+
+        if (!$response->successful()) {
+            $errorBody = $response->json();
+            $mensajeError = $errorBody['message'] ?? $errorBody['error'] ?? $response->body();
+            Log::error('Error Mercado Pago Point al crear order reparación: ' . $response->body());
             throw new FacturacionException('Error Point: ' . $mensajeError);
         }
 
