@@ -197,9 +197,44 @@
     </div>
 </div>
 
+@php
+    $stColors = ['recibido'=>['#ede9fe','#6d28d9'],'en_diagnostico'=>['#e0f2fe','#0369a1'],'esperando_repuesto'=>['#fef9c3','#92400e'],'en_reparacion'=>['#dbeafe','#1d4ed8'],'listo'=>['#d1fae5','#065f46'],'entregado'=>['#f3f4f6','#374151'],'no_reparable'=>['#fee2e2','#991b1b']];
+@endphp
+
+{{-- Tarjeta de Resumen (datos clave de un vistazo) --}}
+<div class="card mb-4">
+    <div class="card-body p-3">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3 col-6">
+                <div style="font-size:11px; color:#9ca3af;">EQUIPO</div>
+                <div style="font-weight:600; font-size:14px;">{{ $reparacion->dispositivo ?: ($reparacion->marca ?: 'Sin equipo') }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:11px; color:#9ca3af;">MARCA</div>
+                <div style="font-weight:600; font-size:14px;">{{ $reparacion->marca ?: '—' }}</div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:11px; color:#9ca3af;">ESTADO</div>
+                @php $scResumen = $stColors[$reparacion->estado] ?? ['#f3f4f6','#374151']; @endphp
+                <span style="background:{{ $scResumen[0] }}; color:{{ $scResumen[1] }}; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; display:inline-block;">
+                    {{ str_replace('_',' ',ucfirst($reparacion->estado)) }}
+                </span>
+            </div>
+            <div class="col-md-2 col-6">
+                <div style="font-size:11px; color:#9ca3af;">TOTAL</div>
+                <div style="font-weight:700; font-size:16px; color:#7c3aed;">S/ {{ number_format($reparacion->total, 2) }}</div>
+            </div>
+            <div class="col-md-3 col-12">
+                <div style="font-size:11px; color:#9ca3af;">RECIBIDO</div>
+                <div style="font-weight:600; font-size:13px;">{{ optional($reparacion->fecha_recepcion)->format('d/m/Y H:i') }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
     {{-- ============================================================ --}}
-    {{-- COLUMNA PRINCIPAL (EQUIPO + DIAGNÓSTICO + FOTOS) --}}
+    {{-- CONTENIDO PRINCIPAL (una sola columna organizada) --}}
     {{-- ============================================================ --}}
     <div class="col-lg-8">
 
@@ -220,18 +255,24 @@
                         </span>
                     </div>
                     <div class="row g-3" style="font-size:13.5px;">
+                        @if($reparacion->dispositivo)
                         <div class="col-md-4 col-6">
                             <span class="text-muted d-block" style="font-size:11px;">DISPOSITIVO</span>
-                            <strong>{{ $reparacion->dispositivo ?: '—' }}</strong>
+                            <strong>{{ $reparacion->dispositivo }}</strong>
                         </div>
+                        @endif
+                        @if($reparacion->marca || $reparacion->modelo)
                         <div class="col-md-4 col-6">
                             <span class="text-muted d-block" style="font-size:11px;">MARCA / MODELO</span>
-                            <strong>{{ $reparacion->marca ?: '—' }}@if($reparacion->modelo) / {{ $reparacion->modelo }}@endif</strong>
+                            <strong>{{ $reparacion->marca ?? '' }}@if($reparacion->modelo) / {{ $reparacion->modelo }}@endif</strong>
                         </div>
+                        @endif
+                        @if($reparacion->color)
                         <div class="col-md-4 col-6">
                             <span class="text-muted d-block" style="font-size:11px;">🎨 COLOR</span>
-                            <strong>{{ $reparacion->color ?: '—' }}</strong>
+                            <strong>{{ $reparacion->color }}</strong>
                         </div>
+                        @endif
                         @if($reparacion->imei)
                         <div class="col-md-4 col-6">
                             <span class="text-muted d-block" style="font-size:11px;">🔢 IMEI / SERIE</span>
