@@ -50,6 +50,11 @@ class MercadoPagoController extends Controller
     /**
      * Webhook de Mercado Pago - recibe notificaciones de pago.
      * Soporta tanto type=payment como type=order (Point).
+     *
+     * Responde 200 inmediatamente a Mercado Pago y procesa la notificación
+     * en segundo plano (fastcgi_finish_request) para evitar timeouts que
+     * provocan errores 502 Bad Gateway al llamar a la API de Mercado Pago
+     * de forma síncrona.
      */
     public function webhook(Request $request)
     {
@@ -59,9 +64,19 @@ class MercadoPagoController extends Controller
         $action = $request->input('action');
         $data = $request->input('data', []);
 
-        // ── Caso 1: Notificación de pago (type=payment) ──
-        if ($tipo === 'payment' && isset($data['id'])) {
-            try {
+        // Responder 200 inmediatamente a Mercado Pago
+        $response = response()->json(['status' => 'ok']);
+
+        // Enviar la respuesta y continuar el procesamiento en segundo plano
+        if (function_exists('fastcgi_finish_request')) {
+            $response->send();
+            fastcgi_finish_request();
+        }
+
+        // ── Procesar la notificación en segundo plano ──
+        try {
+            // Caso 1: Notificación de pago (type=payment)
+            if ($tipo === 'payment' && isset($data['id'])) {
                 $pago = app(MercadoPagoService::class)->consultarPago($data['id']);
 
                 if ($pago['estado'] === 'approved' && $pago['referencia']) {
@@ -76,14 +91,10 @@ class MercadoPagoController extends Controller
                         Log::info("Venta {$venta->numero_venta} marcada como pagada vía Mercado Pago.");
                     }
                 }
-            } catch (\Exception $e) {
-                Log::error('Error procesando webhook Mercado Pago: ' . $e->getMessage());
             }
-        }
 
-        // ── Caso 2: Notificación de order Point (type=order) ──
-        if ($tipo === 'order' && $action === 'order.processed' && isset($data['external_reference'])) {
-            try {
+            // Caso 2: Notificación de order Point (type=order)
+            if ($tipo === 'order' && $action === 'order.processed' && isset($data['external_reference'])) {
                 $referencia = $data['external_reference'];
                 $status = $data['status'] ?? '';
 
@@ -99,11 +110,11 @@ class MercadoPagoController extends Controller
                     ]);
                     Log::info("Venta {$venta->numero_venta} marcada como pagada vía Point.");
                 }
-            } catch (\Exception $e) {
-                Log::error('Error procesando webhook Point: ' . $e->getMessage());
             }
+        } catch (\Exception $e) {
+            Log::error('Error procesando webhook Mercado Pago: ' . $e->getMessage());
         }
 
-        return response()->json(['status' => 'ok']);
+        return $response;
     }
 }
