@@ -125,10 +125,14 @@ class MercadoPagoController extends Controller
                             $totalReparacion = (float) $reparacion->total;
                             $comisionMonto = (float) $reparacion->comision_monto ?? 0;
 
+                            // Usar valores seguros (evitar null en user_id/tenant_id)
+                            $userId = $reparacion->tecnico_id ?? \App\Models\User::where('rol', 'admin')->value('id');
+                            $tenantId = $reparacion->tenant_id ?? \App\Models\Configuracion::empresa()?->tenant_id;
+
                             Venta::create([
                                 'numero_venta'   => Venta::generarNumero(),
                                 'cliente_id'     => $reparacion->cliente_id,
-                                'user_id'        => $reparacion->tecnico_id,
+                                'user_id'        => $userId,
                                 'fecha_venta'    => now(),
                                 'subtotal'       => $totalReparacion,
                                 'descuento'      => 0,
@@ -140,7 +144,7 @@ class MercadoPagoController extends Controller
                                 'estado'         => 'completada',
                                 'estado_pago'    => 'pagado',
                                 'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
-                                'tenant_id'      => $reparacion->tenant_id,
+                                'tenant_id'      => $tenantId,
                             ]);
                             Log::info("Venta creada por reparación {$reparacion->numero_orden} vía Mercado Pago.");
                         }
