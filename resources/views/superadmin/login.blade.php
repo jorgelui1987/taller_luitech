@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperAdmin - CRM Celulares</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
 <body class="bg-dark">
     <div class="container py-5">
@@ -29,8 +28,8 @@
                                 <label for="password" class="form-label">Contraseña</label>
                                 <div class="input-group">
                                     <input type="password" name="password" id="password" class="form-control" required>
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" tabindex="-1">
-                                        <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" tabindex="-1" aria-label="Mostrar u ocultar contraseña">
+                                        <span id="togglePasswordIcon" aria-hidden="true">👁️</span>
                                     </button>
                                 </div>
                             </div>
@@ -49,8 +48,7 @@
         togglePassword.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            togglePasswordIcon.classList.toggle('bi-eye');
-            togglePasswordIcon.classList.toggle('bi-eye-slash');
+            togglePasswordIcon.textContent = type === 'text' ? '🙈' : '👁️';
         });
     </script>
 </body>
