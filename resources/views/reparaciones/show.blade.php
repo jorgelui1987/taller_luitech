@@ -240,8 +240,8 @@
     </div>
 </div>
 
-{{-- Cobro con Mercado Pago (Opción B: cobrar primero, crear venta al autorizar) --}}
-@if($reparacion->estado === 'entregado' && $reparacion->total > 0)
+{{-- Cobro con Mercado Pago (Opción B: venta pendiente, completar al confirmar pago) --}}
+@if($reparacion->estado === 'entregado' && $reparacion->total > 0 && (!$ventaReparacion || $ventaReparacion->estado === 'pendiente'))
 <div class="card mb-4" style="border:1px solid #00b1ea;">
     <div class="card-body p-3">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -760,7 +760,7 @@ function cerrarLightbox() {
 }
 
 // ── IMPRESIÓN AUTOMÁTICA DEL TICKET DE REPARACIÓN AL CONFIRMAR PAGO ──
-@if($reparacion->estado === 'entregado' && $reparacion->total > 0 && !isset($ventaReparacion))
+@if($reparacion->estado === 'entregado' && $reparacion->total > 0 && (!$ventaReparacion || $ventaReparacion->estado === 'pendiente'))
 document.addEventListener('DOMContentLoaded', function() {
     const urlEstadoPago = "{{ route('reparaciones.estado-pago', $reparacion) }}";
     const urlTicket = "{{ route('reparaciones.ticket', $reparacion) }}";
