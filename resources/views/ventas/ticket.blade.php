@@ -4,35 +4,45 @@
 <meta charset="UTF-8">
 <title>Ticket {{ $venta->numero_venta }}</title>
 <style>
-*{margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Lucida Console','Courier New',monospace;font-size:11px;line-height:1.3;color:#000;width:72mm;
     -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
-@page{size:80mm auto;margin:2mm}
+@page{size:72mm auto;margin:2mm}
 .hdr{text-align:center}
 .hdr .tienda{font-size:13px;font-weight:700;letter-spacing:-0.3px}
 .hdr .inf{font-size:9px;letter-spacing:-0.2px}
 .hdr .nro{font-size:14px;font-weight:700;letter-spacing:0.5px}
 .det{font-size:11px}
 .det .etq{font-size:8px;font-weight:700}
-.prod{width:100%;border-collapse:collapse;font-size:10px}
+.prod{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
 .prod th{font-size:8px;text-align:left;font-weight:700;border-bottom:1.5px solid #000;text-transform:uppercase}
 .prod th.c,.prod td.c{text-align:center}
 .prod th.p,.prod td.p{text-align:right}
-.prod td{padding:1px 0;vertical-align:top}
-.prod td.n{font-weight:700;font-size:11px}
-.prod td.d{font-size:8px;color:#555}
-.tot .l{display:flex;justify-content:space-between;font-size:10px}
-.tot .lt{display:flex;justify-content:space-between;font-weight:700;font-size:13px;border-top:1.5px solid #000;border-bottom:1.5px solid #000;padding:2px 0}
+.prod td{padding:1px 0;vertical-align:top;overflow:hidden}
+.prod td.n{font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.prod td.d{font-size:8px;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod th:nth-child(1){width:55%}
+.prod th:nth-child(2){width:12%}
+.prod th:nth-child(3){width:16%}
+.prod th:nth-child(4){width:17%}
+.tot .l{display:flex;justify-content:space-between;font-size:10px;white-space:nowrap}
+.tot .lt{display:flex;justify-content:space-between;font-weight:700;font-size:13px;border-top:1.5px solid #000;border-bottom:1.5px solid #000;padding:2px 0;white-space:nowrap}
 .not{font-size:9px}
 .section{font-weight:700;margin-top:2px;font-size:10px}
 .ftr{text-align:center;margin-top:2px;font-size:9px}
 .ftr .gr{font-size:10px;font-weight:700}
 hr{border:none;border-top:1.5px solid #000;margin:1px 0}
+hr.dotted{border-top:1px dashed #000}
+/* Mini web - más visible para el cliente */
+.miniweb{text-align:center;margin:4px 0;padding:4px 2px;border:2px solid #000;border-radius:4px;background:#fff}
+.miniweb .lbl{font-size:8px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+.miniweb .url{font-size:11px;font-weight:700;word-break:break-all;line-height:1.4}
 
 @media print{
     body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
+</head>
 <body>
 <div class="hdr">
 @if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="max-height:60px;max-width:100px">@endif
@@ -46,7 +56,14 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 @endif
 </div>
 <hr>
-<div class="det"><span class="etq">CLIENTE </span>{{ $venta->cliente?->nombre_completo ?? 'VENTA GENERAL' }}{{ $venta->cliente?->telefono ? ' T:'.$venta->cliente->telefono : '' }}{{ $venta->cliente?->email ? ' E:'.$venta->cliente->email : '' }}</div>
+<div class="det"><span class="etq">CLIENTE </span>{{ $venta->cliente?->nombre_completo ?? 'VENTA GENERAL' }}</div>
+@if($venta->cliente?->telefono || $venta->cliente?->email)
+<div class="det" style="font-size:9px;">
+    @if($venta->cliente?->telefono)<span class="etq">TEL </span>{{ $venta->cliente->telefono }}@endif
+    @if($venta->cliente?->telefono && $venta->cliente?->email) | @endif
+    @if($venta->cliente?->email)<span class="etq">EMAIL </span>{{ $venta->cliente->email }}@endif
+</div>
+@endif
 <div class="det"><span class="etq">PAGO </span>{{ ucfirst($venta->metodo_pago) }} | {{ $venta->vendedor->name ?? '—' }}</div>
 <hr>
 <table class="prod">
@@ -76,8 +93,11 @@ hr{border:none;border-top:1.5px solid #000;margin:1px 0}
 @if($venta->notas)<div class="not">Notas: {{ $venta->notas }}</div>@endif
 
 @if($urlMiniWeb)
-<hr>
-<div style="text-align:center;font-size:9px;">🌐 {{ $urlMiniWeb }}</div>
+<hr class="dotted">
+<div class="miniweb">
+    <div class="lbl">🌐 Visita nuestra tienda online</div>
+    <div class="url">{{ $urlMiniWeb }}</div>
+</div>
 @endif
 
 <div class="ftr">
