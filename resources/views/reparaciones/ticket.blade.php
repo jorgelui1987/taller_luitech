@@ -69,8 +69,7 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 <div class="det">{{ $estadoLabel }} @if($reparacion->prioridad!='baja'){{ $prioridadIcon[$reparacion->prioridad]??'' }}@endif | Téc: {{ $reparacion->tecnico->name ?? '—' }}</div>
 </div>
 <hr>
-<div class="section">CLIENTE</div>
-<div class="det">{{ $reparacion->cliente->nombre_completo ?? '—' }}{{ $reparacion->cliente->telefono ? ' | T:'.$reparacion->cliente->telefono : '' }}</div>
+<div class="det">CLIENTE: {{ rtrim($reparacion->cliente->nombre_completo ?? '—', ' :') }}{{ $reparacion->cliente->telefono ? ' | T:'.$reparacion->cliente->telefono : '' }}</div>
 <hr>
 <div class="section">EQUIPO</div>
 <table class="eq-table">
