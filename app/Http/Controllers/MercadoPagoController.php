@@ -117,36 +117,20 @@ class MercadoPagoController extends Controller
                 if ($pago['estado'] === 'approved' && $pago['referencia']) {
                     $referencia = $pago['referencia'];
 
-                    // Si la referencia es de una REPARACIÓN (REP-...), crear la venta automática
+                    // Si la referencia es de una REPARACIÓN (REP-...), completar la venta pendiente
                     if (str_starts_with($referencia, 'REP-')) {
-                        $reparacion = Reparacion::where('numero_orden', $referencia)->first();
-                        if ($reparacion) {
-                            // Crear la venta automática de la reparación (Opción B)
-                            $totalReparacion = (float) $reparacion->total;
-                            $comisionMonto = (float) $reparacion->comision_monto ?? 0;
+                        $ventaPendiente = Venta::where('notas', 'like', "%{$referencia}%")
+                            ->where('estado', 'pendiente')
+                            ->orderByDesc('id')
+                            ->first();
 
-                            // Usar valores seguros (evitar null en user_id/tenant_id)
-                            $userId = $reparacion->tecnico_id ?? \App\Models\User::where('rol', 'admin')->value('id');
-                            $tenantId = $reparacion->tenant_id ?? \App\Models\Configuracion::empresa()?->tenant_id;
-
-                            Venta::create([
-                                'numero_venta'   => Venta::generarNumero(),
-                                'cliente_id'     => $reparacion->cliente_id,
-                                'user_id'        => $userId,
-                                'fecha_venta'    => now(),
-                                'subtotal'       => $totalReparacion,
-                                'descuento'      => 0,
-                                'impuesto'       => 0,
-                                'total'          => $totalReparacion,
-                                'comision_monto' => $comisionMonto,
-                                'comision_pagada'=> false,
-                                'metodo_pago'    => 'mercadopago',
-                                'estado'         => 'completada',
-                                'estado_pago'    => 'pagado',
-                                'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
-                                'tenant_id'      => $tenantId,
+                        if ($ventaPendiente) {
+                            $ventaPendiente->update([
+                                'estado'      => 'completada',
+                                'estado_pago' => 'pagado',
+                                'metodo_pago' => 'mercadopago',
                             ]);
-                            Log::info("Venta creada por reparación {$reparacion->numero_orden} vía Mercado Pago.");
+                            Log::info("Venta {$ventaPendiente->numero_venta} (reparación {$referencia}) completada vía Mercado Pago.");
                         }
                     } else {
                         // Es una venta normal
