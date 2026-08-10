@@ -274,9 +274,9 @@
                                         <div class="col-md-3">
                                             <label for="metodo_pago" class="form-label">Método de Pago (al entregar)</label>
                                             <select name="metodo_pago" id="metodo_pago" class="form-select">
-                                                <option value="efectivo">💵 Efectivo</option>
-                                                <option value="transferencia">🏦 Transferencia</option>
-                                                <option value="mercadopago">🟦 Mercado Pago</option>
+                                                <option value="efectivo" {{ old('metodo_pago', $reparacion->metodo_pago ?? 'efectivo')=='efectivo'?'selected':'' }}>💵 Efectivo</option>
+                                                <option value="transferencia" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='transferencia'?'selected':'' }}>🏦 Transferencia</option>
+                                                <option value="mercadopago" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='mercadopago'?'selected':'' }}>🟦 Mercado Pago</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
