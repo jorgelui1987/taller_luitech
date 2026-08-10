@@ -288,8 +288,8 @@
 {{-- ADMIN: Últimas ventas + Reparaciones recientes --}}
 @if(auth()->user()->esAdmin() || auth()->user()->esSuperAdmin())
 <div class="row g-3">
-    {{-- Últimas ventas --}}
-    <div class="col-lg-7">
+    {{-- Últimas ventas (PRIMERO - más prominente) --}}
+    <div class="col-lg-8">
         <div class="card">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
@@ -360,8 +360,8 @@
         </div>
     </div>
 
-    {{-- Reparaciones recientes --}}
-    <div class="col-lg-5">
+    {{-- Reparaciones recientes (SEGUNDO) --}}
+    <div class="col-lg-4">
         <div class="card">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center justify-content-between mb-3">
