@@ -401,15 +401,22 @@ function initSignaturePadCreate() {
     const canvas = document.getElementById('canvasFirmaRecepcionCreate');
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
+    const wrapper = canvas.parentElement;
     const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    const width = rect.width || (canvas.parentElement ? canvas.parentElement.clientWidth : 500);
+
+    // Si el canvas está en una pestaña oculta, usar el ancho del wrapper o un mínimo seguro
+    let width = wrapper && wrapper.clientWidth > 100 ? wrapper.clientWidth : 0;
+    if (width < 100) {
+        const activePane = document.querySelector('.tab-pane.active');
+        width = activePane && activePane.clientWidth > 100 ? activePane.clientWidth : 300;
+    }
 
     canvas.width = width * ratio;
     canvas.height = 140 * ratio;
 
     const ctx = canvas.getContext('2d');
-    ctx.scale(ratio, ratio);
+    // Reset + scale (evita acumular transformaciones al reinicializar)
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     signaturePadCreate = new SignaturePad(canvas, {
         backgroundColor: 'rgb(255, 255, 255)',
@@ -509,6 +516,14 @@ function renderizarFotosPrevias() {
 // Al enviar el formulario, guardar la firma
 document.addEventListener('DOMContentLoaded', function() {
     initSignaturePadCreate();
+
+    // Reinicializar cuando la pestaña "Firma" se hace visible
+    const firmaTab = document.getElementById('tab-firma-tab');
+    if (firmaTab) {
+        firmaTab.addEventListener('shown.bs.tab', function() {
+            setTimeout(initSignaturePadCreate, 100);
+        });
+    }
 
     const form = document.getElementById('orderCreateForm');
     if (form) {

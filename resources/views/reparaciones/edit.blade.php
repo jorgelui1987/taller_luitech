@@ -457,8 +457,20 @@ function initFirmaEntregaEdit() {
     const canvas = document.getElementById('sigCanvasEntregaEdit');
     if (!canvas) return;
     const wrapper = document.getElementById('sigPadEntregaWrapperEdit');
-    canvas.width = wrapper.clientWidth || 300;
-    canvas.height = 160;
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+    // Ancho seguro: si el wrapper está oculto o sin layout, usar un mínimo
+    let width = wrapper && wrapper.clientWidth > 100 ? wrapper.clientWidth : 0;
+    if (width < 100) {
+        width = 300;
+    }
+
+    canvas.width = width * ratio;
+    canvas.height = 160 * ratio;
+
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
     sigPadEntregaEdit = new SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
     sigPadEntregaEdit.addEventListener('beginStroke', () => {
         const placeholder = wrapper.querySelector('.placeholder');
