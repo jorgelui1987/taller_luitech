@@ -478,7 +478,8 @@
             .topbar .page-title {
                 font-size: 14px;
             }
-            .topbar-actions .btn-primary span {
+            .topbar-actions .btn-primary span,
+            .topbar-actions .btn-outline-primary span {
                 display: none;
             }
             /* Cards full width */
@@ -1003,6 +1004,12 @@
             <a href="{{ route('ventas.create') }}" class="btn btn-sm btn-primary px-3" style="border-radius:20px;">
                 <i class="fas fa-plus me-1"></i><span> Nueva Venta</span>
             </a>
+
+            @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
+            <a href="{{ route('reparaciones.create') }}" class="btn btn-sm btn-outline-primary px-3" style="border-radius:20px;">
+                <i class="fas fa-tools me-1"></i><span> Nueva Reparación</span>
+            </a>
+            @endif
 
             <button class="topbar-btn">
                 <i class="fas fa-bell"></i>
