@@ -19,17 +19,6 @@
             @endif
         </p>
     </div>
-    <div class="d-flex gap-2">
-        @if(auth()->user()->esAdmin() || auth()->user()->esSuperAdmin())
-        <a href="{{ route('reparaciones.create') }}" class="btn btn-outline-primary px-4">
-            <i class="fas fa-tools me-2"></i>Nueva Reparación
-        </a>
-        @elseif(auth()->user()->esTecnico())
-        <a href="{{ route('reparaciones.create') }}" class="btn btn-primary px-4">
-            <i class="fas fa-tools me-2"></i>Nueva Reparación
-        </a>
-        @endif
-    </div>
 </div>
 
 {{-- ═══════════════════════════════════════════════════════════════════ --}}
