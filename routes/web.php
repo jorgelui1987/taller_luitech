@@ -157,6 +157,8 @@ Route::middleware(['tenant'])->group(function () {
             ->name('productos.destroy')->middleware('check.delete');
         Route::post('/productos/marca-ajax', [\App\Http\Controllers\ProductoController::class, 'storeMarcaAjax'])->name('productos.marca-ajax');
         Route::post('/productos/categoria-ajax', [\App\Http\Controllers\ProductoController::class, 'storeCategoriaAjax'])->name('productos.categoria-ajax');
+        Route::get('/productos/codigos-barras', [\App\Http\Controllers\ProductoController::class, 'codigosBarras'])->name('productos.codigos-barras');
+        Route::post('/productos/generar-codigo-barras', [\App\Http\Controllers\ProductoController::class, 'generarCodigoBarras'])->name('productos.generar-codigo-barras');
 
         // Proveedores (sin route model binding para evitar TenantScope)
         Route::get('/proveedores', [\App\Http\Controllers\ProveedorController::class, 'index'])->name('proveedores.index');

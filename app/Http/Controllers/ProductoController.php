@@ -219,6 +219,68 @@ class ProductoController extends Controller
     }
 
     /**
+     * Página para generar e imprimir códigos de barras de productos.
+     */
+    public function codigosBarras(Request $request)
+    {
+        $query = Producto::with(['categoria', 'marca'])->where('activo', true);
+
+        if ($request->filled('buscar')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nombre', 'like', "%{$request->buscar}%")
+                  ->orWhere('codigo', 'like', "%{$request->buscar}%")
+                  ->orWhere('codigo_barras', 'like', "%{$request->buscar}%");
+            });
+        }
+
+        if ($request->filled('categoria_id')) {
+            $query->where('categoria_id', $request->categoria_id);
+        }
+
+        $productos  = $query->orderBy('nombre')->get();
+        $categorias = Categoria::where('activo', true)->orderBy('nombre')->get();
+
+        return view('productos.codigos-barras', compact('productos', 'categorias'));
+    }
+
+    /**
+     * Genera un código de barras EAN-13 automáticamente para un producto.
+     */
+    public function generarCodigoBarras(Request $request)
+    {
+        $request->validate([
+            'producto_id' => 'required|exists:productos,id',
+        ]);
+
+        $producto = Producto::findOrFail($request->producto_id);
+
+        if ($producto->codigo_barras) {
+            return response()->json([
+                'success' => true,
+                'codigo_barras' => $producto->codigo_barras,
+                'message' => 'El producto ya tiene código de barras.',
+            ]);
+        }
+
+        // Generar EAN-13: 12 dígitos + dígito verificador
+        $base = '200' . str_pad((string) $producto->id, 9, '0', STR_PAD_LEFT);
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $sum += (int) $base[$i] * ($i % 2 === 0 ? 1 : 3);
+        }
+        $check = (10 - ($sum % 10)) % 10;
+        $codigo = $base . $check;
+
+        $producto->update(['codigo_barras' => $codigo]);
+
+        return response()->json([
+            'success' => true,
+            'codigo_barras' => $codigo,
+            'message' => 'Código de barras generado correctamente.',
+        ]);
+    }
+
+    /**
      * Crear una categoría rápidamente desde el modal del formulario
      */
     public function storeCategoriaAjax(Request $request)

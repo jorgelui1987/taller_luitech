@@ -868,10 +868,18 @@
         @endif
 
         <a href="{{ route('productos.index') }}"
-           class="nav-link {{ request()->routeIs('productos.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+           class="nav-link {{ request()->routeIs('productos.*') && !request()->routeIs('productos.codigos-barras') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-box"></i></span>
             Inventario
         </a>
+
+        @if(Auth::user()->esAdmin())
+        <a href="{{ route('productos.codigos-barras') }}"
+           class="nav-link {{ request()->routeIs('productos.codigos-barras') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-barcode"></i></span>
+            Códigos de Barras
+        </a>
+        @endif
 
         @if(Auth::user()->esAdmin())
         <a href="{{ route('stock.bajo') }}"
