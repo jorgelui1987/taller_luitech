@@ -106,13 +106,9 @@ class MercadoPagoController extends Controller
         // Responder 200 inmediatamente a Mercado Pago
         $response = response()->json(['status' => 'ok']);
 
-        // Enviar la respuesta y continuar el procesamiento en segundo plano
-        if (function_exists('fastcgi_finish_request')) {
-            $response->send();
-            fastcgi_finish_request();
-        }
-
-        // ── Procesar la notificación en segundo plano ──
+        // ── Procesar la notificación de forma SÍNCRONA ──
+        // (NO usar fastcgi_finish_request porque corta la conexión a la BD
+        // y la notificación nunca se procesa para crear la venta de reparación)
         try {
             // Caso 1: Notificación de pago (type=payment)
             if ($tipo === 'payment' && isset($data['id'])) {
