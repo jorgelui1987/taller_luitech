@@ -297,12 +297,19 @@ class DashboardController extends Controller
     {
         $inicioMes = Carbon::now()->startOfMonth();
 
-        return DB::table('detalle_ventas')
+        $query = DB::table('detalle_ventas')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->where('ventas.estado', 'completada')
-            ->where('ventas.fecha_venta', '>=', $inicioMes)
-            ->select('productos.nombre', DB::raw('SUM(detalle_ventas.cantidad) as total_vendido'), DB::raw('SUM(detalle_ventas.subtotal) as ingresos'))
+            ->where('ventas.fecha_venta', '>=', $inicioMes);
+
+        // Aplicar filtro de tenant
+        $user = auth()->user();
+        if ($user && !$user->esSuperAdmin() && $user->tenant_id) {
+            $query->where('ventas.tenant_id', $user->tenant_id);
+        }
+
+        return $query->select('productos.nombre', DB::raw('SUM(detalle_ventas.cantidad) as total_vendido'), DB::raw('SUM(detalle_ventas.subtotal) as ingresos'))
             ->groupBy('productos.id', 'productos.nombre')
             ->orderByDesc('total_vendido')
             ->limit(5)

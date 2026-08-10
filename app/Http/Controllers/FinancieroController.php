@@ -17,6 +17,31 @@ class FinancieroController extends Controller
     private const SQL_COSTO_VENTAS = 'productos.precio_compra * detalle_ventas.cantidad';
     private const SQL_COUNT_CANTIDAD = 'COUNT(*) as cantidad';
     private const RANGO_ANIOS = 3;
+
+    /**
+     * Obtiene el tenant_id del usuario autenticado.
+     * Si es superadmin, no filtra (null = sin filtro).
+     */
+    private function tenantId(): ?int
+    {
+        $user = auth()->user();
+        if (!$user || $user->esSuperAdmin()) {
+            return null;
+        }
+        return $user->tenant_id;
+    }
+
+    /**
+     * Aplica el filtro de tenant a una consulta DB::table().
+     */
+    private function scopeTenant($query, string $tabla = 'ventas'): void
+    {
+        $tenantId = $this->tenantId();
+        if ($tenantId) {
+            $query->where($tabla . '.tenant_id', $tenantId);
+        }
+    }
+
     /**
      * Dashboard financiero general
      */
@@ -41,12 +66,13 @@ class FinancieroController extends Controller
 
         // ── COSTOS DEL MES ──────────────────────────────────────────────
         // Costo de ventas (productos vendidos)
-        $costoVentas = DB::table('detalle_ventas')
+        $costoVentasQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
+            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin]);
+        $this->scopeTenant($costoVentasQuery, 'ventas');
+        $costoVentas = $costoVentasQuery->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         // Costo de reparaciones (presupuesto como costo estimado)
         $costoReparaciones = Reparacion::whereBetween('fecha_recepcion', [$fechaInicio, $fechaFin])
@@ -90,12 +116,13 @@ class FinancieroController extends Controller
         $gananciaPotencial     = $valorInventarioVenta - $valorInventarioCompra;
 
         // Rotación de inventario (costo ventas último año / inventario promedio)
-        $costoVentasAnual = DB::table('detalle_ventas')
+        $costoVentasAnualQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
-            ->where('ventas.fecha_venta', '>=', Carbon::now()->subYear())
-            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
+            ->where('ventas.fecha_venta', '>=', Carbon::now()->subYear());
+        $this->scopeTenant($costoVentasAnualQuery, 'ventas');
+        $costoVentasAnual = $costoVentasAnualQuery->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         $rotacionInventario = $valorInventarioCompra > 0
             ? ($costoVentasAnual / $valorInventarioCompra)
@@ -114,12 +141,13 @@ class FinancieroController extends Controller
                   + Reparacion::whereBetween('fecha_recepcion', [$inicio, $fin])
                     ->where('estado', 'entregado')->sum('total');
 
-            $cos = DB::table('detalle_ventas')
+            $cosQuery = DB::table('detalle_ventas')
                     ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
                     ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
                     ->where('ventas.estado', 'completada')
-                    ->whereBetween('ventas.fecha_venta', [$inicio, $fin])
-                    ->sum(DB::raw(self::SQL_COSTO_VENTAS));
+                    ->whereBetween('ventas.fecha_venta', [$inicio, $fin]);
+            $this->scopeTenant($cosQuery, 'ventas');
+            $cos = $cosQuery->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
             $serieMensual->push([
                 'mes'    => $m->format('M Y'),
@@ -130,7 +158,7 @@ class FinancieroController extends Controller
         }
 
         // Ingresos por categoría de producto (top 8)
-        $ingresosPorCategoria = DB::table('detalle_ventas')
+        $ingresosPorCategoriaQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
@@ -141,8 +169,9 @@ class FinancieroController extends Controller
                 DB::raw('SUM(' . self::SQL_COSTO_VENTAS . ') as costo'))
             ->groupBy('categorias.id', 'categorias.nombre')
             ->orderByDesc('total')
-            ->limit(8)
-            ->get();
+            ->limit(8);
+        $this->scopeTenant($ingresosPorCategoriaQuery, 'ventas');
+        $ingresosPorCategoria = $ingresosPorCategoriaQuery->get();
 
         // Métodos de pago
         $metodosPago = Venta::select('metodo_pago',
@@ -223,12 +252,13 @@ class FinancieroController extends Controller
         $totalIngresos = ($ventas->total ?? 0) + ($reparaciones->total ?? 0);
 
         // ── COSTOS ──────────────────────────────────────────────────────
-        $costoVentas = DB::table('detalle_ventas')
+        $costoVentasQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
+            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin]);
+        $this->scopeTenant($costoVentasQuery, 'ventas');
+        $costoVentas = $costoVentasQuery->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         $costoReparaciones = Reparacion::whereBetween('fecha_recepcion', [$fechaInicio, $fechaFin])
             ->whereIn('estado', ['entregado', 'completado'])
@@ -419,12 +449,13 @@ class FinancieroController extends Controller
         $totalVentas = Venta::whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
             ->where('estado', 'completada')->sum('total');
 
-        $costoVentas = DB::table('detalle_ventas')
+        $costoVentasQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw(self::SQL_COSTO_VENTAS));
+            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin]);
+        $this->scopeTenant($costoVentasQuery, 'ventas');
+        $costoVentas = $costoVentasQuery->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
         $gananciaBruta   = $totalVentas - $costoVentas;
         $margenBruto     = $totalVentas > 0 ? ($gananciaBruta / $totalVentas) * 100 : 0;
@@ -480,11 +511,12 @@ class FinancieroController extends Controller
             : 0;
 
         // ── PRODUCTIVIDAD ───────────────────────────────────────────────
-        $numProductosVendidos = DB::table('detalle_ventas')
+        $numProductosVendidosQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin])
-            ->sum('detalle_ventas.cantidad');
+            ->whereBetween('ventas.fecha_venta', [$fechaInicio, $fechaFin]);
+        $this->scopeTenant($numProductosVendidosQuery, 'ventas');
+        $numProductosVendidos = $numProductosVendidosQuery->sum('detalle_ventas.cantidad');
 
         // Evolución mensual de ingresos para gráfico
         $evolucionMensual = collect();
@@ -495,12 +527,13 @@ class FinancieroController extends Controller
             $ing = Venta::whereBetween('fecha_venta', [$inicio, $fin])
                 ->where('estado', 'completada')->sum('total');
 
-            $cos = DB::table('detalle_ventas')
+            $cosQuery = DB::table('detalle_ventas')
                 ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
                 ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
                 ->where('ventas.estado', 'completada')
-                ->whereBetween('ventas.fecha_venta', [$inicio, $fin])
-                ->sum(DB::raw(self::SQL_COSTO_VENTAS));
+                ->whereBetween('ventas.fecha_venta', [$inicio, $fin]);
+            $this->scopeTenant($cosQuery, 'ventas');
+            $cos = $cosQuery->sum(DB::raw(self::SQL_COSTO_VENTAS));
 
             $evolucionMensual->push([
                 'mes'      => $this->nombreMes($i),

@@ -15,6 +15,9 @@ class ReporteController extends Controller
 {
     public function index(Request $request)
     {
+        // Aplica el filtro de tenant a una consulta DB::table()
+        $tenantId = auth()->user() && !auth()->user()->esSuperAdmin() ? auth()->user()->tenant_id : null;
+
         $desde = $request->filled('desde')
             ? Carbon::parse($request->desde)->startOfDay()
             : Carbon::now()->startOfMonth();
@@ -39,12 +42,15 @@ class ReporteController extends Controller
         $clientesNuevos   = Cliente::whereBetween('created_at', [$desde, $hasta])->count();
 
         // ── Ganancias (margen bruto) ──────────────────────────────────────
-        $ganancia = DB::table('detalle_ventas')
+        $gananciaQuery = DB::table('detalle_ventas')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$desde, $hasta])
-            ->select(
+            ->whereBetween('ventas.fecha_venta', [$desde, $hasta]);
+        if ($tenantId) {
+            $gananciaQuery->where('ventas.tenant_id', $tenantId);
+        }
+        $ganancia = $gananciaQuery->select(
                 DB::raw('SUM((detalle_ventas.precio_unitario - productos.precio_compra) * detalle_ventas.cantidad - detalle_ventas.descuento) as ganancia'),
                 DB::raw('SUM(productos.precio_compra * detalle_ventas.cantidad) as costo')
             )
@@ -90,12 +96,15 @@ class ReporteController extends Controller
             ->get();
 
         // ── Top 10 productos más vendidos ─────────────────────────────────
-        $topProductos = DB::table('detalle_ventas')
+        $topProductosQuery = DB::table('detalle_ventas')
             ->join('productos', 'detalle_ventas.producto_id', '=', 'productos.id')
             ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$desde, $hasta])
-            ->select(
+            ->whereBetween('ventas.fecha_venta', [$desde, $hasta]);
+        if ($tenantId) {
+            $topProductosQuery->where('ventas.tenant_id', $tenantId);
+        }
+        $topProductos = $topProductosQuery->select(
                 'productos.nombre',
                 'productos.codigo',
                 DB::raw('SUM(detalle_ventas.cantidad) as unidades'),
@@ -111,11 +120,14 @@ class ReporteController extends Controller
             ? "CONCAT_WS(' ', clientes.nombre, clientes.apellido)"
             : "CONCAT(clientes.nombre,' ',clientes.apellido)";
 
-        $topClientes = DB::table('ventas')
+        $topClientesQuery = DB::table('ventas')
             ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')
             ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.fecha_venta', [$desde, $hasta])
-            ->select(
+            ->whereBetween('ventas.fecha_venta', [$desde, $hasta]);
+        if ($tenantId) {
+            $topClientesQuery->where('ventas.tenant_id', $tenantId);
+        }
+        $topClientes = $topClientesQuery->select(
                 'clientes.id',
                 DB::raw("$concatExpr as nombre"),
                 DB::raw('COUNT(ventas.id) as compras'),
