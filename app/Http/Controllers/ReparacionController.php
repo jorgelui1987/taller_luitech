@@ -214,6 +214,21 @@ class ReparacionController extends Controller
         return view('reparaciones.show', compact('reparacion', 'ventaReparacion'));
     }
 
+    /**
+     * Devuelve si la reparación ya tiene venta asociada (pago confirmado).
+     * Para polling de impresión automática del ticket de reparación.
+     */
+    public function estadoPago(Reparacion $reparacion)
+    {
+        $ventaReparacion = Venta::where('notas', 'like', "%{$reparacion->numero_orden}%")
+            ->orderByDesc('id')
+            ->first();
+
+        return response()->json([
+            'pagado' => $ventaReparacion ? true : false,
+        ]);
+    }
+
     public function printTicket(Reparacion $reparacion)
     {
         $reparacion->load(['cliente', 'tecnico']);

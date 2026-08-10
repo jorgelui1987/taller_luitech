@@ -759,6 +759,42 @@ function cerrarLightbox() {
     document.getElementById('lightbox').classList.remove('show');
 }
 
+// ── IMPRESIÓN AUTOMÁTICA DEL TICKET DE REPARACIÓN AL CONFIRMAR PAGO ──
+@if($reparacion->estado === 'entregado' && $reparacion->total > 0 && !isset($ventaReparacion))
+document.addEventListener('DOMContentLoaded', function() {
+    const urlEstadoPago = "{{ route('reparaciones.estado-pago', $reparacion) }}";
+    const urlTicket = "{{ route('reparaciones.ticket', $reparacion) }}";
+    let impreso = false;
+
+    // Polling cada 5 segundos para detectar el pago confirmado
+    const intervalo = setInterval(async () => {
+        try {
+            const res = await fetch(urlEstadoPago, {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await res.json();
+
+            // Cuando el pago se confirma (se crea la venta automática), imprimir el ticket de REPARACIÓN
+            if (data.pagado && !impreso) {
+                impreso = true;
+                clearInterval(intervalo);
+
+                // Abrir el ticket de reparación en una ventana nueva y disparar la impresión
+                const win = window.open(urlTicket, '_blank');
+                if (win) {
+                    win.onload = function () {
+                        win.focus();
+                        win.print();
+                    };
+                }
+            }
+        } catch (e) {
+            // Ignorar errores de red temporales
+        }
+    }, 5000);
+});
+@endif
+
 // ── Inicializar al cargar ──
 document.addEventListener('DOMContentLoaded', function() {
     initSignaturePads();
