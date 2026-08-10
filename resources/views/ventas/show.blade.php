@@ -159,17 +159,17 @@
 <div class="card mb-4">
     <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
         <ul class="nav nav-tabs card-header-tabs" id="ventaTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link active" id="tab-productos-tab" data-bs-toggle="tab" data-bs-target="#tab-productos" type="button" role="tab" aria-controls="tab-productos" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                     <i class="fas fa-box-open me-1" style="color:#a855f7;"></i>📦 Productos
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link" id="tab-totales-tab" data-bs-toggle="tab" data-bs-target="#tab-totales" type="button" role="tab" aria-controls="tab-totales" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                     <i class="fas fa-dollar-sign me-1" style="color:#a855f7;"></i>💰 Totales
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link" id="tab-resumen-tab" data-bs-toggle="tab" data-bs-target="#tab-resumen" type="button" role="tab" aria-controls="tab-resumen" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                     <i class="fas fa-info-circle me-1" style="color:#a855f7;"></i>ℹ️ Resumen
                 </button>

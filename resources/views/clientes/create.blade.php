@@ -36,17 +36,17 @@
                     <div class="card mb-4">
                         <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
                             <ul class="nav nav-tabs card-header-tabs" id="clienteCreateTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link active" id="tab-datos-tab" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button" role="tab" aria-controls="tab-datos" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-user me-1" style="color:#a855f7;"></i>👤 Datos Personales
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-empresa-tab" data-bs-toggle="tab" data-bs-target="#tab-empresa" type="button" role="tab" aria-controls="tab-empresa" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-building me-1" style="color:#a855f7;"></i>🏢 Empresa
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-notas-tab" data-bs-toggle="tab" data-bs-target="#tab-notas" type="button" role="tab" aria-controls="tab-notas" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-sticky-note me-1" style="color:#a855f7;"></i>📝 Notas
                                     </button>

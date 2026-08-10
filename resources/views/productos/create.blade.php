@@ -215,8 +215,13 @@
                         <div class="col-lg-4">
                             <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Imagen del Producto</h6>
                             <div id="dropZone"
+                                 role="button"
+                                 tabindex="0"
+                                 aria-label="Subir imagen del producto. Arrastra y suelta o haz clic para seleccionar"
                                  style="border:2px dashed #d1d5db; border-radius:16px; padding:32px 20px;
                                         text-align:center; cursor:pointer; background:#fafafa; transition:.2s; display:block;"
+                                 onclick="document.getElementById('imagenInput').click();"
+                                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('imagenInput').click();}"
                                  ondragover="event.preventDefault(); this.style.borderColor='#a855f7';"
                                  ondragleave="this.style.borderColor='#d1d5db';"
                                  ondrop="handleDrop(event)">

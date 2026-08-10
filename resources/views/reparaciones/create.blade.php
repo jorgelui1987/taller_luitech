@@ -92,32 +92,32 @@
                     <div class="card mb-4">
                         <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
                             <ul class="nav nav-tabs card-header-tabs" id="createReparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link active" id="tab-asignacion-tab" data-bs-toggle="tab" data-bs-target="#tab-asignacion" type="button" role="tab" aria-controls="tab-asignacion" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-users me-1" style="color:#a855f7;"></i>👥 Asignación
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-equipo-tab" data-bs-toggle="tab" data-bs-target="#tab-equipo" type="button" role="tab" aria-controls="tab-equipo" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-mobile-alt me-1" style="color:#a855f7;"></i>📱 Equipo
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-falla-tab" data-bs-toggle="tab" data-bs-target="#tab-falla" type="button" role="tab" aria-controls="tab-falla" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-exclamation-triangle me-1" style="color:#a855f7;"></i>⚠️ Falla
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-costos-tab" data-bs-toggle="tab" data-bs-target="#tab-costos" type="button" role="tab" aria-controls="tab-costos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-dollar-sign me-1" style="color:#a855f7;"></i>💰 Costos
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-fotos-tab" data-bs-toggle="tab" data-bs-target="#tab-fotos" type="button" role="tab" aria-controls="tab-fotos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-camera me-1" style="color:#a855f7;"></i>📷 Fotos
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-firma-tab" data-bs-toggle="tab" data-bs-target="#tab-firma" type="button" role="tab" aria-controls="tab-firma" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-pen me-1" style="color:#a855f7;"></i>✍️ Firma
                                     </button>

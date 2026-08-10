@@ -96,12 +96,12 @@
         <div class="card mb-4">
             <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
                 <ul class="nav nav-tabs card-header-tabs" id="proveedorTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item">
                         <button class="nav-link active" id="tab-ordenes-tab" data-bs-toggle="tab" data-bs-target="#tab-ordenes" type="button" role="tab" aria-controls="tab-ordenes" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                             <i class="fas fa-clipboard-list me-1" style="color:#a855f7;"></i>📋 Órdenes de Compra
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item">
                         <button class="nav-link" id="tab-notas-tab" data-bs-toggle="tab" data-bs-target="#tab-notas" type="button" role="tab" aria-controls="tab-notas" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                             <i class="fas fa-sticky-note me-1" style="color:#a855f7;"></i>📝 Notas
                         </button>

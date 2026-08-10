@@ -72,27 +72,27 @@
                     <div class="card mb-4">
                         <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
                             <ul class="nav nav-tabs card-header-tabs" id="editReparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link active" id="tab-estado-tab" data-bs-toggle="tab" data-bs-target="#tab-estado" type="button" role="tab" aria-controls="tab-estado" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-tasks me-1" style="color:#a855f7;"></i>📋 Estado
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-equipo-tab" data-bs-toggle="tab" data-bs-target="#tab-equipo" type="button" role="tab" aria-controls="tab-equipo" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-mobile-alt me-1" style="color:#a855f7;"></i>📱 Equipo
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-diagnostico-tab" data-bs-toggle="tab" data-bs-target="#tab-diagnostico" type="button" role="tab" aria-controls="tab-diagnostico" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-stethoscope me-1" style="color:#a855f7;"></i>🔍 Diagnóstico
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-costos-tab" data-bs-toggle="tab" data-bs-target="#tab-costos" type="button" role="tab" aria-controls="tab-costos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-dollar-sign me-1" style="color:#a855f7;"></i>💰 Costos
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item">
                                     <button class="nav-link" id="tab-entrega-tab" data-bs-toggle="tab" data-bs-target="#tab-entrega" type="button" role="tab" aria-controls="tab-entrega" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
                                         <i class="fas fa-truck me-1" style="color:#a855f7;"></i>📦 Entrega
                                     </button>

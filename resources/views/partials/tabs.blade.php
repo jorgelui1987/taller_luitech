@@ -11,7 +11,7 @@
     <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
         <ul class="nav nav-tabs card-header-tabs" id="tabs-{{ $activeId }}" role="tablist" style="border-bottom:none; padding:0 8px;">
             @foreach($tabs as $tab)
-            <li class="nav-item" role="presentation">
+            <li class="nav-item">
                 <button class="nav-link {{ $tab['id'] === $activeId ? 'active' : '' }}"
                         id="tab-{{ $tab['id'] }}-tab"
                         data-bs-toggle="tab"
