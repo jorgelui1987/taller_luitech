@@ -191,7 +191,7 @@
         /* ── TOPBAR ──────────────────────────────────────────────── */
         .topbar {
             background: #fff;
-            padding: 14px 28px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
             gap: 16px;
@@ -266,7 +266,7 @@
         }
 
         /* ── PAGE CONTENT ────────────────────────────────────────── */
-        .page-content { padding: 24px 28px; flex: 1; }
+        .page-content { padding: 16px 20px; flex: 1; }
 
         /* ── CARDS ───────────────────────────────────────────────── */
         .card {
@@ -274,6 +274,9 @@
             border-radius: 16px;
             box-shadow: 0 2px 10px rgba(0,0,0,.06);
         }
+
+        /* Compactar tarjetas: p-4 (24px) → p-3 (16px) automáticamente */
+        .card-body.p-4 { padding: 16px !important; }
 
         .kpi-card {
             border-radius: 16px;
@@ -423,7 +426,7 @@
                 gap: 8px;
             }
             .page-content {
-                padding: 16px 12px;
+                padding: 12px 10px;
             }
             .topbar .search-box {
                 max-width: 200px;
@@ -473,7 +476,7 @@
                 gap: 6px;
             }
             .page-content {
-                padding: 12px 8px;
+                padding: 10px 6px;
             }
             .topbar .page-title {
                 font-size: 14px;
@@ -482,9 +485,9 @@
             .topbar-actions .btn-outline-primary span {
                 display: none;
             }
-            /* Cards full width */
+            /* Cards full width - más compactas en móvil */
             .card-body {
-                padding: 14px !important;
+                padding: 12px !important;
             }
             /* KPIs en grid 2x2 más compacto */
             .kpi-card {
@@ -581,11 +584,15 @@
                 font-size: 16px !important; /* Evita zoom en iOS */
             }
             .card-body {
-                padding: 12px !important;
+                padding: 10px !important;
             }
-            .gap-2 { gap: 8px !important; }
-            .gap-3 { gap: 10px !important; }
-            .gap-4 { gap: 12px !important; }
+            .gap-2 { gap: 6px !important; }
+            .gap-3 { gap: 8px !important; }
+            .gap-4 { gap: 10px !important; }
+            /* Reducir márgenes entre secciones en móvil */
+            .mb-4 { margin-bottom: 12px !important; }
+            .mb-3 { margin-bottom: 10px !important; }
+            .row.g-3 { --bs-gutter-y: 0.75rem; }
         }
 
         /* ── Filtros colapsables en móvil ── */
