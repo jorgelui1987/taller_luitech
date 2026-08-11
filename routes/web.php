@@ -153,7 +153,8 @@ Route::middleware(['tenant'])->group(function () {
 
         // Productos (solo admin puede eliminar)
         Route::get('/productos/codigos-barras', [\App\Http\Controllers\ProductoController::class, 'codigosBarras'])->name('productos.codigos-barras');
-        Route::post('/productos/generar-codigo-barras', [\App\Http\Controllers\ProductoController::class, 'generarCodigoBarras'])->name('productos.generar-codigo-barras');
+        Route::post('/productos/guardar-codigo-barras', [\App\Http\Controllers\ProductoController::class, 'guardarCodigoBarras'])->name('productos.guardar-codigo-barras');
+        Route::post('/productos/eliminar-codigo-barras', [\App\Http\Controllers\ProductoController::class, 'eliminarCodigoBarras'])->name('productos.eliminar-codigo-barras');
         Route::resource('productos', ProductoController::class)->except(['destroy']);
         Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])
             ->name('productos.destroy')->middleware('check.delete');
@@ -326,9 +327,10 @@ Route::middleware(['tenant'])->group(function () {
                 ->when(request('q'), fn($q, $buscar) =>
                     $q->where('nombre', 'like', "%$buscar%")
                       ->orWhere('codigo', 'like', "%$buscar%")
+                      ->orWhere('codigo_barras', 'like', "%$buscar%")
                 )
                 ->limit(10)
-                ->get(['id', 'nombre', 'codigo', 'precio_venta', 'stock', 'marca_id']);
+                ->get(['id', 'nombre', 'codigo', 'codigo_barras', 'precio_venta', 'stock', 'marca_id']);
 
             return response()->json($productos);
         })->name('api.productos.buscar');

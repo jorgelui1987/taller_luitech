@@ -14,7 +14,22 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h5 class="fw-bold mb-1">🏷️ Generador de Códigos de Barras</h5>
-                        <p class="text-muted mb-0" style="font-size:13px;">Genera e imprime etiquetas de código de barras para tus productos</p>
+                        <p class="text-muted mb-0" style="font-size:13px;">
+                            Escribe el código de barras (el de fábrica o uno propio) y la cantidad de etiquetas a imprimir
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Instrucciones -->
+                <div class="alert alert-info d-flex align-items-start gap-2" style="font-size:13px;">
+                    <i class="fas fa-info-circle mt-1"></i>
+                    <div>
+                        <strong>¿Cómo funciona?</strong><br>
+                        1. Si el producto <strong>trae código de fábrica</strong>, escríbelo tal cual (ej: 7801234567895).<br>
+                        2. Si el producto <strong>no trae código</strong>, inventa uno tú mismo (ej: 200000000001).<br>
+                        3. Escribe <strong>cuántas etiquetas</strong> quieres imprimir de ese producto.<br>
+                        4. Haz clic en <strong>💾 Guardar</strong> y luego en <strong>🖨️ Imprimir</strong>.<br>
+                        <span class="text-muted">Cada producto tiene su código ÚNICO e individual. La pistola escáner leerá las barras impresas.</span>
                     </div>
                 </div>
 
@@ -49,13 +64,14 @@
                                 <th>Producto</th>
                                 <th>Categoría</th>
                                 <th>Stock</th>
-                                <th style="width:200px;">Código de Barras</th>
-                                <th style="width:140px;">Acciones</th>
+                                <th style="width:220px;">Código de Barras</th>
+                                <th style="width:100px;">Cantidad</th>
+                                <th style="width:180px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($productos as $p)
-                            <tr>
+                            <tr id="fila-{{ $p->id }}">
                                 <td><span class="badge" style="background:#ede9fe; color:#7c3aed; font-weight:600;">{{ $p->codigo }}</span></td>
                                 <td>
                                     <div style="font-weight:600;">{{ $p->nombre }}</div>
@@ -65,30 +81,43 @@
                                 <td><span class="badge {{ $p->stock <= $p->stock_minimo ? 'bg-danger' : 'bg-success' }}">{{ $p->stock }}</span></td>
                                 <td>
                                     @if($p->codigo_barras)
-                                        <span class="text-monospace" style="font-family:monospace; font-weight:600; letter-spacing:1px;">{{ $p->codigo_barras }}</span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <input type="text" id="codigo-{{ $p->id }}" class="form-control form-control-sm text-monospace" 
+                                                   style="font-family:monospace; font-weight:600; letter-spacing:1px;"
+                                                   value="{{ $p->codigo_barras }}">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="eliminarCodigo({{ $p->id }})" title="Eliminar código">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                     @else
-                                        <span class="text-muted" style="font-size:12px;">Sin código</span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <input type="text" id="codigo-{{ $p->id }}" class="form-control form-control-sm" 
+                                                   placeholder="Escribe el código..." style="font-family:monospace;">
+                                            <span class="text-muted" style="font-size:11px; white-space:nowrap;">Sin código</span>
+                                        </div>
                                     @endif
                                 </td>
                                 <td>
+                                    <input type="number" id="cantidad-{{ $p->id }}" class="form-control form-control-sm text-center" 
+                                           min="1" max="100" value="1">
+                                </td>
+                                <td>
                                     <div class="d-flex gap-2">
-                                        @if($p->codigo_barras)
-                                            <button type="button" class="btn btn-sm btn-outline-primary" 
-                                                    onclick="imprimirEtiqueta({{ $p->id }})" title="Imprimir etiqueta">
-                                                <i class="fas fa-print"></i>
-                                            </button>
-                                        @endif
-                                        <button type="button" class="btn btn-sm btn-outline-success"
-                                                onclick="generarCodigo({{ $p->id }}, this)" 
-                                                title="{{ $p->codigo_barras ? 'Regenerar' : 'Generar código' }}">
-                                            <i class="fas fa-sync-alt"></i>
+                                        <button type="button" class="btn btn-sm btn-success" 
+                                                onclick="guardarCodigo({{ $p->id }})" title="Guardar código">
+                                            <i class="fas fa-save"></i> Guardar
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                onclick="imprimirEtiqueta({{ $p->id }})" title="Imprimir etiqueta(s)">
+                                            <i class="fas fa-print"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
+                                <td colspan="7" class="text-center py-4 text-muted">
                                     No se encontraron productos.
                                 </td>
                             </tr>
@@ -98,9 +127,12 @@
                 </div>
 
                 @if($productos->count())
-                <div class="mt-4">
+                <div class="mt-4 d-flex gap-2">
                     <button type="button" class="btn btn-primary" onclick="imprimirTodas()">
                         <i class="fas fa-print me-1"></i>Imprimir Todas las Etiquetas
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="guardarTodos()">
+                        <i class="fas fa-save me-1"></i>Guardar Todos los Códigos
                     </button>
                 </div>
                 @endif
@@ -115,12 +147,61 @@
 @endsection
 
 @push('scripts')
+<!-- JsBarcode: genera las barras reales que lee la pistola escáner -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script>
-function generarCodigo(productoId, btn) {
+// ── Guardar código de barras manual ──────────────────────────────────────
+function guardarCodigo(productoId) {
+    const input = document.getElementById('codigo-' + productoId);
+    const codigo = input.value.trim();
+    
+    if (!codigo) {
+        alert('Escribe el código de barras primero.');
+        input.focus();
+        return;
+    }
+    
+    // Validar caracteres permitidos
+    if (!/^[A-Za-z0-9\-_.]+$/.test(codigo)) {
+        alert('El código solo puede contener letras, números, guiones, puntos y guiones bajos.');
+        return;
+    }
+    
+    const btn = event.target.closest('button');
+    const originalHtml = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     
-    fetch('{{ route("productos.generar-codigo-barras") }}', {
+    fetch('{{ route("productos.guardar-codigo-barras") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ producto_id: productoId, codigo_barras: codigo })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Código guardado: ' + data.codigo_barras);
+            location.reload();
+        } else {
+            alert(data.message || 'Error al guardar el código');
+            btn.innerHTML = originalHtml;
+        }
+    })
+    .catch(() => {
+        alert('Error de conexión');
+        btn.innerHTML = originalHtml;
+    })
+    .finally(() => btn.disabled = false);
+}
+
+// ── Eliminar código de barras ────────────────────────────────────────────
+function eliminarCodigo(productoId) {
+    if (!confirm('¿Eliminar el código de barras de este producto? Podrás asignar uno nuevo.')) return;
+    
+    fetch('{{ route("productos.eliminar-codigo-barras") }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -131,43 +212,114 @@ function generarCodigo(productoId, btn) {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            btn.innerHTML = '<i class="fas fa-sync-alt"></i>';
-            alert('Código generado: ' + data.codigo_barras);
+            alert('✅ Código eliminado. Ahora puedes escribir uno nuevo.');
             location.reload();
         } else {
-            alert(data.message || 'Error al generar el código');
-            btn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+            alert(data.message || 'Error al eliminar el código');
         }
     })
-    .catch(() => {
-        alert('Error de conexión');
-        btn.innerHTML = '<i class="fas fa-sync-alt"></i>';
-    })
-    .finally(() => btn.disabled = false);
+    .catch(() => alert('Error de conexión'));
 }
 
+// ── Guardar todos los códigos que tengan texto ───────────────────────────
+function guardarTodos() {
+    const productos = @json($productos);
+    let pendientes = productos.filter(p => {
+        const input = document.getElementById('codigo-' + p.id);
+        return input && input.value.trim() && !p.codigo_barras;
+    });
+    
+    if (pendientes.length === 0) {
+        alert('No hay códigos nuevos para guardar. Escribe un código en los productos sin código.');
+        return;
+    }
+    
+    if (!confirm('¿Guardar ' + pendientes.length + ' código(s) de barras?')) return;
+    
+    let guardados = 0;
+    let errores = 0;
+    let promesas = pendientes.map(p => {
+        const codigo = document.getElementById('codigo-' + p.id).value.trim();
+        return fetch('{{ route("productos.guardar-codigo-barras") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ producto_id: p.id, codigo_barras: codigo })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) guardados++;
+            else { errores++; console.error(data.message); }
+        })
+        .catch(() => errores++);
+    });
+    
+    Promise.all(promesas).then(() => {
+        alert('✅ Guardados: ' + guardados + (errores > 0 ? ' | Errores: ' + errores : ''));
+        location.reload();
+    });
+}
+
+// ── Imprimir etiqueta(s) de un producto ──────────────────────────────────
 function imprimirEtiqueta(productoId) {
     const productos = @json($productos);
     const p = productos.find(prod => prod.id === productoId);
-    if (!p || !p.codigo_barras) return;
+    if (!p) return;
+    
+    // Usar el código del input (por si el usuario lo cambió sin guardar)
+    const input = document.getElementById('codigo-' + productoId);
+    const codigo = input ? input.value.trim() : p.codigo_barras;
+    if (!codigo) {
+        alert('Este producto no tiene código de barras. Escribe uno y haz clic en Guardar.');
+        return;
+    }
+    
+    const cantidadInput = document.getElementById('cantidad-' + productoId);
+    const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
+    
+    // Generar las etiquetas con JsBarcode
+    const etiquetas = [];
+    for (let i = 0; i < cantidad; i++) {
+        etiquetas.push(`
+            <div class="label">
+                <div class="name">${p.nombre}</div>
+                <svg class="barcode" data-codigo="${codigo}"></svg>
+                <div class="code">${codigo}</div>
+                <div class="sku">SKU: ${p.codigo}</div>
+            </div>
+        `);
+    }
     
     const html = `
         <html><head><title>Etiqueta - ${p.nombre}</title>
         <style>
             body { font-family: Arial; margin: 0; padding: 10px; }
-            .label { border: 2px solid #000; width: 60mm; height: 30mm; text-align: center; padding: 4px; page-break-after: always; }
-            .name { font-size: 9px; font-weight: bold; margin-bottom: 4px; overflow: hidden; }
-            .code { font-family: monospace; font-size: 14px; font-weight: bold; letter-spacing: 2px; }
-            .sku { font-size: 8px; margin-top: 2px; }
+            .label { border: 2px solid #000; width: 60mm; height: 32mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
+            .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+            .barcode { width: 100%; height: 45px; }
+            .code { font-family: monospace; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-top: 2px; }
+            .sku { font-size: 8px; margin-top: 1px; }
             @media print { body { margin: 0; } .label { border: 2px solid #000; } }
         </style></head><body>
-        ${productos.filter(prod => prod.codigo_barras).map(prod => `
-            <div class="label">
-                <div class="name">${prod.nombre}</div>
-                <div class="code">${prod.codigo_barras}</div>
-                <div class="sku">SKU: ${prod.codigo}</div>
-            </div>
-        `).join('')}
+        ${etiquetas.join('')}
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+        <script>
+            document.querySelectorAll('.barcode').forEach(svg => {
+                try {
+                    JsBarcode(svg, svg.dataset.codigo, {
+                        format: 'CODE128',
+                        width: 2,
+                        height: 45,
+                        displayValue: false,
+                        margin: 0
+                    });
+                } catch(e) {
+                    svg.outerHTML = '<div style="color:red;font-size:10px;">Código inválido</div>';
+                }
+            });
+        <\/script>
         </body></html>
     `;
     
@@ -175,36 +327,70 @@ function imprimirEtiqueta(productoId) {
     win.document.write(html);
     win.document.close();
     win.focus();
-    setTimeout(() => { win.print(); }, 500);
+    setTimeout(() => { win.print(); }, 800);
 }
 
+// ── Imprimir todas las etiquetas ─────────────────────────────────────────
 function imprimirTodas() {
-    // Imprime etiquetas para todos los productos con código de barras
     const productos = @json($productos);
-    const conCodigo = productos.filter(p => p.codigo_barras);
+    const conCodigo = productos.filter(p => {
+        const input = document.getElementById('codigo-' + p.id);
+        const codigo = input ? input.value.trim() : p.codigo_barras;
+        return codigo;
+    });
     
     if (conCodigo.length === 0) {
         alert('No hay productos con código de barras para imprimir.');
         return;
     }
     
+    const etiquetas = [];
+    conCodigo.forEach(p => {
+        const input = document.getElementById('codigo-' + p.id);
+        const codigo = input ? input.value.trim() : p.codigo_barras;
+        const cantidadInput = document.getElementById('cantidad-' + p.id);
+        const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
+        
+        for (let i = 0; i < cantidad; i++) {
+            etiquetas.push(`
+                <div class="label">
+                    <div class="name">${p.nombre}</div>
+                    <svg class="barcode" data-codigo="${codigo}"></svg>
+                    <div class="code">${codigo}</div>
+                    <div class="sku">SKU: ${p.codigo}</div>
+                </div>
+            `);
+        }
+    });
+    
     const html = `
         <html><head><title>Etiquetas de Código de Barras</title>
         <style>
             body { font-family: Arial; margin: 0; padding: 10px; }
-            .label { border: 2px solid #000; width: 60mm; height: 30mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
-            .name { font-size: 9px; font-weight: bold; margin-bottom: 4px; overflow: hidden; }
-            .code { font-family: monospace; font-size: 14px; font-weight: bold; letter-spacing: 2px; }
-            .sku { font-size: 8px; margin-top: 2px; }
+            .label { border: 2px solid #000; width: 60mm; height: 32mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
+            .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+            .barcode { width: 100%; height: 45px; }
+            .code { font-family: monospace; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-top: 2px; }
+            .sku { font-size: 8px; margin-top: 1px; }
             @media print { body { margin: 0; } .label { border: 2px solid #000; } }
         </style></head><body>
-        ${conCodigo.map(p => `
-            <div class="label">
-                <div class="name">${p.nombre}</div>
-                <div class="code">${p.codigo_barras}</div>
-                <div class="sku">SKU: ${p.codigo}</div>
-            </div>
-        `).join('')}
+        ${etiquetas.join('')}
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+        <script>
+            document.querySelectorAll('.barcode').forEach(svg => {
+                try {
+                    JsBarcode(svg, svg.dataset.codigo, {
+                        format: 'CODE128',
+                        width: 2,
+                        height: 45,
+                        displayValue: false,
+                        margin: 0
+                    });
+                } catch(e) {
+                    svg.outerHTML = '<div style="color:red;font-size:10px;">Código inválido</div>';
+                }
+            });
+        <\/script>
         </body></html>
     `;
     
@@ -212,7 +398,7 @@ function imprimirTodas() {
     win.document.write(html);
     win.document.close();
     win.focus();
-    setTimeout(() => { win.print(); }, 500);
+    setTimeout(() => { win.print(); }, 800);
 }
 </script>
 @endpush

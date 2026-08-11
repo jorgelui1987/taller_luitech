@@ -244,39 +244,54 @@ class ProductoController extends Controller
     }
 
     /**
-     * Genera un código de barras EAN-13 automáticamente para un producto.
+     * Guarda un código de barras manual (de fábrica o generado por el usuario).
+     * Cada producto tiene su código individual, no se genera automáticamente.
      */
-    public function generarCodigoBarras(Request $request)
+    public function guardarCodigoBarras(Request $request)
+    {
+        $request->validate([
+            'producto_id'   => 'required|exists:productos,id',
+            'codigo_barras' => 'required|string|max:100|regex:/^[A-Za-z0-9\-_.]+$/',
+        ]);
+
+        $producto = Producto::findOrFail($request->producto_id);
+
+        // Verificar que el código no esté en uso por otro producto
+        $existe = Producto::where('codigo_barras', $request->codigo_barras)
+            ->where('id', '!=', $producto->id)
+            ->exists();
+
+        if ($existe) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ese código de barras ya está asignado a otro producto.',
+            ], 422);
+        }
+
+        $producto->update(['codigo_barras' => $request->codigo_barras]);
+
+        return response()->json([
+            'success' => true,
+            'codigo_barras' => $request->codigo_barras,
+            'message' => 'Código de barras guardado correctamente.',
+        ]);
+    }
+
+    /**
+     * Elimina el código de barras de un producto (para poder asignar uno nuevo).
+     */
+    public function eliminarCodigoBarras(Request $request)
     {
         $request->validate([
             'producto_id' => 'required|exists:productos,id',
         ]);
 
         $producto = Producto::findOrFail($request->producto_id);
-
-        if ($producto->codigo_barras) {
-            return response()->json([
-                'success' => true,
-                'codigo_barras' => $producto->codigo_barras,
-                'message' => 'El producto ya tiene código de barras.',
-            ]);
-        }
-
-        // Generar EAN-13: 12 dígitos + dígito verificador
-        $base = '200' . str_pad((string) $producto->id, 9, '0', STR_PAD_LEFT);
-        $sum = 0;
-        for ($i = 0; $i < 12; $i++) {
-            $sum += (int) $base[$i] * ($i % 2 === 0 ? 1 : 3);
-        }
-        $check = (10 - ($sum % 10)) % 10;
-        $codigo = $base . $check;
-
-        $producto->update(['codigo_barras' => $codigo]);
+        $producto->update(['codigo_barras' => null]);
 
         return response()->json([
             'success' => true,
-            'codigo_barras' => $codigo,
-            'message' => 'Código de barras generado correctamente.',
+            'message' => 'Código de barras eliminado. Puedes asignar uno nuevo.',
         ]);
     }
 
