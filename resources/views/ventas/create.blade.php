@@ -64,8 +64,22 @@
                         <div id="scannerContainer" style="display:none; max-width:400px; margin-top:8px;" class="card p-2">
                             <div id="scannerMensaje" style="font-size:13px; padding:10px; text-align:center; color:#6b7280;">
                                 <i class="fas fa-camera fa-2x mb-2" style="color:#a855f7;"></i><br>
-                                Tomando foto del código de barras...
+                                Preparando escáner...
                             </div>
+                            <div id="scannerVideoWrap" style="position:relative; display:none;">
+                                <video id="scannerVideo" playsinline muted style="width:100%; border-radius:8px; background:#000;"></video>
+                                <div id="scannerOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+                                    <div id="scannerBox" style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:80%; height:60px; border:3px solid #a855f7; border-radius:8px; box-shadow:0 0 0 9999px rgba(0,0,0,0.4);"></div>
+                                    <div id="scannerLine" style="position:absolute; left:10%; width:80%; height:2px; background:#22c55e; box-shadow:0 0 8px #22c55e; animation:scanline 2s linear infinite;"></div>
+                                </div>
+                            </div>
+                            <style>
+                                @keyframes scanline {
+                                    0% { top: 20%; }
+                                    50% { top: 80%; }
+                                    100% { top: 20%; }
+                                }
+                            </style>
                             <button type="button" class="btn btn-sm btn-danger mt-2" onclick="detenerScanner()"><i class="fas fa-times me-1"></i>Cerrar</button>
                         </div>
                     </div>
@@ -300,75 +314,90 @@ document.getElementById('cuponInput').addEventListener('keydown', function(e) {
     }
 });
 
+// ===== ESCÁNER CON CÁMARA (ZXing - lee códigos de barras y QR) =====
+let codeReader = null;
+let videoStream = null;
+
 function iniciarScanner() {
     let container = document.getElementById('scannerContainer');
     if (scannerActivo) { 
-        container.style.display = 'none'; 
-        scannerActivo = false; 
+        detenerScanner();
         return; 
     }
     
-    // Cambiar el mensaje temporalmente
     document.getElementById('scannerMensaje').innerHTML = 'Preparando escáner...';
     container.style.display = 'block';
     scannerActivo = true;
     
-    // Intentar con escaneo en tiempo real (html5-qrcode) primero
-    if (typeof Html5Qrcode !== 'undefined') {
+    // Cargar ZXing si no está cargado
+    if (typeof ZXing === 'undefined') {
+        cargarZXing(function() {
+            iniciarEscaneoEnVivo();
+        });
+    } else {
         iniciarEscaneoEnVivo();
-        return;
     }
-    
+}
+
+// Cargar librería ZXing
+function cargarZXing(callback) {
     let script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
-    script.onload = function() {
-        iniciarEscaneoEnVivo();
-    };
+    script.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js';
+    script.onload = function() { callback(); };
     script.onerror = function() {
-        // Si no se puede cargar html5-qrcode, usar cámara nativa con foto
-        document.getElementById('scannerMensaje').innerHTML = 'Usando cámara para tomar foto del código...';
-        document.getElementById('scannerInput').click();
+        alert('No se pudo cargar la librería de lectura de códigos.');
+        document.getElementById('scannerContainer').style.display = 'none';
+        scannerActivo = false;
     };
     document.head.appendChild(script);
 }
 
-// Escaneo en tiempo real con html5-qrcode
+// Escaneo en tiempo real con ZXing (lee códigos de barras 1D y QR)
 function iniciarEscaneoEnVivo() {
-    let container = document.getElementById('scannerContainer');
-    container.querySelector('#qrReader')?.remove();
-    let videoDiv = document.createElement('div');
-    videoDiv.id = 'qrReader';
-    videoDiv.style.width = '100%';
-    videoDiv.style.minHeight = '200px';
-    container.insertBefore(videoDiv, container.querySelector('.btn-danger'));
+    let videoWrap = document.getElementById('scannerVideoWrap');
+    let video = document.getElementById('scannerVideo');
+    let mensaje = document.getElementById('scannerMensaje');
     
-    document.getElementById('scannerMensaje').innerHTML = 'Apuntando la cámara al código de barras...';
+    videoWrap.style.display = 'block';
+    mensaje.innerHTML = '<i class="fas fa-camera fa-2x mb-2" style="color:#a855f7;"></i><br>Apuntando la cámara al código...<br><small style="color:#6b7280;">Alinea el código dentro del recuadro morado</small>';
     
-    let qr = new Html5Qrcode("qrReader");
-    // Guardar referencia global para poder detener
-    window.__qrScanner = qr;
-    
-    qr.start(
-        { facingMode: "environment" }, 
-        { 
-            fps: 10, 
-            qrbox: { width: 250, height: 100 },
-            aspectRatio: 1.0
-        },
-        function(text) {
-            // Código leído correctamente
-            document.getElementById('codBarras').value = text;
-            buscarCodigo(text);
-            qr.stop().catch(()=>{});
-            container.style.display = 'none';
-            scannerActivo = false;
-        }
-    ).catch(function(err) {
-        // Si falla el video en tiempo real, usar cámara nativa con foto
-        console.error('Escaneo en vivo falló:', err);
-        document.getElementById('scannerMensaje').innerHTML = 'Escaneo en vivo no disponible. Tomando foto del código...';
-        qr.stop().catch(()=>{});
-        try { qr.clear(); } catch(e2) {}
+    // Solicitar acceso a la cámara trasera
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } },
+        audio: false
+    }).then(function(stream) {
+        videoStream = stream;
+        video.srcObject = stream;
+        video.play();
+        
+        // Crear lector ZXing
+        codeReader = new ZXing.BrowserMultiFormatReader();
+        
+        // Escanear continuamente desde el video (ZXing maneja el bucle internamente)
+        codeReader.decodeFromVideoElement(video, function(result, err) {
+            if (result && result.getText()) {
+                let codigo = result.getText().trim();
+                // Feedback visual: recuadro verde + vibración
+                document.getElementById('scannerBox').style.borderColor = '#22c55e';
+                if (navigator.vibrate) navigator.vibrate(200);
+                mensaje.innerHTML = '<i class="fas fa-check-circle fa-2x mb-2" style="color:#22c55e;"></i><br>Código leído: <strong>' + codigo + '</strong>';
+                
+                // Agregar producto
+                document.getElementById('codBarras').value = codigo;
+                buscarCodigo(codigo);
+                
+                // Detener escáner
+                setTimeout(function() {
+                    detenerScanner();
+                }, 500);
+            }
+        });
+        
+    }).catch(function(err) {
+        console.error('Error cámara:', err);
+        // Si no hay cámara en vivo, usar foto
+        mensaje.innerHTML = 'Cámara en vivo no disponible. Tomando foto del código...';
+        videoWrap.style.display = 'none';
         document.getElementById('scannerInput').click();
     });
 }
@@ -445,25 +474,11 @@ function fallbackALeerConZXing(img, container) {
     }
 }
 
-// Cargar librería ZXing (leer códigos de barras desde imagen)
-function cargarZXing(callback) {
-    let script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js';
-    script.onload = function() { callback(); };
-    script.onerror = function() {
-        alert('No se pudo cargar la librería de lectura de códigos.');
-        document.getElementById('scannerContainer').style.display = 'none';
-        scannerActivo = false;
-    };
-    document.head.appendChild(script);
-}
-
-// Leer código con ZXing (API corregida)
+// Leer código con ZXing desde imagen
 function leerConZXing(img, container) {
     try {
-        // Usar la API simple de ZXing para leer desde una imagen
-        const codeReader = new ZXing.BrowserMultiFormatReader();
-        codeReader.decodeFromImageElement(img).then(result => {
+        const codeReaderImg = new ZXing.BrowserMultiFormatReader();
+        codeReaderImg.decodeFromImageElement(img).then(result => {
             if (result && result.getText()) {
                 let codigo = result.getText().trim();
                 document.getElementById('codBarras').value = codigo;
@@ -471,18 +486,18 @@ function leerConZXing(img, container) {
                 container.style.display = 'none';
                 scannerActivo = false;
             } else {
-                alert('No se pudo leer el código de barras. Acerca la cámara al código, con buena luz y sosteniendo el teléfono quieto.');
+                alert('No se pudo leer el código. Acerca la cámara al código, con buena luz y sosteniendo el teléfono quieto.');
                 container.style.display = 'none';
                 scannerActivo = false;
             }
         }).catch(function(err) {
-            alert('No se pudo leer el código de barras. Asegúrate de que el código esté completo, enfocado y con buena luz.');
+            alert('No se pudo leer el código. Asegúrate de que el código esté completo, enfocado y con buena luz.');
             container.style.display = 'none';
             scannerActivo = false;
         });
     } catch(e) {
         console.error('Error ZXing:', e);
-        alert('No se pudo leer el código de barras. Intenta de nuevo con mejor enfoque y luz.');
+        alert('No se pudo leer el código. Intenta de nuevo con mejor enfoque y luz.');
         container.style.display = 'none';
         scannerActivo = false;
     }
@@ -491,10 +506,26 @@ function leerConZXing(img, container) {
 function detenerScanner() {
     document.getElementById('scannerContainer').style.display = 'none';
     scannerActivo = false;
-    if (window.__qrScanner) {
-        window.__qrScanner.stop().catch(()=>{});
-        window.__qrScanner = null;
+    
+    // Detener video
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
     }
+    
+    // Detener lector ZXing
+    if (codeReader) {
+        try { codeReader.reset(); } catch(e) {}
+        codeReader = null;
+    }
+    
+    // Restablecer recuadro
+    let box = document.getElementById('scannerBox');
+    if (box) box.style.borderColor = '#a855f7';
+    
+    // Ocultar video
+    let videoWrap = document.getElementById('scannerVideoWrap');
+    if (videoWrap) videoWrap.style.display = 'none';
 }
 </script>
 @endpush
