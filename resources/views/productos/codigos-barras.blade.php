@@ -149,6 +149,8 @@
 @push('scripts')
 <!-- JsBarcode: genera las barras reales que lee la pistola escáner -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<!-- qrcodejs: genera códigos QR para cada producto -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
 // ── Guardar código de barras manual ──────────────────────────────────────
 function guardarCodigo(productoId) {
@@ -279,13 +281,16 @@ function imprimirEtiqueta(productoId) {
     const cantidadInput = document.getElementById('cantidad-' + productoId);
     const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
     
-    // Generar las etiquetas con JsBarcode
+    // Generar las etiquetas con JsBarcode y QR
     const etiquetas = [];
     for (let i = 0; i < cantidad; i++) {
         etiquetas.push(`
             <div class="label">
                 <div class="name">${p.nombre}</div>
-                <svg class="barcode" data-codigo="${codigo}"></svg>
+                <div class="content-row">
+                    <svg class="barcode" data-codigo="${codigo}"></svg>
+                    <div class="qrcode" data-qr="${codigo}"></div>
+                </div>
                 <div class="code">${codigo}</div>
                 <div class="sku">SKU: ${p.codigo}</div>
             </div>
@@ -296,27 +301,40 @@ function imprimirEtiqueta(productoId) {
         <html><head><title>Etiqueta - ${p.nombre}</title>
         <style>
             body { font-family: Arial; margin: 0; padding: 10px; }
-            .label { border: 2px solid #000; width: 60mm; height: 32mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
+            .label { border: 2px solid #000; width: 65mm; height: 45mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
             .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-            .barcode { width: 100%; height: 45px; }
-            .code { font-family: monospace; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-top: 2px; }
-            .sku { font-size: 8px; margin-top: 1px; }
+            .content-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 2px 0; }
+            .barcode { width: 65%; height: 40px; }
+            .qrcode { width: 45px; height: 45px; }
+            .qrcode canvas { width: 100%; height: 100%; }
+            .code { font-family: monospace; font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-top: 1px; }
+            .sku { font-size: 7px; margin-top: 1px; }
             @media print { body { margin: 0; } .label { border: 2px solid #000; } }
         </style></head><body>
         ${etiquetas.join('')}
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>
         <script>
             document.querySelectorAll('.barcode').forEach(svg => {
                 try {
                     JsBarcode(svg, svg.dataset.codigo, {
                         format: 'CODE128',
                         width: 2,
-                        height: 45,
+                        height: 40,
                         displayValue: false,
                         margin: 0
                     });
                 } catch(e) {
                     svg.outerHTML = '<div style="color:red;font-size:10px;">Código inválido</div>';
+                }
+            });
+            document.querySelectorAll('.qrcode').forEach(qr => {
+                try {
+                    QRCode.toCanvas(qr, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
+                        if (error) console.error(error);
+                    });
+                } catch(e) {
+                    qr.outerHTML = '<div style="color:red;font-size:10px;">QR inválido</div>';
                 }
             });
         <\/script>
@@ -355,7 +373,10 @@ function imprimirTodas() {
             etiquetas.push(`
                 <div class="label">
                     <div class="name">${p.nombre}</div>
-                    <svg class="barcode" data-codigo="${codigo}"></svg>
+                    <div class="content-row">
+                        <svg class="barcode" data-codigo="${codigo}"></svg>
+                        <div class="qrcode" data-qr="${codigo}"></div>
+                    </div>
                     <div class="code">${codigo}</div>
                     <div class="sku">SKU: ${p.codigo}</div>
                 </div>
@@ -367,27 +388,40 @@ function imprimirTodas() {
         <html><head><title>Etiquetas de Código de Barras</title>
         <style>
             body { font-family: Arial; margin: 0; padding: 10px; }
-            .label { border: 2px solid #000; width: 60mm; height: 32mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
+            .label { border: 2px solid #000; width: 65mm; height: 45mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
             .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-            .barcode { width: 100%; height: 45px; }
-            .code { font-family: monospace; font-size: 12px; font-weight: bold; letter-spacing: 2px; margin-top: 2px; }
-            .sku { font-size: 8px; margin-top: 1px; }
+            .content-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 2px 0; }
+            .barcode { width: 65%; height: 40px; }
+            .qrcode { width: 45px; height: 45px; }
+            .qrcode canvas { width: 100%; height: 100%; }
+            .code { font-family: monospace; font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-top: 1px; }
+            .sku { font-size: 7px; margin-top: 1px; }
             @media print { body { margin: 0; } .label { border: 2px solid #000; } }
         </style></head><body>
         ${etiquetas.join('')}
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>
         <script>
             document.querySelectorAll('.barcode').forEach(svg => {
                 try {
                     JsBarcode(svg, svg.dataset.codigo, {
                         format: 'CODE128',
                         width: 2,
-                        height: 45,
+                        height: 40,
                         displayValue: false,
                         margin: 0
                     });
                 } catch(e) {
                     svg.outerHTML = '<div style="color:red;font-size:10px;">Código inválido</div>';
+                }
+            });
+            document.querySelectorAll('.qrcode').forEach(qr => {
+                try {
+                    QRCode.toCanvas(qr, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
+                        if (error) console.error(error);
+                    });
+                } catch(e) {
+                    qr.outerHTML = '<div style="color:red;font-size:10px;">QR inválido</div>';
                 }
             });
         <\/script>
