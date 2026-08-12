@@ -150,7 +150,7 @@
 <!-- JsBarcode: genera las barras reales que lee la pistola escáner -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <!-- qrcodejs: genera códigos QR para cada producto -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ── Guardar código de barras manual ──────────────────────────────────────
 function guardarCodigo(productoId) {
@@ -313,7 +313,7 @@ function imprimirEtiqueta(productoId) {
         </style></head><body>
         ${etiquetas.join('')}
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
-        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
         <script>
             document.querySelectorAll('.barcode').forEach(svg => {
                 try {
@@ -330,9 +330,12 @@ function imprimirEtiqueta(productoId) {
             });
             document.querySelectorAll('.qrcode').forEach(qr => {
                 try {
-                    const canvas = qr.querySelector('canvas');
-                    QRCode.toCanvas(canvas, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
-                        if (error) console.error(error);
+                    qr.innerHTML = '';
+                    new QRCode(qr, {
+                        text: qr.dataset.qr,
+                        width: 45,
+                        height: 45,
+                        correctLevel: QRCode.CorrectLevel.M
                     });
                 } catch(e) {
                     qr.outerHTML = '<div style="color:red;font-size:10px;">QR inválido</div>';
@@ -401,7 +404,7 @@ function imprimirTodas() {
         </style></head><body>
         ${etiquetas.join('')}
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
-        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
         <script>
             document.querySelectorAll('.barcode').forEach(svg => {
                 try {
@@ -418,9 +421,12 @@ function imprimirTodas() {
             });
             document.querySelectorAll('.qrcode').forEach(qr => {
                 try {
-                    const canvas = qr.querySelector('canvas');
-                    QRCode.toCanvas(canvas, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
-                        if (error) console.error(error);
+                    qr.innerHTML = '';
+                    new QRCode(qr, {
+                        text: qr.dataset.qr,
+                        width: 45,
+                        height: 45,
+                        correctLevel: QRCode.CorrectLevel.M
                     });
                 } catch(e) {
                     qr.outerHTML = '<div style="color:red;font-size:10px;">QR inválido</div>';
