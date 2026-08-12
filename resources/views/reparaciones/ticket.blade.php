@@ -157,6 +157,67 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 <div class="gr">¡Gracias por su preferencia!</div>
 <div style="font-size:9px;">{{ $reparacion->created_at->format('d/m/Y H:i') }} | {{ $reparacion->numero_orden }}</div>
 </div>
+<div id="btPrintBtn" style="display:none; text-align:center; margin:10px 0; padding:10px;">
+    <button onclick="BTPrintTicket.imprimir()" style="background:#0070e0; color:#fff; border:none; border-radius:8px; padding:12px 20px; font-size:14px; cursor:pointer; font-family:Arial, sans-serif;">
+        <span class="bt-print-status">📡 Imprimir por Bluetooth</span>
+    </button>
+    <div id="btPrintMsg" style="font-size:11px; font-family:Arial, sans-serif; color:#555; margin-top:6px;"></div>
+</div>
+
+<script src="{{ asset('js/bluetooth-print.js') }}"></script>
+<script>
+// Si el navegador soporta Web Bluetooth, mostrar botón de impresión Bluetooth
+if (navigator.bluetooth) {
+    document.getElementById('btPrintBtn').style.display = 'block';
+}
+
+window.BTPrintTicket = (function() {
+    const reparacionData = {
+        tienda: @json($empresa->nombre_tienda ?? 'CRM Celulares'),
+        direccion: @json($empresa->direccion ?? ''),
+        numero_orden: @json($reparacion->numero_orden),
+        cliente: @json($reparacion->cliente?->nombre_completo ?? ''),
+        tecnico: @json($reparacion->tecnico?->name ?? ''),
+        fecha_recepcion: @json($reparacion->fecha_recepcion?->format('d/m/Y H:i') ?? ''),
+        tipo_dispositivo: @json($tipoDispositivo[$reparacion->tipo_dispositivo] ?? ''),
+        marca: @json($reparacion->marca ?? ''),
+        modelo: @json($reparacion->modelo ?? ''),
+        imei: @json($reparacion->imei ?? ''),
+        color: @json($reparacion->color ?? ''),
+        falla_reportada: @json($reparacion->falla_reportada ?? ''),
+        diagnostico: @json($reparacion->diagnostico ?? ''),
+        presupuesto: {{ $reparacion->presupuesto ?? 0 }},
+        abono: {{ $reparacion->abono ?? 0 }},
+        total: {{ $reparacion->total ?? 0 }}
+    };
+
+    async function imprimir() {
+        const msg = document.getElementById('btPrintMsg');
+        const status = document.querySelector('.bt-print-status');
+
+        try {
+            status.textContent = '🔍 Buscando impresora...';
+            msg.innerHTML = 'Asegúrate de que la impresora Bluetooth esté encendida.';
+            await BTPrint.conectar();
+
+            status.textContent = '🖨️ Imprimiendo...';
+            msg.innerHTML = 'Enviando ticket a la impresora...';
+            const datos = BTPrint.generarTicketReparacion(reparacionData);
+            await BTPrint.enviarDatos(datos);
+
+            status.textContent = '✅ ¡Ticket impreso!';
+            msg.innerHTML = 'La impresión se completó correctamente.';
+            setTimeout(() => { status.textContent = '📡 Imprimir por Bluetooth'; }, 3000);
+        } catch (err) {
+            status.textContent = '❌ Error';
+            msg.innerHTML = '<span style="color:#dc2626;">' + (err.message || 'No se pudo imprimir') + '</span>';
+            setTimeout(() => { status.textContent = '📡 Imprimir por Bluetooth'; }, 4000);
+        }
+    }
+
+    return { imprimir: imprimir };
+})();
+</script>
 <script>window.onload=function(){window.print()};window.onafterprint=function(){window.close()};</script>
 </body>
 </html>

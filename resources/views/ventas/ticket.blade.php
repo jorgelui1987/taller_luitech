@@ -104,6 +104,72 @@ hr.dotted{border-top:1px dashed #000}
 <div class="gr">Gracias por su preferencia!</div>
 <div>{{ $venta->created_at->format('d/m/Y H:i') }}</div>
 </div>
+<div id="btPrintBtn" style="display:none; text-align:center; margin:10px 0; padding:10px;">
+    <button onclick="BTPrintTicket.imprimir()" style="background:#0070e0; color:#fff; border:none; border-radius:8px; padding:12px 20px; font-size:14px; cursor:pointer; font-family:Arial, sans-serif;">
+        <span class="bt-print-status">📡 Imprimir por Bluetooth</span>
+    </button>
+    <div id="btPrintMsg" style="font-size:11px; font-family:Arial, sans-serif; color:#555; margin-top:6px;"></div>
+</div>
+
+<script src="{{ asset('js/bluetooth-print.js') }}"></script>
+<script>
+// Si el navegador soporta Web Bluetooth, mostrar botón de impresión Bluetooth
+if (navigator.bluetooth) {
+    document.getElementById('btPrintBtn').style.display = 'block';
+}
+
+window.BTPrintTicket = (function() {
+    const ventaData = {
+        tienda: @json($empresa->nombre_tienda ?? 'CRM Celulares'),
+        direccion: @json($empresa->direccion ?? ''),
+        telefono: @json($empresa->telefono ?? ''),
+        numero_venta: @json($venta->numero_venta),
+        cliente: @json($venta->cliente?->nombre_completo ?? 'VENTA GENERAL'),
+        fecha: @json($venta->fecha_venta->format('d/m/Y H:i')),
+        metodo_pago: @json(ucfirst($venta->metodo_pago)),
+        vendedor: @json($venta->vendedor->name ?? '—'),
+        subtotal: {{ $venta->subtotal }},
+        descuento: {{ $venta->descuento }},
+        impuesto: {{ $venta->impuesto }},
+        total: {{ $venta->total }},
+        productos: @json($venta->detalles->map(function($det) {
+            return [
+                'nombre' => $det->producto?->nombre ?? '—',
+                'cantidad' => $det->cantidad,
+                'precio_unitario' => number_format($det->precio_unitario, 2),
+                'subtotal' => number_format($det->subtotal, 2),
+            ];
+        }))
+    };
+
+    async function imprimir() {
+        const btn = document.querySelector('#btPrintBtn button');
+        const msg = document.getElementById('btPrintMsg');
+        const status = document.querySelector('.bt-print-status');
+
+        try {
+            status.textContent = '🔍 Buscando impresora...';
+            msg.innerHTML = 'Asegúrate de que la impresora Bluetooth esté encendida.';
+            await BTPrint.conectar();
+
+            status.textContent = '🖨️ Imprimiendo...';
+            msg.innerHTML = 'Enviando ticket a la impresora...';
+            const datos = BTPrint.generarTicketVenta(ventaData);
+            await BTPrint.enviarDatos(datos);
+
+            status.textContent = '✅ ¡Ticket impreso!';
+            msg.innerHTML = 'La impresión se completó correctamente.';
+            setTimeout(() => { status.textContent = '📡 Imprimir por Bluetooth'; }, 3000);
+        } catch (err) {
+            status.textContent = '❌ Error';
+            msg.innerHTML = '<span style="color:#dc2626;">' + (err.message || 'No se pudo imprimir') + '</span>';
+            setTimeout(() => { status.textContent = '📡 Imprimir por Bluetooth'; }, 4000);
+        }
+    }
+
+    return { imprimir: imprimir };
+})();
+</script>
 <script>window.onload=function(){window.print()};window.onafterprint=function(){window.close()};</script>
 </body>
 </html>
