@@ -298,14 +298,58 @@ document.getElementById('cuponInput').addEventListener('keydown', function(e) {
 
 function iniciarScanner() {
     let container = document.getElementById('scannerContainer');
-    if (scannerActivo) { container.style.display = 'none'; scannerActivo = false; return; }
+    if (scannerActivo) { 
+        container.style.display = 'none'; 
+        scannerActivo = false; 
+        return; 
+    }
     container.style.display = 'block';
     scannerActivo = true;
+    
+    // Si la librería ya está cargada, iniciar directamente
+    if (typeof Html5Qrcode !== 'undefined') {
+        iniciarCamara();
+        return;
+    }
+    
+    // Cargar la librería desde CDN
     let script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
     script.onload = function() {
-        let qr = new Html5Qrcode("qrReader");
-        qr.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } },
+        iniciarCamara();
+    };
+    script.onerror = function() {
+        alert('No se pudo cargar la librería de escaneo. Verifica tu conexión a internet.');
+        container.style.display = 'none';
+        scannerActivo = false;
+    };
+    document.head.appendChild(script);
+}
+
+function iniciarCamara() {
+    let container = document.getElementById('scannerContainer');
+    let qr = new Html5Qrcode("qrReader");
+    
+    // Intentar con cámara trasera primero, luego frontal
+    qr.start(
+        { facingMode: "environment" }, 
+        { 
+            fps: 10, 
+            qrbox: { width: 250, height: 150 },
+            aspectRatio: 1.0
+        },
+        function(text) {
+            document.getElementById('codBarras').value = text;
+            buscarCodigo(text);
+            qr.stop().catch(()=>{});
+            container.style.display = 'none';
+            scannerActivo = false;
+        }
+    ).catch(function(err) {
+        // Si falla con cámara trasera, intentar con cualquier cámara
+        qr.start(
+            { facingMode: "user" },
+            { fps: 10, qrbox: { width: 250, height: 150 } },
             function(text) {
                 document.getElementById('codBarras').value = text;
                 buscarCodigo(text);
@@ -313,13 +357,12 @@ function iniciarScanner() {
                 container.style.display = 'none';
                 scannerActivo = false;
             }
-        ).catch(function(err) {
-            alert('Cámara no disponible: ' + err);
+        ).catch(function(err2) {
+            alert('No se pudo acceder a la cámara. Error: ' + err2);
             container.style.display = 'none';
             scannerActivo = false;
         });
-    };
-    document.head.appendChild(script);
+    });
 }
 
 function detenerScanner() {
