@@ -132,14 +132,7 @@ window.BTPrintTicket = (function() {
         descuento: {{ $venta->descuento }},
         impuesto: {{ $venta->impuesto }},
         total: {{ $venta->total }},
-        productos: @json($venta->detalles->map(function($det) {
-            return [
-                'nombre' => $det->producto?->nombre ?? '—',
-                'cantidad' => $det->cantidad,
-                'precio_unitario' => number_format($det->precio_unitario, 2),
-                'subtotal' => number_format($det->subtotal, 2),
-            ];
-        }))
+        productos: @json($productosArray)
     };
 
     async function imprimir() {

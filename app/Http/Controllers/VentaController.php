@@ -246,7 +246,17 @@ class VentaController extends Controller
         $tenant = $venta->tenant;
         $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
 
-        return view('ventas.ticket', compact('venta', 'urlMiniWeb'));
+        // Datos de productos para impresión Bluetooth (array plano para @json)
+        $productosArray = $venta->detalles->map(function($det) {
+            return [
+                'nombre' => $det->producto?->nombre ?? '—',
+                'cantidad' => (int)($det->cantidad ?? 0),
+                'precio_unitario' => number_format((float)($det->precio_unitario ?? 0), 2),
+                'subtotal' => number_format((float)($det->subtotal ?? 0), 2),
+            ];
+        })->values();
+
+        return view('ventas.ticket', compact('venta', 'urlMiniWeb', 'productosArray'));
     }
 
     /**
