@@ -301,14 +301,14 @@ function imprimirEtiqueta(productoId) {
         <html><head><title>Etiqueta - ${p.nombre}</title>
         <style>
             body { font-family: Arial; margin: 0; padding: 10px; }
-            .label { border: 2px solid #000; width: 65mm; height: 45mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
+            .label { border: 2px solid #000; width: 80mm; height: 50mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
             .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-            .content-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 2px 0; }
-            .barcode { width: 65%; height: 40px; }
-            .qrcode { width: 45px; height: 45px; }
+            .content-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0; }
+            .barcode { width: 60%; height: 45px; }
+            .qrcode { width: 65px; height: 65px; }
             .qrcode canvas { width: 100%; height: 100%; }
-            .code { font-family: monospace; font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-top: 1px; }
-            .sku { font-size: 7px; margin-top: 1px; }
+            .code { font-family: monospace; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
+            .sku { font-size: 8px; margin-top: 1px; }
             @media print { body { margin: 0; } .label { border: 2px solid #000; } }
         </style></head><body>
         ${etiquetas.join('')}
@@ -320,7 +320,7 @@ function imprimirEtiqueta(productoId) {
                     JsBarcode(svg, svg.dataset.codigo, {
                         format: 'CODE128',
                         width: 2,
-                        height: 40,
+                        height: 45,
                         displayValue: false,
                         margin: 0
                     });
@@ -333,9 +333,9 @@ function imprimirEtiqueta(productoId) {
                     qr.innerHTML = '';
                     new QRCode(qr, {
                         text: qr.dataset.qr,
-                        width: 45,
-                        height: 45,
-                        correctLevel: QRCode.CorrectLevel.M
+                        width: 65,
+                        height: 65,
+                        correctLevel: QRCode.CorrectLevel.L
                     });
                 } catch(e) {
                     qr.outerHTML = '<div style="color:red;font-size:10px;">QR inválido</div>';
@@ -392,14 +392,14 @@ function imprimirTodas() {
         <html><head><title>Etiquetas de Código de Barras</title>
         <style>
             body { font-family: Arial; margin: 0; padding: 10px; }
-            .label { border: 2px solid #000; width: 65mm; height: 45mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
+            .label { border: 2px solid #000; width: 80mm; height: 50mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
             .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-            .content-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 2px 0; }
-            .barcode { width: 65%; height: 40px; }
-            .qrcode { width: 45px; height: 45px; }
+            .content-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0; }
+            .barcode { width: 60%; height: 45px; }
+            .qrcode { width: 65px; height: 65px; }
             .qrcode canvas { width: 100%; height: 100%; }
-            .code { font-family: monospace; font-size: 10px; font-weight: bold; letter-spacing: 1px; margin-top: 1px; }
-            .sku { font-size: 7px; margin-top: 1px; }
+            .code { font-family: monospace; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
+            .sku { font-size: 8px; margin-top: 1px; }
             @media print { body { margin: 0; } .label { border: 2px solid #000; } }
         </style></head><body>
         ${etiquetas.join('')}
@@ -411,7 +411,7 @@ function imprimirTodas() {
                     JsBarcode(svg, svg.dataset.codigo, {
                         format: 'CODE128',
                         width: 2,
-                        height: 40,
+                        height: 45,
                         displayValue: false,
                         margin: 0
                     });
@@ -424,9 +424,9 @@ function imprimirTodas() {
                     qr.innerHTML = '';
                     new QRCode(qr, {
                         text: qr.dataset.qr,
-                        width: 45,
-                        height: 45,
-                        correctLevel: QRCode.CorrectLevel.M
+                        width: 65,
+                        height: 65,
+                        correctLevel: QRCode.CorrectLevel.L
                     });
                 } catch(e) {
                     qr.outerHTML = '<div style="color:red;font-size:10px;">QR inválido</div>';
