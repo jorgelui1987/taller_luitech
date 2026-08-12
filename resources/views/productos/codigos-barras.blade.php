@@ -289,7 +289,7 @@ function imprimirEtiqueta(productoId) {
                 <div class="name">${p.nombre}</div>
                 <div class="content-row">
                     <svg class="barcode" data-codigo="${codigo}"></svg>
-                    <div class="qrcode" data-qr="${codigo}"></div>
+                    <div class="qrcode" data-qr="${codigo}"><canvas></canvas></div>
                 </div>
                 <div class="code">${codigo}</div>
                 <div class="sku">SKU: ${p.codigo}</div>
@@ -330,7 +330,8 @@ function imprimirEtiqueta(productoId) {
             });
             document.querySelectorAll('.qrcode').forEach(qr => {
                 try {
-                    QRCode.toCanvas(qr, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
+                    const canvas = qr.querySelector('canvas');
+                    QRCode.toCanvas(canvas, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
                         if (error) console.error(error);
                     });
                 } catch(e) {
@@ -373,10 +374,10 @@ function imprimirTodas() {
             etiquetas.push(`
                 <div class="label">
                     <div class="name">${p.nombre}</div>
-                    <div class="content-row">
-                        <svg class="barcode" data-codigo="${codigo}"></svg>
-                        <div class="qrcode" data-qr="${codigo}"></div>
-                    </div>
+                <div class="content-row">
+                    <svg class="barcode" data-codigo="${codigo}"></svg>
+                    <div class="qrcode" data-qr="${codigo}"><canvas></canvas></div>
+                </div>
                     <div class="code">${codigo}</div>
                     <div class="sku">SKU: ${p.codigo}</div>
                 </div>
@@ -417,7 +418,8 @@ function imprimirTodas() {
             });
             document.querySelectorAll('.qrcode').forEach(qr => {
                 try {
-                    QRCode.toCanvas(qr, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
+                    const canvas = qr.querySelector('canvas');
+                    QRCode.toCanvas(canvas, qr.dataset.qr, { width: 45, height: 45, margin: 0 }, function(error) {
                         if (error) console.error(error);
                     });
                 } catch(e) {
