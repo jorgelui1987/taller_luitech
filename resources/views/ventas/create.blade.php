@@ -347,27 +347,18 @@ function procesarFotoCodigo(input) {
     reader.onload = function(e) {
         let img = new Image();
         img.onload = function() {
-            // Dibujar la imagen en un canvas para leer el código
-            let canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            let ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            
-            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            let code = jsQR(imageData.data, imageData.width, imageData.height);
-            
-            if (code && code.data) {
-                // Código leído correctamente
-                document.getElementById('codBarras').value = code.data;
-                buscarCodigo(code.data);
-                container.style.display = 'none';
-                scannerActivo = false;
+            // Usar BarcodeDetector API nativa del navegador si está disponible
+            if ('BarcodeDetector' in window) {
+                leerConBarcodeDetector(img, container);
             } else {
-                // No se pudo leer el código
-                alert('No se pudo leer el código de barras. Asegúrate de que la foto esté enfocada y con buena luz.');
-                container.style.display = 'none';
-                scannerActivo = false;
+                // Fallback: cargar librería ZXing para leer códigos de barras
+                if (typeof ZXing === 'undefined') {
+                    cargarZXing(function() {
+                        leerConZXing(img, container);
+                    });
+                } else {
+                    leerConZXing(img, container);
+                }
             }
         };
         img.src = e.target.result;
@@ -375,6 +366,82 @@ function procesarFotoCodigo(input) {
     
     reader.readAsDataURL(file);
     input.value = '';
+}
+
+// Leer código con BarcodeDetector (API nativa del navegador)
+function leerConBarcodeDetector(img, container) {
+    try {
+        const detector = new BarcodeDetector({
+            formats: ['code_128', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_93', 'codabar', 'itf', 'qr_code']
+        });
+        detector.detect(img).then(codes => {
+            if (codes && codes.length > 0 && codes[0].rawValue) {
+                let codigo = codes[0].rawValue.trim();
+                document.getElementById('codBarras').value = codigo;
+                buscarCodigo(codigo);
+                container.style.display = 'none';
+                scannerActivo = false;
+            } else {
+                // No se pudo leer
+                alert('No se pudo leer el código de barras. Acerca la cámara al código, con buena luz y sosteniendo el teléfono quieto.');
+                container.style.display = 'none';
+                scannerActivo = false;
+            }
+        }).catch(function(err) {
+            alert('Error al leer el código de barras. Intenta de nuevo.');
+            container.style.display = 'none';
+            scannerActivo = false;
+        });
+    } catch(e) {
+        alert('BarcodeDetector no disponible en este navegador.');
+        container.style.display = 'none';
+        scannerActivo = false;
+    }
+}
+
+// Cargar librería ZXing (leer códigos de barras desde imagen)
+function cargarZXing(callback) {
+    let script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js';
+    script.onload = function() { callback(); };
+    script.onerror = function() {
+        alert('No se pudo cargar la librería de lectura de códigos.');
+        document.getElementById('scannerContainer').style.display = 'none';
+        scannerActivo = false;
+    };
+    document.head.appendChild(script);
+}
+
+// Leer código con ZXing
+function leerConZXing(img, container) {
+    try {
+        let canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        let ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let luminanceSource = new ZXing.HTMLCanvasElementLuminanceSource(canvas);
+        let binaryBitmap = new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(luminanceSource));
+        let reader = new ZXing.MultiFormatReader();
+        
+        let result = reader.decode(binaryBitmap);
+        if (result && result.text) {
+            let codigo = result.text.trim();
+            document.getElementById('codBarras').value = codigo;
+            buscarCodigo(codigo);
+            container.style.display = 'none';
+            scannerActivo = false;
+        } else {
+            alert('No se pudo leer el código de barras. Acerca la cámara al código, con buena luz y sosteniendo el teléfono quieto.');
+            container.style.display = 'none';
+            scannerActivo = false;
+        }
+    } catch(e) {
+        alert('No se pudo leer el código de barras. Asegúrate de que el código esté completo, enfocado y con buena luz.');
+        container.style.display = 'none';
+        scannerActivo = false;
+    }
 }
 
 function detenerScanner() {
