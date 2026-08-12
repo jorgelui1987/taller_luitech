@@ -60,8 +60,12 @@
                                 <button type="button" class="btn btn-outline-primary w-100" onclick="iniciarScanner()"><i class="fas fa-camera me-1"></i>Escanear</button>
                             </div>
                         </div>
+                        <input type="file" id="scannerInput" accept="image/*" capture="environment" style="display:none;" onchange="procesarFotoCodigo(this)">
                         <div id="scannerContainer" style="display:none; max-width:400px; margin-top:8px;" class="card p-2">
-                            <div id="qrReader" style="width:100%; min-height:200px;"></div>
+                            <div id="scannerMensaje" style="font-size:13px; padding:10px; text-align:center; color:#6b7280;">
+                                <i class="fas fa-camera fa-2x mb-2" style="color:#a855f7;"></i><br>
+                                Tomando foto del código de barras...
+                            </div>
                             <button type="button" class="btn btn-sm btn-danger mt-2" onclick="detenerScanner()"><i class="fas fa-times me-1"></i>Cerrar</button>
                         </div>
                     </div>
@@ -306,63 +310,71 @@ function iniciarScanner() {
     container.style.display = 'block';
     scannerActivo = true;
     
-    // Si la librería ya está cargada, iniciar directamente
-    if (typeof Html5Qrcode !== 'undefined') {
-        iniciarCamara();
+    // Cargar la librería jsQR para leer el código de la foto
+    if (typeof jsQR === 'undefined') {
+        let script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+        script.onload = function() {
+            abrirCamaraNativa();
+        };
+        script.onerror = function() {
+            alert('No se pudo cargar la librería de lectura. Verifica tu conexión a internet.');
+            container.style.display = 'none';
+            scannerActivo = false;
+        };
+        document.head.appendChild(script);
+    } else {
+        abrirCamaraNativa();
+    }
+}
+
+function abrirCamaraNativa() {
+    // Abrir la cámara nativa del celular (igual que en reparaciones)
+    document.getElementById('scannerInput').click();
+}
+
+function procesarFotoCodigo(input) {
+    let container = document.getElementById('scannerContainer');
+    if (!input.files || !input.files[0]) {
+        container.style.display = 'none';
+        scannerActivo = false;
         return;
     }
     
-    // Cargar la librería desde CDN
-    let script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
-    script.onload = function() {
-        iniciarCamara();
-    };
-    script.onerror = function() {
-        alert('No se pudo cargar la librería de escaneo. Verifica tu conexión a internet.');
-        container.style.display = 'none';
-        scannerActivo = false;
-    };
-    document.head.appendChild(script);
-}
-
-function iniciarCamara() {
-    let container = document.getElementById('scannerContainer');
-    let qr = new Html5Qrcode("qrReader");
+    let file = input.files[0];
+    let reader = new FileReader();
     
-    // Intentar con cámara trasera primero, luego frontal
-    qr.start(
-        { facingMode: "environment" }, 
-        { 
-            fps: 10, 
-            qrbox: { width: 250, height: 150 },
-            aspectRatio: 1.0
-        },
-        function(text) {
-            document.getElementById('codBarras').value = text;
-            buscarCodigo(text);
-            qr.stop().catch(()=>{});
-            container.style.display = 'none';
-            scannerActivo = false;
-        }
-    ).catch(function(err) {
-        // Si falla con cámara trasera, intentar con cualquier cámara
-        qr.start(
-            { facingMode: "user" },
-            { fps: 10, qrbox: { width: 250, height: 150 } },
-            function(text) {
-                document.getElementById('codBarras').value = text;
-                buscarCodigo(text);
-                qr.stop().catch(()=>{});
+    reader.onload = function(e) {
+        let img = new Image();
+        img.onload = function() {
+            // Dibujar la imagen en un canvas para leer el código
+            let canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let code = jsQR(imageData.data, imageData.width, imageData.height);
+            
+            if (code && code.data) {
+                // Código leído correctamente
+                document.getElementById('codBarras').value = code.data;
+                buscarCodigo(code.data);
+                container.style.display = 'none';
+                scannerActivo = false;
+            } else {
+                // No se pudo leer el código
+                alert('No se pudo leer el código de barras. Asegúrate de que la foto esté enfocada y con buena luz.');
                 container.style.display = 'none';
                 scannerActivo = false;
             }
-        ).catch(function(err2) {
-            alert('No se pudo acceder a la cámara. Error: ' + err2);
-            container.style.display = 'none';
-            scannerActivo = false;
-        });
-    });
+        };
+        img.src = e.target.result;
+    };
+    
+    reader.readAsDataURL(file);
+    input.value = '';
 }
 
 function detenerScanner() {
