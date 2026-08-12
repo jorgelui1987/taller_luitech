@@ -231,6 +231,9 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/reparaciones/{reparacion}/kanban-estado', [ComboPublicidadController::class, 'kanbanActualizarEstado'])->name('reparaciones.kanban.estado');
             Route::get('/reparaciones/{reparacion}/recordatorio-retiro', [ComboPublicidadController::class, 'enviarRecordatorioRetiro'])->name('reparaciones.recordatorio-retiro');
 
+            // Registro rápido de cliente desde el formulario de reparación (AJAX)
+            Route::post('/reparaciones/cliente-rapido', [ReparacionController::class, 'storeClienteRapido'])->name('reparaciones.cliente-rapido');
+
             Route::resource('reparaciones', ReparacionController::class)->parameters(['reparaciones' => 'reparacion']);
             Route::get('/reparaciones/{reparacion}/ticket', [ReparacionController::class, 'printTicket'])->name('reparaciones.ticket');
             Route::get('/reparaciones/{reparacion}/whatsapp', [ReparacionController::class, 'enviarWhatsApp'])->name('reparaciones.whatsapp');

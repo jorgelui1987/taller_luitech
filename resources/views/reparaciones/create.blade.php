@@ -132,18 +132,23 @@
                                     <div class="row g-4">
                                         <div class="col-md-5">
                                             <label for="clienteBuscarInput" class="form-label">Cliente <span class="text-danger">*</span></label>
-                                            <div class="cliente-buscador" style="position:relative;">
-                                                <input
-                                                       type="text"
-                                                       id="clienteBuscarInput"
-                                                       class="form-control @error('cliente_id') is-invalid @enderror"
-                                                       placeholder="🔍 Escribe el nombre del cliente..."
-                                                       autocomplete="off"
-                                                       value="{{ old('cliente_id', request('cliente')) ? optional($clientes->firstWhere('id', old('cliente_id', request('cliente'))))->nombre_completo : '' }}">
-                                                <input type="hidden" name="cliente_id" id="clienteIdHidden"
-                                                       value="{{ old('cliente_id', request('cliente')) }}">
-                                                <div id="clienteResultados" class="dropdown-menu"
-                                                     style="display:none; width:100%; max-height:250px; overflow-y:auto;"></div>
+                                            <div class="d-flex gap-2">
+                                                <div class="cliente-buscador flex-grow-1" style="position:relative;">
+                                                    <input
+                                                           type="text"
+                                                           id="clienteBuscarInput"
+                                                           class="form-control @error('cliente_id') is-invalid @enderror"
+                                                           placeholder="🔍 Escribe el nombre del cliente..."
+                                                           autocomplete="off"
+                                                           value="{{ old('cliente_id', request('cliente')) ? optional($clientes->firstWhere('id', old('cliente_id', request('cliente'))))->nombre_completo : '' }}">
+                                                    <input type="hidden" name="cliente_id" id="clienteIdHidden"
+                                                           value="{{ old('cliente_id', request('cliente')) }}">
+                                                    <div id="clienteResultados" class="dropdown-menu"
+                                                         style="display:none; width:100%; max-height:250px; overflow-y:auto;"></div>
+                                                </div>
+                                                <button type="button" class="btn btn-outline-success" style="white-space:nowrap; flex-shrink:0;" onclick="abrirModalClienteRapido()" title="Registrar nuevo cliente">
+                                                    <i class="fas fa-user-plus me-1"></i>Nuevo
+                                                </button>
                                             </div>
                                             <div id="clienteSeleccionado" style="font-size:11px; color:#10b981; font-weight:600; min-height:16px;"></div>
                                             @error('cliente_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -385,6 +390,58 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal: Registro rápido de cliente --}}
+<div class="modal fade" id="modalClienteRapido" tabindex="-1" aria-labelledby="modalClienteRapidoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#f8f5ff; border-bottom:1px solid #e5e7eb;">
+                <h6 class="modal-title fw-bold" id="modalClienteRapidoLabel" style="color:#a855f7;">
+                    <i class="fas fa-user-plus me-1"></i>Registrar Nuevo Cliente
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="clienteRapidoMsg" class="mb-3" style="display:none;"></div>
+                <form id="formClienteRapido" class="row g-3">
+                    @csrf
+                    <div class="col-md-6">
+                        <label for="clienteRapidoNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" id="clienteRapidoNombre" name="nombre" required maxlength="100" placeholder="Ej: Juan">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clienteRapidoApellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" id="clienteRapidoApellido" name="apellido" required maxlength="100" placeholder="Ej: Pérez">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clienteRapidoTelefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" id="clienteRapidoTelefono" name="telefono" required maxlength="20" placeholder="Ej: 987654321">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clienteRapidoCelular" class="form-label">Celular</label>
+                        <input type="text" class="form-control form-control-sm" id="clienteRapidoCelular" name="celular" maxlength="20" placeholder="Opcional">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clienteRapidoEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control form-control-sm" id="clienteRapidoEmail" name="email" maxlength="150" placeholder="Opcional">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="clienteRapidoDni" class="form-label">DNI / Cédula</label>
+                        <input type="text" class="form-control form-control-sm" id="clienteRapidoDni" name="dni" maxlength="15" placeholder="Opcional">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #e5e7eb;">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success btn-sm" id="btnGuardarClienteRapido" onclick="guardarClienteRapido()">
+                    <i class="fas fa-check me-1"></i>Guardar Cliente
+                </button>
             </div>
         </div>
     </div>
@@ -727,6 +784,90 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 200);
     });
 });
+
+// ── REGISTRO RÁPIDO DE CLIENTE ──
+function abrirModalClienteRapido() {
+    // Limpiar campos y mensajes al abrir
+    document.getElementById('formClienteRapido').reset();
+    document.getElementById('clienteRapidoMsg').style.display = 'none';
+    document.getElementById('clienteRapidoMsg').innerHTML = '';
+    // Eventualmente precargar el nombre escrito si existe
+    const buscador = document.getElementById('clienteBuscarInput');
+    if (buscador && buscador.value.trim() && !document.getElementById('clienteIdHidden').value) {
+        // Si escribió algo que no encontró, precargar en nombre (poner en nombre solo)
+        const texto = buscador.value.trim();
+        const partes = texto.split(' ');
+        document.getElementById('clienteRapidoNombre').value = partes.shift() || '';
+        document.getElementById('clienteRapidoApellido').value = partes.join(' ');
+    }
+    // Mostrar modal
+    const modal = document.getElementById('modalClienteRapido');
+    const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modal);
+    modalBootstrap.show();
+}
+
+function guardarClienteRapido() {
+    const form = document.getElementById('formClienteRapido');
+    const msg = document.getElementById('clienteRapidoMsg');
+    const btn = document.getElementById('btnGuardarClienteRapido');
+
+    // Validar campos requeridos
+    if (!form.nombre.value.trim() || !form.apellido.value.trim() || !form.telefono.value.trim()) {
+        msg.innerHTML = '<div class="alert alert-danger py-2 px-3 mb-0" style="font-size:12px;"><i class="fas fa-exclamation-triangle me-1"></i>Nombre, apellido y teléfono son obligatorios.</div>';
+        msg.style.display = 'block';
+        return;
+    }
+
+    // Deshabilitar botón
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+    msg.style.display = 'none';
+
+    const data = new FormData(form);
+
+    fetch('{{ route("reparaciones.cliente-rapido") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+        },
+        body: data,
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Seleccionar el cliente recién creado en el buscador
+            const input = document.getElementById('clienteBuscarInput');
+            const hidden = document.getElementById('clienteIdHidden');
+            const seleccionado = document.getElementById('clienteSeleccionado');
+
+            input.value = data.cliente.nombre_completo;
+            hidden.value = data.cliente.id;
+            seleccionado.innerHTML = '✅ ' + data.cliente.nombre_completo;
+
+            // Cerrar modal
+            const modal = document.getElementById('modalClienteRapido');
+            const modalBootstrap = bootstrap.Modal.getInstance(modal);
+            if (modalBootstrap) modalBootstrap.hide();
+
+            // Mostrar mensaje de éxito temporal
+            msg.innerHTML = '<div class="alert alert-success py-2 px-3 mb-0" style="font-size:12px;"><i class="fas fa-check-circle me-1"></i>' + data.message + '</div>';
+            msg.style.display = 'block';
+        } else {
+            msg.innerHTML = '<div class="alert alert-danger py-2 px-3 mb-0" style="font-size:12px;"><i class="fas fa-times-circle me-1"></i>' + (data.message || 'Error al guardar el cliente.') + '</div>';
+            msg.style.display = 'block';
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        msg.innerHTML = '<div class="alert alert-danger py-2 px-3 mb-0" style="font-size:12px;"><i class="fas fa-times-circle me-1"></i>Error de conexión al guardar el cliente.</div>';
+        msg.style.display = 'block';
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-1"></i>Guardar Cliente';
+    });
+}
 
 // ── VALIDAR CUPÓN DE DESCUENTO ──
 function validarCuponReparacion() {

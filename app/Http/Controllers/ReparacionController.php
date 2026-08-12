@@ -70,6 +70,46 @@ class ReparacionController extends Controller
         return view('reparaciones.create', compact('clientes', 'tecnicos'));
     }
 
+    /**
+     * Registro rápido de cliente desde el formulario de reparación (AJAX)
+     */
+    public function storeClienteRapido(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre'   => 'required|string|max:100',
+            'apellido' => 'required|string|max:100',
+            'telefono' => 'required|string|max:20',
+            'celular'  => 'nullable|string|max:20',
+            'email'    => 'nullable|email|max:150',
+            'dni'      => 'nullable|string|max:15',
+        ]);
+
+        // Forzar tenant_id
+        $tenantId = Auth::user()?->tenant_id;
+        if (!$tenantId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de configuración: no hay tenant asignado.',
+            ], 422);
+        }
+        $validated['tenant_id'] = $tenantId;
+        $validated['tipo'] = 'particular';
+        $validated['activo'] = true;
+
+        $cliente = Cliente::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cliente registrado correctamente.',
+            'cliente' => [
+                'id'               => $cliente->id,
+                'nombre_completo'  => $cliente->nombre_completo,
+                'telefono'         => $cliente->telefono,
+                'celular'          => $cliente->celular,
+            ],
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
