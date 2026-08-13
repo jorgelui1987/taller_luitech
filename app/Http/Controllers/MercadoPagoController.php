@@ -209,8 +209,10 @@ class MercadoPagoController extends Controller
     /**
      * Valida la firma HMAC-SHA256 de la notificación de Mercado Pago.
      *
-     * Mercado Pago firma cada notificación con la clave X-Signature
-     * usando HMAC-SHA256, la clave secreta del webhook y el x-request-id.
+     * IMPORTANTE: Si NO hay webhook secret configurado, se permite el webhook
+     * sin validación (por compatibilidad con instalaciones anteriores).
+     * Si SÍ hay secret configurado (en Configuración → Empresa), la firma
+     * se valida estrictamente con HMAC-SHA256.
      *
      * @param Request $request
      * @return bool
@@ -220,10 +222,13 @@ class MercadoPagoController extends Controller
         $config = \App\Models\Configuracion::empresa();
         $secret = $config->mercadopago_webhook_secret ?? null;
 
-        // Si no hay secret configurado, rechazar por seguridad
+        // ── Si NO hay secret configurado: permitir el webhook ─────────────
+        // Esto mantiene compatibilidad con instalaciones que no han configurado
+        // el webhook secret. La desactivación del CSRF sigue siendo necesaria
+        // porque Mercado Pago no envía tokens CSRF.
         if (!$secret) {
-            Log::warning('Webhook Mercado Pago: no hay webhook secret configurado.');
-            return false;
+            Log::info('Webhook Mercado Pago: sin webhook secret configurado, se permite (compatibilidad).');
+            return true;
         }
 
         $signature = $request->header('x-signature');
