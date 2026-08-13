@@ -1,0 +1,61 @@
+# ⚠️⚠️⚠️ IMPORTANTE ⚠️⚠️⚠️
+# Este archivo es la configuracion CORRECTA para Dokploy
+#
+# Usa este archivo en Dokploy → pestaña "docker-compose" en vez del docker-compose.yml local
+#
+# Cambios criticos vs docker-compose.yml:
+# 1. storage se monta en un NAMED VOLUME persistente (no se borra en deploys)
+# 2. La base de datos es EXTERNA (PostgreSQL administrado de Dokploy)
+#    — NO uses el MySQL del stack, porque se destruye en cada deploy
+# 3. Todas las variables de entorno se configuran en Dokploy, NO en este archivo
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taller-luitech-app
+    ports:
+      - "8000:80"
+    volumes:
+      # ⚠️ VOLUMEN PERSISTENTE: Los backups, logos y fotos viven aqui.
+      # Sin este volumen, TODO se borra en cada actualizacion de Dokploy.
+      - taller_storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=${APP_URL}
+      - APP_KEY=${APP_KEY}
+      - DB_CONNECTION=${DB_CONNECTION}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SSLMODE=${DB_SSLMODE:-prefer}
+      - SESSION_DRIVER=file
+      - CACHE_DRIVER=file
+      - QUEUE_CONNECTION=sync
+      - FORCE_HTTPS=true
+      - SESSION_SECURE_COOKIE=true
+      - TRUSTED_PROXIES=*
+      - LOG_LEVEL=warning
+    restart: unless-stopped
+    networks:
+      - taller-luitech-network
+
+# ⚠️ NO hay servicio mysql aqui.
+# Usa la base de datos PostgreSQL que Dokploy te ofrece como servicio externo.
+# En Dokploy ve a "Databases" → crea una PostgreSQL
+# y copia sus valores (Host, Port, Database, User, Password) en las variables
+# DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+volumes:
+  # Volumen persistente para storage (backups, logos, fotos)
+  taller_storage:
+
+networks:
+  taller-luitech-network:
+    driver: bridge
