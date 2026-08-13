@@ -54,15 +54,22 @@ class DatabaseSeeder extends Seeder
         );
 
         // ── Categorías ───────────────────────────────────────────────────
+        $tenantId = \App\Models\Tenant::value('id');
         $cats = ['Smartphones', 'Tablets', 'Accesorios', 'Audífonos', 'Cargadores', 'Cases y Fundas', 'Repuestos'];
         foreach ($cats as $cat) {
-            Categoria::firstOrCreate(['nombre' => $cat]);
+            Categoria::firstOrCreate(
+                ['nombre' => $cat],
+                ['tenant_id' => $tenantId]
+            );
         }
 
         // ── Marcas ───────────────────────────────────────────────────────
         $marcas = ['Samsung', 'Apple', 'Xiaomi', 'Motorola', 'Huawei', 'OPPO', 'Realme', 'OnePlus'];
         foreach ($marcas as $marca) {
-            Marca::firstOrCreate(['nombre' => $marca]);
+            Marca::firstOrCreate(
+                ['nombre' => $marca],
+                ['tenant_id' => $tenantId]
+            );
         }
 
         // ── Productos de ejemplo ─────────────────────────────────────────

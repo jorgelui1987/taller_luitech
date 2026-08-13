@@ -200,8 +200,9 @@ class ProductoController extends Controller
             ]);
 
             $marca = Marca::create([
-                'nombre' => $validated['nombre'],
-                'activo' => true,
+                'nombre'    => $validated['nombre'],
+                'activo'    => true,
+                'tenant_id' => auth()->user()->tenant_id,
             ]);
 
             return response()->json([
@@ -306,8 +307,9 @@ class ProductoController extends Controller
             ]);
 
             $categoria = Categoria::create([
-                'nombre' => $validated['nombre'],
-                'activo' => true,
+                'nombre'    => $validated['nombre'],
+                'activo'    => true,
+                'tenant_id' => auth()->user()->tenant_id,
             ]);
 
             return response()->json([
