@@ -22,6 +22,7 @@ mkdir -p /var/www/html/storage/framework/sessions
 mkdir -p /var/www/html/storage/framework/views
 mkdir -p /var/www/html/storage/framework/cache/data
 mkdir -p /var/www/html/storage/app/public
+mkdir -p /var/www/html/storage/app/backups
 mkdir -p /var/www/html/bootstrap/cache
 
 # ── Generar .env desde variables de entorno ──────────────────────────
@@ -133,16 +134,88 @@ if [[ "$DB_CHECK" == "OK" ]]; then
         runuser -u appuser -- php artisan migrate --force 2>&1 || true
     fi
 
-    # Ejecutar seeders SOLO si la base de datos no tiene datos reales
-    # (evita borrar ventas, reparaciones u otros datos de empresas en cada deploy)
+    # ── Verificar si hay datos existentes ──────────────────────────────
     echo "Verificando si hay datos existentes..."
     HAY_DATOS=$(runuser -u appuser -- php artisan tinker --execute="echo (App\\Models\\Venta::exists() || App\\Models\\Reparacion::exists()) ? 'SI' : 'NO';" 2>/dev/null || echo "ERROR")
 
     if [ "$HAY_DATOS" == "SI" ]; then
-        echo "⚠ Se detectaron datos existentes. SE OMITEN los seeders para no borrar información."
+        echo "⚠ Se detectaron datos existentes. Se omiten seeders y restauración."
+
     elif [ "$HAY_DATOS" == "NO" ]; then
-        echo "Base de datos vacía. Ejecutando seeders iniciales..."
-        runuser -u appuser -- php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Error en seeders"
+        echo "Base de datos vacía. Buscando backup más reciente para restaurar..."
+
+        # Buscar el backup .sql más reciente en storage/app/backups/
+        BACKUP_DIR="/var/www/html/storage/app/backups"
+        BACKUP_RECIENTE=$(ls -t "$BACKUP_DIR"/*.sql 2>/dev/null | head -1 || true)
+
+        if [ -n "$BACKUP_RECIENTE" ] && [ -f "$BACKUP_RECIENTE" ]; then
+            echo "✓ Backup encontrado: $(basename "$BACKUP_RECIENTE")"
+            echo "Restaurando backup automáticamente..."
+
+            # Extraer las sentencias SQL y ejecutarlas
+            # (misma lógica que BackupController::restaurar pero sin subir archivo)
+            RESTORE_RESULT=$(runuser -u appuser -- php artisan tinker --execute="
+                \$contenido = file_get_contents('$BACKUP_RECIENTE');
+                \$statements = preg_split('/;\s*[\r\n]+/', \$contenido);
+                \$comandosBloqueados = ['DROP DATABASE', 'DROP USER', 'GRANT', 'REVOKE', 'ALTER USER', 'CREATE USER'];
+                \$contador = 0;
+                foreach (\$statements as \$stmt) {
+                    \$stmt = trim(\$stmt);
+                    if (empty(\$stmt) || preg_match('/^--/', \$stmt) || preg_match('/^\/\*/', \$stmt)) continue;
+                    \$stmtUpper = strtoupper(\$stmt);
+                    \$bloqueado = false;
+                    foreach (\$comandosBloqueados as \$comando) {
+                        if (strpos(\$stmtUpper, \$comando) !== false) { \$bloqueado = true; break; }
+                    }
+                    if (\$bloqueado) continue;
+                    try {
+                        \Illuminate\Support\Facades\DB::unprepared(\$stmt);
+                        \$contador++;
+                    } catch (\Throwable \$e) {
+                        // Continuar con la siguiente sentencia
+                    }
+                }
+                echo \"OK:{\$contador} sentencias ejecutadas\";
+            " 2>&1 || echo "ERROR")
+
+            if [[ "$RESTORE_RESULT" == *"OK:"* ]]; then
+                echo "✅ Restauración completada: $RESTORE_RESULT"
+                echo "Verificando datos después de restaurar..."
+                HAY_DATOS_AFTER=$(runuser -u appuser -- php artisan tinker --execute="echo (App\\Models\\Venta::exists() || App\\Models\\Reparacion::exists()) ? 'SI' : 'NO';" 2>/dev/null || echo "ERROR")
+                if [ "$HAY_DATOS_AFTER" == "SI" ]; then
+                    echo "✅ Base de datos restaurada correctamente con el backup."
+                else
+                    echo "⚠ El backup no contenía datos de ventas/reparaciones. Se continuará."
+                fi
+            else
+                echo "⚠ Error al restaurar el backup: $RESTORE_RESULT"
+                echo "  Se continuará sin restaurar."
+            fi
+        else
+            echo "⚠ No se encontraron backups en storage/app/backups/"
+        fi
+
+        # ── Seeders SOLO si no hay datos después del intento de restauración ──
+        HAY_DATOS_FINAL=$(runuser -u appuser -- php artisan tinker --execute="echo (App\\Models\\Venta::exists() || App\\Models\\Reparacion::exists()) ? 'SI' : 'NO';" 2>/dev/null || echo "ERROR")
+
+        if [ "$HAY_DATOS_FINAL" == "NO" ]; then
+            echo "Base de datos sigue vacía. Ejecutando seeders básicos (usuarios y catálogo)..."
+
+            # Ejecutar DatabaseSeeder con flag para NO crear datos demo
+            # SOLO crea SuperAdmin, usuarios básicos, categorías y marcas
+            if [ "$APP_ENV" == "production" ]; then
+                echo "Modo producción: ejecutando ONLY seeders seguros (usuarios, categorías, marcas)..."
+                SEED_RESULT=$(runuser -u appuser -- php artisan db:seed --class=DatabaseSeeder --force 2>&1 || echo "ERROR")
+                if [[ "$SEED_RESULT" == *"ERROR"* ]]; then
+                    echo "⚠ Error en seeders básicos: $SEED_RESULT"
+                else
+                    echo "✓ Seeders básicos ejecutados"
+                fi
+            else
+                echo "Modo desarrollo: ejecutando todos los seeders (incluye datos demo)..."
+                runuser -u appuser -- php artisan db:seed --force 2>&1 && echo "✓ Seeders ejecutados" || echo "⚠ Error en seeders"
+            fi
+        fi
     else
         echo "⚠ No se pudo verificar. Se omiten los seeders por seguridad."
     fi
@@ -151,9 +224,29 @@ else
     echo "  Las migraciones se ejecutarán manualmente después."
 fi
 
+# ── Configurar cron para el scheduler de Laravel ────────────────────
+echo "Configurando cron para el programador de Laravel..."
+
+# Añadir la entrada cron para el scheduler si no existe
+# Esto ejecuta "php artisan schedule:run" cada minuto como el usuario appuser,
+# que dispara el backup automático diario a las 2:00 AM
+CRON_EXISTS=$(crontab -l 2>/dev/null | grep "php artisan schedule:run" || true)
+if [ -z "$CRON_EXISTS" ]; then
+    echo "* * * * * runuser -u appuser -- php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -
+    echo "✓ Cron configurado para el scheduler de Laravel"
+else
+    echo "✓ Cron ya estaba configurado"
+fi
+
 # ── Optimizar Laravel ───────────────────────────────────────────────
 echo "Optimizando Laravel..."
 runuser -u appuser -- php artisan optimize 2>/dev/null || true
+
+# ── Iniciar cron en segundo plano (para que los backups automáticos funcionen) ──
+echo "Iniciando cron en segundo plano..."
+cron -f &
+CRON_PID=$!
+echo "✓ Cron iniciado (PID: $CRON_PID)"
 
 echo "=========================================="
 echo "✅ Aplicación lista!"

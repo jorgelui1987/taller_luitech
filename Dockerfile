@@ -8,6 +8,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN apt-get update -qq && apt-get install -y -qq \
     git \
     curl \
+    cron \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
