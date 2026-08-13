@@ -90,13 +90,18 @@ class MercadoPagoController extends Controller
      * Webhook de Mercado Pago - recibe notificaciones de pago.
      * Soporta tanto type=payment como type=order (Point).
      *
-     * Responde 200 inmediatamente a Mercado Pago y procesa la notificación
-     * en segundo plano (fastcgi_finish_request) para evitar timeouts que
-     * provocan errores 502 Bad Gateway al llamar a la API de Mercado Pago
-     * de forma síncrona.
+     * La URL se excluye de la verificación CSRF porque Mercado Pago no envía
+     * tokens CSRF. La seguridad se garantiza validando la firma HMAC-SHA256
+     * que Mercado Pago incluye en las cabeceras X-Signature y x-request-id.
      */
     public function webhook(Request $request)
     {
+        // ── Validar firma de Mercado Pago ──────────────────────────────
+        if (!$this->validarFirmaWebhook($request)) {
+            Log::warning('Webhook Mercado Pago rechazado: firma inválida', $request->headers->all());
+            return response()->json(['error' => 'Firma inválida'], 401);
+        }
+
         Log::info('Webhook Mercado Pago recibido', $request->all());
 
         $tipo = $request->input('type');
@@ -199,5 +204,59 @@ class MercadoPagoController extends Controller
         }
 
         return $response;
+    }
+
+    /**
+     * Valida la firma HMAC-SHA256 de la notificación de Mercado Pago.
+     *
+     * Mercado Pago firma cada notificación con la clave X-Signature
+     * usando HMAC-SHA256, la clave secreta del webhook y el x-request-id.
+     *
+     * @param Request $request
+     * @return bool
+     */
+    private function validarFirmaWebhook(Request $request): bool
+    {
+        $config = \App\Models\Configuracion::empresa();
+        $secret = $config->mercadopago_webhook_secret ?? null;
+
+        // Si no hay secret configurado, rechazar por seguridad
+        if (!$secret) {
+            Log::warning('Webhook Mercado Pago: no hay webhook secret configurado.');
+            return false;
+        }
+
+        $signature = $request->header('x-signature');
+        $requestId = $request->header('x-request-id');
+
+        if (!$signature || !$requestId) {
+            Log::warning('Webhook Mercado Pago: faltan cabeceras de firma.');
+            return false;
+        }
+
+        // Extraer la firma ts=v1:hash
+        // Formato: ts=<timestamp>,v1=<hash>
+        $parts = explode(',', $signature);
+        $ts = null;
+        $hash = null;
+
+        foreach ($parts as $part) {
+            if (str_starts_with($part, 'ts=')) {
+                $ts = substr($part, 3);
+            } elseif (str_starts_with($part, 'v1=')) {
+                $hash = substr($part, 3);
+            }
+        }
+
+        if (!$ts || !$hash) {
+            return false;
+        }
+
+        // Construir la cadena a firmar: id:<requestId>;request-id:<requestId>;ts:<ts>;
+        $manifest = "id:{$requestId};request-id:{$requestId};ts:{$ts};";
+
+        $expectedHash = hash_hmac('sha256', $manifest, $secret);
+
+        return hash_equals($expectedHash, $hash);
     }
 }

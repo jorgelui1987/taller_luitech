@@ -148,9 +148,6 @@
 
 @push('scripts')
 <!-- JsBarcode: genera las barras reales que lee la pistola escáner -->
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-<!-- qrcodejs: genera códigos QR para cada producto -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ── Guardar código de barras manual ──────────────────────────────────────
 function guardarCodigo(productoId) {
