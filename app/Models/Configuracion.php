@@ -76,12 +76,38 @@ class Configuracion extends Model
 
     /**
      * Obtiene la configuración de la empresa para el tenant actual.
+     * Si no hay usuario autenticado (ej. rutas públicas como /manifest.json),
+     * resuelve el tenant por subdominio/dominio para no devolver siempre la
+     * configuración de la primera empresa registrada.
      */
     public static function empresa(): ?self
     {
+        // 1. Usuario autenticado → filtrar por su tenant
         if (auth()->check() && auth()->user()->tenant_id) {
             return static::where('tenant_id', auth()->user()->tenant_id)->first();
         }
+
+        // 2. Tenant ya inyectado por el middleware IdentifyTenant (request->tenant)
+        $tenantRequest = request()->route('tenant') ?? request('tenant');
+        if ($tenantRequest instanceof Tenant) {
+            return static::where('tenant_id', $tenantRequest->id)->first();
+        }
+
+        // 3. Header X-Tenant (útil en desarrollo y para el manifest)
+        if (request()->hasHeader('X-Tenant')) {
+            $tenant = Tenant::where('subdominio', request()->header('X-Tenant'))->first();
+            if ($tenant) {
+                return static::where('tenant_id', $tenant->id)->first();
+            }
+        }
+
+        // 4. Resolver el tenant por subdominio/dominio (rutas públicas sin sesión)
+        $tenant = Tenant::current();
+        if ($tenant) {
+            return static::where('tenant_id', $tenant->id)->first();
+        }
+
+        // Fallback: sin tenant identificado → primera configuración (panel principal)
         return static::first();
     }
 }
