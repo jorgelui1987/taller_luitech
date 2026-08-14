@@ -1314,8 +1314,10 @@
     document.addEventListener('click', function(e) {
         var sidebar = document.getElementById('sidebar');
         var toggleBtn = document.querySelector('.topbar-btn.d-md-none');
+        // No cerrar si el click fue en el botón "Menú" de la barra inferior
+        var isBottomNavBtn = e.target.closest && e.target.closest('.bn-item');
         if (window.innerWidth < 992 && sidebar.classList.contains('open')) {
-            if (!sidebar.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target)) {
+            if (!sidebar.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target) && !isBottomNavBtn) {
                 closeSidebarMobile();
             }
         }
