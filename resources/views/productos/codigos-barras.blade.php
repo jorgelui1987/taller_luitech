@@ -301,7 +301,7 @@ function imprimirEtiqueta(productoId) {
             .label { border: 2px solid #000; width: 80mm; height: 50mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
             .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
             .content-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0; }
-            .barcode { width: 60%; height: 45px; }
+            .barcode { width: 80%; height: 60px; }
             .qrcode { width: 65px; height: 65px; }
             .qrcode canvas { width: 100%; height: 100%; }
             .code { font-family: monospace; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
@@ -316,10 +316,10 @@ function imprimirEtiqueta(productoId) {
                 try {
                     JsBarcode(svg, svg.dataset.codigo, {
                         format: 'CODE128',
-                        width: 2,
-                        height: 45,
+                        width: 4,
+                        height: 60,
                         displayValue: false,
-                        margin: 0
+                        margin: 2
                     });
                 } catch(e) {
                     svg.outerHTML = '<div style="color:red;font-size:10px;">Código inválido</div>';
@@ -392,7 +392,7 @@ function imprimirTodas() {
             .label { border: 2px solid #000; width: 80mm; height: 50mm; text-align: center; padding: 4px; page-break-after: always; display: inline-block; margin: 2px; }
             .name { font-size: 9px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
             .content-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0; }
-            .barcode { width: 60%; height: 45px; }
+            .barcode { width: 80%; height: 60px; }
             .qrcode { width: 65px; height: 65px; }
             .qrcode canvas { width: 100%; height: 100%; }
             .code { font-family: monospace; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
@@ -407,10 +407,10 @@ function imprimirTodas() {
                 try {
                     JsBarcode(svg, svg.dataset.codigo, {
                         format: 'CODE128',
-                        width: 2,
-                        height: 45,
+                        width: 4,
+                        height: 60,
                         displayValue: false,
-                        margin: 0
+                        margin: 2
                     });
                 } catch(e) {
                     svg.outerHTML = '<div style="color:red;font-size:10px;">Código inválido</div>';
