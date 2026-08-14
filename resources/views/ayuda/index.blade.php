@@ -249,6 +249,190 @@
 
     .tabla-roles tr:last-child td { border-bottom: none; }
 
+    /* ── Encabezado con empresa ── */
+    .ayuda-hero {
+        background: linear-gradient(135deg, #1a0a3e, #7c3aed);
+        border-radius: 20px;
+        padding: 32px;
+        color: #fff;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 8px 24px rgba(124,58,237,.25);
+    }
+
+    .ayuda-hero .hero-logo {
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        background: rgba(255,255,255,.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .ayuda-hero .hero-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .ayuda-hero .hero-titulo {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .ayuda-hero .hero-sub {
+        font-size: 13px;
+        opacity: .85;
+        margin: 4px 0 0;
+    }
+
+    /* ── Buscador ── */
+    .ayuda-buscador {
+        position: relative;
+        margin-bottom: 24px;
+    }
+
+    .ayuda-buscador input {
+        width: 100%;
+        padding: 14px 18px 14px 48px;
+        border: 2px solid #e5e7eb;
+        border-radius: 14px;
+        font-size: 14px;
+        font-family: inherit;
+        background: #fff;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none;
+    }
+
+    .ayuda-buscador input:focus {
+        border-color: var(--accent1);
+        box-shadow: 0 0 0 4px rgba(168,85,247,.15);
+    }
+
+    .ayuda-buscador i {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 16px;
+    }
+
+    /* ── Grid de tarjetas ── */
+    .ayuda-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .ayuda-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 2px solid #f3f0ff;
+        padding: 20px;
+        cursor: pointer;
+        transition: all .25s;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ayuda-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient);
+        opacity: 0;
+        transition: opacity .25s;
+    }
+
+    .ayuda-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(168,85,247,.15);
+        border-color: var(--accent1);
+    }
+
+    .ayuda-card:hover::before {
+        opacity: 1;
+    }
+
+    .ayuda-card .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: #fff;
+    }
+
+    .ayuda-card .card-titulo {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .ayuda-card .card-desc {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 0;
+        flex: 1;
+    }
+
+    .ayuda-card .card-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent1);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* ── Pestañas por rol ── */
+    .ayuda-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .ayuda-tab {
+        padding: 8px 18px;
+        border-radius: 50px;
+        border: 2px solid #e5e7eb;
+        background: #fff;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+    .ayuda-tab.active {
+        background: var(--gradient);
+        border-color: transparent;
+        color: #fff;
+        font-weight: 600;
+    }
+
     /* ── Botón de volver arriba ── */
     .btn-volver-arriba {
         position: fixed;
@@ -303,6 +487,17 @@
     }
 
     @media (max-width: 575.98px) {
+        .ayuda-hero {
+            padding: 20px;
+            flex-direction: column;
+            text-align: center;
+        }
+        .ayuda-hero .hero-titulo {
+            font-size: 18px;
+        }
+        .ayuda-grid {
+            grid-template-columns: 1fr;
+        }
         .ayuda-seccion {
             padding: 16px;
         }
@@ -360,6 +555,9 @@
         <a class="indice-item" data-target="stock">
             <i class="fas fa-exchange-alt"></i> Movimientos de Stock
         </a>
+        <a class="indice-item" data-target="codigos-barras">
+            <i class="fas fa-barcode"></i> Códigos de Barras
+        </a>
         <a class="indice-item" data-target="ventas">
             <i class="fas fa-shopping-cart"></i> Ventas
         </a>
@@ -368,6 +566,9 @@
         </a>
         <a class="indice-item" data-target="reparaciones">
             <i class="fas fa-tools"></i> Reparaciones
+        </a>
+        <a class="indice-item" data-target="kanban">
+            <i class="fas fa-columns"></i> Tablero Kanban
         </a>
         <a class="indice-item" data-target="reportes">
             <i class="fas fa-chart-bar"></i> Reportes
@@ -384,6 +585,9 @@
         <a class="indice-item" data-target="configuracion">
             <i class="fas fa-cog"></i> Configuración
         </a>
+        <a class="indice-item" data-target="seguridad">
+            <i class="fas fa-shield-alt"></i> Seguridad (2FA)
+        </a>
         <a class="indice-item" data-target="facturacion-electronica">
             <i class="fas fa-file-invoice"></i> Facturación Electrónica
         </a>
@@ -391,7 +595,10 @@
             <i class="fab fa-mercadopago"></i> Mercado Pago
         </a>
         <a class="indice-item" data-target="pagina-publica">
-            <i class="fas fa-globe"></i> Página Pública (Mini Web)
+            <i class="fas fa-globe"></i> Página Pública
+        </a>
+        <a class="indice-item" data-target="auditoria">
+            <i class="fas fa-clipboard-check"></i> Auditoría
         </a>
         <a class="indice-item" data-target="backup">
             <i class="fas fa-database"></i> Backup & Restore
@@ -403,6 +610,190 @@
 
     {{-- ══════════ CONTENIDO PRINCIPAL ══════════ --}}
     <div class="ayuda-contenido">
+
+        {{-- ── HERO CON LOGO DE LA EMPRESA ── --}}
+        @php $nombreTienda = $empresa->nombre_tienda ?? 'CRM Celulares'; @endphp
+        <div class="ayuda-hero">
+            <div class="hero-logo">
+                @if(isset($empresa) && $empresa && $empresa->logo && !empty($empresa->logo_url))
+                    <img src="{{ $empresa->logo_url }}" alt="Logo">
+                @else
+                    <i class="fas fa-book-open"></i>
+                @endif
+            </div>
+            <div>
+                <h1 class="hero-titulo">📖 Manual de Ayuda de {{ $nombreTienda }}</h1>
+                <p class="hero-sub">Guía completa para usar el sistema de gestión.</p>
+            </div>
+        </div>
+
+        {{-- ── PESTAÑAS POR ROL ── --}}
+        <div class="ayuda-tabs">
+            <button class="ayuda-tab active" data-rol="todos">👥 Todos</button>
+            <button class="ayuda-tab" data-rol="admin">🛡️ Administrador</button>
+            <button class="ayuda-tab" data-rol="vendedor">🛒 Vendedor</button>
+            <button class="ayuda-tab" data-rol="tecnico">🔧 Técnico</button>
+        </div>
+
+        {{-- ── BUSCADOR ── --}}
+        <div class="ayuda-buscador">
+            <i class="fas fa-search"></i>
+            <input type="text" id="buscadorAyuda" placeholder="🔍 Buscar en el manual... (ej: venta, reparación, configuración)">
+        </div>
+
+        {{-- ── GRID DE TARJETAS (acceso rápido) ── --}}
+        <div class="ayuda-grid" id="ayudaGrid">
+            <a class="ayuda-card" href="#dashboard" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#a855f7,#7c3aed);">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <h3 class="card-titulo">Dashboard</h3>
+                <p class="card-desc">Indicadores clave de tu negocio en un vistazo.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#clientes" data-rol="todos">
+                <div class="card-icon" style="background:linear-gradient(135deg,#06b6d4,#0284c7);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="card-titulo">Clientes</h3>
+                <p class="card-desc">Registra, busca y gestiona tu cartera de clientes.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#proveedores" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3 class="card-titulo">Proveedores</h3>
+                <p class="card-desc">Gestiona tus proveedores de productos y repuestos.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#compras" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3 class="card-titulo">Órdenes de Compra</h3>
+                <p class="card-desc">Registra compras y actualiza tu inventario automáticamente.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#inventario" data-rol="todos">
+                <div class="card-icon" style="background:linear-gradient(135deg,#10b981,#059669);">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3 class="card-titulo">Inventario</h3>
+                <p class="card-desc">Controla productos, precios, stock y categorías.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#stock" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3 class="card-titulo">Movimientos Stock</h3>
+                <p class="card-desc">Ajustes, alertas de stock bajo y notificaciones.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#codigos-barras" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <h3 class="card-titulo">Códigos de Barras</h3>
+                <p class="card-desc">Genera e imprime etiquetas con código de barras y QR.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#ventas" data-rol="vendedor">
+                <div class="card-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3 class="card-titulo">Ventas</h3>
+                <p class="card-desc">Registra ventas, imprime tickets y envía por WhatsApp.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#devoluciones" data-rol="vendedor">
+                <div class="card-icon" style="background:linear-gradient(135deg,#f43f5e,#e11d48);">
+                    <i class="fas fa-undo-alt"></i>
+                </div>
+                <h3 class="card-titulo">Devoluciones</h3>
+                <p class="card-desc">Gestiona devoluciones y repone stock automáticamente.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#reparaciones" data-rol="tecnico">
+                <div class="card-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3 class="card-titulo">Reparaciones</h3>
+                <p class="card-desc">Órdenes de reparación, fotos, firmas y seguimiento.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#kanban" data-rol="tecnico">
+                <div class="card-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);">
+                    <i class="fas fa-columns"></i>
+                </div>
+                <h3 class="card-titulo">Tablero Kanban</h3>
+                <p class="card-desc">Arrastra y suelta reparaciones entre estados visualmente.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#configuracion" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#64748b,#475569);">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h3 class="card-titulo">Configuración</h3>
+                <p class="card-desc">Personaliza tu empresa, logo, usuarios y más.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#seguridad" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#dc2626,#991b1b);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="card-titulo">Seguridad (2FA)</h3>
+                <p class="card-desc">Protege tu cuenta con verificación en dos pasos.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#auditoria" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3 class="card-titulo">Auditoría</h3>
+                <p class="card-desc">Registro de todas las acciones realizadas en el sistema.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#backup" data-rol="admin">
+                <div class="card-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="card-titulo">Backup & Restore</h3>
+                <p class="card-desc">Protege tu información con copias de seguridad.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+
+            <a class="ayuda-card" href="#pwa" data-rol="todos">
+                <div class="card-icon" style="background:linear-gradient(135deg,#a855f7,#ec4899);">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="card-titulo">Instalar App</h3>
+                <p class="card-desc">Accede al sistema como app nativa desde tu celular.</p>
+                <span class="card-link">Ver guía <i class="fas fa-arrow-right"></i></span>
+            </a>
+        </div>
+
+        {{-- Mensaje "sin resultados" del buscador --}}
+        <div id="sinResultados" style="display:none; text-align:center; padding:40px 20px; color:var(--text-muted);">
+            <i class="fas fa-search" style="font-size:40px; opacity:.4; margin-bottom:12px; display:block;"></i>
+            <p style="font-size:16px; font-weight:600;">No se encontraron resultados para "<span id="terminoBusqueda"></span>"</p>
+            <p style="font-size:13px;">Prueba con otras palabras como: venta, reparación, configuración, cliente, etc.</p>
+        </div>
 
         {{-- ── INICIO ── --}}
         <section class="ayuda-seccion" id="inicio">
@@ -1550,6 +1941,215 @@
             </div>
         </section>
 
+        {{-- ── CÓDIGOS DE BARRAS ── --}}
+        <section class="ayuda-seccion" id="codigos-barras">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Códigos de Barras</h2>
+                    <p class="seccion-desc">Genera e imprime etiquetas con código de barras y QR</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Ir a Códigos de Barras</div>
+                    <p class="paso-texto">
+                        En el menú lateral (solo Administrador), haz clic en <strong>Inventario → Códigos de Barras</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Asignar un código al producto</div>
+                    <p class="paso-texto">
+                        Escribe el <strong>código de barras</strong> en el campo correspondiente:
+                        <br>• <strong>Si el producto trae código de fábrica</strong>, escríbelo tal cual (ej: 7801234567895).
+                        <br>• <strong>Si no trae código</strong>, inventa uno (ej: 200000000001).
+                        <br>Luego presiona <strong>"Guardar"</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Imprimir etiquetas</div>
+                    <p class="paso-texto">
+                        Indica la <strong>cantidad de etiquetas</strong> y haz clic en el icono
+                        <i class="fas fa-print text-primary"></i>. También puedes hacer clic en
+                        <strong>"Imprimir Todas las Etiquetas"</strong> para imprimir todas a la vez.
+                    </p>
+                </div>
+            </div>
+
+            <div class="nota">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    Cada etiqueta incluye el <strong>código de barras</strong> (para la pistola escáner)
+                    y un <strong>código QR</strong>. La pistola lee las barras gruesas impresas en la etiqueta.
+                </div>
+            </div>
+        </section>
+
+        {{-- ── TABLERO KANBAN ── --}}
+        <section class="ayuda-seccion" id="kanban">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);">
+                    <i class="fas fa-columns"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Tablero Kanban</h2>
+                    <p class="seccion-desc">Visualiza y mueve las reparaciones entre estados</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Acceder al tablero</div>
+                    <p class="paso-texto">
+                        Ve a <strong>Reparaciones → Tablero Kanban</strong> (solo Admin y Técnico).
+                        Verás las reparaciones organizadas en columnas por estado:
+                        <strong>Recibido → En Proceso → Listo → Entregado</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Mover una reparación</div>
+                    <p class="paso-texto">
+                        Haz clic en una tarjeta de reparación y <strong>arrástrala</strong> a la columna
+                        del nuevo estado. El sistema actualizará el estado automáticamente.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Ver detalles</div>
+                    <p class="paso-texto">
+                        Haz clic en la tarjeta para ver los <strong>detalles completos</strong> de la reparación:
+                        cliente, equipo, falla, presupuesto y fotos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="consejo">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>Consejo:</strong> El tablero Kanban es ideal para <strong>gestionar el flujo de trabajo</strong>
+                    del taller de un vistazo y saber qué reparaciones están pendientes.
+                </div>
+            </div>
+        </section>
+
+        {{-- ── SEGURIDAD (2FA) ── --}}
+        <section class="ayuda-seccion" id="seguridad">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#dc2626,#991b1b);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Seguridad (2FA)</h2>
+                    <p class="seccion-desc">Protege tu cuenta con verificación en dos pasos</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Configurar la verificación en dos pasos</div>
+                    <p class="paso-texto">
+                        Ve a <strong>Configuración → Seguridad (2FA)</strong>.
+                        El sistema generará un <strong>código QR</strong>. Escanéalo con la app
+                        <strong>Google Authenticator</strong> o <strong>Authy</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Ingresar el código de confirmación</div>
+                    <p class="paso-texto">
+                        La app de autenticación te mostrará un <strong>código de 6 dígitos</strong>.
+                        Escríbelo en el campo de confirmación y presiona <strong>"Confirmar"</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Iniciar sesión con 2FA</div>
+                    <p class="paso-texto">
+                        A partir de ahora, al iniciar sesión se te pedirá el <strong>código de 6 dígitos</strong>
+                        de tu app de autenticación además de tu contraseña.
+                    </p>
+                </div>
+            </div>
+
+            <div class="advertencia">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Importante:</strong> Guarda el <strong>código de respaldo</strong> en un lugar seguro.
+                    Sin él, no podrás recuperar tu cuenta si pierdes el acceso a la app de autenticación.
+                </div>
+            </div>
+        </section>
+
+        {{-- ── AUDITORÍA ── --}}
+        <section class="ayuda-seccion" id="auditoria">
+            <div class="seccion-header">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h2 class="seccion-titulo">Auditoría</h2>
+                    <p class="seccion-desc">Registro de todas las acciones realizadas en el sistema</p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Acceder al registro de auditoría</div>
+                    <p class="paso-texto">
+                        Ve a <strong>Sistema → Auditoría</strong> (solo Administrador).
+                        Verás el historial completo de acciones: quién, qué y cuándo.
+                    </p>
+                </div>
+            </div>
+
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <div class="paso-titulo">Filtrar y buscar</div>
+                    <p class="paso-texto">
+                        Usa los <strong>filtros</strong> para buscar por usuario, fecha o tipo de acción.
+                        El registro es de solo lectura: no se puede modificar ni eliminar.
+                    </p>
+                </div>
+            </div>
+
+            <div class="nota">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    La auditoría registra automáticamente acciones como: <strong>crear ventas, registrar reparaciones,
+                    modificar productos, cambiar configuraciones, etc.</strong>
+                </div>
+            </div>
+        </section>
+
         {{-- ── INSTALAR APP (PWA) ── --}}
         <section class="ayuda-seccion" id="pwa">
             <div class="seccion-header">
@@ -1620,6 +2220,49 @@
 
 @section('scripts')
 <script>
+    // ── Buscador de tarjetas ───────────────────────────────────────
+    var buscador = document.getElementById('buscadorAyuda');
+    var tarjetas = document.querySelectorAll('.ayuda-card');
+    var sinResultados = document.getElementById('sinResultados');
+
+    if (buscador) {
+        buscador.addEventListener('input', function() {
+            var termino = this.value.toLowerCase().trim();
+            var visibles = 0;
+
+            tarjetas.forEach(function(tarjeta) {
+                var texto = tarjeta.textContent.toLowerCase();
+                var coincide = !termino || texto.indexOf(termino) !== -1;
+                tarjeta.style.display = coincide ? '' : 'none';
+                if (coincide) visibles++;
+            });
+
+            if (sinResultados) {
+                sinResultados.style.display = visibles === 0 ? 'block' : 'none';
+                document.getElementById('terminoBusqueda').textContent = this.value;
+            }
+        });
+    }
+
+    // ── Pestañas por rol ───────────────────────────────────────────
+    var tabs = document.querySelectorAll('.ayuda-tab');
+
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            var rol = this.dataset.rol;
+
+            // Activar pestaña
+            tabs.forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
+
+            // Filtrar tarjetas
+            tarjetas.forEach(function(tarjeta) {
+                var tarjetaRol = tarjeta.dataset.rol || 'todos';
+                tarjeta.style.display = (rol === 'todos' || tarjetaRol === 'todos' || tarjetaRol === rol) ? '' : 'none';
+            });
+        });
+    });
+
     // ── Navegación del índice ──────────────────────────────────────
     document.querySelectorAll('.ayuda-indice .indice-item').forEach(function(item) {
         item.addEventListener('click', function(e) {
