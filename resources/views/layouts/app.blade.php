@@ -60,7 +60,7 @@
             background: var(--sidebar-bg);
             display: flex;
             flex-direction: column;
-            z-index: 1050;
+            z-index: 1200;
             transition: transform .3s ease;
             overflow-y: auto;
             overflow-x: hidden;
@@ -174,7 +174,7 @@
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.5);
-            z-index: 1049;
+            z-index: 1199;
         }
         .sidebar-overlay.show {
             display: block;
@@ -1139,12 +1139,12 @@
         </div>
 
         <div class="topbar-actions">
-            <a href="{{ route('ventas.create') }}" class="btn btn-sm btn-primary px-3" style="border-radius:20px;">
+            <a href="{{ route('ventas.create') }}" class="btn btn-sm btn-primary px-3 hide-mobile" style="border-radius:20px;">
                 <i class="fas fa-plus me-1"></i><span> Nueva Venta</span>
             </a>
 
             @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
-            <a href="{{ route('reparaciones.create') }}" class="btn btn-sm btn-outline-primary px-3" style="border-radius:20px;">
+            <a href="{{ route('reparaciones.create') }}" class="btn btn-sm btn-outline-primary px-3 hide-mobile" style="border-radius:20px;">
                 <i class="fas fa-tools me-1"></i><span> Nueva Reparación</span>
             </a>
             @endif
