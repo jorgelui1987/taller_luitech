@@ -799,6 +799,129 @@
         .pwa-install-btn i {
             font-size: 15px;
         }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BOTTOM NAVIGATION (estilo app nativa) — solo móvil
+           ═══════════════════════════════════════════════════════════════ */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 62px;
+            background: #ffffff;
+            border-top: 1px solid #f0ecf7;
+            display: flex;
+            align-items: stretch;
+            justify-content: space-around;
+            z-index: 1100;
+            box-shadow: 0 -4px 20px rgba(26, 10, 62, 0.08);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .bottom-nav .bn-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            text-decoration: none;
+            color: #9ca3af;
+            font-size: 10px;
+            font-weight: 500;
+            transition: color .2s;
+            position: relative;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .bottom-nav .bn-item i {
+            font-size: 19px;
+            line-height: 1;
+            transition: transform .2s;
+        }
+
+        .bottom-nav .bn-item:active i {
+            transform: scale(0.85);
+        }
+
+        .bottom-nav .bn-item.active {
+            color: var(--accent1);
+            font-weight: 600;
+        }
+
+        .bottom-nav .bn-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 3px;
+            background: var(--gradient);
+            border-radius: 0 0 4px 4px;
+        }
+
+        .bottom-nav .bn-item .bn-badge {
+            position: absolute;
+            top: 6px;
+            right: calc(50% - 26px);
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            background: var(--accent2);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #fff;
+        }
+
+        /* Botón central destacado (Nuevo) */
+        .bottom-nav .bn-fab {
+            margin-top: -24px;
+        }
+
+        .bottom-nav .bn-fab .bn-fab-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.45);
+            border: 4px solid #fff;
+            transition: transform .2s;
+        }
+
+        .bottom-nav .bn-fab .bn-fab-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Ocultar en escritorio */
+        @media (min-width: 576px) {
+            .bottom-nav {
+                display: none !important;
+            }
+        }
+
+        /* Ajustar contenido para que no quede tapado por la barra */
+        @media (max-width: 575.98px) {
+            .page-content {
+                padding-bottom: 80px;
+            }
+            .fab-mobile {
+                bottom: 84px;
+            }
+        }
     </style>
 
     @stack('styles')
@@ -1097,6 +1220,69 @@
         @yield('content')
     </main>
 </div>
+
+{{-- ══════════ BOTTOM NAVIGATION (móvil, estilo app nativa) ══════════ --}}
+<nav class="bottom-nav" aria-label="Navegación principal móvil">
+    {{-- Inicio --}}
+    <a href="{{ route('dashboard') }}"
+       class="bn-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <i class="fas fa-th-large"></i>
+        <span>Inicio</span>
+    </a>
+
+    {{-- Ventas --}}
+    @if(in_array(Auth::user()->rol, ['admin', 'vendedor']))
+    <a href="{{ route('ventas.index') }}"
+       class="bn-item {{ request()->routeIs('ventas.*') && !request()->routeIs('ventas.create') ? 'active' : '' }}">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Ventas</span>
+    </a>
+    @else
+    <a href="{{ route('clientes.index') }}"
+       class="bn-item {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
+        <i class="fas fa-users"></i>
+        <span>Clientes</span>
+    </a>
+    @endif
+
+    {{-- Botón central destacado: Nueva Venta / Nueva Reparación --}}
+    <div class="bn-item bn-fab">
+        @if(in_array(Auth::user()->rol, ['admin', 'vendedor']))
+        <a href="{{ route('ventas.create') }}" class="bn-fab-btn" title="Nueva Venta">
+            <i class="fas fa-plus"></i>
+        </a>
+        @else
+        <a href="{{ route('reparaciones.create') }}" class="bn-fab-btn" title="Nueva Reparación">
+            <i class="fas fa-plus"></i>
+        </a>
+        @endif
+    </div>
+
+    {{-- Reparaciones --}}
+    @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
+    <a href="{{ route('reparaciones.index') }}"
+       class="bn-item {{ request()->routeIs('reparaciones.*') && !request()->routeIs('reparaciones.create') ? 'active' : '' }}">
+        <i class="fas fa-tools"></i>
+        <span>Reparac.</span>
+        @php $pendRepBn = \App\Models\Reparacion::where('estado','listo')->count(); @endphp
+        @if($pendRepBn > 0)
+            <span class="bn-badge">{{ $pendRepBn }}</span>
+        @endif
+    </a>
+    @else
+    <a href="{{ route('productos.index') }}"
+       class="bn-item {{ request()->routeIs('productos.*') ? 'active' : '' }}">
+        <i class="fas fa-box"></i>
+        <span>Inventario</span>
+    </a>
+    @endif
+
+    {{-- Menú (abre sidebar) --}}
+    <button type="button" class="bn-item" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+        <span>Menú</span>
+    </button>
+</nav>
 
 {{-- FAB (Floating Action Button) para móvil - Nueva Orden --}}
 @if(request()->routeIs('reparaciones.index'))
