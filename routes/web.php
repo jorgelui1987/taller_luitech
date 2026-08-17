@@ -146,6 +146,17 @@ Route::middleware(['tenant'])->group(function () {
         // Manual de Ayuda
         Route::get('/ayuda', [AyudaController::class, 'index'])->name('ayuda.index');
 
+        // Cierre de Caja
+        Route::middleware('check.admin')->group(function () {
+            Route::get('/caja', [\App\Http\Controllers\CierreCajaController::class, 'index'])->name('caja.index');
+            Route::get('/caja/abrir', [\App\Http\Controllers\CierreCajaController::class, 'crear'])->name('caja.abrir');
+            Route::post('/caja/abrir', [\App\Http\Controllers\CierreCajaController::class, 'abrir'])->name('caja.guardar');
+            Route::get('/caja/cerrar', [\App\Http\Controllers\CierreCajaController::class, 'cerrar'])->name('caja.cerrar');
+            Route::post('/caja/cerrar', [\App\Http\Controllers\CierreCajaController::class, 'guardarCierre'])->name('caja.guardarCierre');
+            Route::get('/caja/{cierre}', [\App\Http\Controllers\CierreCajaController::class, 'show'])->name('caja.show');
+            Route::get('/caja/{cierre}/ticket', [\App\Http\Controllers\CierreCajaController::class, 'ticket'])->name('caja.ticket');
+        });
+
         // Clientes (solo admin puede eliminar)
         Route::resource('clientes', ClienteController::class)->except(['destroy']);
         Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])

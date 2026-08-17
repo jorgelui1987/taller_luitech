@@ -1054,6 +1054,14 @@
         @endif
 
         @if(Auth::user()->esAdmin())
+        <div class="nav-section-title">Caja</div>
+
+        <a href="{{ route('caja.index') }}"
+           class="nav-link {{ request()->routeIs('caja.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-cash-register"></i></span>
+            Cierre de Caja
+        </a>
+
         <div class="nav-section-title">Reportes</div>
 
         <a href="{{ route('reportes.index') }}"
