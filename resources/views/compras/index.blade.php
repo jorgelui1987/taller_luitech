@@ -26,7 +26,7 @@
     <td class="ps-4" style="font-weight:600;">{{ $oc->numero_orden }}</td>
     <td>@if($oc->proveedor)<a href="{{ route('proveedores.show', $oc->proveedor) }}" style="color:#7c3aed;font-weight:500;font-size:13px;">{{ $oc->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif</td>
     <td style="font-size:13px;color:#6b7280;">{{ $oc->fecha_orden->format('d/m/Y') }}</td>
-    <td style="font-weight:600;">S/ {{ number_format($oc->total, 2) }}</td>
+    <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($oc->total, 2) }}</td>
     <td><span style="background:{{ $oc->estado_bg }};color:{{ $oc->estado_color }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_',' ',$oc->estado)) }}</span></td>
     <td style="font-size:12px;color:#6b7280;">{{ $oc->user->name ?? '—' }}</td>
     <td class="text-end pe-4"><div class="d-flex gap-1 justify-content-end">

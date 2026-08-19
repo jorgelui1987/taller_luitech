@@ -48,39 +48,39 @@
 
                 <div class="bs-line">
                     <span>Efectivo y Equivalentes</span>
-                    <span class="bs-value">S/ {{ number_format($efectivo, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($efectivo, 2) }}</span>
                 </div>
                 <div class="bs-line">
                     <span>Cuentas por Cobrar</span>
-                    <span class="bs-value">S/ {{ number_format($cuentasPorCobrar, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cuentasPorCobrar, 2) }}</span>
                 </div>
                 <div class="bs-line">
                     <span>Inventario (costo)</span>
-                    <span class="bs-value">S/ {{ number_format($inventario, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($inventario, 2) }}</span>
                 </div>
 
                 <div class="bs-divider"></div>
                 <div class="bs-line bs-line-total">
                     <span>Total Activo Corriente</span>
-                    <span class="bs-value bs-positive">S/ {{ number_format($totalActivoCorriente, 2) }}</span>
+                    <span class="bs-value bs-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalActivoCorriente, 2) }}</span>
                 </div>
 
                 <div class="bs-section mt-3" style="color:#7c3aed;">ACTIVO NO CORRIENTE</div>
 
                 <div class="bs-line">
                     <span>Activo Fijo (estimado)</span>
-                    <span class="bs-value">S/ {{ number_format($activoFijo, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($activoFijo, 2) }}</span>
                 </div>
 
                 <div class="bs-divider"></div>
                 <div class="bs-line bs-line-total">
                     <span>Total Activo No Corriente</span>
-                    <span class="bs-value bs-positive">S/ {{ number_format($activoFijo, 2) }}</span>
+                    <span class="bs-value bs-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($activoFijo, 2) }}</span>
                 </div>
 
                 <div class="bs-line bs-line-total mt-3" style="font-size:20px;">
                     <span style="color:var(--text-dark);">TOTAL ACTIVOS</span>
-                    <span class="bs-positive">S/ {{ number_format($totalActivos, 2) }}</span>
+                    <span class="bs-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalActivos, 2) }}</span>
                 </div>
 
             </div>
@@ -99,55 +99,55 @@
 
                 <div class="bs-line">
                     <span>Cuentas por Pagar</span>
-                    <span class="bs-value">S/ {{ number_format($cuentasPorPagar, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cuentasPorPagar, 2) }}</span>
                 </div>
 
                 <div class="bs-divider"></div>
                 <div class="bs-line bs-line-total">
                     <span>Total Pasivo Corriente</span>
-                    <span class="bs-value bs-negative">S/ {{ number_format($pasivosCortoPlazo, 2) }}</span>
+                    <span class="bs-value bs-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($pasivosCortoPlazo, 2) }}</span>
                 </div>
 
                 <div class="bs-section mt-3" style="color:#7c3aed;">PASIVO NO CORRIENTE</div>
 
                 <div class="bs-line">
                     <span>Pasivos a Largo Plazo</span>
-                    <span class="bs-value">S/ {{ number_format($pasivosLargoPlazo, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($pasivosLargoPlazo, 2) }}</span>
                 </div>
 
                 <div class="bs-divider"></div>
                 <div class="bs-line bs-line-total">
                     <span>Total Pasivo No Corriente</span>
-                    <span class="bs-value bs-negative">S/ {{ number_format($pasivosLargoPlazo, 2) }}</span>
+                    <span class="bs-value bs-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($pasivosLargoPlazo, 2) }}</span>
                 </div>
 
                 <div class="bs-line bs-line-total mt-2">
                     <span style="color:var(--text-dark);">TOTAL PASIVOS</span>
-                    <span class="bs-negative">S/ {{ number_format($totalPasivos, 2) }}</span>
+                    <span class="bs-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalPasivos, 2) }}</span>
                 </div>
 
                 <div class="bs-section mt-3" style="color:#10b981;">PATRIMONIO</div>
 
                 <div class="bs-line">
                     <span>Capital Social</span>
-                    <span class="bs-value">S/ {{ number_format($capitalSocial, 2) }}</span>
+                    <span class="bs-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($capitalSocial, 2) }}</span>
                 </div>
                 <div class="bs-line">
                     <span>Utilidades Retenidas</span>
                     <span class="bs-value {{ $utilidadesRetenidas >= 0 ? 'bs-positive' : 'bs-negative' }}">
-                        S/ {{ number_format($utilidadesRetenidas, 2) }}
+                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($utilidadesRetenidas, 2) }}
                     </span>
                 </div>
 
                 <div class="bs-divider"></div>
                 <div class="bs-line bs-line-total">
                     <span>Total Patrimonio</span>
-                    <span class="bs-value bs-positive">S/ {{ number_format($totalPatrimonio, 2) }}</span>
+                    <span class="bs-value bs-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalPatrimonio, 2) }}</span>
                 </div>
 
                 <div class="bs-line bs-line-total mt-3" style="font-size:20px;">
                     <span style="color:var(--text-dark);">TOTAL PASIVO + PATRIMONIO</span>
-                    <span class="bs-positive">S/ {{ number_format($totalPasivos + $totalPatrimonio, 2) }}</span>
+                    <span class="bs-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalPasivos + $totalPatrimonio, 2) }}</span>
                 </div>
 
             </div>

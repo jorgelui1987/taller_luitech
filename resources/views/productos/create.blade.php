@@ -175,14 +175,14 @@
                             <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Precios y Stock</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label for="precio_compra" class="form-label">Precio de Compra (S/) <span class="text-danger">*</span></label>
+                                    <label for="precio_compra" class="form-label">Precio de Compra ({{ $empresa->simbolo_moneda ?? '$' }}) <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('precio_compra') is-invalid @enderror"
                                            name="precio_compra" id="precio_compra" value="{{ old('precio_compra',0) }}"
                                            min="0" step="0.01" oninput="calcularMargen()">
                                     @error('precio_compra')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="precio_venta" class="form-label">Precio de Venta (S/) <span class="text-danger">*</span></label>
+                                    <label for="precio_venta" class="form-label">Precio de Venta ({{ $empresa->simbolo_moneda ?? '$' }}) <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('precio_venta') is-invalid @enderror"
                                            name="precio_venta" id="precio_venta" value="{{ old('precio_venta',0) }}"
                                            min="0" step="0.01" oninput="calcularMargen()">
@@ -246,16 +246,16 @@
                                 <h6 style="font-size:13px; font-weight:600; margin-bottom:12px;">Resumen de Precio</h6>
                                 <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
                                     <span class="text-muted">Precio compra</span>
-                                    <span id="resCompra">S/ 0.00</span>
+                                    <span id="resCompra">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2" style="font-size:13px;">
                                     <span class="text-muted">Precio venta</span>
-                                    <span id="resVenta" style="font-weight:600;">S/ 0.00</span>
+                                    <span id="resVenta" style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
                                 </div>
                                 <hr style="margin:8px 0;">
                                 <div class="d-flex justify-content-between" style="font-size:13px;">
                                     <span class="text-muted">Ganancia unitaria</span>
-                                    <span id="resGanancia" style="color:#10b981; font-weight:600;">S/ 0.00</span>
+                                    <span id="resGanancia" style="color:#10b981; font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -382,10 +382,10 @@ function calcularMargen() {
 
     document.getElementById('margenValor').textContent = margen.toFixed(1) + '%';
     document.getElementById('margenValor').style.color = margen >= 0 ? '#10b981' : '#dc2626';
-    document.getElementById('margenMonto').textContent = '(S/ ' + ganancia.toFixed(2) + ')';
-    document.getElementById('resCompra').textContent  = 'S/ ' + compra.toFixed(2);
-    document.getElementById('resVenta').textContent   = 'S/ ' + venta.toFixed(2);
-    document.getElementById('resGanancia').textContent = 'S/ ' + ganancia.toFixed(2);
+    document.getElementById('margenMonto').textContent = '({{ $empresa->simbolo_moneda ?? '$' }} ' + ganancia.toFixed(2) + ')';
+    document.getElementById('resCompra').textContent  = '{{ $empresa->simbolo_moneda ?? '$' }} ' + compra.toFixed(2);
+    document.getElementById('resVenta').textContent   = '{{ $empresa->simbolo_moneda ?? '$' }} ' + venta.toFixed(2);
+    document.getElementById('resGanancia').textContent = '{{ $empresa->simbolo_moneda ?? '$' }} ' + ganancia.toFixed(2);
     document.getElementById('resGanancia').style.color = ganancia >= 0 ? '#10b981' : '#dc2626';
 }
 

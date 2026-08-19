@@ -67,19 +67,19 @@
     <div class="col-md-3">
         <div class="kpi-box">
             <div class="lbl">Total Ventas</div>
-            <div class="num">S/ {{ number_format($indicadores['totalVentas'], 0) }}</div>
+            <div class="num">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['totalVentas'], 0) }}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="kpi-box" style="background:#fdf2f8;">
             <div class="lbl">Reparaciones</div>
-            <div class="num" style="color:var(--accent2);">S/ {{ number_format($indicadores['totalReparaciones'], 0) }}</div>
+            <div class="num" style="color:var(--accent2);">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['totalReparaciones'], 0) }}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="kpi-box" style="background:#f0fdf4;">
             <div class="lbl">Costo Ventas</div>
-            <div class="num" style="color:#10b981;">S/ {{ number_format($indicadores['costoVentas'], 0) }}</div>
+            <div class="num" style="color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['costoVentas'], 0) }}</div>
         </div>
     </div>
     <div class="col-md-3">
@@ -110,14 +110,14 @@
                     <div class="col-6">
                         <div class="indicator-card d-flex flex-column justify-content-center h-100" style="background:#f0fdf4;">
                             <div class="indicator-label">Ganancia Bruta</div>
-                            <div class="indicator-value" style="color:#10b981;">S/ {{ number_format($indicadores['gananciaBruta'], 0) }}</div>
+                            <div class="indicator-value" style="color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['gananciaBruta'], 0) }}</div>
                             <div class="indicator-desc">Ingresos - Costo de Ventas</div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="indicator-card" style="background:#f8f5ff;">
                             <div class="indicator-label">Ticket Promedio</div>
-                            <div class="indicator-value" style="color:var(--accent1);">S/ {{ number_format($indicadores['ticketPromedio'], 2) }}</div>
+                            <div class="indicator-value" style="color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['ticketPromedio'], 2) }}</div>
                             <div class="indicator-desc">Total Ventas / N° Ventas</div>
                         </div>
                     </div>
@@ -159,13 +159,13 @@
                     <div class="col-6">
                         <div class="indicator-card" style="background:#f0fdf4;">
                             <div class="indicator-label">Efectivo</div>
-                            <div class="indicator-value" style="color:#10b981;">S/ {{ number_format($indicadores['efectivo'], 0) }}</div>
+                            <div class="indicator-value" style="color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['efectivo'], 0) }}</div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="indicator-card" style="background:#fdf2f8;">
                             <div class="indicator-label">Cuentas x Cobrar</div>
-                            <div class="indicator-value" style="color:var(--accent2);">S/ {{ number_format($indicadores['cuentasPorCobrar'], 0) }}</div>
+                            <div class="indicator-value" style="color:var(--accent2);">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['cuentasPorCobrar'], 0) }}</div>
                         </div>
                     </div>
                 </div>
@@ -201,7 +201,7 @@
                     <div class="col-12">
                         <div class="indicator-card" style="background:#f8f5ff;">
                             <div class="indicator-label">Valor del Inventario</div>
-                            <div class="indicator-value" style="color:var(--accent1);">S/ {{ number_format($indicadores['inventario'], 0) }}</div>
+                            <div class="indicator-value" style="color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['inventario'], 0) }}</div>
                             <div class="indicator-desc">Stock actual valorizado al precio de compra</div>
                         </div>
                     </div>
@@ -229,14 +229,14 @@
                     <div class="col-6">
                         <div class="indicator-card d-flex flex-column justify-content-center h-100" style="background:#fef2f2;">
                             <div class="indicator-label">Cuentas por Pagar</div>
-                            <div class="indicator-value" style="color:#ef4444;">S/ {{ number_format($indicadores['cuentasPorPagar'], 0) }}</div>
+                            <div class="indicator-value" style="color:#ef4444;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['cuentasPorPagar'], 0) }}</div>
                             <div class="indicator-desc">Órdenes pendientes</div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="indicator-card" style="background:#f0fdf4;">
                             <div class="indicator-label">Total Activos</div>
-                            <div class="indicator-value" style="color:#10b981;">S/ {{ number_format($indicadores['totalActivos'], 0) }}</div>
+                            <div class="indicator-value" style="color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['totalActivos'], 0) }}</div>
                             <div class="indicator-desc">Efectivo + Cuentas x Cobrar + Inventario</div>
                         </div>
                     </div>
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     y: {
                         beginAtZero: true,
                         position: 'left',
-                        ticks: { callback: v => 'S/ ' + v.toLocaleString() }
+                        ticks: { callback: v => '{{ $empresa->simbolo_moneda ?? '$' }} ' + v.toLocaleString() }
                     },
                     y1: {
                         beginAtZero: true,

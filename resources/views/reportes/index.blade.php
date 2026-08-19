@@ -69,7 +69,7 @@
     <div class="col-6 col-xl-3">
         <div class="kpi-card bg-grad-purple">
             <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">S/ {{ number_format($totalVentas, 0) }}</div>
+            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalVentas, 0) }}</div>
             <div class="kpi-label">Total Ventas</div>
             <span class="kpi-badge"><i class="fas fa-receipt fa-xs"></i> {{ $cantidadVentas }} transacciones</span>
         </div>
@@ -77,7 +77,7 @@
     <div class="col-6 col-xl-3">
         <div class="kpi-card bg-grad-pink">
             <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="kpi-value">S/ {{ number_format($ticketPromedio, 0) }}</div>
+            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ticketPromedio, 0) }}</div>
             <div class="kpi-label">Ticket Promedio</div>
             <span class="kpi-badge"><i class="fas fa-shopping-bag fa-xs"></i> Por venta</span>
         </div>
@@ -85,7 +85,7 @@
     <div class="col-6 col-xl-3">
         <div class="kpi-card bg-grad-cyan">
             <div class="kpi-icon"><i class="fas fa-tools"></i></div>
-            <div class="kpi-value">S/ {{ number_format($totalReparaciones, 0) }}</div>
+            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalReparaciones, 0) }}</div>
             <div class="kpi-label">Ingresos Reparaciones</div>
             <span class="kpi-badge"><i class="fas fa-wrench fa-xs"></i> Servicio técnico</span>
         </div>
@@ -124,7 +124,7 @@
                     @foreach($ventasPorPago as $pago)
                     <div class="d-flex justify-content-between align-items-center mb-1" style="font-size:12px;">
                         <span class="text-muted">{{ ucfirst($pago->metodo_pago) }}</span>
-                        <span class="fw-600">S/ {{ number_format($pago->monto, 2) }} ({{ $pago->total }})</span>
+                        <span class="fw-600">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($pago->monto, 2) }} ({{ $pago->total }})</span>
                     </div>
                     @endforeach
                 </div>
@@ -165,7 +165,7 @@
                                     <div style="font-size:11px; color:#9ca3af;">{{ $p->codigo }}</div>
                                 </td>
                                 <td class="text-center">{{ $p->unidades }}</td>
-                                <td class="text-end fw-bold" style="color:#1e1b4b;">S/ {{ number_format($p->ingresos, 2) }}</td>
+                                <td class="text-end fw-bold" style="color:#1e1b4b;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($p->ingresos, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -205,7 +205,7 @@
                                 </td>
                                 <td style="font-weight:500;">{{ $c->nombre }}</td>
                                 <td class="text-center">{{ $c->compras }}</td>
-                                <td class="text-end fw-bold" style="color:#1e1b4b;">S/ {{ number_format($c->total, 2) }}</td>
+                                <td class="text-end fw-bold" style="color:#1e1b4b;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($c->total, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -324,7 +324,7 @@ new Chart(ctxDias, {
         labels: diasLabels,
         datasets: [
             {
-                label: 'Ventas (S/)',
+                label: 'Ventas ({{ $empresa->simbolo_moneda ?? '$' }})',
                 data: diasTotales,
                 backgroundColor: 'rgba(168,85,247,.75)',
                 borderRadius: 6,
@@ -335,11 +335,11 @@ new Chart(ctxDias, {
     options: {
         responsive: true,
         plugins: { legend: { display: false },
-            tooltip: { callbacks: { label: c => ' S/ ' + c.parsed.y.toLocaleString('es-PE', {minimumFractionDigits:2}) } }
+            tooltip: { callbacks: { label: c => ' {{ $empresa->simbolo_moneda ?? '$' }} ' + c.parsed.y.toLocaleString('es-PE', {minimumFractionDigits:2}) } }
         },
         scales: {
             x: { grid: { display: false }, ticks: { font: { family: 'Poppins', size: 11 }, color: '#9ca3af' } },
-            y: { grid: { color: '#f3f4f6' }, ticks: { font: { family: 'Poppins', size: 11 }, color: '#9ca3af', callback: v => 'S/ '+v.toLocaleString('es-PE') } }
+            y: { grid: { color: '#f3f4f6' }, ticks: { font: { family: 'Poppins', size: 11 }, color: '#9ca3af', callback: v => '{{ $empresa->simbolo_moneda ?? '$' }} '+v.toLocaleString('es-PE') } }
         }
     }
 });
@@ -364,7 +364,7 @@ new Chart(document.getElementById('chartPago'), {
         cutout: '65%',
         plugins: {
             legend: { position: 'bottom', labels: { font: { family: 'Poppins', size: 11 }, padding: 12 } },
-            tooltip: { callbacks: { label: c => ' S/ ' + c.parsed.toLocaleString('es-PE', {minimumFractionDigits:2}) } }
+            tooltip: { callbacks: { label: c => ' {{ $empresa->simbolo_moneda ?? '$' }} ' + c.parsed.toLocaleString('es-PE', {minimumFractionDigits:2}) } }
         }
     }
 });

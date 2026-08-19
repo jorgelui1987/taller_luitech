@@ -38,7 +38,7 @@
         <div class="card">
             <div class="card-body text-center">
                 <div style="font-size:12px; color:var(--text-muted);">Total Ingresos {{ $year }}</div>
-                <div style="font-size:28px; font-weight:700; color:#10b981;">S/ {{ number_format($totalIngresosAnual, 2) }}</div>
+                <div style="font-size:28px; font-weight:700; color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalIngresosAnual, 2) }}</div>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
         <div class="card">
             <div class="card-body text-center">
                 <div style="font-size:12px; color:var(--text-muted);">Total Egresos {{ $year }}</div>
-                <div style="font-size:28px; font-weight:700; color:#ef4444;">S/ {{ number_format($totalEgresosAnual, 2) }}</div>
+                <div style="font-size:28px; font-weight:700; color:#ef4444;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalEgresosAnual, 2) }}</div>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
             <div class="card-body text-center">
                 <div style="font-size:12px; color:var(--text-muted);">Saldo Final {{ $year }}</div>
                 <div style="font-size:28px; font-weight:700; {{ $saldoFinal >= 0 ? 'color:#10b981;' : 'color:#ef4444;' }}">
-                    S/ {{ number_format($saldoFinal, 2) }}
+                    {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($saldoFinal, 2) }}
                 </div>
             </div>
         </div>
@@ -99,13 +99,13 @@
                             @foreach($mesesData as $item)
                                 <tr>
                                     <td><strong>{{ $item['mes'] }}</strong></td>
-                                    <td class="text-end cf-positive">S/ {{ number_format($item['ingresos'], 2) }}</td>
-                                    <td class="text-end cf-negative">S/ {{ number_format($item['egresos'], 2) }}</td>
+                                    <td class="text-end cf-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['ingresos'], 2) }}</td>
+                                    <td class="text-end cf-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['egresos'], 2) }}</td>
                                     <td class="text-end {{ $item['saldo_mes'] >= 0 ? 'cf-positive' : 'cf-negative' }}">
-                                        S/ {{ number_format($item['saldo_mes'], 2) }}
+                                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['saldo_mes'], 2) }}
                                     </td>
                                     <td class="text-end {{ $item['saldo_acum'] >= 0 ? 'cf-positive' : 'cf-negative' }}" style="font-weight:700;">
-                                        S/ {{ number_format($item['saldo_acum'], 2) }}
+                                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['saldo_acum'], 2) }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -113,13 +113,13 @@
                         <tfoot>
                             <tr style="font-weight:700; border-top:2px solid var(--text-dark);">
                                 <td>TOTAL</td>
-                                <td class="text-end cf-positive">S/ {{ number_format($totalIngresosAnual, 2) }}</td>
-                                <td class="text-end cf-negative">S/ {{ number_format($totalEgresosAnual, 2) }}</td>
+                                <td class="text-end cf-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalIngresosAnual, 2) }}</td>
+                                <td class="text-end cf-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalEgresosAnual, 2) }}</td>
                                 <td class="text-end {{ $saldoFinal >= 0 ? 'cf-positive' : 'cf-negative' }}">
-                                    S/ {{ number_format($totalIngresosAnual - $totalEgresosAnual, 2) }}
+                                    {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalIngresosAnual - $totalEgresosAnual, 2) }}
                                 </td>
                                 <td class="text-end {{ $saldoFinal >= 0 ? 'cf-positive' : 'cf-negative' }}">
-                                    S/ {{ number_format($saldoFinal, 2) }}
+                                    {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($saldoFinal, 2) }}
                                 </td>
                             </tr>
                         </tfoot>
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
                 },
                 scales: {
-                    y: { beginAtZero: true, ticks: { callback: v => 'S/ ' + v.toLocaleString() } }
+                    y: { beginAtZero: true, ticks: { callback: v => '{{ $empresa->simbolo_moneda ?? '$' }} ' + v.toLocaleString() } }
                 }
             }
         });

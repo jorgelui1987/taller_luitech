@@ -65,12 +65,12 @@
 
                 <div class="pl-line">
                     <span class="pl-label">Ventas de Productos ({{ $ventas->cantidad }} transacciones)</span>
-                    <span class="pl-value">S/ {{ number_format($ventas->total ?? 0, 2) }}</span>
+                    <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ventas->total ?? 0, 2) }}</span>
                 </div>
                 @if($ventas->descuento > 0)
                 <div class="pl-line pl-indent">
                     <span class="pl-label">Descuentos otorgados</span>
-                    <span class="pl-value pl-negative">- S/ {{ number_format($ventas->descuento, 2) }}</span>
+                    <span class="pl-value pl-negative">- {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ventas->descuento, 2) }}</span>
                 </div>
                 @endif
                 @if($ventas->impuesto > 0)
@@ -82,13 +82,13 @@
 
                 <div class="pl-line">
                     <span class="pl-label">Reparaciones ({{ $reparaciones->cantidad }} servicios)</span>
-                    <span class="pl-value">S/ {{ number_format($reparaciones->total ?? 0, 2) }}</span>
+                    <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparaciones->total ?? 0, 2) }}</span>
                 </div>
 
                 <div class="pl-divider"></div>
                 <div class="pl-line pl-line-total">
                     <span class="pl-label">Total Ingresos</span>
-                    <span class="pl-value pl-positive">S/ {{ number_format($totalIngresos, 2) }}</span>
+                    <span class="pl-value pl-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalIngresos, 2) }}</span>
                 </div>
 
                 {{-- COSTOS --}}
@@ -96,17 +96,17 @@
 
                 <div class="pl-line">
                     <span class="pl-label">Costo de Ventas (productos)</span>
-                    <span class="pl-value">S/ {{ number_format($costoVentas, 2) }}</span>
+                    <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($costoVentas, 2) }}</span>
                 </div>
                 <div class="pl-line">
                     <span class="pl-label">Costo de Reparaciones</span>
-                    <span class="pl-value">S/ {{ number_format($costoReparaciones, 2) }}</span>
+                    <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($costoReparaciones, 2) }}</span>
                 </div>
 
                 <div class="pl-divider"></div>
                 <div class="pl-line pl-line-total">
                     <span class="pl-label">Total Costos</span>
-                    <span class="pl-value pl-negative">S/ {{ number_format($totalCostos, 2) }}</span>
+                    <span class="pl-value pl-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalCostos, 2) }}</span>
                 </div>
 
                 {{-- UTILIDAD BRUTA --}}
@@ -114,7 +114,7 @@
                 <div class="pl-line pl-line-total">
                     <span class="pl-label" style="font-size:18px;">Utilidad Bruta</span>
                     <span class="pl-value {{ $utilidadBruta >= 0 ? 'pl-positive' : 'pl-negative' }}" style="font-size:20px;">
-                        S/ {{ number_format($utilidadBruta, 2) }}
+                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($utilidadBruta, 2) }}
                     </span>
                 </div>
                 <div class="pl-line pl-indent">
@@ -129,13 +129,13 @@
 
                 <div class="pl-line">
                     <span class="pl-label">Gastos Administrativos (Compras)</span>
-                    <span class="pl-value">S/ {{ number_format($gastosAdmin, 2) }}</span>
+                    <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($gastosAdmin, 2) }}</span>
                 </div>
 
                 <div class="pl-divider"></div>
                 <div class="pl-line pl-line-total">
                     <span class="pl-label">Total Gastos Operativos</span>
-                    <span class="pl-value pl-negative">S/ {{ number_format($totalGastosOperativos, 2) }}</span>
+                    <span class="pl-value pl-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalGastosOperativos, 2) }}</span>
                 </div>
 
                 {{-- UTILIDAD OPERATIVA --}}
@@ -143,7 +143,7 @@
                 <div class="pl-line pl-line-total">
                     <span class="pl-label" style="font-size:16px;">Utilidad Operativa (EBIT)</span>
                     <span class="pl-value {{ $utilidadOperativa >= 0 ? 'pl-positive' : 'pl-negative' }}" style="font-size:18px;">
-                        S/ {{ number_format($utilidadOperativa, 2) }}
+                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($utilidadOperativa, 2) }}
                     </span>
                 </div>
                 <div class="pl-line pl-indent">
@@ -157,7 +157,7 @@
                 @if($gastosFinancieros > 0)
                 <div class="pl-line mt-2">
                     <span class="pl-label">Gastos Financieros</span>
-                    <span class="pl-value pl-negative">S/ {{ number_format($gastosFinancieros, 2) }}</span>
+                    <span class="pl-value pl-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($gastosFinancieros, 2) }}</span>
                 </div>
                 @endif
 
@@ -166,7 +166,7 @@
                 <div class="pl-line pl-line-total">
                     <span class="pl-label" style="font-size:20px; color:var(--accent1);">Utilidad Neta</span>
                     <span class="pl-value {{ $utilidadNeta >= 0 ? 'pl-positive' : 'pl-negative' }}" style="font-size:22px;">
-                        S/ {{ number_format($utilidadNeta, 2) }}
+                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($utilidadNeta, 2) }}
                     </span>
                 </div>
                 <div class="pl-line pl-indent">

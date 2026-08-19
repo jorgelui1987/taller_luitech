@@ -37,7 +37,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total gastado</div>
-                <div style="font-weight:700; font-size:16px; color:#059669;">S/ {{ number_format($stats['total'], 0) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#059669;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($stats['total'], 0) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Reparaciones</div>
@@ -150,7 +150,7 @@
                     <div class="col-6">
                         <div style="background:#d1fae5; border-radius:12px; padding:16px;">
                             <div style="font-size:22px; font-weight:700; color:#059669;">
-                                S/ {{ number_format($cliente->totalCompras(), 0) }}
+                                {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cliente->totalCompras(), 0) }}
                             </div>
                             <div style="font-size:11px; color:#9ca3af;">Total gastado</div>
                         </div>
@@ -217,7 +217,7 @@
                                         <td style="color:#a855f7; font-weight:600;">{{ $v->numero_venta }}</td>
                                         <td>{{ $v->fecha_venta->format('d/m/Y') }}</td>
                                         <td>{{ $v->detalles->count() }} ítem(s)</td>
-                                        <td style="font-weight:600;">S/ {{ number_format($v->total, 2) }}</td>
+                                        <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($v->total, 2) }}</td>
                                         <td>
                                             @php $cfg=['completada'=>['#d1fae5','#065f46'],'cancelada'=>['#fee2e2','#991b1b'],'pendiente'=>['#fef3c7','#92400e']]; $c=$cfg[$v->estado]??['#f3f4f6','#374151']; @endphp
                                             <span style="background:{{ $c[0] }}; color:{{ $c[1] }}; border-radius:20px; padding:3px 8px; font-size:11px;">{{ ucfirst($v->estado) }}</span>
@@ -260,7 +260,7 @@
                                             @php $label=str_replace('_',' ',ucfirst($r->estado)); @endphp
                                             <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 8px; font-size:11px;">{{ $label }}</span>
                                         </td>
-                                        <td style="font-weight:600;">{{ $r->costo_final > 0 ? 'S/ '.number_format($r->costo_final,2) : '—' }}</td>
+                                        <td style="font-weight:600;">{{ $r->costo_final > 0 ? '{{ $empresa->simbolo_moneda ?? '$' }} '.number_format($r->costo_final,2) : '—' }}</td>
                                         <td><a href="{{ route('reparaciones.show', $r) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
                                     </tr>
                                     @endforeach

@@ -55,9 +55,9 @@
                                 <td class="text-center">{{ $det->cantidad_ordenada }}</td>
                                 <td class="text-center">{{ $det->cantidad_recibida }}</td>
                                 <td class="text-center">{{ $det->pendiente_recibir }}</td>
-                                <td class="text-end">S/ {{ number_format($det->precio_unitario, 2) }}</td>
-                                <td class="text-end">{{ $det->descuento > 0 ? 'S/ '.number_format($det->descuento, 2) : '—' }}</td>
-                                <td class="text-end" style="font-weight:600;">S/ {{ number_format($det->subtotal, 2) }}</td>
+                                <td class="text-end">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->precio_unitario, 2) }}</td>
+                                <td class="text-end">{{ $det->descuento > 0 ? '{{ $empresa->simbolo_moneda ?? '$' }} '.number_format($det->descuento, 2) : '—' }}</td>
+                                <td class="text-end" style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->subtotal, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -77,19 +77,19 @@
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
                         <span class="text-muted">Subtotal</span>
-                        <span>S/ {{ number_format($ordenCompra->subtotal, 2) }}</span>
+                        <span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ordenCompra->subtotal, 2) }}</span>
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
                         <span class="text-muted">Descuento</span>
-                        <span style="color:#dc2626;">- S/ {{ number_format($ordenCompra->descuento, 2) }}</span>
+                        <span style="color:#dc2626;">- {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ordenCompra->descuento, 2) }}</span>
                     </div>
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
                         <span class="text-muted">Impuesto ({{ $empresa->igv ?? 18 }}%)</span>
-                        <span>S/ {{ number_format($ordenCompra->impuesto, 2) }}</span>
+                        <span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ordenCompra->impuesto, 2) }}</span>
                     </div>
                     <div class="d-flex justify-content-between py-2">
                         <span class="fw-bold">Total</span>
-                        <span style="font-weight:700;font-size:18px;color:#7c3aed;">S/ {{ number_format($ordenCompra->total, 2) }}</span>
+                        <span style="font-weight:700;font-size:18px;color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ordenCompra->total, 2) }}</span>
                     </div>
                 </div>
                 @if($ordenCompra->fecha_estimada)

@@ -226,7 +226,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">S/ {{ number_format($reparacion->total, 2) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total, 2) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Cliente</div>
@@ -451,20 +451,20 @@
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#f8f5ff;">
                             <div style="font-size:10px; color:#9ca3af;">PRESUPUESTO</div>
-                            <div style="font-weight:700; font-size:16px; color:#7c3aed;">S/ {{ $reparacion->presupuesto ? number_format($reparacion->presupuesto, 2) : '0.00' }}</div>
+                            <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ $reparacion->presupuesto ? number_format($reparacion->presupuesto, 2) : '0.00' }}</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#d1fae5;">
                             <div style="font-size:10px; color:#065f46;">COSTO FINAL</div>
-                            <div style="font-weight:700; font-size:16px; color:#059669;">S/ {{ $reparacion->costo_final ? number_format($reparacion->costo_final, 2) : '0.00' }}</div>
+                            <div style="font-weight:700; font-size:16px; color:#059669;">{{ $empresa->simbolo_moneda ?? '$' }} {{ $reparacion->costo_final ? number_format($reparacion->costo_final, 2) : '0.00' }}</div>
                         </div>
                     </div>
                     @if($reparacion->costo_repuesto > 0)
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#f3f4f6;">
                             <div style="font-size:10px; color:#6b7280;">REPUESTOS</div>
-                            <div style="font-weight:600; font-size:14px;">S/ {{ number_format($reparacion->costo_repuesto, 2) }}</div>
+                            <div style="font-weight:600; font-size:14px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->costo_repuesto, 2) }}</div>
                         </div>
                     </div>
                     @endif
@@ -472,14 +472,14 @@
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#fef3c7;">
                             <div style="font-size:10px; color:#92400e;">ABONO</div>
-                            <div style="font-weight:600; font-size:14px;">S/ {{ number_format($reparacion->abono, 2) }}</div>
+                            <div style="font-weight:600; font-size:14px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->abono, 2) }}</div>
                         </div>
                     </div>
                     @endif
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#fef3c7; border:2px solid #f59e0b;">
                             <div style="font-size:10px; color:#92400e; font-weight:600;">SALDO</div>
-                            <div style="font-weight:700; font-size:17px; color:#92400e;">S/ {{ number_format($reparacion->total, 2) }}</div>
+                            <div style="font-weight:700; font-size:17px; color:#92400e;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total, 2) }}</div>
                         </div>
                     </div>
                 </div>

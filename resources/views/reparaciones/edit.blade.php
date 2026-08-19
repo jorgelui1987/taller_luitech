@@ -267,7 +267,7 @@
                                 <div class="tab-pane fade" id="tab-costos" role="tabpanel" aria-labelledby="tab-costos-tab">
                                     <div class="row g-3">
                                         <div class="col-md-3">
-                                            <label for="presupuesto" class="form-label">Presupuesto (S/)</label>
+                                            <label for="presupuesto" class="form-label">Presupuesto ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="presupuesto" id="presupuesto"
                                                    value="{{ old('presupuesto',$reparacion->presupuesto) }}" min="0" step="0.01">
                                         </div>
@@ -280,12 +280,12 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3">
-                                            <label for="costo_final" class="form-label">Costo Final (S/)</label>
+                                            <label for="costo_final" class="form-label">Costo Final ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="costo_final" id="costo_final"
                                                    value="{{ old('costo_final',$reparacion->costo_final) }}" min="0" step="0.01">
                                         </div>
                                         <div class="col-md-3">
-                                            <label for="costo_repuesto" class="form-label">Costo de Repuesto(s) (S/)</label>
+                                            <label for="costo_repuesto" class="form-label">Costo de Repuesto(s) ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="costo_repuesto" id="costo_repuesto"
                                                    value="{{ old('costo_repuesto',$reparacion->costo_repuesto) }}" min="0" step="0.01" placeholder="0.00">
                                             <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia</div>
@@ -296,12 +296,12 @@
                                             <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Se pre-rellena con el % del perfil del tecnico</div>
                                         </div>
                                         <div class="col-md-3">
-                                            <label for="abono" class="form-label">Abono (S/)</label>
+                                            <label for="abono" class="form-label">Abono ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="abono" id="abono"
                                                    value="{{ old('abono',$reparacion->abono) }}" min="0" step="0.01">
                                         </div>
                                         <div class="col-md-3">
-                                            <label for="total" class="form-label">Total (S/)</label>
+                                            <label for="total" class="form-label">Total ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control total-auto" name="total" id="total"
                                                    value="{{ old('total',$reparacion->total) }}" min="0" step="0.01" readonly
                                                    style="background:#f3f4f6; font-weight:700;">
@@ -340,15 +340,15 @@
                                                 <div class="row g-2">
                                                     <div class="col-md-2">
                                                         <div style="font-size:11px; color:#6b7280;">Monto a cobrar</div>
-                                                        <div id="comisionPreviewCobrado" style="font-weight:600;">S/ 0.00</div>
+                                                        <div id="comisionPreviewCobrado" style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
                                                     </div>
                                                     <div class="col-md-2">
                                                         <div style="font-size:11px; color:#6b7280;">Repuesto(s)</div>
-                                                        <div id="comisionPreviewRepuesto" style="color:#dc2626;">- S/ 0.00</div>
+                                                        <div id="comisionPreviewRepuesto" style="color:#dc2626;">- {{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
                                                     </div>
                                                     <div class="col-md-2">
                                                         <div style="font-size:11px; color:#6b7280;">Base comision</div>
-                                                        <div id="comisionPreviewBase" style="color:#9a3412; font-weight:600;">S/ 0.00</div>
+                                                        <div id="comisionPreviewBase" style="color:#9a3412; font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
                                                     </div>
                                                     <div class="col-md-2">
                                                         <div style="font-size:11px; color:#6b7280;">% del tecnico</div>
@@ -356,7 +356,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div style="font-size:11px; color:#9a3412; font-weight:700;">Comision del tecnico</div>
-                                                        <div id="comisionPreviewMonto" style="color:#f59e0b; font-size:18px; font-weight:700;">S/ 0.00</div>
+                                                        <div id="comisionPreviewMonto" style="color:#f59e0b; font-size:18px; font-weight:700;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -662,7 +662,7 @@ function validarCuponReparacion() {
     .then(data => {
         if (data.success) {
             const cupon = data.cupon;
-            const valorTexto = cupon.tipo === 'porcentaje' ? cupon.valor + '%' : 'S/ ' + cupon.valor;
+            const valorTexto = cupon.tipo === 'porcentaje' ? cupon.valor + '%' : '{{ $empresa->simbolo_moneda ?? '$' }} ' + cupon.valor;
             infoDiv.innerHTML = `
                 <div class="alert alert-success py-2 px-3 mb-0" style="font-size:13px;">
                     <i class="fas fa-check-circle me-1"></i>

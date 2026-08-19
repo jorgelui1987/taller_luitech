@@ -296,19 +296,19 @@
                                 <div class="tab-pane fade" id="tab-costos" role="tabpanel" aria-labelledby="tab-costos-tab">
                                     <div class="row g-3">
                                         <div class="col-md-4">
-                                            <label for="presupuesto" class="form-label">Presupuesto Estimado (S/)</label>
+                                            <label for="presupuesto" class="form-label">Presupuesto Estimado ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="presupuesto" id="presupuesto"
                                                    value="{{ old('presupuesto', 0) }}" min="0" step="0.01">
                                             <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Dejar en 0 si aún no se determinó</div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="abono" class="form-label">Abono (S/)</label>
+                                            <label for="abono" class="form-label">Abono ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="abono" id="abono"
                                                    value="{{ old('abono', 0) }}" min="0" step="0.01">
                                             <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Monto pagado por adelantado</div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="costo_repuesto" class="form-label">Costo de Repuesto(s) (S/)</label>
+                                            <label for="costo_repuesto" class="form-label">Costo de Repuesto(s) ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="costo_repuesto" id="costo_repuesto"
                                                    value="{{ old('costo_repuesto', 0) }}" min="0" step="0.01">
                                             <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia del técnico</div>
@@ -892,7 +892,7 @@ function validarCuponReparacion() {
     .then(data => {
         if (data.success) {
             const cupon = data.cupon;
-            const valorTexto = cupon.tipo === 'porcentaje' ? cupon.valor + '%' : 'S/ ' + cupon.valor;
+            const valorTexto = cupon.tipo === 'porcentaje' ? cupon.valor + '%' : '{{ $empresa->simbolo_moneda ?? '$' }} ' + cupon.valor;
             infoDiv.innerHTML = `
                 <div class="alert alert-success py-2 px-3 mb-0" style="font-size:12px;">
                     <i class="fas fa-check-circle me-1"></i>

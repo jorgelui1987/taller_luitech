@@ -77,29 +77,29 @@
     <div class="col-md-3">
         <div class="fin-card bg-gradient-purple">
             <div class="fin-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="fin-value">S/ {{ number_format($kpis['totalIngresos'], 2) }}</div>
+            <div class="fin-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['totalIngresos'], 2) }}</div>
             <div class="fin-label">Ingresos del Mes</div>
             <div class="fin-badge">
                 <i class="fas fa-arrow-up"></i>
-                Ventas: S/ {{ number_format($kpis['ingresosVentas'], 0) }}
+                Ventas: {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['ingresosVentas'], 0) }}
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="fin-card bg-gradient-pink">
             <div class="fin-icon"><i class="fas fa-shopping-bag"></i></div>
-            <div class="fin-value">S/ {{ number_format($kpis['totalCostos'], 2) }}</div>
+            <div class="fin-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['totalCostos'], 2) }}</div>
             <div class="fin-label">Costos del Mes</div>
             <div class="fin-badge">
                 <i class="fas fa-box"></i>
-                Costo Ventas: S/ {{ number_format($kpis['costoVentas'], 0) }}
+                Costo Ventas: {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['costoVentas'], 0) }}
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="fin-card bg-gradient-cyan">
             <div class="fin-icon"><i class="fas fa-hand-holding-usd"></i></div>
-            <div class="fin-value">S/ {{ number_format($kpis['gananciaBruta'], 2) }}</div>
+            <div class="fin-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['gananciaBruta'], 2) }}</div>
             <div class="fin-label">Ganancia Bruta</div>
             <div class="fin-badge">
                 <i class="fas fa-percentage"></i>
@@ -110,7 +110,7 @@
     <div class="col-md-3">
         <div class="fin-card bg-gradient-green">
             <div class="fin-icon"><i class="fas fa-coins"></i></div>
-            <div class="fin-value">S/ {{ number_format($kpis['gananciaNeta'], 2) }}</div>
+            <div class="fin-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['gananciaNeta'], 2) }}</div>
             <div class="fin-label">Ganancia Neta</div>
             <div class="fin-badge">
                 <i class="fas fa-percentage"></i>
@@ -167,25 +167,25 @@
                 <div class="row g-3 mt-2">
                     <div class="col-6">
                         <div class="stat-label">Efectivo Estimado</div>
-                        <div class="stat-value">S/ {{ number_format($kpis['efectivo'], 0) }}</div>
+                        <div class="stat-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['efectivo'], 0) }}</div>
                     </div>
                     <div class="col-6">
                         <div class="stat-label">Cuentas por Cobrar</div>
-                        <div class="stat-value">S/ {{ number_format($kpis['cuentasPorCobrar'], 0) }}</div>
+                        <div class="stat-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['cuentasPorCobrar'], 0) }}</div>
                     </div>
                     <div class="col-6">
                         <div class="stat-label">Cuentas por Pagar</div>
-                        <div class="stat-value">S/ {{ number_format($kpis['cuentasPorPagar'], 0) }}</div>
+                        <div class="stat-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['cuentasPorPagar'], 0) }}</div>
                     </div>
                     <div class="col-6">
                         <div class="stat-label">Capital de Trabajo</div>
                         <div class="stat-value {{ $kpis['capitalTrabajo'] >= 0 ? 'text-success' : 'text-danger' }}">
-                            S/ {{ number_format($kpis['capitalTrabajo'], 0) }}
+                            {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['capitalTrabajo'], 0) }}
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="stat-label">Valor Inventario (costo)</div>
-                        <div class="stat-value">S/ {{ number_format($kpis['valorInventario'], 0) }}</div>
+                        <div class="stat-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($kpis['valorInventario'], 0) }}</div>
                     </div>
                     <div class="col-6">
                         <div class="stat-label">Rotación Inventario</div>
@@ -221,10 +221,10 @@
                                 @php $margen = $item['ingresos'] > 0 ? ($item['ganancia'] / $item['ingresos']) * 100 : 0; @endphp
                                 <tr>
                                     <td>{{ $item['mes'] }}</td>
-                                    <td class="text-end">S/ {{ number_format($item['ingresos'], 2) }}</td>
-                                    <td class="text-end">S/ {{ number_format($item['costos'], 2) }}</td>
+                                    <td class="text-end">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['ingresos'], 2) }}</td>
+                                    <td class="text-end">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['costos'], 2) }}</td>
                                     <td class="text-end {{ $item['ganancia'] >= 0 ? 'text-success' : 'text-danger' }}">
-                                        S/ {{ number_format($item['ganancia'], 2) }}
+                                        {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($item['ganancia'], 2) }}
                                     </td>
                                     <td class="text-center">
                                         <span class="badge {{ $margen >= 0 ? 'bg-success' : 'bg-danger' }}">
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
                 },
                 scales: {
-                    y: { beginAtZero: true, ticks: { callback: v => 'S/ ' + v.toLocaleString() } }
+                    y: { beginAtZero: true, ticks: { callback: v => '{{ $empresa->simbolo_moneda ?? '$' }} ' + v.toLocaleString() } }
                 }
             }
         });

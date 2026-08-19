@@ -287,7 +287,7 @@ function validarCupon() {
             cuponAplicado = data.cupon;
             document.getElementById('cuponInput').value = data.cupon.codigo;
             msg.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Cupón válido: ' +
-                (data.cupon.tipo === 'porcentaje' ? data.cupon.valor + '% de descuento' : 'S/ ' + data.cupon.valor + ' de descuento') + '</span>';
+                (data.cupon.tipo === 'porcentaje' ? data.cupon.valor + '% de descuento' : '{{ $empresa->simbolo_moneda ?? '$' }} ' + data.cupon.valor + ' de descuento') + '</span>';
             totales();
         } else {
             cuponAplicado = null;

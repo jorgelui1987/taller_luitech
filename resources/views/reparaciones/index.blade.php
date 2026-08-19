@@ -157,7 +157,7 @@
                         </td>
                         <td style="font-size:13px; font-weight:600;">
                             @if($rep->presupuesto > 0)
-                                S/ {{ number_format($rep->presupuesto, 2) }}
+                                {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($rep->presupuesto, 2) }}
                             @else
                                 <span class="text-muted">—</span>
                             @endif
@@ -258,7 +258,7 @@
                             </span>
                             @if($rep->presupuesto > 0)
                                 <div style="font-size:13px; font-weight:700; color:#7c3aed; margin-top:4px;">
-                                    S/ {{ number_format($rep->presupuesto, 2) }}
+                                    {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($rep->presupuesto, 2) }}
                                 </div>
                             @endif
                         </div>

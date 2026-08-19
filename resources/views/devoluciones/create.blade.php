@@ -161,7 +161,7 @@
                             <div class="p-3 rounded-3 me-3" style="background:#f8f5ff;min-width:220px;">
                                 <div class="d-flex justify-content-between" style="font-size:12px;">
                                     <span class="text-muted">Subtotal devolución</span>
-                                    <strong id="resumenSubtotal">S/ 0.00</strong>
+                                    <strong id="resumenSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</strong>
                                 </div>
                                 <div class="d-flex justify-content-between" style="font-size:12px;margin-top:4px;">
                                     <span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }}</span>
@@ -170,7 +170,7 @@
                                 <hr style="margin:8px 0;">
                                 <div class="d-flex justify-content-between">
                                     <span style="font-weight:600;">Total a devolver</span>
-                                    <strong style="color:#7c3aed;font-size:16px;" id="resumenTotal">S/ 0.00</strong>
+                                    <strong style="color:#7c3aed;font-size:16px;" id="resumenTotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</strong>
                                 </div>
                             </div>
                         </div>
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<div class="d-flex justify-content-between"><span class="text-muted">N° Venta</span><strong>' + data.venta.numero_venta + '</strong></div>' +
                     '<div class="d-flex justify-content-between mt-1"><span class="text-muted">Fecha</span><span>' + data.venta.fecha_venta + '</span></div>' +
                     '<div class="d-flex justify-content-between mt-1"><span class="text-muted">Cliente</span><span>' + data.venta.cliente + '</span></div>' +
-                    '<div class="d-flex justify-content-between mt-1"><span class="text-muted">Total venta</span><strong>S/ ' + data.venta.total.toFixed(2) + '</strong></div>';
+                    '<div class="d-flex justify-content-between mt-1"><span class="text-muted">Total venta</span><strong>{{ $empresa->simbolo_moneda ?? '$' }} ' + data.venta.total.toFixed(2) + '</strong></div>';
 
                 sinVentaMsg.style.display = 'none';
                 productosContainer.style.display = 'block';
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td><input type="checkbox" class="form-check-input check-item" data-detalle="${det.detalle_venta_id}"></td>
                         <td>
                             <div style="font-weight:500;">${det.producto_nombre}</div>
-                            <div style="font-size:11px;color:#9ca3af;">Precio: S/ ${det.precio_unitario.toFixed(2)}</div>
+                            <div style="font-size:11px;color:#9ca3af;">Precio: {{ $empresa->simbolo_moneda ?? '$' }} ${det.precio_unitario.toFixed(2)}</div>
                             ${det.imei ? `<div style="font-size:11px;color:#9ca3af;">IMEI: ${det.imei}</div>` : ''}
                         </td>
                         <td class="text-center">${det.cantidad_vendida}</td>
@@ -372,9 +372,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const impuesto = subtotal * (igvPorcentaje / 100);
         const total = subtotal + impuesto;
 
-        document.getElementById('resumenSubtotal').textContent = 'S/ ' + subtotal.toFixed(2);
-        document.getElementById('resumenImpuesto').textContent = 'S/ ' + impuesto.toFixed(2);
-        document.getElementById('resumenTotal').textContent = 'S/ ' + total.toFixed(2);
+        document.getElementById('resumenSubtotal').textContent = '{{ $empresa->simbolo_moneda ?? '$' }} ' + subtotal.toFixed(2);
+        document.getElementById('resumenImpuesto').textContent = '{{ $empresa->simbolo_moneda ?? '$' }} ' + impuesto.toFixed(2);
+        document.getElementById('resumenTotal').textContent = '{{ $empresa->simbolo_moneda ?? '$' }} ' + total.toFixed(2);
 
         btnSubmit.disabled = !hayItems;
         btnSubmit.style.opacity = hayItems ? '1' : '.5';

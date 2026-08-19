@@ -31,7 +31,7 @@
                             <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada" value="{{ old('fecha_estimada') }}">
                         </div>
                         <div class="col-md-3">
-                            <label for="descuento_general" class="form-label">Descuento general (S/)</label>
+                            <label for="descuento_general" class="form-label">Descuento general ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                             <input type="number" class="form-control" name="descuento_general" id="descuento_general" value="{{ old('descuento_general', 0) }}" min="0" step="0.01">
                         </div>
                     </div>

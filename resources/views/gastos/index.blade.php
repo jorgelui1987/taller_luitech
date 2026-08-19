@@ -126,7 +126,7 @@
                             <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ej: Renta del local" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="monto" class="form-label">Monto (S/) <span class="text-danger">*</span></label>
+                            <label for="monto" class="form-label">Monto ({{ $empresa->simbolo_moneda ?? '$' }}) <span class="text-danger">*</span></label>
                             <input type="number" name="monto" id="monto" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="col-md-6">
@@ -182,7 +182,7 @@
                             <input type="text" name="nombre" id="editNombre" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="editMonto" class="form-label">Monto (S/) <span class="text-danger">*</span></label>
+                            <label for="editMonto" class="form-label">Monto ({{ $empresa->simbolo_moneda ?? '$' }}) <span class="text-danger">*</span></label>
                             <input type="number" name="monto" id="editMonto" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="col-md-6">

@@ -65,14 +65,14 @@
         <div class="caja-card bg-grad-cyan text-white">
             <div class="caja-icon"><i class="fas fa-coins"></i></div>
             <div class="caja-label">Monto Inicial</div>
-            <div class="caja-value" style="font-size:18px;">S/ {{ number_format($cajaAbierta->monto_inicial, 2) }}</div>
+            <div class="caja-value" style="font-size:18px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cajaAbierta->monto_inicial, 2) }}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="caja-card bg-grad-purple text-white">
             <div class="caja-icon"><i class="fas fa-shopping-cart"></i></div>
             <div class="caja-label">Ventas del Día</div>
-            <div class="caja-value" style="font-size:18px;">S/ {{ number_format($totalVentasHoy + $totalReparacionesHoy, 2) }}</div>
+            <div class="caja-value" style="font-size:18px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalVentasHoy + $totalReparacionesHoy, 2) }}</div>
         </div>
     </div>
     <div class="col-md-3">
@@ -171,11 +171,11 @@
                             <td>{{ $cierre->usuario->name ?? '—' }}</td>
                             <td>{{ $cierre->fecha_apertura?->format('d/m/Y H:i') }}</td>
                             <td>{{ $cierre->fecha_cierre?->format('d/m/Y H:i') ?? '—' }}</td>
-                            <td class="text-end">S/ {{ number_format($cierre->monto_inicial, 2) }}</td>
-                            <td class="text-end">S/ {{ number_format($cierre->total_esperado, 2) }}</td>
-                            <td class="text-end">{{ $cierre->total_contado !== null ? 'S/ ' . number_format($cierre->total_contado, 2) : '—' }}</td>
+                            <td class="text-end">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cierre->monto_inicial, 2) }}</td>
+                            <td class="text-end">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cierre->total_esperado, 2) }}</td>
+                            <td class="text-end">{{ $cierre->total_contado !== null ? '{{ $empresa->simbolo_moneda ?? '$' }} ' . number_format($cierre->total_contado, 2) : '—' }}</td>
                             <td class="text-end {{ $cierre->diferencia > 0 ? 'text-success' : ($cierre->diferencia < 0 ? 'text-danger' : 'text-muted') }}">
-                                {{ $cierre->diferencia > 0 ? '+' : '' }}S/ {{ number_format($cierre->diferencia, 2) }}
+                                {{ $cierre->diferencia > 0 ? '+' : '' }}{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cierre->diferencia, 2) }}
                             </td>
                             <td class="text-center">
                                 @if($cierre->estado == 'abierta')

@@ -39,7 +39,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total compras</div>
-                <div style="font-weight:700; font-size:16px; color:#059669;">S/ {{ number_format($totalCompras, 0) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#059669;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalCompras, 0) }}</div>
             </div>
         </div>
     </div>
@@ -122,7 +122,7 @@
                                     <tr>
                                         <td><a href="{{ route('compras.show', $oc) }}" style="color:#a855f7;font-weight:500;">{{ $oc->numero_orden ?? '—' }}</a></td>
                                         <td style="color:#6b7280;">{{ $oc->fecha_orden ? \Carbon\Carbon::parse($oc->fecha_orden)->format('d/m/Y') : '—' }}</td>
-                                        <td style="font-weight:600;">S/ {{ number_format($oc->total ?? 0, 2) }}</td>
+                                        <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($oc->total ?? 0, 2) }}</td>
                                         <td><span style="background:{{ $oc->estado_bg ?? '#f3f4f6' }};color:{{ $oc->estado_color ?? '#6b7280' }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_', ' ', $oc->estado ?? 'pendiente')) }}</span></td>
                                     </tr>
                                     @endforeach

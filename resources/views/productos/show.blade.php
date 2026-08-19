@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Precio venta</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">S/ {{ number_format($producto->precio_venta, 2) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Condición</div>
@@ -119,11 +119,11 @@
                 <h6 class="fw-bold mb-3">Precios</h6>
                 <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
                     <span class="text-muted">Precio Compra</span>
-                    <span>S/ {{ number_format($producto->precio_compra, 2) }}</span>
+                    <span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_compra, 2) }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
                     <span class="text-muted">Precio Venta</span>
-                    <span style="font-weight:700; color:#1e1b4b;">S/ {{ number_format($producto->precio_venta, 2) }}</span>
+                    <span style="font-weight:700; color:#1e1b4b;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</span>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between" style="font-size:13.5px;">
@@ -132,10 +132,10 @@
                 </div>
                 <div class="d-flex justify-content-between mt-1" style="font-size:13px;">
                     <span class="text-muted">Ganancia unitaria</span>
-                    <span style="color:#10b981;">S/ {{ number_format($producto->precio_venta - $producto->precio_compra, 2) }}</span>
+                    <span style="color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta - $producto->precio_compra, 2) }}</span>
                 </div>
                 <div class="mt-3 p-2 rounded-3 text-center" style="background:#f8f5ff; font-size:12px; color:#6b7280;">
-                    Valor en stock: <strong style="color:#7c3aed;">S/ {{ number_format($producto->stock * $producto->precio_venta, 2) }}</strong>
+                    Valor en stock: <strong style="color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->stock * $producto->precio_venta, 2) }}</strong>
                 </div>
             </div>
         </div>
@@ -263,8 +263,8 @@
                                         <td>{{ $det->venta->cliente->nombre_completo ?? '—' }}</td>
                                         <td style="color:#9ca3af;">{{ $det->venta->fecha_venta?->format('d/m/Y') ?? '—' }}</td>
                                         <td>{{ $det->cantidad }}</td>
-                                        <td>S/ {{ number_format($det->precio_unitario, 2) }}</td>
-                                        <td style="font-weight:600;">S/ {{ number_format($det->subtotal, 2) }}</td>
+                                        <td>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->precio_unitario, 2) }}</td>
+                                        <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->subtotal, 2) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

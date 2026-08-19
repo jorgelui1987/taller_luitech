@@ -155,9 +155,9 @@
                             @if($producto->ram) <span class="badge bg-light text-dark">{{ $producto->ram }}</span> @endif
                             @if($producto->color) <div class="mt-1">{{ $producto->color }}</div> @endif
                         </td>
-                        <td style="font-size:13px; color:#6b7280;">S/ {{ number_format($producto->precio_compra, 2) }}</td>
+                        <td style="font-size:13px; color:#6b7280;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_compra, 2) }}</td>
                         <td style="font-size:13px; font-weight:600; color:#1e1b4b;">
-                            S/ {{ number_format($producto->precio_venta, 2) }}
+                            {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}
                             <div style="font-size:11px; color:#10b981; font-weight:400;">
                                 +{{ number_format($producto->margen, 1) }}% margen
                             </div>

@@ -132,25 +132,25 @@ body{font-family:'Inter',-apple-system,sans-serif;background:linear-gradient(135
         <div class="costos">
             @if($reparacion->presupuesto>0)
             <div class="costo-item">
-                <div class="monto presupuesto">S/ {{ number_format($reparacion->presupuesto,2) }}</div>
+                <div class="monto presupuesto">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->presupuesto,2) }}</div>
                 <div class="lbl">Presupuesto</div>
             </div>
             @endif
             @if($reparacion->costo_final>0)
             <div class="costo-item">
-                <div class="monto final">S/ {{ number_format($reparacion->costo_final,2) }}</div>
+                <div class="monto final">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->costo_final,2) }}</div>
                 <div class="lbl">Costo final</div>
             </div>
             @endif
             @if($reparacion->abono>0)
             <div class="costo-item">
-                <div class="monto abono">S/ {{ number_format($reparacion->abono,2) }}</div>
+                <div class="monto abono">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->abono,2) }}</div>
                 <div class="lbl">Abono</div>
             </div>
             @endif
             @if($reparacion->total>0)
             <div class="costo-item">
-                <div class="monto total">S/ {{ number_format($reparacion->total,2) }}</div>
+                <div class="monto total">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total,2) }}</div>
                 <div class="lbl">Total</div>
             </div>
             @endif

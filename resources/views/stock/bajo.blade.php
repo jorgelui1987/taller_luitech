@@ -33,7 +33,7 @@
     <div class="col-md-3">
         <div class="kpi-card bg-grad-green">
             <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">S/ {{ number_format($valorStockBajo, 0) }}</div>
+            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($valorStockBajo, 0) }}</div>
             <div class="kpi-label">Valor en compra del stock bajo</div>
         </div>
     </div>
@@ -162,9 +162,9 @@
                                 -{{ $deficit > 0 ? $deficit : 0 }}
                             </span>
                         </td>
-                        <td style="font-size:13px;">S/ {{ number_format($producto->precio_venta, 2) }}</td>
+                        <td style="font-size:13px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</td>
                         <td style="font-size:13px; color:#6b7280;">
-                            S/ {{ number_format($producto->stock * $producto->precio_venta, 2) }}
+                            {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->stock * $producto->precio_venta, 2) }}
                         </td>
                         <td class="text-end pe-4">
                             <div class="d-flex gap-1 justify-content-end">
