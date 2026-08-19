@@ -190,8 +190,18 @@ class VentaController extends Controller
 
             $base      = $subtotal - $descuento;
             $impuestoPorcentaje = Configuracion::empresa()->igv ?? ($paisConfig['impuesto'] ?? 18);
-            $impuesto  = round($base * ($impuestoPorcentaje / 100), 2);
-            $total     = $base + $impuesto;
+
+            if (($paisConfig['pais'] ?? '') === 'CL') {
+                // 🇨🇱 Chile: el precio del producto YA INCLUYE IVA.
+                // Descomponer el total para obtener neto e impuesto.
+                $total     = round($base, 2);
+                $base      = round($total / (1 + $impuestoPorcentaje / 100), 2);
+                $impuesto  = round($total - $base, 2);
+            } else {
+                // Otros países: el precio es base SIN impuesto, se suma encima.
+                $impuesto  = round($base * ($impuestoPorcentaje / 100), 2);
+                $total     = $base + $impuesto;
+            }
 
             $esMercadoPago = $request->metodo_pago === 'mercadopago';
 
