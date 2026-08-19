@@ -60,6 +60,12 @@ class VentaController extends Controller
                 ->with('error', 'Debe abrir la caja primero antes de registrar ventas.');
         }
 
+        // Bloquear si la caja abierta es de otro día (se olvidó cerrar)
+        if (CierreCaja::cajaAbiertaDeOtroDia()) {
+            return redirect()->route('caja.cerrar')
+                ->with('error', 'La caja abierta es de un día anterior. Debe cerrarla primero antes de registrar ventas.');
+        }
+
         $clientes  = Cliente::where('activo', true)->orderBy('nombre')->get();
         $productos = Producto::with(['categoria', 'marca'])
             ->where('activo', true)
@@ -76,6 +82,12 @@ class VentaController extends Controller
         if (!CierreCaja::hayCajaAbierta()) {
             return redirect()->route('caja.abrir')
                 ->with('error', 'Debe abrir la caja primero antes de registrar ventas.');
+        }
+
+        // Bloquear si la caja abierta es de otro día (se olvidó cerrar)
+        if (CierreCaja::cajaAbiertaDeOtroDia()) {
+            return redirect()->route('caja.cerrar')
+                ->with('error', 'La caja abierta es de un día anterior. Debe cerrarla primero antes de registrar ventas.');
         }
 
         $paisConfig = PaisHelper::configuracionActual();

@@ -1241,6 +1241,22 @@
             </div>
         @endif
 
+        {{-- Aviso de caja abierta de otro día (se olvidó cerrar) --}}
+        @if(in_array(Auth::user()->rol, ['admin', 'vendedor']) && \App\Models\CierreCaja::cajaAbiertaDeOtroDia())
+            @php $cajaVieja = \App\Models\CierreCaja::cajaAbierta(); @endphp
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2" role="alert" style="border-left:4px solid #dc2626;">
+                <i class="fas fa-exclamation-triangle" style="font-size:18px; color:#dc2626;"></i>
+                <span class="flex-fill">
+                    <strong>Caja abierta desde {{ $cajaVieja?->fecha_apertura?->format('d/m/Y H:i') }}.</strong>
+                    Debes cerrarla antes de registrar nuevas ventas.
+                </span>
+                <a href="{{ route('caja.cerrar') }}" class="btn btn-sm btn-danger ms-auto" style="border-radius:20px; white-space:nowrap;">
+                    <i class="fas fa-lock me-1"></i> Cerrar Caja
+                </a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 </div>

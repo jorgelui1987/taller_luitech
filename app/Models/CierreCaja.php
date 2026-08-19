@@ -65,6 +65,18 @@ class CierreCaja extends Model
     }
 
     /**
+     * La caja abierta es de un día anterior (no de hoy)?
+     */
+    public static function cajaAbiertaDeOtroDia(): bool
+    {
+        $caja = self::cajaAbierta();
+        if (!$caja || !$caja->fecha_apertura) {
+            return false;
+        }
+        return $caja->fecha_apertura->lt(now()->startOfDay());
+    }
+
+    /**
      * Ventas del día (desde la apertura de la caja actual o desde hoy).
      */
     public static function ventasDelDia(?self $caja = null): array
