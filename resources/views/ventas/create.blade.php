@@ -125,7 +125,12 @@
                         </div>
                     </div>
                     <hr>
+                    @if(($empresa->pais ?? '') === 'CL')
+                    <div class="d-flex justify-content-between mb-2"><span>Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Neto</span><span id="lblNeto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    @else
                     <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    @endif
                     <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <div class="d-flex justify-content-between mb-2" id="cuponRow" style="display:none;">
                         <span>Cupón <span id="lblCuponCodigo" class="text-success"></span></span>
@@ -256,10 +261,12 @@ function totales() {
     let igvPct = {{ $empresa->igv ?? 18 }};
     @if(($empresa->pais ?? '') === 'CL')
     // 🇨🇱 Chile: el precio YA INCLUYE IVA → descomponer
-    let totalCL = base;
-    let netoCL = totalCL / (1 + igvPct / 100);
-    document.getElementById('lblIgv').textContent = simbolo + ' ' + (totalCL - netoCL).toFixed(2);
-    document.getElementById('lblTotal').textContent = simbolo + ' ' + totalCL.toFixed(2);
+    let valorCL = base;
+    let netoCL = valorCL / (1 + igvPct / 100);
+    let ivaCL = valorCL - netoCL;
+    document.getElementById('lblNeto').textContent = simbolo + ' ' + netoCL.toFixed(2);
+    document.getElementById('lblIgv').textContent = simbolo + ' ' + ivaCL.toFixed(2);
+    document.getElementById('lblTotal').textContent = simbolo + ' ' + valorCL.toFixed(2);
     @else
     // Otros países: el impuesto se SUMA al precio
     document.getElementById('lblIgv').textContent = simbolo + ' ' + (base * (igvPct / 100)).toFixed(2);
