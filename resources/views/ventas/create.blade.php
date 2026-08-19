@@ -254,8 +254,17 @@ function totales() {
         document.getElementById('cuponRow').style.display = 'none';
     }
     let igvPct = {{ $empresa->igv ?? 18 }};
+    @if(($empresa->pais ?? '') === 'CL')
+    // 🇨🇱 Chile: el precio YA INCLUYE IVA → descomponer
+    let totalCL = base;
+    let netoCL = totalCL / (1 + igvPct / 100);
+    document.getElementById('lblIgv').textContent = simbolo + ' ' + (totalCL - netoCL).toFixed(2);
+    document.getElementById('lblTotal').textContent = simbolo + ' ' + totalCL.toFixed(2);
+    @else
+    // Otros países: el impuesto se SUMA al precio
     document.getElementById('lblIgv').textContent = simbolo + ' ' + (base * (igvPct / 100)).toFixed(2);
     document.getElementById('lblTotal').textContent = simbolo + ' ' + (base * (1 + igvPct / 100)).toFixed(2);
+    @endif
     btnReg.disabled = Object.keys(items).length === 0;
 }
 
