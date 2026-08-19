@@ -123,7 +123,7 @@ class CierreCajaController extends Controller
                 ->with('error', 'No hay una caja abierta para cerrar.');
         }
 
-        $ventasHoy = CierreCaja::ventasDelDia();
+        $ventasHoy = CierreCaja::ventasDelDia($caja);
         $simbolo   = PaisHelper::configuracionActual()['simbolo_moneda'];
 
         // Totales del turno actual
@@ -159,7 +159,7 @@ class CierreCajaController extends Controller
             'observaciones'  => 'nullable|string|max:2000',
         ]);
 
-        $ventasHoy = CierreCaja::ventasDelDia();
+        $ventasHoy = CierreCaja::ventasDelDia($caja);
 
         $ventasEfectivo    = $ventasHoy['efectivo'] ?? 0;
         $ventasTarjeta     = $ventasHoy['tarjeta'] ?? 0;

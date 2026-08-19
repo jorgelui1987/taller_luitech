@@ -9,6 +9,7 @@ use App\Models\DetalleVenta;
 use App\Models\MovimientoStock;
 use App\Models\Configuracion;
 use App\Models\Cupon;
+use App\Models\CierreCaja;
 use App\Helpers\PaisHelper;
 use App\Services\FacturacionElectronicaService;
 use Illuminate\Http\Request;
@@ -53,6 +54,12 @@ class VentaController extends Controller
 
     public function create()
     {
+        // Verificar si hay caja abierta
+        if (!CierreCaja::hayCajaAbierta()) {
+            return redirect()->route('caja.abrir')
+                ->with('error', 'Debe abrir la caja primero antes de registrar ventas.');
+        }
+
         $clientes  = Cliente::where('activo', true)->orderBy('nombre')->get();
         $productos = Producto::with(['categoria', 'marca'])
             ->where('activo', true)
@@ -65,6 +72,12 @@ class VentaController extends Controller
 
     public function store(Request $request)
     {
+        // Verificar si hay caja abierta
+        if (!CierreCaja::hayCajaAbierta()) {
+            return redirect()->route('caja.abrir')
+                ->with('error', 'Debe abrir la caja primero antes de registrar ventas.');
+        }
+
         $paisConfig = PaisHelper::configuracionActual();
         $request->validate([
             'cliente_id'          => 'nullable|exists:clientes,id',

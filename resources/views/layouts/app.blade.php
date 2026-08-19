@@ -1053,7 +1053,7 @@
         </a>
         @endif
 
-        @if(Auth::user()->esAdmin())
+        @if(in_array(Auth::user()->rol, ['admin', 'vendedor']))
         <div class="nav-section-title">Caja</div>
 
         <a href="{{ route('caja.index') }}"
@@ -1061,7 +1061,9 @@
             <span class="nav-icon"><i class="fas fa-cash-register"></i></span>
             Cierre de Caja
         </a>
+        @endif
 
+        @if(Auth::user()->esAdmin())
         <div class="nav-section-title">Reportes</div>
 
         <a href="{{ route('reportes.index') }}"
@@ -1222,6 +1224,20 @@
                 <i class="fas fa-exclamation-circle"></i>
                 <span class="flex-fill">{{ session('error') }}</span>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        {{-- Aviso de caja cerrada (persistente) --}}
+        @if(in_array(Auth::user()->rol, ['admin', 'vendedor']) && !\App\Models\CierreCaja::hayCajaAbierta())
+            <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center gap-2" role="alert" style="border-left:4px solid #f59e0b;">
+                <i class="fas fa-cash-register" style="font-size:18px; color:#d97706;"></i>
+                <span class="flex-fill">
+                    <strong>No hay caja abierta.</strong> Debes abrir la caja antes de registrar ventas.
+                </span>
+                <a href="{{ route('caja.abrir') }}" class="btn btn-sm btn-warning ms-auto" style="border-radius:20px; white-space:nowrap;">
+                    <i class="fas fa-unlock me-1"></i> Abrir Caja
+                </a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 

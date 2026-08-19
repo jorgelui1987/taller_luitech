@@ -146,8 +146,8 @@ Route::middleware(['tenant'])->group(function () {
         // Manual de Ayuda
         Route::get('/ayuda', [AyudaController::class, 'index'])->name('ayuda.index');
 
-        // Cierre de Caja
-        Route::middleware('check.admin')->group(function () {
+        // Cierre de Caja (admin y vendedor)
+        Route::middleware('check.ventas')->group(function () {
             Route::get('/caja', [\App\Http\Controllers\CierreCajaController::class, 'index'])->name('caja.index');
             Route::get('/caja/abrir', [\App\Http\Controllers\CierreCajaController::class, 'crear'])->name('caja.abrir');
             Route::post('/caja/abrir', [\App\Http\Controllers\CierreCajaController::class, 'abrir'])->name('caja.guardar');

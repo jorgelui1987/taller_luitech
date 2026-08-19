@@ -67,11 +67,16 @@ class CierreCaja extends Model
     /**
      * Ventas del día (desde la apertura de la caja actual o desde hoy).
      */
-    public static function ventasDelDia(): array
+    public static function ventasDelDia(?self $caja = null): array
     {
         $tenantId = auth()->user()->tenant_id;
         $hoy = now()->startOfDay();
         $fin = now()->endOfDay();
+
+        // Si hay caja abierta, contar desde su fecha de apertura
+        if ($caja && $caja->fecha_apertura) {
+            $hoy = $caja->fecha_apertura;
+        }
 
         $ventas = Venta::where('estado', 'completada')
             ->where('tenant_id', $tenantId)
