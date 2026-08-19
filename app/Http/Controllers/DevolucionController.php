@@ -9,6 +9,7 @@ use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\MovimientoStock;
 use App\Models\Configuracion;
+use App\Helpers\PaisHelper;
 use App\Exceptions\DevolucionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -159,8 +160,18 @@ class DevolucionController extends Controller
             }
 
             $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
-            $impuesto  = round($subtotal * ($igvPorcentaje / 100), 2);
-            $total     = $subtotal + $impuesto;
+            $paisConfig = PaisHelper::configuracionActual();
+
+            if (($paisConfig['pais'] ?? '') === 'CL') {
+                // 🇨🇱 Chile: el precio YA INCLUYE IVA → descomponer
+                $total     = round($subtotal, 2);
+                $baseCL    = round($total / (1 + $igvPorcentaje / 100), 2);
+                $impuesto  = round($total - $baseCL, 2);
+            } else {
+                // Otros países: el impuesto se SUMA
+                $impuesto  = round($subtotal * ($igvPorcentaje / 100), 2);
+                $total     = $subtotal + $impuesto;
+            }
 
             $devolucion = Devolucion::create([
                 'numero_devolucion' => Devolucion::generarNumero(),

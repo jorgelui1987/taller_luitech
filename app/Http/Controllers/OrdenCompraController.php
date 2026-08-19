@@ -8,6 +8,7 @@ use App\Models\Proveedor;
 use App\Models\Producto;
 use App\Models\MovimientoStock;
 use App\Models\Configuracion;
+use App\Helpers\PaisHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -91,8 +92,18 @@ class OrdenCompraController extends Controller
             $descuento = (float)($request->descuento_general ?? 0);
             $base      = $subtotal - $descuento;
             $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
-            $impuesto  = round($base * ($igvPorcentaje / 100), 2);
-            $total     = $base + $impuesto;
+            $paisConfig = PaisHelper::configuracionActual();
+
+            if (($paisConfig['pais'] ?? '') === 'CL') {
+                // 🇨🇱 Chile: el precio YA INCLUYE IVA → descomponer
+                $total     = round($base, 2);
+                $base      = round($total / (1 + $igvPorcentaje / 100), 2);
+                $impuesto  = round($total - $base, 2);
+            } else {
+                // Otros países: el impuesto se SUMA
+                $impuesto  = round($base * ($igvPorcentaje / 100), 2);
+                $total     = $base + $impuesto;
+            }
 
             $orden = OrdenCompra::create([
                 'proveedor_id'  => $request->proveedor_id,
