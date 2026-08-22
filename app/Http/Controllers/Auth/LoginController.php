@@ -10,20 +10,40 @@ use Illuminate\Support\Facades\Cache;
 
 class LoginController extends Controller
 {
+    private const MAX_ATTEMPTS = 5;
+    private const LOCKOUT_MINUTES = 15;
+
     private function rateLimitKey(string $email, Request $request): string
     {
         return 'login:' . hash('sha256', $request->ip() . ':' . strtolower($email));
+    }
+
+    private function lockoutKey(string $email, Request $request): string
+    {
+        return 'login_lockout:' . hash('sha256', $request->ip() . ':' . strtolower($email));
     }
 
     private function incrementRateLimit(string $key): void
     {
         $attempts = Cache::get($key, 0) + 1;
         Cache::put($key, $attempts, 60);
+
+        // Si alcanza el máximo de intentos, bloquear temporalmente
+        if ($attempts >= self::MAX_ATTEMPTS) {
+            $lockoutKey = str_replace('login:', 'login_lockout:', $key);
+            Cache::put($lockoutKey, true, self::LOCKOUT_MINUTES * 60);
+        }
     }
 
     private function isRateLimited(string $key): bool
     {
-        return (int) Cache::get($key, 0) >= 5;
+        return (int) Cache::get($key, 0) >= self::MAX_ATTEMPTS;
+    }
+
+    private function isLockedOut(string $key): bool
+    {
+        $lockoutKey = str_replace('login:', 'login_lockout:', $key);
+        return (bool) Cache::get($lockoutKey, false);
     }
 
     public function showLoginForm()
@@ -64,6 +84,12 @@ class LoginController extends Controller
 
     private function validarCredenciales(array $credentials, string $throttledKey): ?RedirectResponse
     {
+        if ($this->isLockedOut($throttledKey)) {
+            return back()->withErrors([
+                'email' => 'Cuenta bloqueada temporalmente por demasiados intentos. Intenta en ' . self::LOCKOUT_MINUTES . ' minutos.',
+            ])->onlyInput('email');
+        }
+
         if ($this->isRateLimited($throttledKey)) {
             return back()->withErrors([
                 'email' => 'Demasiados intentos. Intenta nuevamente en unos minutos.',
