@@ -21,27 +21,29 @@
     </div>
 </div>
 
-{{-- ── Accesos Rápidos ─────────────────────────────────────────────── --}}
-<div class="row g-2 mb-3">
-    <div class="col-6 col-md-3">
-        <a href="{{ route('ventas.create') }}" class="btn btn-success w-100 py-2" style="font-weight:700;">
-            <i class="fas fa-cash-register me-1"></i> Nueva Venta
-        </a>
-    </div>
-    <div class="col-6 col-md-3">
-        <a href="{{ route('reparaciones.create') }}" class="btn btn-warning w-100 py-2" style="font-weight:700;">
-            <i class="fas fa-tools me-1"></i> Nueva Reparación
-        </a>
-    </div>
-    <div class="col-6 col-md-3">
-        <a href="{{ route('caja.abrir') }}" class="btn btn-info w-100 py-2" style="font-weight:700;">
-            <i class="fas fa-cash-register me-1"></i> Abrir Caja
-        </a>
-    </div>
-    <div class="col-6 col-md-3">
-        <a href="{{ route('productos.create') }}" class="btn btn-primary w-100 py-2" style="font-weight:700;">
-            <i class="fas fa-box-open me-1"></i> Nuevo Producto
-        </a>
+{{-- ── Accesos Rápidos (solo PC, ≥992px) ───────────────────────────── --}}
+<div class="d-none d-lg-block">
+    <div class="row g-2 mb-3">
+        <div class="col-6 col-md-3">
+            <a href="{{ route('ventas.create') }}" class="btn btn-success w-100 py-2" style="font-weight:700;">
+                <i class="fas fa-cash-register me-1"></i> Nueva Venta
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{{ route('reparaciones.create') }}" class="btn btn-warning w-100 py-2" style="font-weight:700;">
+                <i class="fas fa-tools me-1"></i> Nueva Reparación
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{{ route('caja.abrir') }}" class="btn btn-info w-100 py-2" style="font-weight:700;">
+                <i class="fas fa-cash-register me-1"></i> Abrir Caja
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{{ route('productos.create') }}" class="btn btn-primary w-100 py-2" style="font-weight:700;">
+                <i class="fas fa-box-open me-1"></i> Nuevo Producto
+            </a>
+        </div>
     </div>
 </div>
 
