@@ -659,14 +659,15 @@ class ReparacionController extends Controller
                 // Calcular impuesto de la venta automática según país
                 $paisConfigVenta = PaisHelper::configuracionActual();
                 $impuestoPorcentajeVenta = Configuracion::empresa()->igv ?? ($paisConfigVenta['impuesto'] ?? 18);
-                $impuestoVenta = 0;
+
                 if (($paisConfigVenta['pais'] ?? '') === 'CL') {
-                    // 🇨🇱 Chile: el total YA INCLUYE IVA. Descomponer.
-                    $baseVenta = round($totalReparacion / (1 + $impuestoPorcentajeVenta / 100), 2);
-                    $impuestoVenta = round($totalReparacion - $baseVenta, 2);
+                    // 🇨🇱 Chile: el total YA INCLUYE IVA. Usar el total directamente.
+                    $impuestoVenta = 0;
+                    $totalVenta = $totalReparacion;
                 } else {
                     // Otros países: el total es base SIN impuesto, se suma encima.
                     $impuestoVenta = round($totalReparacion * ($impuestoPorcentajeVenta / 100), 2);
+                    $totalVenta = $totalReparacion + $impuestoVenta;
                 }
 
                 Venta::create([
@@ -677,7 +678,7 @@ class ReparacionController extends Controller
                     'subtotal'       => $totalReparacion,
                     'descuento'      => 0,
                     'impuesto'       => $impuestoVenta,
-                    'total'          => $totalReparacion + $impuestoVenta,
+                    'total'          => $totalVenta,
                     'comision_monto' => $comisionMonto,
                     'comision_pagada'=> false,
                     'metodo_pago'    => $metodoPago,
