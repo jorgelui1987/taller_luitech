@@ -107,6 +107,7 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 @if($reparacion->presupuesto>0)<div class="price-box"><div class="lbl">PRESUPUESTO</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->presupuesto,2) }}</div>@endif
 @if($reparacion->costo_final>0)<div class="price-box"><div class="lbl">COSTO FINAL</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->costo_final,2) }}</div>@endif
 @if($reparacion->abono>0)<div class="price-box"><div class="lbl">ABONO</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->abono,2) }}</div>@endif
+@if($reparacion->impuesto>0)<div class="price-box"><div class="lbl">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->impuesto,2) }}</div>@endif
 @if($reparacion->total>0)<div class="price-box"><div class="lbl">TOTAL</div>{{ $empresa->simbolo_moneda ?? '$' }}{{ number_format($reparacion->total,2) }}</div>@endif
 </div>
 @endif
@@ -188,6 +189,7 @@ window.BTPrintTicket = (function() {
         diagnostico: @json($reparacion->diagnostico ?? ''),
         presupuesto: {{ $reparacion->presupuesto ?? 0 }},
         abono: {{ $reparacion->abono ?? 0 }},
+        impuesto: {{ $reparacion->impuesto ?? 0 }},
         total: {{ $reparacion->total ?? 0 }}
     };
 

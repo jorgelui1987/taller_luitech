@@ -10,6 +10,7 @@ use App\Models\Configuracion;
 use App\Models\Venta;
 use App\Models\Cupon;
 use App\Helpers\WhatsAppHelper;
+use App\Helpers\PaisHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -142,6 +143,19 @@ class ReparacionController extends Controller
         $validated['fecha_recepcion'] = now();
         $validated['total']           = max(0, ($validated['presupuesto'] ?? 0) - ($validated['abono'] ?? 0));
         $validated['tenant_id']       = Auth::user()?->tenant_id;
+
+        // ── Calcular impuesto (IVA/IGV) según país ──
+        $paisConfig = PaisHelper::configuracionActual();
+        $impuestoPorcentaje = Configuracion::empresa()->igv ?? ($paisConfig['impuesto'] ?? 18);
+        $base = (float) ($validated['presupuesto'] ?? 0);
+        if (($paisConfig['pais'] ?? '') === 'CL') {
+            // 🇨🇱 Chile: el precio YA INCLUYE IVA. Descomponer.
+            $base = round($base / (1 + $impuestoPorcentaje / 100), 2);
+            $validated['impuesto'] = round((float)($validated['presupuesto'] ?? 0) - $base, 2);
+        } else {
+            // Otros países: el precio es base SIN impuesto, se suma encima.
+            $validated['impuesto'] = round($base * ($impuestoPorcentaje / 100), 2);
+        }
 
         // ── Procesar cupón de descuento ──
         $cuponAplicado = null;
@@ -386,6 +400,10 @@ class ReparacionController extends Controller
         if ($reparacion->abono > 0) {
             $texto .= 'ABONO: S/ ' . number_format($reparacion->abono, 2) . "\n";
         }
+        if ($reparacion->impuesto > 0) {
+            $nombreImpuesto = $empresa?->pais == 'CL' ? 'IVA' : 'IGV';
+            $texto .= $nombreImpuesto . ': S/ ' . number_format($reparacion->impuesto, 2) . "\n";
+        }
         if ($reparacion->total > 0) {
             $texto .= $lineaDoble . "\n";
             $texto .= 'TOTAL: S/ ' . number_format($reparacion->total, 2) . "\n";
@@ -484,6 +502,19 @@ class ReparacionController extends Controller
             ? (float) $validated['costo_final']
             : (float) ($validated['presupuesto'] ?? 0);
         $validated['total'] = max(0, $precioBase - (float) ($validated['abono'] ?? 0));
+
+        // ── Calcular impuesto (IVA/IGV) según país ──
+        $paisConfig = PaisHelper::configuracionActual();
+        $impuestoPorcentaje = Configuracion::empresa()->igv ?? ($paisConfig['impuesto'] ?? 18);
+        $baseImpuesto = $precioBase;
+        if (($paisConfig['pais'] ?? '') === 'CL') {
+            // 🇨🇱 Chile: el precio YA INCLUYE IVA. Descomponer.
+            $baseImpuesto = round($baseImpuesto / (1 + $impuestoPorcentaje / 100), 2);
+            $validated['impuesto'] = round($precioBase - $baseImpuesto, 2);
+        } else {
+            // Otros países: el precio es base SIN impuesto, se suma encima.
+            $validated['impuesto'] = round($baseImpuesto * ($impuestoPorcentaje / 100), 2);
+        }
 
         // ── Procesar cupón de descuento ──
         $cuponAplicado = null;
@@ -625,6 +656,19 @@ class ReparacionController extends Controller
                 // Si es Mercado Pago, la venta queda PENDIENTE hasta confirmar pago
                 $esMercadoPago = $metodoPago === 'mercadopago';
 
+                // Calcular impuesto de la venta automática según país
+                $paisConfigVenta = PaisHelper::configuracionActual();
+                $impuestoPorcentajeVenta = Configuracion::empresa()->igv ?? ($paisConfigVenta['impuesto'] ?? 18);
+                $impuestoVenta = 0;
+                if (($paisConfigVenta['pais'] ?? '') === 'CL') {
+                    // 🇨🇱 Chile: el total YA INCLUYE IVA. Descomponer.
+                    $baseVenta = round($totalReparacion / (1 + $impuestoPorcentajeVenta / 100), 2);
+                    $impuestoVenta = round($totalReparacion - $baseVenta, 2);
+                } else {
+                    // Otros países: el total es base SIN impuesto, se suma encima.
+                    $impuestoVenta = round($totalReparacion * ($impuestoPorcentajeVenta / 100), 2);
+                }
+
                 Venta::create([
                     'numero_venta'   => Venta::generarNumero(),
                     'cliente_id'     => $reparacion->cliente_id,
@@ -632,8 +676,8 @@ class ReparacionController extends Controller
                     'fecha_venta'    => now(),
                     'subtotal'       => $totalReparacion,
                     'descuento'      => 0,
-                    'impuesto'       => 0,
-                    'total'          => $totalReparacion,
+                    'impuesto'       => $impuestoVenta,
+                    'total'          => $totalReparacion + $impuestoVenta,
                     'comision_monto' => $comisionMonto,
                     'comision_pagada'=> false,
                     'metodo_pago'    => $metodoPago,

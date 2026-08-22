@@ -269,6 +269,10 @@ const BTPrint = (function() {
             data = data.concat(convert('ABONO: ' + formatMoneda(reparacion.abono)));
             data.push(LF);
         }
+        if (reparacion.impuesto > 0) {
+            data = data.concat(convert('IGV/IVA: ' + formatMoneda(reparacion.impuesto)));
+            data.push(LF);
+        }
         if (reparacion.total > 0) {
             data.push(ESC, 0x21, 0x08);
             data = data.concat(convert('TOTAL: ' + formatMoneda(reparacion.total)));
