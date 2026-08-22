@@ -90,26 +90,25 @@ class CierreCaja extends Model
             $hoy = $caja->fecha_apertura;
         }
 
+        // NOTA IMPORTANTE: NO se suman las reparaciones por separado porque
+        // al entregar una reparación el sistema YA crea una venta automática.
+        // Sumarlas también causaría que el dinero se cuente DOS VECES (descuadre).
         $ventas = Venta::where('estado', 'completada')
             ->where('tenant_id', $tenantId)
             ->whereBetween('fecha_venta', [$hoy, $fin])
             ->get();
 
-        $reparaciones = Reparacion::where('estado', 'entregado')
+        $reparacionesEntregadas = Reparacion::where('estado', 'entregado')
             ->where('tenant_id', $tenantId)
             ->whereBetween('fecha_entrega', [$hoy, $fin])
-            ->get();
+            ->count();
 
-        $efectivo    = $ventas->where('metodo_pago', 'efectivo')->sum('total')
-                      + $reparaciones->where('metodo_pago', 'efectivo')->sum('total');
-        $tarjeta     = $ventas->whereIn('metodo_pago', ['tarjeta', 'debito', 'credito', 'cuotas'])->sum('total')
-                      + $reparaciones->whereIn('metodo_pago', ['tarjeta', 'debito', 'credito', 'cuotas'])->sum('total');
-        $transferencia = $ventas->where('metodo_pago', 'transferencia')->sum('total')
-                      + $reparaciones->where('metodo_pago', 'transferencia')->sum('total');
-        $otros = $ventas->whereNotIn('metodo_pago', ['efectivo', 'tarjeta', 'debito', 'credito', 'cuotas', 'transferencia'])->sum('total')
-               + $reparaciones->whereNotIn('metodo_pago', ['efectivo', 'tarjeta', 'debito', 'credito', 'cuotas', 'transferencia'])->sum('total');
+        $efectivo    = $ventas->where('metodo_pago', 'efectivo')->sum('total');
+        $tarjeta     = $ventas->whereIn('metodo_pago', ['tarjeta', 'debito', 'credito', 'cuotas'])->sum('total');
+        $transferencia = $ventas->where('metodo_pago', 'transferencia')->sum('total');
+        $otros = $ventas->whereNotIn('metodo_pago', ['efectivo', 'tarjeta', 'debito', 'credito', 'cuotas', 'transferencia'])->sum('total');
 
-        $totalIngresos = $ventas->sum('total') + $reparaciones->sum('total');
+        $totalIngresos = $ventas->sum('total');
 
         // Devoluciones en efectivo del día
         $egresos = \App\Models\Devolucion::whereDate('created_at', now()->toDateString())
@@ -125,7 +124,7 @@ class CierreCaja extends Model
             'total_ingresos' => $totalIngresos,
             'total_egresos' => $egresos,
             'num_ventas'    => $ventas->count(),
-            'num_reparaciones' => $reparaciones->count(),
+            'num_reparaciones' => $reparacionesEntregadas,
         ];
     }
 }
