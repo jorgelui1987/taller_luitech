@@ -661,8 +661,9 @@ class ReparacionController extends Controller
                 $impuestoPorcentajeVenta = Configuracion::empresa()->igv ?? ($paisConfigVenta['impuesto'] ?? 18);
 
                 if (($paisConfigVenta['pais'] ?? '') === 'CL') {
-                    // 🇨🇱 Chile: el total YA INCLUYE IVA. Usar el total directamente.
-                    $impuestoVenta = 0;
+                    // 🇨🇱 Chile: el total YA INCLUYE IVA. Descomponer el IVA del total.
+                    $baseVenta = round($totalReparacion / (1 + $impuestoPorcentajeVenta / 100), 2);
+                    $impuestoVenta = round($totalReparacion - $baseVenta, 2);
                     $totalVenta = $totalReparacion;
                 } else {
                     // Otros países: el total es base SIN impuesto, se suma encima.
