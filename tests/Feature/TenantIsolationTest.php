@@ -6,6 +6,8 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Cliente;
 use App\Models\Producto;
+use App\Models\Categoria;
+use App\Models\Marca;
 use App\Models\Venta;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -26,6 +28,8 @@ class TenantIsolationTest extends TestCase
         $this->tenant1 = Tenant::create([
             'empresa' => 'Tienda Uno',
             'subdominio' => 'tienda1',
+            'email_contacto' => 'tienda1@test.com',
+            'telefono_contacto' => '111111111',
             'plan' => 'basico',
             'estado' => 'activo',
             'max_usuarios' => 5,
@@ -35,6 +39,8 @@ class TenantIsolationTest extends TestCase
         $this->tenant2 = Tenant::create([
             'empresa' => 'Tienda Dos',
             'subdominio' => 'tienda2',
+            'email_contacto' => 'tienda2@test.com',
+            'telefono_contacto' => '222222222',
             'plan' => 'basico',
             'estado' => 'activo',
             'max_usuarios' => 5,
@@ -69,6 +75,9 @@ class TenantIsolationTest extends TestCase
             'tenant_id' => $this->tenant1->id,
         ]);
 
+        // Cerrar sesión para que el trait no sobrescriba el tenant_id
+        \Illuminate\Support\Facades\Auth::logout();
+
         Cliente::create([
             'nombre' => 'Cliente Dos',
             'apellido' => 'Test',
@@ -86,6 +95,18 @@ class TenantIsolationTest extends TestCase
 
     public function test_usuario_solo_ve_productos_de_su_tenant(): void
     {
+        $categoria1 = Categoria::create([
+            'nombre' => 'Categoria Uno',
+            'activo' => true,
+            'tenant_id' => $this->tenant1->id,
+        ]);
+
+        $marca1 = Marca::create([
+            'nombre' => 'Marca Uno',
+            'activo' => true,
+            'tenant_id' => $this->tenant1->id,
+        ]);
+
         Producto::create([
             'nombre' => 'Producto Uno',
             'codigo' => 'P001',
@@ -93,7 +114,24 @@ class TenantIsolationTest extends TestCase
             'precio_compra' => 50,
             'stock' => 10,
             'stock_minimo' => 2,
+            'categoria_id' => $categoria1->id,
+            'marca_id' => $marca1->id,
             'tenant_id' => $this->tenant1->id,
+        ]);
+
+        // Cerrar sesión para que el trait no sobrescriba el tenant_id
+        \Illuminate\Support\Facades\Auth::logout();
+
+        $categoria2 = Categoria::create([
+            'nombre' => 'Categoria Dos',
+            'activo' => true,
+            'tenant_id' => $this->tenant2->id,
+        ]);
+
+        $marca2 = Marca::create([
+            'nombre' => 'Marca Dos',
+            'activo' => true,
+            'tenant_id' => $this->tenant2->id,
         ]);
 
         Producto::create([
@@ -103,6 +141,8 @@ class TenantIsolationTest extends TestCase
             'precio_compra' => 100,
             'stock' => 20,
             'stock_minimo' => 5,
+            'categoria_id' => $categoria2->id,
+            'marca_id' => $marca2->id,
             'tenant_id' => $this->tenant2->id,
         ]);
 
@@ -147,6 +187,9 @@ class TenantIsolationTest extends TestCase
             'telefono' => '111111111',
             'tenant_id' => $this->tenant1->id,
         ]);
+
+        // Cerrar sesión para que el trait no sobrescriba el tenant_id
+        \Illuminate\Support\Facades\Auth::logout();
 
         Cliente::create([
             'nombre' => 'Cliente Dos',
