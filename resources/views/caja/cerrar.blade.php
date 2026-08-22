@@ -65,7 +65,7 @@
                                 <td class="text-end" style="font-weight:600;">{{ $simbolo }} {{ number_format($ventasTransferencia, 2) }}</td>
                             </tr>
                             <tr>
-                                <td style="font-weight:500;">📱 Otros (Yape, Plin, MP, etc.)</td>
+                                <td style="font-weight:500;">📱 Otros (Mercado Pago, etc.)</td>
                                 <td class="text-end" style="font-weight:600;">{{ $simbolo }} {{ number_format($ventasOtros, 2) }}</td>
                             </tr>
                             <tr style="border-top:2px solid var(--text-dark);">
