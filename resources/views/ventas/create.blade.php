@@ -95,12 +95,12 @@
                         <div class="col-md-6">
                             <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
                             <select name="metodo_pago" id="metodo_pago" class="form-select" required>
-                                <option value="efectivo">💵 Efectivo</option>
-                                <option value="tarjeta">💳 Tarjeta</option>
-                                <option value="transferencia">🏦 Transferencia</option>
                                 @if(($empresa->mercadopago_activo ?? false))
                                 <option value="mercadopago">🟦 Mercado Pago</option>
                                 @endif
+                                <option value="efectivo">💵 Efectivo</option>
+                                <option value="tarjeta">💳 Tarjeta</option>
+                                <option value="transferencia">🏦 Transferencia</option>
                             </select>
                         </div>
                         <div class="col-md-6">
