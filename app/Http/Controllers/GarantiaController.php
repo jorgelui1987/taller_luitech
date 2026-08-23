@@ -64,17 +64,21 @@ class GarantiaController extends Controller
                 ->find(request('venta_id'));
         }
 
-        return view('garantias.create', compact('ventas', 'ventaSeleccionada'));
+        $productos = Producto::where('tenant_id', auth()->user()->tenant_id)
+            ->orderBy('nombre')
+            ->get();
+
+        return view('garantias.create', compact('ventas', 'ventaSeleccionada', 'productos'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'venta_id'  => 'required|exists:ventas,id',
+            'venta_id'  => 'nullable|exists:ventas,id',
             'motivo'    => 'required|string|max:100',
             'observacion'    => 'nullable|string|max:1000',
             'productos'      => 'required|array|min:1|max:100',
-            'productos.*.detalle_venta_id' => 'required|integer',
+            'productos.*.detalle_venta_id' => 'nullable|integer',
             'productos.*.producto_id'      => 'required|integer',
             'productos.*.cantidad'         => 'required|integer|min:1|max:1000',
             'productos.*.condicion'        => 'nullable|in:nuevo,usado,dañado,incompleto',
@@ -89,10 +93,13 @@ class GarantiaController extends Controller
             }
         }
 
-        $venta = Venta::with(['detalles'])->findOrFail($request->venta_id);
+        $venta = null;
+        if ($request->filled('venta_id')) {
+            $venta = Venta::with(['detalles'])->findOrFail($request->venta_id);
 
-        if (!in_array($venta->estado, ['completada', 'devuelta'])) {
-            return back()->with('error', 'Solo se pueden registrar garantías de ventas completadas.')->withInput();
+            if (!in_array($venta->estado, ['completada', 'devuelta'])) {
+                return back()->with('error', 'Solo se pueden registrar garantías de ventas completadas.')->withInput();
+            }
         }
 
         DB::beginTransaction();
@@ -103,7 +110,7 @@ class GarantiaController extends Controller
                 $condicion = $item['condicion'] ?? 'nuevo';
 
                 // Si es un item genérico (venta de reparación sin producto físico), no tocar stock
-                if ((int)$item['detalle_venta_id'] === 0 || (int)$item['producto_id'] === 0) {
+                if ((int)($item['detalle_venta_id'] ?? 0) === 0 || (int)$item['producto_id'] === 0) {
                     $detalles[] = [
                         'producto_id'     => null,
                         'detalle_venta_id'=> null,
@@ -113,17 +120,19 @@ class GarantiaController extends Controller
                     continue;
                 }
 
-                $detalleVenta = DetalleVenta::findOrFail($item['detalle_venta_id']);
-
-                if ($detalleVenta->venta_id !== $venta->id) {
-                    throw new \Exception('El producto no pertenece a la venta seleccionada.');
-                }
-
                 $producto = Producto::findOrFail($item['producto_id']);
+
+                // Si hay venta, validar que el detalle pertenezca a la venta
+                if ($venta && !empty($item['detalle_venta_id'])) {
+                    $detalleVenta = DetalleVenta::findOrFail($item['detalle_venta_id']);
+                    if ($detalleVenta->venta_id !== $venta->id) {
+                        throw new \Exception('El producto no pertenece a la venta seleccionada.');
+                    }
+                }
 
                 $detalles[] = [
                     'producto_id'     => $item['producto_id'],
-                    'detalle_venta_id'=> $item['detalle_venta_id'],
+                    'detalle_venta_id'=> $item['detalle_venta_id'] ?? null,
                     'cantidad'        => $item['cantidad'],
                     'condicion'       => $condicion,
                 ];
@@ -139,7 +148,7 @@ class GarantiaController extends Controller
                         'cantidad'       => $item['cantidad'],
                         'stock_anterior' => $stockAnterior,
                         'stock_nuevo'    => $producto->fresh()->stock,
-                        'observacion'    => "Garantía de {$item['cantidad']} unidad(es) - Venta {$venta->numero_venta} (condición: {$condicion})",
+                        'observacion'    => "Garantía de {$item['cantidad']} unidad(es)" . ($venta ? " - Venta {$venta->numero_venta}" : '') . " (condición: {$condicion})",
                         'user_id'        => Auth::id(),
                         'tenant_id'      => $tenantId,
                     ]);
@@ -154,7 +163,7 @@ class GarantiaController extends Controller
                         'cantidad'       => $item['cantidad'],
                         'stock_anterior' => $stockDaniadoAnterior,
                         'stock_nuevo'    => (int) $producto->fresh()->stock_daniado,
-                        'observacion'    => "Garantía de {$item['cantidad']} unidad(es) DAÑADA(S) - Venta {$venta->numero_venta} (condición: {$condicion})",
+                        'observacion'    => "Garantía de {$item['cantidad']} unidad(es) DAÑADA(S)" . ($venta ? " - Venta {$venta->numero_venta}" : '') . " (condición: {$condicion})",
                         'user_id'        => Auth::id(),
                         'tenant_id'      => $tenantId,
                     ]);
@@ -163,8 +172,8 @@ class GarantiaController extends Controller
 
             $garantia = Garantia::create([
                 'numero_garantia' => Garantia::generarNumero(),
-                'venta_id'        => $venta->id,
-                'cliente_id'      => $venta->cliente_id,
+                'venta_id'        => $venta?->id,
+                'cliente_id'      => $venta?->cliente_id,
                 'user_id'         => Auth::id(),
                 'fecha_garantia'  => now(),
                 'motivo'          => $request->motivo,
@@ -204,6 +213,11 @@ class GarantiaController extends Controller
         DB::transaction(function () use ($garantia) {
             foreach ($garantia->detalles as $detalle) {
                 $producto = $detalle->producto;
+
+                // Si no hay producto físico (ej: reparación/servicio), solo anular sin tocar stock
+                if (!$producto) {
+                    continue;
+                }
 
                 if (in_array($detalle->condicion, ['nuevo', 'usado'])) {
                     $stockAnterior = $producto->stock;

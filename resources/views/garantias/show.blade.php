@@ -152,7 +152,7 @@
                                 $cInfo = $condiciones[$det->condicion] ?? ['📦 Otro', '#f3f4f6', '#374151'];
                             @endphp
                             <tr>
-                                <td style="font-weight:500;">{{ $det->producto->nombre ?? 'Producto eliminado' }}</td>
+                                <td style="font-weight:500;">{{ $det->producto->nombre ?? ($det->detalle_venta_id ? 'Producto eliminado' : 'Reparación / Servicio') }}</td>
                                 <td class="text-center"><strong>{{ $det->cantidad }}</strong></td>
                                 <td class="text-center">
                                     <span style="background:{{ $cInfo[1] }}; color:{{ $cInfo[2] }}; border-radius:20px; padding:4px 10px; font-size:11px; font-weight:600; display:inline-block;">

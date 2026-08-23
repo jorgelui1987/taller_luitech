@@ -83,7 +83,11 @@
                     <tr>
                         <td style="font-weight:600;">{{ $g->numero_garantia }}</td>
                         <td>
-                            <a href="{{ route('ventas.show', $g->venta) }}" class="text-decoration-none">{{ $g->venta->numero_venta ?? '—' }}</a>
+                            @if($g->venta)
+                                <a href="{{ route('ventas.show', $g->venta) }}" class="text-decoration-none">{{ $g->venta->numero_venta }}</a>
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
                         </td>
                         <td>{{ $g->cliente->nombre_completo ?? 'Venta general' }}</td>
                         <td>{{ $g->fecha_garantia->format('d/m/Y H:i') }}</td>

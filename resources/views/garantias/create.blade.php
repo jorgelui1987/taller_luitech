@@ -43,12 +43,12 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3"><i class="fas fa-shopping-cart me-2" style="color:#10b981;"></i>Venta Original</h6>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-shopping-cart me-2" style="color:#10b981;"></i>Venta Original (Opcional)</h6>
 
                     <div class="mb-3">
-                        <label for="ventaSelect" class="form-label">Seleccionar venta <span class="text-danger">*</span></label>
-                        <select name="venta_id" id="ventaSelect" class="form-select @error('venta_id') is-invalid @enderror" required>
-                            <option value="">Seleccionar venta...</option>
+                        <label for="ventaSelect" class="form-label">Seleccionar venta (opcional)</label>
+                        <select name="venta_id" id="ventaSelect" class="form-select @error('venta_id') is-invalid @enderror">
+                            <option value="">Sin venta asociada...</option>
                             @foreach($ventas as $v)
                                 <option value="{{ $v->id }}" {{ old('venta_id', $ventaSeleccionada->id ?? '') == $v->id ? 'selected' : '' }}>
                                     {{ $v->numero_venta }} - {{ $v->fecha_venta->format('d/m/Y') }} - {{ $v->cliente->nombre_completo ?? 'Venta general' }}
@@ -101,15 +101,46 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h6 class="fw-bold mb-0"><i class="fas fa-box me-2" style="color:#10b981;"></i>Productos en Garantía</h6>
-                        <span class="badge" style="background:#ecfdf5;color:#059669;font-size:11px;">Seleccione una venta primero</span>
+                        <span class="badge" style="background:#ecfdf5;color:#059669;font-size:11px;">Agregue productos manualmente o seleccione una venta</span>
                     </div>
 
-                    <div id="sinVentaMsg" class="text-center py-5">
+                    <!-- Agregar producto manualmente -->
+                    <div class="row g-2 mb-3 p-3 rounded-3" style="background:#f8fafc;border:1px dashed #cbd5e1;">
+                        <div class="col-md-5">
+                            <label class="form-label" style="font-size:12px;">Producto</label>
+                            <select id="productoManualSelect" class="form-select form-select-sm">
+                                <option value="">Seleccionar producto...</option>
+                                @foreach($productos as $p)
+                                    <option value="{{ $p->id }}" data-nombre="{{ $p->nombre }}">{{ $p->nombre }} (Stock: {{ $p->stock }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label" style="font-size:12px;">Cantidad</label>
+                            <input type="number" id="productoManualCantidad" class="form-control form-control-sm" min="1" value="1">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" style="font-size:12px;">Condición</label>
+                            <select id="productoManualCondicion" class="form-select form-select-sm">
+                                <option value="nuevo">🆕 Nuevo</option>
+                                <option value="usado">👌 Usado</option>
+                                <option value="dañado">💥 Dañado</option>
+                                <option value="incompleto">📦 Incompleto</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary btn-sm w-100" id="btnAgregarProducto">
+                                <i class="fas fa-plus me-1"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="sinVentaMsg" class="text-center py-5" style="display:none;">
                         <i class="fas fa-shopping-cart" style="font-size:48px;color:#e5e7eb;"></i>
                         <p class="text-muted mt-3 mb-0">Selecciona una venta para cargar sus productos</p>
                     </div>
 
-                    <div id="productosContainer" style="display:none;">
+                    <div id="productosContainer">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle" id="productosTable">
                                 <thead>
@@ -119,6 +150,7 @@
                                         <th class="text-center" style="width:90px;">Vendido</th>
                                         <th class="text-center" style="width:110px;">Cantidad</th>
                                         <th style="width:130px;">Condición</th>
+                                        <th style="width:50px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="productosTbody"></tbody>
@@ -148,6 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const productosTbody = document.getElementById('productosTbody');
     const checkAll = document.getElementById('checkAll');
     const btnSubmit = document.getElementById('btnSubmit');
+    const btnAgregarProducto = document.getElementById('btnAgregarProducto');
+    const productoManualSelect = document.getElementById('productoManualSelect');
+    const productoManualCantidad = document.getElementById('productoManualCantidad');
+    const productoManualCondicion = document.getElementById('productoManualCondicion');
+
+    let itemsManuales = [];
 
     const ventaPreseleccionada = '{{ old('venta_id', $ventaSeleccionada->id ?? '') }}';
     if (ventaPreseleccionada) {
@@ -159,12 +197,11 @@ document.addEventListener('DOMContentLoaded', function() {
             cargarVenta(this.value);
         } else {
             ventaInfo.style.display = 'none';
-            sinVentaMsg.style.display = 'block';
-            productosContainer.style.display = 'none';
+            sinVentaMsg.style.display = 'none';
             productosTbody.innerHTML = '';
             checkAll.checked = false;
             checkAll.disabled = true;
-            btnSubmit.disabled = true;
+            actualizarBtn();
         }
     });
 
@@ -210,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <option value="incompleto">📦 Incompleto</option>
                             </select>
                         </td>
+                        <td></td>
                     `;
                     productosTbody.appendChild(tr);
                 });
@@ -268,6 +306,106 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         actualizarBtn();
     });
+
+    // Agregar producto manualmente
+    btnAgregarProducto.addEventListener('click', function() {
+        const productoId = productoManualSelect.value;
+        const nombre = productoManualSelect.options[productoManualSelect.selectedIndex]?.dataset.nombre || '';
+        const cantidad = parseInt(productoManualCantidad.value) || 1;
+        const condicion = productoManualCondicion.value;
+
+        if (!productoId) {
+            alert('Selecciona un producto.');
+            return;
+        }
+
+        // Verificar si ya existe
+        const existe = itemsManuales.find(i => i.producto_id === parseInt(productoId));
+        if (existe) {
+            alert('Ese producto ya fue agregado.');
+            return;
+        }
+
+        itemsManuales.push({
+            producto_id: parseInt(productoId),
+            nombre: nombre,
+            cantidad: cantidad,
+            condicion: condicion
+        });
+
+        renderItemsManuales();
+        productoManualSelect.value = '';
+        productoManualCantidad.value = 1;
+        productoManualCondicion.value = 'nuevo';
+        actualizarBtn();
+    });
+
+    function renderItemsManuales() {
+        // Eliminar filas manuales existentes
+        document.querySelectorAll('.fila-manual').forEach(el => el.remove());
+
+        itemsManuales.forEach((item, idx) => {
+            const tr = document.createElement('tr');
+            tr.className = 'fila-manual';
+            tr.dataset.productoId = item.producto_id;
+            tr.dataset.detalleVentaId = 0;
+
+            tr.innerHTML = `
+                <td><input type="checkbox" class="form-check-input check-item" data-detalle="0" checked></td>
+                <td>
+                    <div style="font-weight:500;">${item.nombre}</div>
+                    <div style="font-size:11px;color:#9ca3af;">Agregado manualmente</div>
+                </td>
+                <td class="text-center">-</td>
+                <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center cant-item"
+                           min="1" value="${item.cantidad}" data-detalle="0">
+                </td>
+                <td>
+                    <select class="form-select form-select-sm cond-item" data-detalle="0">
+                        <option value="nuevo" ${item.condicion === 'nuevo' ? 'selected' : ''}>🆕 Nuevo</option>
+                        <option value="usado" ${item.condicion === 'usado' ? 'selected' : ''}>👌 Usado</option>
+                        <option value="dañado" ${item.condicion === 'dañado' ? 'selected' : ''}>💥 Dañado</option>
+                        <option value="incompleto" ${item.condicion === 'incompleto' ? 'selected' : ''}>📦 Incompleto</option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-manual" data-idx="${idx}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            productosTbody.appendChild(tr);
+        });
+
+        // Eventos para filas manuales
+        document.querySelectorAll('.fila-manual .check-item').forEach(chk => {
+            chk.addEventListener('change', function() {
+                const fila = this.closest('tr');
+                const cantInput = fila.querySelector('.cant-item');
+                const condSelect = fila.querySelector('.cond-item');
+                cantInput.disabled = !this.checked;
+                condSelect.disabled = !this.checked;
+                actualizarCheckAll();
+                actualizarBtn();
+            });
+        });
+
+        document.querySelectorAll('.fila-manual .cant-item').forEach(inp => {
+            inp.addEventListener('input', actualizarBtn);
+        });
+
+        document.querySelectorAll('.btn-eliminar-manual').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.dataset.idx);
+                itemsManuales.splice(idx, 1);
+                renderItemsManuales();
+                actualizarBtn();
+            });
+        });
+
+        actualizarCheckAll();
+    }
 
     function actualizarCheckAll() {
         const checks = document.querySelectorAll('.check-item');
