@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             cantInput.value = '';
                         } else {
                             const max = parseInt(cantInput.max);
-                            if (max === 1) cantInput.value = 1;
+                            cantInput.value = max;
                             cantInput.focus();
                         }
 
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
             condSelect.disabled = !this.checked;
             if (this.checked) {
                 const max = parseInt(cantInput.max);
-                if (max === 1) cantInput.value = 1;
+                cantInput.value = max;
             } else {
                 cantInput.value = '';
             }
