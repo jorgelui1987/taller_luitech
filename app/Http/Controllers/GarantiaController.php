@@ -54,7 +54,7 @@ class GarantiaController extends Controller
     public function create()
     {
         $ventas = Venta::with(['cliente'])
-            ->where('estado', 'completada')
+            ->whereIn('estado', ['completada', 'devuelta'])
             ->orderByDesc('fecha_venta')
             ->get();
 
@@ -91,7 +91,7 @@ class GarantiaController extends Controller
 
         $venta = Venta::with(['detalles'])->findOrFail($request->venta_id);
 
-        if ($venta->estado !== 'completada') {
+        if (!in_array($venta->estado, ['completada', 'devuelta'])) {
             return back()->with('error', 'Solo se pueden registrar garantías de ventas completadas.')->withInput();
         }
 
@@ -240,7 +240,7 @@ class GarantiaController extends Controller
             return response()->json(['error' => 'Venta no encontrada.'], 404);
         }
 
-        if ($venta->estado !== 'completada') {
+        if ($venta->estado !== 'completada' && $venta->estado !== 'devuelta') {
             return response()->json(['error' => 'La venta no está completada.'], 400);
         }
 
