@@ -35,11 +35,15 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 # Asegurar que APP_URL tenga protocolo
-APP_URL="${APP_URL}"
+APP_URL="${APP_URL:-}"
 if [ -n "$APP_URL" ] && [[ "$APP_URL" != http* ]]; then
     APP_URL="https://${APP_URL}"
     echo "✓ APP_URL corregida: $APP_URL"
 fi
+
+# ⚠️ IMPORTANTE: Ninguna variable tiene valor por defecto para DB.
+# Todas las credenciales se definen SOLO en Dokploy → Variables.
+# Esto evita que contraseñas reales queden expuestas en el repositorio.
 
 {
     echo "APP_NAME=\"${APP_NAME:-CRM Tienda Celulares}\""
@@ -50,20 +54,20 @@ fi
     echo "FORCE_HTTPS=${FORCE_HTTPS:-true}"
     echo "SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-true}"
     echo ""
-    echo "DB_CONNECTION=${DB_CONNECTION:-postgresql}"
-    echo "DB_HOST=${DB_HOST:-taller-taller-oqwcrq}"
-    echo "DB_PORT=${DB_PORT:-5432}"
-    echo "DB_DATABASE=${DB_DATABASE:-tiendacelulares_crm}"
-    echo "DB_USERNAME=${DB_USERNAME:-tiendacelulares_crm}"
-    echo "DB_PASSWORD=${DB_PASSWORD:-Castro161219@}"
+    echo "DB_CONNECTION=${DB_CONNECTION}"
+    echo "DB_HOST=${DB_HOST}"
+    echo "DB_PORT=${DB_PORT}"
+    echo "DB_DATABASE=${DB_DATABASE}"
+    echo "DB_USERNAME=${DB_USERNAME}"
+    echo "DB_PASSWORD=${DB_PASSWORD}"
     echo ""
     echo "SESSION_DRIVER=${SESSION_DRIVER:-file}"
     echo "SESSION_LIFETIME=${SESSION_LIFETIME:-120}"
     echo "CACHE_DRIVER=${CACHE_DRIVER:-file}"
     echo "QUEUE_CONNECTION=${QUEUE_CONNECTION:-sync}"
     echo ""
-    echo "LOG_LEVEL=debug"
-    echo "TRUSTED_PROXIES=*"
+    echo "LOG_LEVEL=${LOG_LEVEL:-warning}"
+    echo "TRUSTED_PROXIES=${TRUSTED_PROXIES}"
 } > /var/www/html/.env
 
 echo "✓ .env generado correctamente"
@@ -111,11 +115,11 @@ fi
 echo "Verificando conexión a base de datos..."
 DB_CHECK=$(php -r "
     try {
-        \$driver = '${DB_CONNECTION:-postgresql}';
+        \$driver = '${DB_CONNECTION}';
         if (\$driver === 'pgsql' || \$driver === 'postgresql') {
-            \$pdo = new PDO('pgsql:host=${DB_HOST:-taller-taller-oqwcrq};port=${DB_PORT:-5432};dbname=${DB_DATABASE:-tiendacelulares_crm}', '${DB_USERNAME:-tiendacelulares_crm}', '${DB_PASSWORD:-Castro161219@}', [PDO::ATTR_TIMEOUT => 5]);
+            \$pdo = new PDO('pgsql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}', [PDO::ATTR_TIMEOUT => 5]);
         } else {
-            \$pdo = new PDO('mysql:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-3306};dbname=${DB_DATABASE:-tiendacelulares_crm}', '${DB_USERNAME:-root}', '${DB_PASSWORD:-}', [PDO::ATTR_TIMEOUT => 5]);
+            \$pdo = new PDO('mysql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}', [PDO::ATTR_TIMEOUT => 5]);
         }
         echo 'OK';
     } catch (PDOException \$e) {

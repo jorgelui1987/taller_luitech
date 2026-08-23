@@ -15,11 +15,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── SuperAdmin (accede a /superadmin/login) ──────────────────────
+        // ⚠️ La contraseña NUNCA debe estar hardcodeada en el código.
+        // Se define vía variable de entorno SUPERADMIN_PASSWORD.
+        // En producción, configura SUPERADMIN_PASSWORD en Dokploy → Variables.
+        $superAdminEmail = env('SUPERADMIN_EMAIL', 'luitechserena@gmail.com');
+        $superAdminPass  = env('SUPERADMIN_PASSWORD', 'password');
+
         User::firstOrCreate(
-            ['email' => 'luitechserena@gmail.com'],
+            ['email' => $superAdminEmail],
             [
                 'name'     => 'Super Admin',
-                'password' => Hash::make('Castro161219@'),
+                'password' => Hash::make($superAdminPass),
                 'rol'      => 'superadmin',
                 'activo'   => true,
             ]
