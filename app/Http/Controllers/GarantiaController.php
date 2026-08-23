@@ -256,6 +256,18 @@ class GarantiaController extends Controller
             ];
         }
 
+        // Si la venta no tiene detalles (ej: venta de reparación), agregar un item genérico
+        if (empty($detalles)) {
+            $detalles[] = [
+                'detalle_venta_id'    => 0,
+                'producto_id'         => 0,
+                'producto_nombre'     => 'Reparación / Servicio',
+                'cantidad_vendida'    => 1,
+                'precio_unitario'     => (float)$venta->total,
+                'imei'                => null,
+            ];
+        }
+
         return response()->json([
             'venta' => [
                 'id'           => $venta->id,
