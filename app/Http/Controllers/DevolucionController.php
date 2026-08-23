@@ -80,7 +80,9 @@ class DevolucionController extends Controller
             'venta_id'  => 'required|exists:ventas,id',
             'tipo'      => 'required|in:devolucion,garantia',
             'motivo'    => 'required|string|max:100',
-            'tipo_reembolso' => 'nullable|in:efectivo,tarjeta,transferencia,nota_credito',
+            'tipo_reembolso' => $request->tipo === 'devolucion'
+                ? 'required|in:efectivo,tarjeta,transferencia,nota_credito'
+                : 'nullable|in:efectivo,tarjeta,transferencia,nota_credito',
             'observacion'    => 'nullable|string|max:1000',
             'productos'      => 'required|array|min:1|max:100',
             'productos.*.detalle_venta_id' => 'required|exists:detalle_ventas,id',
@@ -194,7 +196,15 @@ class DevolucionController extends Controller
             $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
             $paisConfig = PaisHelper::configuracionActual();
 
-            if (($paisConfig['pais'] ?? '') === 'CL') {
+            // En GARANTÍA: el total se pone en 0 (no se reembolsa dinero).
+            // Solo se registra el producto y la condición.
+            $esGarantia = $request->tipo === 'garantia';
+
+            if ($esGarantia) {
+                $subtotal = 0;
+                $impuesto = 0;
+                $total    = 0;
+            } elseif (($paisConfig['pais'] ?? '') === 'CL') {
                 // 🇨🇱 Chile: el precio YA INCLUYE IVA → descomponer
                 $total     = round($subtotal, 2);
                 $baseCL    = round($total / (1 + $igvPorcentaje / 100), 2);
@@ -228,14 +238,17 @@ class DevolucionController extends Controller
                 DevolucionDetalle::create($detalle);
             }
 
-            // Marcar la venta como devuelta si todos los productos fueron devueltos
-            $totalVendido = $venta->detalles->sum('cantidad');
-            $totalDevuelto = DevolucionDetalle::whereHas('devolucion', fn($q) => $q->where('estado', 'completada'))
-                ->whereIn('detalle_venta_id', $venta->detalles->pluck('id'))
-                ->sum('cantidad');
+            // Marcar la venta como devuelta SOLO en devoluciones reales.
+            // En garantía NO se marca devuelta (no hay reembolso, la venta sigue válida).
+            if (!$esGarantia) {
+                $totalVendido = $venta->detalles->sum('cantidad');
+                $totalDevuelto = DevolucionDetalle::whereHas('devolucion', fn($q) => $q->where('estado', 'completada'))
+                    ->whereIn('detalle_venta_id', $venta->detalles->pluck('id'))
+                    ->sum('cantidad');
 
-            if ($totalDevuelto >= $totalVendido) {
-                $venta->update(['estado' => 'devuelta']);
+                if ($totalDevuelto >= $totalVendido) {
+                    $venta->update(['estado' => 'devuelta']);
+                }
             }
 
             DB::commit();
