@@ -14,7 +14,7 @@ class Producto extends Model
         'tipo', 'codigo', 'codigo_barras', 'nombre', 'descripcion', 'garantia_dias',
         'categoria_id', 'marca_id', 'proveedor_id',
         'modelo', 'color', 'almacenamiento', 'ram', 'precio_compra',
-        'precio_venta', 'stock', 'stock_minimo', 'imagen', 'imei',
+        'precio_venta', 'stock', 'stock_daniado', 'stock_minimo', 'imagen', 'imei',
         'condicion', 'activo', 'tenant_id',
     ];
 

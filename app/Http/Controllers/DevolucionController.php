@@ -151,13 +151,14 @@ class DevolucionController extends Controller
                     'condicion'       => $item['condicion'] ?? 'nuevo',
                 ];
 
-                // Reponer stock SOLO si el producto volvió en buen estado
-                // (Opción A: productos dañados/incompletos NO vuelven al stock vendible)
+                // (Opción B: stock separado de dañados)
+                // Productos nuevos/usados → stock vendible.
+                // Productos dañados/incompletos → stock_daniado (inventario separado).
                 $condicion = $item['condicion'] ?? 'nuevo';
                 $producto = Producto::findOrFail($item['producto_id']);
-                $stockAnterior = $producto->stock;
 
                 if (in_array($condicion, ['nuevo', 'usado'])) {
+                    $stockAnterior = $producto->stock;
                     $producto->increment('stock', $item['cantidad']);
 
                     MovimientoStock::create([
@@ -172,9 +173,21 @@ class DevolucionController extends Controller
                         'tenant_id'      => $tenantId,
                     ]);
                 } else {
-                    // Producto dañado/incompleto: NO reponer stock vendible.
-                    // Solo se registra en el detalle de la devolución para control.
-                    \Illuminate\Support\Facades\Log::info("Producto #{$producto->id} devuelto como '{$condicion}' - NO se repone stock. Devolución {$venta->numero_venta}.");
+                    // Producto dañado/incompleto → va al STOCK DAÑADO (separado del vendible)
+                    $stockDaniadoAnterior = (int) $producto->stock_daniado;
+                    $producto->increment('stock_daniado', $item['cantidad']);
+
+                    MovimientoStock::create([
+                        'producto_id'    => $producto->id,
+                        'tipo'           => 'entrada',
+                        'motivo'         => 'devolucion_daniado',
+                        'cantidad'       => $item['cantidad'],
+                        'stock_anterior' => $stockDaniadoAnterior,
+                        'stock_nuevo'    => (int) $producto->fresh()->stock_daniado,
+                        'observacion'    => "Devolución de {$item['cantidad']} unidad(es) DAÑADA(S) - Venta {$venta->numero_venta} (condición: {$condicion})",
+                        'user_id'        => Auth::id(),
+                        'tenant_id'      => $tenantId,
+                    ]);
                 }
             }
 
@@ -252,27 +265,41 @@ class DevolucionController extends Controller
             foreach ($devolucion->detalles as $detalle) {
                 $producto = $detalle->producto;
 
-                // Solo quitar stock para productos que fueron repuestos
-                // (condición nueve/usado). Los dañados/incompletos nunca se repusieron,
-                // por lo tanto NO se deben descontar al anular la devolución.
-                if (!in_array($detalle->condicion, ['nuevo', 'usado'])) {
-                    continue;
+                // (Opción B) Al anular la devolución:
+                // - Productos nuevos/usados: se quita del stock vendible
+                // - Productos dañados/incompletos: se quita del stock_daniado
+                if (in_array($detalle->condicion, ['nuevo', 'usado'])) {
+                    $stockAnterior = $producto->stock;
+                    $producto->decrement('stock', $detalle->cantidad);
+
+                    MovimientoStock::create([
+                        'producto_id'    => $producto->id,
+                        'tipo'           => 'salida',
+                        'motivo'         => 'cancelacion',
+                        'cantidad'       => -$detalle->cantidad,
+                        'stock_anterior' => $stockAnterior,
+                        'stock_nuevo'    => $producto->fresh()->stock,
+                        'observacion'    => "Anulación de devolución {$devolucion->numero_devolucion} (condición: {$detalle->condicion})",
+                        'user_id'        => Auth::id(),
+                        'tenant_id'      => Auth::user()->tenant_id,
+                    ]);
+                } else {
+                    // Producto dañado/incompleto: quitar del stock_daniado
+                    $stockDaniadoAnterior = (int) $producto->stock_daniado;
+                    $producto->decrement('stock_daniado', $detalle->cantidad);
+
+                    MovimientoStock::create([
+                        'producto_id'    => $producto->id,
+                        'tipo'           => 'salida',
+                        'motivo'         => 'cancelacion_daniado',
+                        'cantidad'       => -$detalle->cantidad,
+                        'stock_anterior' => $stockDaniadoAnterior,
+                        'stock_nuevo'    => (int) $producto->fresh()->stock_daniado,
+                        'observacion'    => "Anulación de devolución {$devolucion->numero_devolucion} (dañado, condición: {$detalle->condicion})",
+                        'user_id'        => Auth::id(),
+                        'tenant_id'      => Auth::user()->tenant_id,
+                    ]);
                 }
-
-                $stockAnterior = $producto->stock;
-                $producto->decrement('stock', $detalle->cantidad);
-
-                MovimientoStock::create([
-                    'producto_id'    => $producto->id,
-                    'tipo'           => 'salida',
-                    'motivo'         => 'cancelacion',
-                    'cantidad'       => -$detalle->cantidad,
-                    'stock_anterior' => $stockAnterior,
-                    'stock_nuevo'    => $producto->fresh()->stock,
-                    'observacion'    => "Anulación de devolución {$devolucion->numero_devolucion}",
-                    'user_id'        => Auth::id(),
-                    'tenant_id'      => Auth::user()->tenant_id,
-                ]);
             }
 
             $devolucion->update(['estado' => 'anulada']);
