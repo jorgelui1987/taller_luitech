@@ -151,22 +151,31 @@ class DevolucionController extends Controller
                     'condicion'       => $item['condicion'] ?? 'nuevo',
                 ];
 
-                // Reponer stock
+                // Reponer stock SOLO si el producto volvió en buen estado
+                // (Opción A: productos dañados/incompletos NO vuelven al stock vendible)
+                $condicion = $item['condicion'] ?? 'nuevo';
                 $producto = Producto::findOrFail($item['producto_id']);
                 $stockAnterior = $producto->stock;
-                $producto->increment('stock', $item['cantidad']);
 
-                MovimientoStock::create([
-                    'producto_id'    => $producto->id,
-                    'tipo'           => 'entrada',
-                    'motivo'         => 'devolucion',
-                    'cantidad'       => $item['cantidad'],
-                    'stock_anterior' => $stockAnterior,
-                    'stock_nuevo'    => $producto->fresh()->stock,
-                    'observacion'    => "Devolución de {$item['cantidad']} unidad(es) - Venta {$venta->numero_venta}",
-                    'user_id'        => Auth::id(),
-                    'tenant_id'      => $tenantId,
-                ]);
+                if (in_array($condicion, ['nuevo', 'usado'])) {
+                    $producto->increment('stock', $item['cantidad']);
+
+                    MovimientoStock::create([
+                        'producto_id'    => $producto->id,
+                        'tipo'           => 'entrada',
+                        'motivo'         => 'devolucion',
+                        'cantidad'       => $item['cantidad'],
+                        'stock_anterior' => $stockAnterior,
+                        'stock_nuevo'    => $producto->fresh()->stock,
+                        'observacion'    => "Devolución de {$item['cantidad']} unidad(es) - Venta {$venta->numero_venta} (condición: {$condicion})",
+                        'user_id'        => Auth::id(),
+                        'tenant_id'      => $tenantId,
+                    ]);
+                } else {
+                    // Producto dañado/incompleto: NO reponer stock vendible.
+                    // Solo se registra en el detalle de la devolución para control.
+                    \Illuminate\Support\Facades\Log::info("Producto #{$producto->id} devuelto como '{$condicion}' - NO se repone stock. Devolución {$venta->numero_venta}.");
+                }
             }
 
             $igvPorcentaje = Configuracion::empresa()->igv ?? 18;
@@ -242,6 +251,14 @@ class DevolucionController extends Controller
         DB::transaction(function () use ($devolucion) {
             foreach ($devolucion->detalles as $detalle) {
                 $producto = $detalle->producto;
+
+                // Solo quitar stock para productos que fueron repuestos
+                // (condición nueve/usado). Los dañados/incompletos nunca se repusieron,
+                // por lo tanto NO se deben descontar al anular la devolución.
+                if (!in_array($detalle->condicion, ['nuevo', 'usado'])) {
+                    continue;
+                }
+
                 $stockAnterior = $producto->stock;
                 $producto->decrement('stock', $detalle->cantidad);
 
