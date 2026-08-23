@@ -241,6 +241,18 @@
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Recibido</div>
                 <div style="font-weight:600; font-size:13px;">{{ optional($reparacion->fecha_recepcion)->format('d/m/Y') }}</div>
             </div>
+            @php $garantiaInfo = $reparacion->estadoGarantia(); @endphp
+            @if($reparacion->garantia)
+            <div class="col-md-2 col-6">
+                <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Garantía</div>
+                <span style="background:{{ $garantiaInfo['bg'] }}; color:{{ $garantiaInfo['color'] }}; border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; display:inline-block;">
+                    {{ $garantiaInfo['label'] }}
+                </span>
+                @if(isset($garantiaInfo['fecha_vencimiento']))
+                <div style="font-size:10px; color:#9ca3af; margin-top:2px;">Vence: {{ $garantiaInfo['fecha_vencimiento']->format('d/m/Y') }}</div>
+                @endif
+            </div>
+            @endif
         </div>
     </div>
 </div>

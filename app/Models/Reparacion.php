@@ -119,6 +119,37 @@ class Reparacion extends Model
         return $this->firma_recepcion ? asset('storage/' . $this->firma_recepcion) : null;
     }
 
+    /**
+     * Estado de la garantía: vigente, vencida o sin garantía.
+     */
+    public function estadoGarantia(): array
+    {
+        if (!$this->garantia || $this->dias_garantia <= 0) {
+            return ['estado' => 'sin_garantia', 'label' => 'Sin garantía', 'color' => '#9ca3af', 'bg' => '#f3f4f6'];
+        }
+
+        $fechaBase = $this->fecha_entrega ?? $this->fecha_recepcion ?? now();
+        $fechaVencimiento = $fechaBase->copy()->addDays((int) $this->dias_garantia);
+
+        if ($fechaVencimiento->lt(now())) {
+            return [
+                'estado' => 'vencida',
+                'label' => 'Vencida',
+                'color' => '#dc2626',
+                'bg' => '#fee2e2',
+                'fecha_vencimiento' => $fechaVencimiento,
+            ];
+        }
+
+        return [
+            'estado' => 'vigente',
+            'label' => 'Vigente',
+            'color' => '#059669',
+            'bg' => '#d1fae5',
+            'fecha_vencimiento' => $fechaVencimiento,
+        ];
+    }
+
     public function getFirmaEntregaUrlAttribute(): ?string
     {
         return $this->firma_entrega ? asset('storage/' . $this->firma_entrega) : null;
