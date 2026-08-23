@@ -120,6 +120,7 @@
                         <th>Precio Compra</th>
                         <th>Precio Venta</th>
                         <th>Stock</th>
+                        <th>Stock Dañado</th>
                         <th>Condición</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
@@ -178,6 +179,15 @@
                             @endif
                         </td>
                         <td>
+                            @if(($producto->stock_daniado ?? 0) > 0)
+                                <span style="background:#fee2e2; color:#b91c1c; border-radius:20px; padding:4px 10px; font-size:12px; font-weight:600;">
+                                    <i class="fas fa-exclamation-triangle fa-xs me-1"></i>{{ $producto->stock_daniado }}
+                                </span>
+                            @else
+                                <span style="color:#9ca3af; font-size:12px;">—</span>
+                            @endif
+                        </td>
+                        <td>
                             @php
                                 $cond = ['nuevo'=>['#d1fae5','#065f46'],'reacondicionado'=>['#e0f2fe','#0369a1'],'usado'=>['#f3f4f6','#374151']];
                                 $c = $cond[$producto->condicion] ?? ['#f3f4f6','#374151'];
@@ -211,7 +221,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-5">
+                        <td colspan="9" class="text-center py-5">
                             <i class="fas fa-box-open fa-3x mb-3 d-block" style="color:#d1d5db;"></i>
                             <p class="text-muted mb-2">No hay productos registrados</p>
                             <a href="{{ route('productos.create') }}" class="btn btn-primary btn-sm">
