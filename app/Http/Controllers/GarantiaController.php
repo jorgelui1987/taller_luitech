@@ -74,8 +74,8 @@ class GarantiaController extends Controller
             'motivo'    => 'required|string|max:100',
             'observacion'    => 'nullable|string|max:1000',
             'productos'      => 'required|array|min:1|max:100',
-            'productos.*.detalle_venta_id' => 'required|exists:detalle_ventas,id',
-            'productos.*.producto_id'      => 'required|exists:productos,id',
+            'productos.*.detalle_venta_id' => 'required|integer',
+            'productos.*.producto_id'      => 'required|integer',
             'productos.*.cantidad'         => 'required|integer|min:1|max:1000',
             'productos.*.condicion'        => 'nullable|in:nuevo,usado,dañado,incompleto',
         ]);
@@ -100,13 +100,25 @@ class GarantiaController extends Controller
             $detalles = [];
 
             foreach ($request->productos as $item) {
+                $condicion = $item['condicion'] ?? 'nuevo';
+
+                // Si es un item genérico (venta de reparación sin producto físico), no tocar stock
+                if ((int)$item['detalle_venta_id'] === 0 || (int)$item['producto_id'] === 0) {
+                    $detalles[] = [
+                        'producto_id'     => null,
+                        'detalle_venta_id'=> null,
+                        'cantidad'        => $item['cantidad'],
+                        'condicion'       => $condicion,
+                    ];
+                    continue;
+                }
+
                 $detalleVenta = DetalleVenta::findOrFail($item['detalle_venta_id']);
 
                 if ($detalleVenta->venta_id !== $venta->id) {
                     throw new \Exception('El producto no pertenece a la venta seleccionada.');
                 }
 
-                $condicion = $item['condicion'] ?? 'nuevo';
                 $producto = Producto::findOrFail($item['producto_id']);
 
                 $detalles[] = [
