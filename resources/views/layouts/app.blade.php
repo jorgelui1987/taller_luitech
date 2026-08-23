@@ -1034,6 +1034,12 @@
             <span class="nav-icon"><i class="fas fa-undo-alt"></i></span>
             Devoluciones
         </a>
+
+        <a href="{{ route('garantias.index') }}"
+           class="nav-link {{ request()->routeIs('garantias.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-shield-alt"></i></span>
+            Garantías
+        </a>
         @endif
 
         @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))

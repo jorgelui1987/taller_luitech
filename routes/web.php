@@ -235,6 +235,16 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/api/devoluciones/venta/{ventaId}', [\App\Http\Controllers\DevolucionController::class, 'getVentaDetalles'])->name('devoluciones.api.venta');
         });
 
+        // Garantías (solo admin y vendedor)
+        Route::middleware('check.ventas')->group(function () {
+            Route::get('/garantias', [\App\Http\Controllers\GarantiaController::class, 'index'])->name('garantias.index');
+            Route::get('/garantias/crear', [\App\Http\Controllers\GarantiaController::class, 'create'])->name('garantias.create');
+            Route::post('/garantias', [\App\Http\Controllers\GarantiaController::class, 'store'])->name('garantias.store');
+            Route::get('/garantias/{garantia}', [\App\Http\Controllers\GarantiaController::class, 'show'])->name('garantias.show');
+            Route::patch('/garantias/{garantia}/anular', [\App\Http\Controllers\GarantiaController::class, 'anular'])->name('garantias.anular');
+            Route::get('/api/garantias/venta/{ventaId}', [\App\Http\Controllers\GarantiaController::class, 'getVentaDetalles'])->name('garantias.api.venta');
+        });
+
         // Reparaciones (solo admin y técnico)
         Route::middleware('check.reparaciones')->group(function () {
             // Kanban (vista de tablero) - IMPORTANTE: antes del resource

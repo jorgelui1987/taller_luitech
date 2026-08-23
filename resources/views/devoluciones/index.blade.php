@@ -18,6 +18,51 @@
     </a>
 </div>
 
+{{-- Tarjetas de resumen --}}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div style="width:48px;height:48px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:20px;color:#0369a1;flex-shrink:0;">
+                    <i class="fas fa-undo-alt"></i>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Devoluciones del mes</div>
+                    <div style="font-size:22px;font-weight:700;color:#1e1b4b;">{{ $totalCompletadas }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ route('devoluciones.index', ['condicion' => 'daniado']) }}" class="text-decoration-none">
+            <div class="card" style="border:2px solid {{ request('condicion')=='daniado' ? '#dc2626' : 'transparent' }};">
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                    <div style="width:48px;height:48px;border-radius:12px;background:#fee2e2;display:flex;align-items:center;justify-content:center;font-size:20px;color:#dc2626;flex-shrink:0;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Con productos dañados</div>
+                        <div style="font-size:22px;font-weight:700;color:#dc2626;">{{ $totalDaniadas }}</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body p-3 d-flex align-items-center gap-3">
+                <div style="width:48px;height:48px;border-radius:12px;background:#d1fae5;display:flex;align-items:center;justify-content:center;font-size:20px;color:#059669;flex-shrink:0;">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Total devuelto del mes</div>
+                    <div style="font-size:22px;font-weight:700;color:#059669;">{{ formatoMoneda($totalMes) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px;">
         <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
@@ -55,6 +100,13 @@
                     <option value="">Todos los tipos</option>
                     <option value="devolucion" {{ request('tipo')=='devolucion'?'selected':'' }}>Devolución</option>
                     <option value="garantia"   {{ request('tipo')=='garantia'?'selected':'' }}>Garantía</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="condicion" class="visually-hidden">Filtrar por condición</label>
+                <select class="form-select" name="condicion" id="condicion">
+                    <option value="">Todas las condiciones</option>
+                    <option value="daniado" {{ request('condicion')=='daniado'?'selected':'' }}>💥 Con dañados</option>
                 </select>
             </div>
             <div class="col-md-2">

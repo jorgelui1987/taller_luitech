@@ -20,7 +20,7 @@ class DevolucionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Devolucion::with(['cliente', 'usuario', 'venta']);
+        $query = Devolucion::with(['cliente', 'usuario', 'venta', 'detalles']);
 
         if ($request->filled('buscar')) {
             $query->where('numero_devolucion', 'like', "%{$request->buscar}%")
@@ -41,6 +41,11 @@ class DevolucionController extends Controller
             $query->where('tipo', $request->tipo);
         }
 
+        // Filtro para devoluciones con productos dañados
+        if ($request->filled('condicion')) {
+            $query->whereHas('detalles', fn($q) => $q->whereIn('condicion', ['dañado', 'incompleto']));
+        }
+
         if ($request->filled('fecha_desde')) {
             $query->whereDate('fecha_devolucion', '>=', $request->fecha_desde);
         }
@@ -55,7 +60,17 @@ class DevolucionController extends Controller
             ->where('fecha_devolucion', '>=', Carbon::now()->startOfMonth())
             ->sum('total');
 
-        return view('devoluciones.index', compact('devoluciones', 'totalMes'));
+        // Contadores para las tarjetas
+        $totalDaniadas = Devolucion::where('estado', 'completada')
+            ->whereHas('detalles', fn($q) => $q->whereIn('condicion', ['dañado', 'incompleto']))
+            ->where('fecha_devolucion', '>=', Carbon::now()->startOfMonth())
+            ->count();
+
+        $totalCompletadas = Devolucion::where('estado', 'completada')
+            ->where('fecha_devolucion', '>=', Carbon::now()->startOfMonth())
+            ->count();
+
+        return view('devoluciones.index', compact('devoluciones', 'totalMes', 'totalDaniadas', 'totalCompletadas'));
     }
 
     public function create()
