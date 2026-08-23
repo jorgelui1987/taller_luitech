@@ -337,6 +337,18 @@
                                                 <div style="font-size:11px; color:#92400e; margin-top:2px;">Presupuesto - Abono</div>
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <label for="garantia" class="form-label">¿Incluye Garantía?</label>
+                                            <select name="garantia" id="garantia" class="form-select">
+                                                <option value="0" {{ old('garantia', 0) == 0 ? 'selected' : '' }}>No</option>
+                                                <option value="1" {{ old('garantia') == 1 ? 'selected' : '' }}>Sí</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="dias_garantia" class="form-label">Días de Garantía</label>
+                                            <input type="number" class="form-control" name="dias_garantia" id="dias_garantia"
+                                                   value="{{ old('dias_garantia', 0) }}" min="0">
+                                        </div>
                                     </div>
                                 </div>
 
