@@ -10,12 +10,14 @@ return new class extends Migration
     {
         Schema::table('garantia_detalles', function (Blueprint $table) {
             $table->foreignId('producto_id')->nullable()->change();
+            $table->foreignId('detalle_venta_id')->nullable()->change();
         });
     }
 
     public function down(): void
     {
         Schema::table('garantia_detalles', function (Blueprint $table) {
+            $table->foreignId('detalle_venta_id')->nullable(false)->change();
             $table->foreignId('producto_id')->nullable(false)->change();
         });
     }
