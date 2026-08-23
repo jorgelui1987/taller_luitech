@@ -276,18 +276,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function actualizarBtn() {
-        let hayItems = false;
-        document.querySelectorAll('.check-item:checked').forEach(chk => {
-            const fila = chk.closest('tr');
-            const cantInput = fila.querySelector('.cant-item');
-            const cantidad = parseInt(cantInput.value) || 0;
-            const max = parseInt(cantInput.max);
-            if (cantidad > max) {
-                cantInput.value = max;
-                return actualizarBtn();
-            }
-            if (cantidad > 0) hayItems = true;
-        });
+        // Habilitar el botón si hay al menos un producto seleccionado
+        const itemsSeleccionados = document.querySelectorAll('.check-item:checked');
+        const hayItems = itemsSeleccionados.length > 0;
         btnSubmit.disabled = !hayItems;
         btnSubmit.style.opacity = hayItems ? '1' : '.5';
     }
