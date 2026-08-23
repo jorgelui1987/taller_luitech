@@ -6,6 +6,7 @@ use App\Models\Cliente;
 use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\Reparacion;
+use App\Models\Devolucion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +47,15 @@ class DashboardController extends Controller
         $ventasHoy          = Venta::whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
         $ventasMes          = Venta::where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
         $ventasMesAnterior  = Venta::whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
+
+        // Devoluciones del día y del mes (se restan de las ventas)
+        $devolucionesHoy = Devolucion::whereDate('fecha_devolucion', $hoy)->where('estado', 'completada')->sum('total');
+        $devolucionesMes = Devolucion::where('fecha_devolucion', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
+        $devolucionesMesAnterior = Devolucion::whereBetween('fecha_devolucion', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
+
+        $ventasHoy   = max(0, $ventasHoy - $devolucionesHoy);
+        $ventasMes   = max(0, $ventasMes - $devolucionesMes);
+        $ventasMesAnterior = max(0, $ventasMesAnterior - $devolucionesMesAnterior);
 
         // Restar costo de repuestos de reparaciones entregadas (ganancia real del negocio)
         $costoRepuestosHoy = Reparacion::where('estado', 'entregado')
@@ -116,6 +126,14 @@ class DashboardController extends Controller
         $ventasHoy          = Venta::where('user_id', $user->id)->whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
         $ventasMes          = Venta::where('user_id', $user->id)->where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
         $ventasMesAnterior  = Venta::where('user_id', $user->id)->whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
+
+        // Devoluciones del día/mes del vendedor (restar de sus ventas)
+        $devolucionesHoy = Devolucion::where('user_id', $user->id)->whereDate('fecha_devolucion', $hoy)->where('estado', 'completada')->sum('total');
+        $devolucionesMes = Devolucion::where('user_id', $user->id)->where('fecha_devolucion', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
+
+        $ventasHoy = max(0, $ventasHoy - $devolucionesHoy);
+        $ventasMes = max(0, $ventasMes - $devolucionesMes);
+
         $crecimientoVentas = $ventasMesAnterior > 0 ? (($ventasMes - $ventasMesAnterior) / $ventasMesAnterior) * 100 : 0;
 
         $misVentasHoy = Venta::where('user_id', $user->id)->whereDate('fecha_venta', $hoy)->where('estado', 'completada')->count();

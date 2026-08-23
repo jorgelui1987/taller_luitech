@@ -104,6 +104,16 @@ class DevolucionController extends Controller
             return back()->with('error', 'Solo se pueden hacer devoluciones de ventas completadas.')->withInput();
         }
 
+        // ⚠️ Bloquear devoluciones múltiples de la misma venta
+        // Solo se permite UNA devolución por venta.
+        $devolucionExistente = Devolucion::where('venta_id', $venta->id)
+            ->where('estado', 'completada')
+            ->exists();
+
+        if ($devolucionExistente) {
+            throw new DevolucionException('Esta venta ya tiene una devolución registrada. Solo se permite una devolución por venta.');
+        }
+
         DB::beginTransaction();
         try {
             $subtotal = 0;
