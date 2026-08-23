@@ -183,6 +183,11 @@
         <a href="{{ route('reparaciones.edit', $reparacion) }}" class="btn btn-primary px-4">
             <i class="fas fa-edit me-2"></i>Actualizar Estado
         </a>
+        @if(Auth::user()->rol === 'admin' && isset($ventaReparacion) && $ventaReparacion->estado === 'completada')
+        <button type="button" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#modalReembolsar">
+            <i class="fas fa-undo-alt me-2"></i>Reembolsar
+        </button>
+        @endif
         @if(Auth::user()->rol === 'admin')
         <form action="{{ route('reparaciones.destroy', $reparacion) }}" method="POST"
               onsubmit="return confirm('¿Estás seguro de eliminar la orden {{ $reparacion->numero_orden }}? Esta acción no se puede deshacer.');"
@@ -575,6 +580,52 @@
     <button type="button" class="close" aria-label="Cerrar">&times;</button>
     <img id="lightboxImg" src="" alt="Foto">
 </div>
+
+{{-- Modal Reembolsar Reparación --}}
+@if(Auth::user()->rol === 'admin' && isset($ventaReparacion) && $ventaReparacion->estado === 'completada')
+<div class="modal fade" id="modalReembolsar" tabindex="-1" aria-labelledby="modalReembolsarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('reparaciones.reembolsar', $reparacion) }}" method="POST">
+                @csrf
+                <div class="modal-header" style="background:#fef3c7;">
+                    <h5 class="modal-title fw-bold" id="modalReembolsarLabel" style="color:#92400e;">
+                        <i class="fas fa-undo-alt me-2"></i>Reembolsar Reparación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning py-2" style="font-size:13px;">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        Se reembolsará <strong>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ventaReparacion->total, 2) }}</strong>
+                        de la venta <strong>{{ $ventaReparacion->numero_venta }}</strong>.
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipo_reembolso" class="form-label" style="font-size:13px;">Tipo de reembolso</label>
+                        <select name="tipo_reembolso" id="tipo_reembolso" class="form-select" required>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="tarjeta">Tarjeta</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="nota_credito">Nota de Crédito</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="motivo" class="form-label" style="font-size:13px;">Motivo del reembolso</label>
+                        <textarea name="motivo" id="motivo" class="form-control" rows="2" required placeholder="Ej: Reparación falló, cliente no quedó conforme, etc."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"
+                            onclick="return confirm('¿Confirmas el reembolso de esta reparación? Esta acción no se puede deshacer.');">
+                        <i class="fas fa-check me-1"></i>Confirmar Reembolso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 @endsection
 
 @push('scripts')

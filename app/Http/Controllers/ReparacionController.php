@@ -9,11 +9,13 @@ use App\Models\User;
 use App\Models\Configuracion;
 use App\Models\Venta;
 use App\Models\Cupon;
+use App\Models\Devolucion;
 use App\Helpers\WhatsAppHelper;
 use App\Helpers\PaisHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ReparacionController extends Controller
@@ -281,6 +283,84 @@ class ReparacionController extends Controller
         return response()->json([
             'pagado' => $ventaReparacion && $ventaReparacion->estado === 'completada' ? true : false,
         ]);
+    }
+
+    /**
+     * Reembolsa la venta asociada a una reparación.
+     * Crea una devolución y marca la reparación y la venta como devueltas.
+     *
+     * @param Request $request
+     * @param Reparacion $reparacion
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function reembolsar(Request $request, Reparacion $reparacion)
+    {
+        // Solo admin puede reembolsar
+        if (Auth::user()->rol !== 'admin') {
+            abort(403, 'Solo el administrador puede reembolsar reparaciones.');
+        }
+
+        $request->validate([
+            'motivo'         => 'required|string|max:500',
+            'tipo_reembolso' => 'required|in:efectivo,tarjeta,transferencia,nota_credito',
+        ]);
+
+        // Buscar la venta asociada a la reparación
+        $ventaReparacion = Venta::where('notas', 'like', "%{$reparacion->numero_orden}%")
+            ->where('estado', '!=', 'devuelta')
+            ->orderByDesc('id')
+            ->first();
+
+        if (!$ventaReparacion) {
+            return back()->with('error', 'No se encontró una venta pagada asociada a esta reparación para reembolsar.');
+        }
+
+        // Verificar si ya existe una devolución para esta venta
+        $devolucionExistente = Devolucion::where('venta_id', $ventaReparacion->id)
+            ->where('estado', 'completada')
+            ->exists();
+
+        if ($devolucionExistente) {
+            return back()->with('error', 'Esta reparación ya tiene un reembolso registrado.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $total = (float) $ventaReparacion->total;
+
+            // Crear la devolución
+            $devolucion = Devolucion::create([
+                'numero_devolucion' => Devolucion::generarNumero(),
+                'venta_id'          => $ventaReparacion->id,
+                'cliente_id'        => $reparacion->cliente_id,
+                'user_id'           => Auth::id(),
+                'fecha_devolucion'  => now(),
+                'motivo'            => $request->motivo,
+                'tipo'              => 'devolucion',
+                'estado'            => 'completada',
+                'subtotal'          => $total,
+                'descuento'         => 0,
+                'impuesto'          => 0,
+                'total'             => $total,
+                'tipo_reembolso'    => $request->tipo_reembolso,
+                'observacion'       => "Reembolso de reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+                'tenant_id'         => Auth::user()->tenant_id ?? $reparacion->tenant_id,
+            ]);
+
+            // Marcar la venta como devuelta
+            $ventaReparacion->update(['estado' => 'devuelta']);
+
+            // Marcar la reparación como devuelta
+            $reparacion->update(['estado' => 'no_reparable']);
+
+            DB::commit();
+
+            return redirect()->route('reparaciones.show', $reparacion)
+                ->with('success', "Reembolso {$devolucion->numero_devolucion} registrado correctamente por {$total}.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al procesar el reembolso: ' . $e->getMessage());
+        }
     }
 
     public function printTicket(Reparacion $reparacion)
