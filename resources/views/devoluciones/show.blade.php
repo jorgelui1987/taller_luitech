@@ -202,20 +202,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($devolucion->detalles as $det)
-                                @php
-                                    $condiciones = ['nuevo'=>'🆕 Nuevo','usado'=>'👌 Usado','dañado'=>'💥 Dañado','incompleto'=>'📦 Incompleto'];
-                                    $condicion = $condiciones[$det->condicion] ?? $det->condicion;
-                                @endphp
-                                <tr>
-                                    <td style="font-weight:500;">{{ $det->producto->nombre ?? 'Producto eliminado' }}</td>
-                                    <td class="text-center"><strong>{{ $det->cantidad }}</strong></td>
-                                    <td class="text-end">{{ number_format($det->precio_unitario, 2) }}</td>
-                                    <td class="text-end">{{ $det->descuento > 0 ? '-'.number_format($det->descuento, 2) : '—' }}</td>
-                                    <td class="text-end"><strong>{{ number_format($det->subtotal, 2) }}</strong></td>
-                                    <td class="text-center" style="font-size:12px;">{{ $condicion }}</td>
-                                </tr>
-                            @endforeach
+					@foreach($devolucion->detalles as $det)
+                        @php
+                            $condiciones = [
+                                'nuevo'      => ['🆕 Nuevo', '#d1fae5', '#065f46'],
+                                'usado'      => ['👌 Usado', '#fef3c7', '#92400e'],
+                                'dañado'     => ['💥 Dañado', '#fee2e2', '#b91c1c'],
+                                'incompleto' => ['📦 Incompleto', '#fee2e2', '#b91c1c'],
+                            ];
+                            $cInfo = $condiciones[$det->condicion] ?? ['📦 Otro', '#f3f4f6', '#374151'];
+                        @endphp
+                        <tr>
+                            <td style="font-weight:500;">{{ $det->producto->nombre ?? 'Producto eliminado' }}</td>
+                            <td class="text-center"><strong>{{ $det->cantidad }}</strong></td>
+                            <td class="text-end">{{ number_format($det->precio_unitario, 2) }}</td>
+                            <td class="text-end">{{ $det->descuento > 0 ? '-'.number_format($det->descuento, 2) : '—' }}</td>
+                            <td class="text-end"><strong>{{ number_format($det->subtotal, 2) }}</strong></td>
+                            <td class="text-center">
+                                <span style="background:{{ $cInfo[1] }}; color:{{ $cInfo[2] }}; border-radius:20px; padding:4px 10px; font-size:11px; font-weight:600; display:inline-block;">
+                                    {{ $cInfo[0] }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
                         </tbody>
                     </table>
                 </div>

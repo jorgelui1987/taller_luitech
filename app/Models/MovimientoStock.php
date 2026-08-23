@@ -82,11 +82,13 @@ class MovimientoStock extends Model
             'venta'      => 'Venta',
             'compra'     => 'Compra / Reposición',
             'ajuste'     => 'Ajuste manual',
-            'devolucion' => 'Devolución',
+            'devolucion' => 'Devolución de cliente',
+            'devolucion_daniado' => 'Devolución de producto dañado',
             'perdida'    => 'Pérdida',
             'daño'       => 'Dañado / Defectuoso',
             'sobrante'   => 'Sobrante en inventario',
             'cancelacion'=> 'Cancelación de venta',
+            'cancelacion_daniado' => 'Cancelación de devolución dañada',
         ];
         return $labels[$this->motivo] ?? ucfirst($this->motivo);
     }
