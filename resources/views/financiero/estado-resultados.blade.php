@@ -85,6 +85,13 @@
                     <span class="pl-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparaciones->total ?? 0, 2) }}</span>
                 </div>
 
+                @if(($devoluciones->total ?? 0) > 0)
+                <div class="pl-line pl-indent">
+                    <span class="pl-label">Devoluciones ({{ $devoluciones->cantidad }} devoluciones)</span>
+                    <span class="pl-value pl-negative">- {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($devoluciones->total ?? 0, 2) }}</span>
+                </div>
+                @endif
+
                 <div class="pl-divider"></div>
                 <div class="pl-line pl-line-total">
                     <span class="pl-label">Total Ingresos</span>

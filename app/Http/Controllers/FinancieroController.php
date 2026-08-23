@@ -8,6 +8,7 @@ use App\Models\Reparacion;
 use App\Models\OrdenCompra;
 use App\Models\DetalleVenta;
 use App\Models\GastoFijo;
+use App\Models\Devolucion;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -62,7 +63,12 @@ class FinancieroController extends Controller
             ->where('estado', 'entregado')
             ->sum('total');
 
-        $totalIngresos = $ingresosVentas + $ingresosReparaciones;
+        // Devoluciones del mes (se restan de los ingresos)
+        $devoluciones = Devolucion::whereBetween('fecha_devolucion', [$fechaInicio, $fechaFin])
+            ->where('estado', 'completada')
+            ->sum('total');
+
+        $totalIngresos = $ingresosVentas + $ingresosReparaciones - $devoluciones;
 
         // ── COSTOS DEL MES ──────────────────────────────────────────────
         // Costo de ventas (productos vendidos)
@@ -139,7 +145,9 @@ class FinancieroController extends Controller
             $ing = Venta::whereBetween('fecha_venta', [$inicio, $fin])
                     ->where('estado', 'completada')->sum('total')
                   + Reparacion::whereBetween('fecha_recepcion', [$inicio, $fin])
-                    ->where('estado', 'entregado')->sum('total');
+                    ->where('estado', 'entregado')->sum('total')
+                  - Devolucion::whereBetween('fecha_devolucion', [$inicio, $fin])
+                    ->where('estado', 'completada')->sum('total');
 
             $cosQuery = DB::table('detalle_ventas')
                     ->join('ventas', 'detalle_ventas.venta_id', '=', 'ventas.id')
@@ -249,7 +257,14 @@ class FinancieroController extends Controller
             ->selectRaw('SUM(total) as total')
             ->first();
 
-        $totalIngresos = ($ventas->total ?? 0) + ($reparaciones->total ?? 0);
+        // Devoluciones del periodo (se restan de los ingresos)
+        $devoluciones = Devolucion::whereBetween('fecha_devolucion', [$fechaInicio, $fechaFin])
+            ->where('estado', 'completada')
+            ->selectRaw('COUNT(*) as cantidad')
+            ->selectRaw('SUM(total) as total')
+            ->first();
+
+        $totalIngresos = ($ventas->total ?? 0) + ($reparaciones->total ?? 0) - ($devoluciones->total ?? 0);
 
         // ── COSTOS ──────────────────────────────────────────────────────
         $costoVentasQuery = DB::table('detalle_ventas')
@@ -303,7 +318,7 @@ class FinancieroController extends Controller
         $anios = range(Carbon::now()->year - self::RANGO_ANIOS, Carbon::now()->year);
 
         return view('financiero.estado-resultados', compact(
-            'ventas', 'reparaciones',
+            'ventas', 'reparaciones', 'devoluciones',
             'totalIngresos', 'costoVentas', 'costoReparaciones', 'totalCostos',
             'utilidadBruta', 'margenBruto',
             'gastosAdmin', 'totalGastosOperativos',
@@ -400,14 +415,18 @@ class FinancieroController extends Controller
             $ingresosReparaciones = Reparacion::whereBetween('fecha_recepcion', [$inicio, $fin])
                 ->where('estado', 'entregado')->sum('total');
 
-            $totalIngresos = $ingresosVentas + $ingresosReparaciones;
+            // Devoluciones del mes (se restan de los ingresos)
+            $devoluciones = Devolucion::whereBetween('fecha_devolucion', [$inicio, $fin])
+                ->where('estado', 'completada')->sum('total');
+
+            $totalIngresos = $ingresosVentas + $ingresosReparaciones - $devoluciones;
 
             // Egresos del mes
             $compras = OrdenCompra::whereBetween('fecha_orden', [$inicio, $fin])
                 ->whereIn('estado', ['completada', 'recibida_parcial'])
                 ->sum('total');
 
-            $totalEgresos = $compras;
+            $totalEgresos = $compras + $devoluciones;
 
             $saldoMensual   = $totalIngresos - $totalEgresos;
             $saldoAcumulado = $saldoInicial + $saldoMensual;
@@ -463,7 +482,11 @@ class FinancieroController extends Controller
         $totalReparaciones = Reparacion::whereBetween('fecha_recepcion', [$fechaInicio, $fechaFin])
             ->where('estado', 'entregado')->sum('total');
 
-        $totalIngresos = $totalVentas + $totalReparaciones;
+        // Devoluciones del periodo (se restan de los ingresos)
+        $devoluciones = Devolucion::whereBetween('fecha_devolucion', [$fechaInicio, $fechaFin])
+            ->where('estado', 'completada')->sum('total');
+
+        $totalIngresos = $totalVentas + $totalReparaciones - $devoluciones;
 
         // ── LIQUIDEZ ────────────────────────────────────────────────────
         $efectivo = Venta::where('estado', 'completada')
@@ -525,6 +548,8 @@ class FinancieroController extends Controller
             $fin    = Carbon::create($year, $i, 1)->endOfMonth();
 
             $ing = Venta::whereBetween('fecha_venta', [$inicio, $fin])
+                ->where('estado', 'completada')->sum('total')
+              - Devolucion::whereBetween('fecha_devolucion', [$inicio, $fin])
                 ->where('estado', 'completada')->sum('total');
 
             $cosQuery = DB::table('detalle_ventas')
