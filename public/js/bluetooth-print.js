@@ -110,15 +110,30 @@ const BTPrint = (function() {
         data.push(LF);
         data.push(ESC, 0x21, 0x00); // Tamaño normal
         data.push(ESC, 0x61, 0x01);
+
+        // Bloque fiscal del emisor
+        if (venta.rut) {
+            data = data.concat(convert('R.U.T.: ' + venta.rut));
+            data.push(LF);
+        }
+        data = data.concat(convert('BOLETA DE VENTA'));
+        data.push(LF);
+        data.push(ESC, 0x21, 0x08); // Doble tamaño para el número
+        data = data.concat(convert('N° ' + (venta.numero_venta || '')));
+        data.push(LF);
+        data.push(ESC, 0x21, 0x00);
+
+        if (venta.razon_social) {
+            data = data.concat(convert(venta.razon_social));
+            data.push(LF);
+        }
+        if (venta.giro) {
+            data = data.concat(convert(venta.giro));
+            data.push(LF);
+        }
         data = data.concat(convert(venta.direccion || ''));
         data.push(LF);
         data = data.concat(convert(venta.telefono || ''));
-        data.push(LF);
-
-        // Número de venta
-        data.push(ESC, 0x61, 0x01);
-        data.push(ESC, 0x21, 0x08);
-        data = data.concat(convert(venta.numero_venta || ''));
         data.push(LF);
 
         // Separador
@@ -156,7 +171,7 @@ const BTPrint = (function() {
 
         // Totales
         if (venta.subtotal > 0) {
-            data = data.concat(convert('Subtotal: ' + formatMoneda(venta.subtotal)));
+            data = data.concat(convert((venta.neto_label || 'Subtotal') + ': ' + formatMoneda(venta.subtotal)));
             data.push(LF);
         }
         if (venta.descuento > 0) {
@@ -171,6 +186,26 @@ const BTPrint = (function() {
         data = data.concat(convert('TOTAL: ' + formatMoneda(venta.total)));
         data.push(LF);
         data.push(ESC, 0x21, 0x00);
+
+        // Pie: garantía y contacto
+        if (venta.garantia) {
+            data = data.concat(convert('-'.repeat(32)));
+            data.push(LF);
+            data = data.concat(convert('GARANTIA: ' + venta.garantia));
+            data.push(LF);
+        }
+        if (venta.whatsapp) {
+            data = data.concat(convert('WhatsApp: ' + venta.whatsapp));
+            data.push(LF);
+        }
+        if (venta.instagram) {
+            data = data.concat(convert('IG: ' + venta.instagram));
+            data.push(LF);
+        }
+        if (venta.horario) {
+            data = data.concat(convert('Horario: ' + venta.horario));
+            data.push(LF);
+        }
 
         // Pie
         data.push(LF);

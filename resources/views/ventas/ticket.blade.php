@@ -36,6 +36,14 @@ hr.dotted{border-top:1px dashed #000}
 .miniweb{text-align:center;margin:4px 0;padding:4px 2px;border:2px solid #000;border-radius:4px;background:#fff}
 .miniweb .lbl{font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
 .miniweb .url{font-size:11px;font-weight:700;word-break:break-all;line-height:1.4}
+/* Bloque fiscal del emisor (estilo documento tributario) */
+.fiscal{border:2px solid #000;padding:3px 4px;margin:3px 0 2px;text-align:center}
+.fiscal .frut{font-size:11px;font-weight:700}
+.fiscal .ftipo{font-size:12px;font-weight:700;letter-spacing:1px}
+.fiscal .fnro{font-size:14px;font-weight:700}
+.fdatos{font-size:10px;font-weight:600;line-height:1.35;text-align:center}
+.gar{font-size:9px;line-height:1.35;margin-top:2px;text-align:left}
+.contacto{font-size:9px;font-weight:600;line-height:1.5;margin-top:2px}
 
 @media print{
     body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -46,9 +54,18 @@ hr.dotted{border-top:1px dashed #000}
 <div class="hdr">
 @if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="max-height:60px;max-width:100px">@endif
 <div class="tienda">{{ $empresa->nombre_tienda ?? 'CRM Celulares' }}</div>
-<div class="inf">{{ $empresa->ruc ?? '' }}{{ ($empresa->ruc??'') && ($empresa->direccion??'') ? ' | ' : '' }}{{ $empresa->direccion ?? '' }}</div>
+</div>
+{{-- Bloque fiscal del emisor (estilo documento tributario) --}}
+<div class="fiscal">
+@if($empresa->rut_emisor ?? '')<div class="frut">R.U.T.: {{ $empresa->rut_emisor }}</div>@endif
+<div class="ftipo">BOLETA DE VENTA</div>
+<div class="fnro">N° {{ $venta->numero_venta }}</div>
+</div>
+@if($empresa->razon_social ?? '')<div class="fdatos">{{ $empresa->razon_social }}</div>@endif
+@if($empresa->giro ?? '')<div class="fdatos">{{ $empresa->giro }}</div>@endif
+@if($empresa->direccion ?? '')<div class="fdatos">{{ $empresa->direccion }}{{ ($empresa->comuna_ciudad ?? '') ? ', '.$empresa->comuna_ciudad : '' }}</div>@endif
+<div class="hdr">
 <div class="inf">{{ $empresa->telefono ?? '' }}{{ ($empresa->telefono??'') && ($empresa->email??'') ? ' | ' : '' }}{{ $empresa->email ?? '' }}</div>
-<div class="nro">{{ $venta->numero_venta }}</div>
 <div>{{ ucfirst($venta->estado) }} | {{ $venta->fecha_venta->format('d/m/Y H:i') }}</div>
 @if($venta->estado === 'cancelada')
 <div style="font-size:16px;font-weight:700;color:#000; border:2px solid #000; padding:4px 0; margin-top:4px;">*** VENTA CANCELADA ***</div>
@@ -84,7 +101,7 @@ hr.dotted{border-top:1px dashed #000}
 </tbody>
 </table>
 <div class="tot">
-<div class="l"><span>Subtotal</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->subtotal,2) }}</span></div>
+<div class="l"><span>{{ $empresa->pais == 'CL' ? 'Neto' : 'Subtotal' }}</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->subtotal,2) }}</span></div>
 @if($venta->descuento > 0)<div class="l"><span>Descuento</span><span>-{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->descuento,2) }}</span></div>@endif
 <div class="l"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->impuesto,2) }}</span></div>
 <div class="lt"><span>TOTAL</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total,2) }}</span></div>
@@ -100,6 +117,17 @@ hr.dotted{border-top:1px dashed #000}
 @endif
 
 <div class="ftr">
+@if($empresa->terminos_garantia ?? '')
+<hr class="dotted">
+<div class="gar"><strong>GARANTÍA:</strong> {{ $empresa->terminos_garantia }}</div>
+@endif
+@if(($empresa->whatsapp ?? '') || ($empresa->instagram ?? '') || ($empresa->facebook ?? '') || ($empresa->horario_atencion ?? ''))
+<div class="contacto">
+@if($empresa->whatsapp ?? '')WhatsApp: {{ $empresa->whatsapp }}<br>@endif
+@if($empresa->instagram ?? '')IG: {{ $empresa->instagram }}@endif@if(($empresa->instagram ?? '') && ($empresa->facebook ?? '')) | @endif@if($empresa->facebook ?? '')FB: {{ $empresa->facebook }}@endif
+@if($empresa->horario_atencion ?? '')<br>Horario: {{ $empresa->horario_atencion }}@endif
+</div>
+@endif
 <div class="gr">Gracias por su preferencia!</div>
 <div>{{ $venta->created_at->format('d/m/Y H:i') }}</div>
 </div>
@@ -122,6 +150,14 @@ window.BTPrintTicket = (function() {
         tienda: @json($empresa->nombre_tienda ?? 'CRM Celulares'),
         direccion: @json($empresa->direccion ?? ''),
         telefono: @json($empresa->telefono ?? ''),
+        rut: @json($empresa->rut_emisor ?? ''),
+        razon_social: @json($empresa->razon_social ?? ''),
+        giro: @json($empresa->giro ?? ''),
+        neto_label: @json($empresa->pais == 'CL' ? 'Neto' : 'Subtotal'),
+        garantia: @json($empresa->terminos_garantia ?? ''),
+        whatsapp: @json($empresa->whatsapp ?? ''),
+        instagram: @json($empresa->instagram ?? ''),
+        horario: @json($empresa->horario_atencion ?? ''),
         numero_venta: @json($venta->numero_venta),
         cliente: @json($venta->cliente?->nombre_completo ?? 'VENTA GENERAL'),
         fecha: @json($venta->fecha_venta->format('d/m/Y H:i')),
