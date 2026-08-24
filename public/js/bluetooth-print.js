@@ -187,6 +187,18 @@ const BTPrint = (function() {
         data.push(LF);
         data.push(ESC, 0x21, 0x00);
 
+        // Efectivo recibido y vuelto (solo pagos en efectivo)
+        if (venta.monto_recibido !== null && venta.monto_recibido !== undefined) {
+            data = data.concat(convert('Recibido: ' + formatMoneda(parseFloat(venta.monto_recibido))));
+            data.push(LF);
+        }
+        if (venta.vuelto !== null && venta.vuelto !== undefined) {
+            data.push(ESC, 0x21, 0x08); // Doble tamaño para el vuelto
+            data = data.concat(convert('VUELTO: ' + formatMoneda(parseFloat(venta.vuelto))));
+            data.push(LF);
+            data.push(ESC, 0x21, 0x00);
+        }
+
         // Pie: garantía y contacto
         if (venta.garantia) {
             data = data.concat(convert('-'.repeat(32)));

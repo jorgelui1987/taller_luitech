@@ -119,6 +119,20 @@
                             </div>
                             <div id="cuponMsg" class="form-text mt-1" style="font-size:12px;"></div>
                         </div>
+                        <div class="col-12" id="rowEfectivo" style="display:none;">
+                            <label for="montoRecibido" class="form-label">💵 Efectivo recibido <span class="text-muted" style="font-size:11px;">(opcional)</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{ $empresa->simbolo_moneda ?? '$' }}</span>
+                                <input type="number" class="form-control" name="monto_recibido" id="montoRecibido"
+                                       min="0" step="1" placeholder="¿Con cuánto paga el cliente?" oninput="actualizarVuelto()">
+                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(1000)">1.000</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(5000)">5.000</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(10000)">10.000</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(20000)">20.000</button>
+                            </div>
+                            <div id="lblVuelto" class="mt-2" style="display:none;font-size:18px;font-weight:700;color:#059669;"></div>
+                            <div id="lblFalta" class="mt-1 text-danger" style="display:none;font-size:12px;"></div>
+                        </div>
                         <div class="col-12">
                             <label for="notas" class="form-label">Notas</label>
                             <textarea class="form-control" name="notas" id="notas" rows="2"></textarea>
@@ -267,13 +281,55 @@ function totales() {
     document.getElementById('lblNeto').textContent = simbolo + ' ' + netoCL.toFixed(2);
     document.getElementById('lblIgv').textContent = simbolo + ' ' + ivaCL.toFixed(2);
     document.getElementById('lblTotal').textContent = simbolo + ' ' + valorCL.toFixed(2);
+    window.totalActual = valorCL;
     @else
     // Otros países: el impuesto se SUMA al precio
     document.getElementById('lblIgv').textContent = simbolo + ' ' + (base * (igvPct / 100)).toFixed(2);
     document.getElementById('lblTotal').textContent = simbolo + ' ' + (base * (1 + igvPct / 100)).toFixed(2);
+    window.totalActual = base * (1 + igvPct / 100);
     @endif
     btnReg.disabled = Object.keys(items).length === 0;
+    if (typeof actualizarVuelto === 'function') actualizarVuelto();
 }
+
+// ── Efectivo recibido y vuelto (solo pago en efectivo) ──
+function actualizarVuelto() {
+    const row = document.getElementById('rowEfectivo');
+    if (!row || row.style.display === 'none') return;
+
+    const total = window.totalActual || 0;
+    const recibido = parseFloat(document.getElementById('montoRecibido').value) || 0;
+    const lblVuelto = document.getElementById('lblVuelto');
+    const lblFalta = document.getElementById('lblFalta');
+    const simbolo = '{{ $empresa->simbolo_moneda ?? '$' }}';
+
+    if (recibido <= 0 || total <= 0) {
+        lblVuelto.style.display = 'none';
+        lblFalta.style.display = 'none';
+        return;
+    }
+
+    const dif = recibido - total;
+    if (dif >= 0) {
+        lblVuelto.style.display = 'block';
+        lblVuelto.textContent = 'VUELTO: ' + simbolo + ' ' + dif.toLocaleString('es-CL', { maximumFractionDigits: 2 });
+        lblFalta.style.display = 'none';
+    } else {
+        lblVuelto.style.display = 'none';
+        lblFalta.style.display = 'block';
+        lblFalta.textContent = 'Faltan ' + simbolo + ' ' + Math.abs(dif).toLocaleString('es-CL', { maximumFractionDigits: 2 }) + ' para completar el total.';
+    }
+}
+
+function setRecibido(valor) {
+    document.getElementById('montoRecibido').value = valor;
+    actualizarVuelto();
+}
+
+document.getElementById('metodo_pago').addEventListener('change', function () {
+    document.getElementById('rowEfectivo').style.display = (this.value === 'efectivo') ? 'block' : 'none';
+    actualizarVuelto();
+});
 
 function validarCupon() {
     let codigo = document.getElementById('cuponInput').value.trim().toUpperCase();

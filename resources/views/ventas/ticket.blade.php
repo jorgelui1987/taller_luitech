@@ -105,6 +105,12 @@ hr.dotted{border-top:1px dashed #000}
 @if($venta->descuento > 0)<div class="l"><span>Descuento</span><span>-{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->descuento,2) }}</span></div>@endif
 <div class="l"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->impuesto,2) }}</span></div>
 <div class="lt"><span>TOTAL</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total,2) }}</span></div>
+@if(!is_null($venta->monto_recibido))
+<div class="l"><span>Efectivo recibido</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->monto_recibido,2) }}</span></div>
+@endif
+@if(!is_null($venta->vuelto))
+<div class="l" style="font-size:12px;font-weight:700;"><span>VUELTO</span><span>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->vuelto,2) }}</span></div>
+@endif
 </div>
 @if($venta->notas)<div class="not">Notas: {{ $venta->notas }}</div>@endif
 
@@ -167,6 +173,8 @@ window.BTPrintTicket = (function() {
         descuento: {{ $venta->descuento }},
         impuesto: {{ $venta->impuesto }},
         total: {{ $venta->total }},
+        monto_recibido: @json($venta->monto_recibido ? (float) $venta->monto_recibido : null),
+        vuelto: @json($venta->vuelto ? (float) $venta->vuelto : null),
         productos: @json($productosArray)
     };
 

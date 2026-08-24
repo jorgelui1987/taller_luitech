@@ -13,6 +13,7 @@ class Venta extends Model
     protected $fillable = [
         'numero_venta', 'cliente_id', 'user_id', 'fecha_venta',
         'subtotal', 'descuento', 'impuesto', 'total',
+        'monto_recibido', 'vuelto',
         'comision_monto', 'comision_pagada',
         'metodo_pago', 'estado', 'estado_pago', 'notas', 'motivo_cancelacion', 'tenant_id',
         'dte_tipo', 'dte_folio', 'dte_token', 'dte_pdf_url', 'dte_estado',
@@ -25,6 +26,8 @@ class Venta extends Model
         'impuesto'       => 'decimal:2',
         'total'          => 'decimal:2',
         'comision_monto' => 'decimal:2',
+        'monto_recibido' => 'decimal:2',
+        'vuelto'         => 'decimal:2',
         'comision_pagada'=> 'boolean',
     ];
 

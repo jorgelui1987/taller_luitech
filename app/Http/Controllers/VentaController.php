@@ -101,6 +101,7 @@ class VentaController extends Controller
             'descuento_general'   => 'nullable|numeric|min:0|max:99999999.99',
             'cupon_codigo'        => 'nullable|string|max:30',
             'notas'               => 'nullable|string|max:2000',
+            'monto_recibido'      => 'nullable|numeric|min:0|max:9999999999.99',
         ]);
 
         // Obtener tenant_id con fallback
@@ -205,6 +206,18 @@ class VentaController extends Controller
 
             $esMercadoPago = $request->metodo_pago === 'mercadopago';
 
+            // ── Efectivo recibido y vuelto (solo pagos en efectivo) ──
+            // Si el cliente paga con menos que el total, no se registra
+            // vuelto (queda como pago parcial / venta pendiente de saldar).
+            $montoRecibido = null;
+            $vuelto = null;
+            if ($request->metodo_pago === 'efectivo' && $request->filled('monto_recibido')) {
+                $montoRecibido = round((float) $request->monto_recibido, 2);
+                if ($montoRecibido > $total) {
+                    $vuelto = round($montoRecibido - $total, 2);
+                }
+            }
+
             $venta = Venta::create([
                 'numero_venta' => Venta::generarNumero(),
                 'cliente_id'   => $request->cliente_id,
@@ -214,6 +227,8 @@ class VentaController extends Controller
                 'descuento'    => $descuento,
                 'impuesto'     => $impuesto,
                 'total'        => $total,
+                'monto_recibido' => $montoRecibido,
+                'vuelto'         => $vuelto,
                 'metodo_pago'  => $request->metodo_pago,
                 'estado'       => $esMercadoPago ? 'pendiente' : 'completada',
                 'estado_pago'  => $esMercadoPago ? 'pendiente' : 'pagado',
