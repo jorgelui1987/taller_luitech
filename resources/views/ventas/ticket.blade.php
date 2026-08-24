@@ -66,7 +66,7 @@ hr.dotted{border-top:1px dashed #000}
 @if($empresa->direccion ?? '')<div class="fdatos">{{ $empresa->direccion }}{{ ($empresa->comuna_ciudad ?? '') ? ', '.$empresa->comuna_ciudad : '' }}</div>@endif
 <div class="hdr">
 <div class="inf">{{ $empresa->telefono ?? '' }}{{ ($empresa->telefono??'') && ($empresa->email??'') ? ' | ' : '' }}{{ $empresa->email ?? '' }}</div>
-<div>{{ ucfirst($venta->estado) }} | {{ $venta->fecha_venta->format('d/m/Y H:i') }}</div>
+<div>{{ ucfirst($venta->estado) }} | {{ $venta->fecha_venta?->format('d/m/Y H:i') }}</div>
 @if($venta->estado === 'cancelada')
 <div style="font-size:16px;font-weight:700;color:#000; border:2px solid #000; padding:4px 0; margin-top:4px;">*** VENTA CANCELADA ***</div>
 @endif
@@ -129,7 +129,7 @@ hr.dotted{border-top:1px dashed #000}
 </div>
 @endif
 <div class="gr">Gracias por su preferencia!</div>
-<div>{{ $venta->created_at->format('d/m/Y H:i') }}</div>
+<div>{{ $venta->created_at?->format('d/m/Y H:i') }}</div>
 </div>
 <div id="btPrintBtn" style="display:none; text-align:center; margin:10px 0; padding:10px;">
     <button onclick="BTPrintTicket.imprimir()" style="background:#0070e0; color:#fff; border:none; border-radius:8px; padding:12px 20px; font-size:14px; cursor:pointer; font-family:Arial, sans-serif;">
@@ -160,7 +160,7 @@ window.BTPrintTicket = (function() {
         horario: @json($empresa->horario_atencion ?? ''),
         numero_venta: @json($venta->numero_venta),
         cliente: @json($venta->cliente?->nombre_completo ?? 'VENTA GENERAL'),
-        fecha: @json($venta->fecha_venta->format('d/m/Y H:i')),
+        fecha: @json($venta->fecha_venta?->format('d/m/Y H:i')),
         metodo_pago: @json(ucfirst($venta->metodo_pago)),
         vendedor: @json($venta->vendedor->name ?? '—'),
         subtotal: {{ $venta->subtotal }},
