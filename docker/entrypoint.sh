@@ -68,6 +68,10 @@ fi
     echo ""
     echo "LOG_LEVEL=${LOG_LEVEL:-warning}"
     echo "TRUSTED_PROXIES=${TRUSTED_PROXIES}"
+    echo ""
+    echo "# Credenciales del SuperAdmin (panel /superadmin/login)"
+    echo "SUPERADMIN_EMAIL=${SUPERADMIN_EMAIL:-luitechserena@gmail.com}"
+    echo "SUPERADMIN_PASSWORD=${SUPERADMIN_PASSWORD:-password}"
 } > /var/www/html/.env
 
 echo "✓ .env generado correctamente"
@@ -136,6 +140,17 @@ if [[ "$DB_CHECK" == "OK" ]]; then
         echo "⚠ Error en migraciones. Intentando de nuevo con migrar pendientes..."
         runuser -u appuser -- php artisan migrate --force --pretend 2>&1 | head -20 || true
         runuser -u appuser -- php artisan migrate --force 2>&1 || true
+    fi
+
+    # ── Asegurar que el SuperAdmin existe con las credenciales configuradas ──
+    # Esto corrige errores de "credenciales inválidas" cuando la BD fue
+    # restaurada de un backup o la migración de credenciales corrió con
+    # otras variables de entorno.
+    echo "Asegurando existencia del SuperAdmin..."
+    if runuser -u appuser -- php artisan superadmin:reset --force 2>&1; then
+        echo "✓ SuperAdmin verificado/creado"
+    else
+        echo "⚠ No se pudo asegurar el SuperAdmin (revisar credenciales manualmente)"
     fi
 
     # ── Verificar si hay datos existentes ──────────────────────────────
