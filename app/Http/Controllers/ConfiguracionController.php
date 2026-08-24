@@ -40,8 +40,19 @@ class ConfiguracionController extends Controller
             ->orderBy('name')
             ->get();
 
-        // 2. Datos de la empresa
+        // 2. Datos de la empresa (crear una por defecto si no existe,
+        //    p.ej. tras una restauración parcial que dejó la tabla vacía)
         $empresa = Configuracion::empresa();
+        if (!$empresa) {
+            $empresa = Configuracion::create([
+                'nombre_tienda' => 'Mi Tienda',
+                'pais'          => 'CL',
+                'igv'           => 19,
+                'moneda'        => 'CLP',
+                'simbolo_moneda'=> '$',
+                'tenant_id'     => $tenantId,
+            ]);
+        }
 
         // 3. Estadísticas del sistema (solo de este tenant)
         $stats = [

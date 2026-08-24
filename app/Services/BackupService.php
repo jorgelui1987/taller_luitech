@@ -193,7 +193,10 @@ class BackupService
             $lines = [];
             foreach ($chunk as $row) {
                 $vals = array_map(
-                    fn ($v) => $v === null ? 'NULL' : $pdo->quote((string) $v),
+                    fn ($v) => $v === null ? 'NULL'
+                        // PostgreSQL devuelve las columnas boolean como PHP bool:
+                        // (string) false === '' y PostgreSQL rechaza '' como boolean.
+                        : (is_bool($v) ? ($v ? 'TRUE' : 'FALSE') : $pdo->quote((string) $v)),
                     array_values($row)
                 );
                 $lines[] = '(' . implode(', ', $vals) . ')';
