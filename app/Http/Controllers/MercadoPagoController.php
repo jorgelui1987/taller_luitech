@@ -23,9 +23,9 @@ class MercadoPagoController extends Controller
             }
 
             return back()->with('mercadopago', $pago);
-        } catch (\Exception $e) {
-            Log::error('Error generando pago Mercado Pago: ' . $e->getMessage());
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Error generando pago Mercado Pago: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', 'Error Mercado Pago (QR): ' . $e->getMessage());
         }
     }
 
@@ -42,9 +42,9 @@ class MercadoPagoController extends Controller
             }
 
             return back()->with('point', $pago);
-        } catch (\Exception $e) {
-            Log::error('Error cobrando con Point: ' . $e->getMessage());
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Error cobrando con Point: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', 'Error Point: ' . $e->getMessage());
         }
     }
 
@@ -61,9 +61,9 @@ class MercadoPagoController extends Controller
             }
 
             return back()->with('mercadopago_reparacion', $pago);
-        } catch (\Exception $e) {
-            Log::error('Error generando pago reparacion Mercado Pago: ' . $e->getMessage());
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Error generando pago reparacion Mercado Pago: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', 'Error Mercado Pago (QR reparación): ' . $e->getMessage());
         }
     }
 
@@ -80,9 +80,9 @@ class MercadoPagoController extends Controller
             }
 
             return back()->with('point_reparacion', $pago);
-        } catch (\Exception $e) {
-            Log::error('Error cobrando reparación con Point: ' . $e->getMessage());
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Error cobrando reparación con Point: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', 'Error Point (reparación): ' . $e->getMessage());
         }
     }
 
@@ -199,8 +199,8 @@ class MercadoPagoController extends Controller
                     }
                 }
             }
-        } catch (\Exception $e) {
-            Log::error('Error procesando webhook Mercado Pago: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Error procesando webhook Mercado Pago: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
         return $response;
