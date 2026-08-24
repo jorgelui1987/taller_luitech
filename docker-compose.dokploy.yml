@@ -42,6 +42,10 @@ services:
       - SESSION_SECURE_COOKIE=true
       - TRUSTED_PROXIES=*
       - LOG_LEVEL=warning
+      # Credenciales del SuperAdmin (panel /superadmin/login)
+      # Definir en Dokploy → Environment; si no, usa estos valores por defecto.
+      - SUPERADMIN_EMAIL=${SUPERADMIN_EMAIL:-luitechserena@gmail.com}
+      - SUPERADMIN_PASSWORD=${SUPERADMIN_PASSWORD:-password}
     restart: unless-stopped
     networks:
       - taller-luitech-network
