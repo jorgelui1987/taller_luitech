@@ -146,14 +146,22 @@ if [[ "$DB_CHECK" == "OK" ]]; then
         echo "⚠ Se detectaron datos existentes. Se omiten seeders y restauración."
 
     elif [ "$HAY_DATOS" == "NO" ]; then
-        echo "Base de datos vacía. Buscando backup más reciente para restaurar..."
+        echo "Base de datos vacía. Buscando backup para restaurar..."
 
-        # Buscar el backup .sql más reciente en storage/app/backups/
-        BACKUP_DIR="/var/www/html/storage/app/backups"
-        BACKUP_RECIENTE=$(ls -t "$BACKUP_DIR"/*.sql 2>/dev/null | head -1 || true)
+        # ⚠️ IMPORTANTE: En PostgreSQL NO se restauran backups .sql de MySQL.
+        # Los dumps de MySQL usan backticks (`) y SET FOREIGN_KEY_CHECKS,
+        # sintaxis incompatible con PostgreSQL que corrompe la base de datos
+        # (causa conocida de errores en garantia_detalles y login).
+        # PostgreSQL solo recibe migraciones y seeders de Laravel.
+        if [ "$DB_CONNECTION" == "pgsql" ] || [ "$DB_CONNECTION" == "postgresql" ]; then
+            echo "ℹ Base de datos PostgreSQL: se omiten backups MySQL por incompatibilidad de sintaxis."
+        else
+            # Buscar el backup .sql más reciente en storage/app/backups/
+            BACKUP_DIR="/var/www/html/storage/app/backups"
+            BACKUP_RECIENTE=$(ls -t "$BACKUP_DIR"/*.sql 2>/dev/null | head -1 || true)
 
-        if [ -n "$BACKUP_RECIENTE" ] && [ -f "$BACKUP_RECIENTE" ]; then
-            echo "✓ Backup encontrado: $(basename "$BACKUP_RECIENTE")"
+            if [ -n "$BACKUP_RECIENTE" ] && [ -f "$BACKUP_RECIENTE" ]; then
+                echo "✓ Backup encontrado: $(basename "$BACKUP_RECIENTE")"
             echo "Restaurando backup automáticamente..."
 
             # Extraer las sentencias SQL y ejecutarlas
@@ -195,8 +203,9 @@ if [[ "$DB_CHECK" == "OK" ]]; then
                 echo "⚠ Error al restaurar el backup: $RESTORE_RESULT"
                 echo "  Se continuará sin restaurar."
             fi
-        else
-            echo "⚠ No se encontraron backups en storage/app/backups/"
+            else
+                echo "⚠ No se encontraron backups en storage/app/backups/"
+            fi
         fi
 
         # ── Seeders SOLO si no hay datos después del intento de restauración ──
