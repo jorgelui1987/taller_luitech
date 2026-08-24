@@ -287,8 +287,16 @@ class DashboardController extends Controller
     private function ventasPorMes($query)
     {
         $driver = DB::connection()->getDriverName();
-        $yearExpr = $driver === 'pgsql' ? "EXTRACT(YEAR FROM fecha_venta)" : "YEAR(fecha_venta)";
-        $monthExpr = $driver === 'pgsql' ? "EXTRACT(MONTH FROM fecha_venta)" : "MONTH(fecha_venta)";
+        $yearExpr = match ($driver) {
+            'pgsql'  => "EXTRACT(YEAR FROM fecha_venta)",
+            'sqlite' => "strftime('%Y', fecha_venta)",
+            default  => "YEAR(fecha_venta)",
+        };
+        $monthExpr = match ($driver) {
+            'pgsql'  => "EXTRACT(MONTH FROM fecha_venta)",
+            'sqlite' => "strftime('%m', fecha_venta)",
+            default  => "MONTH(fecha_venta)",
+        };
 
         return (clone $query)
             ->select(
