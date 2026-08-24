@@ -81,6 +81,17 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 chown -R appuser:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 
+# ── Asegurar que el log de Laravel sea escribible ───────────────────
+# Crítico: si laravel.log no se puede escribir, CUALQUIER excepción menor
+# escala a un error 500 (el handler no puede registrar el error).
+# El volumen persistente puede contener el log con dueño/grupo distintos
+# entre despliegues (www-data de Apache vs appuser de artisan/cron).
+mkdir -p /var/www/html/storage/logs
+touch /var/www/html/storage/logs/laravel.log
+chown appuser:www-data /var/www/html/storage/logs/laravel.log 2>/dev/null || true
+chmod 664 /var/www/html/storage/logs/laravel.log 2>/dev/null || true
+chmod 775 /var/www/html/storage/logs 2>/dev/null || true
+
 # ── Limpiar caché (como appuser no-root) ────────────────────────────
 echo "Limpiando cachés..."
 runuser -u appuser -- php artisan config:clear 2>/dev/null || true
