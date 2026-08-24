@@ -46,6 +46,9 @@ services:
       # Definir en Dokploy → Environment; si no, usa estos valores por defecto.
       - SUPERADMIN_EMAIL=${SUPERADMIN_EMAIL:-luitechserena@gmail.com}
       - SUPERADMIN_PASSWORD=${SUPERADMIN_PASSWORD:-password}
+      # Token de emergencia para /recuperar-superadmin/{token}
+      # Vacío = herramienta de recuperación DESACTIVADA (recomendado en operación normal).
+      - SUPERADMIN_RECOVERY_TOKEN=${SUPERADMIN_RECOVERY_TOKEN:-}
     restart: unless-stopped
     networks:
       - taller-luitech-network

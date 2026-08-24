@@ -35,7 +35,10 @@ class SuperAdminRecoveryController extends Controller
     public function show(string $token)
     {
         if (!$this->tokenValido($token)) {
-            abort(404);
+            // Página explicativa con estado 404: permite distinguir si el
+            // código actual está desplegado (muestra instrucciones) o si el
+            // servidor aún corre una versión antigua (404 genérico del server).
+            return response()->view('superadmin.recuperar-desactivada', [], 404);
         }
 
         $diagnostico = $this->diagnosticar();
@@ -49,7 +52,7 @@ class SuperAdminRecoveryController extends Controller
     public function reset(Request $request, string $token)
     {
         if (!$this->tokenValido($token)) {
-            abort(404);
+            return response()->view('superadmin.recuperar-desactivada', [], 404);
         }
 
         $validated = $request->validate([
