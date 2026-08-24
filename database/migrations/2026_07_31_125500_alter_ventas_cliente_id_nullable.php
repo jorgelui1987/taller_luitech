@@ -9,10 +9,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Compatible con MySQL/MariaDB y PostgreSQL
+        // Compatible con PostgreSQL, MySQL/MariaDB y SQLite
         $driver = DB::connection()->getDriverName();
         if ($driver === 'pgsql') {
             DB::statement('ALTER TABLE ventas ALTER COLUMN cliente_id DROP NOT NULL');
+        } elseif ($driver === 'sqlite') {
+            Schema::table('ventas', function (Blueprint $table) {
+                $table->unsignedBigInteger('cliente_id')->nullable()->change();
+            });
         } else {
             // MySQL / MariaDB
             DB::statement('ALTER TABLE ventas MODIFY cliente_id BIGINT UNSIGNED NULL');
@@ -24,6 +28,10 @@ return new class extends Migration
         $driver = DB::connection()->getDriverName();
         if ($driver === 'pgsql') {
             DB::statement('ALTER TABLE ventas ALTER COLUMN cliente_id SET NOT NULL');
+        } elseif ($driver === 'sqlite') {
+            Schema::table('ventas', function (Blueprint $table) {
+                $table->unsignedBigInteger('cliente_id')->nullable(false)->change();
+            });
         } else {
             // MySQL / MariaDB
             DB::statement('ALTER TABLE ventas MODIFY cliente_id BIGINT UNSIGNED NOT NULL');

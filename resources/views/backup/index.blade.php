@@ -190,6 +190,13 @@
     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
 </div>
 @endif
+@if(session('warning'))
+<div class="alert alert-warning alert-dismissible fade show d-flex align-items-start gap-2" style="border-radius:12px;border:none;background:#fef3c7;color:#92400e;">
+    <i class="fas fa-exclamation-triangle fa-lg mt-1"></i>
+    <div style="font-size:13px;line-height:1.7;">{!! session('warning') !!}</div>
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+</div>
+@endif
 
 {{-- ══════════ HERO ══════════ --}}
 <div class="backup-hero">

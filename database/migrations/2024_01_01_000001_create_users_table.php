@@ -13,7 +13,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('rol', ['admin', 'vendedor', 'tecnico'])->default('vendedor');
+            // 'superadmin' incluido desde el inicio para que instalaciones
+            // nuevas (y los tests) coincidan con la migración
+            // 2026_07_14_114613_add_superadmin_role_to_users.
+            $table->enum('rol', ['admin', 'vendedor', 'tecnico', 'superadmin'])->default('vendedor');
             $table->string('telefono')->nullable();
             $table->string('foto')->nullable();
             $table->boolean('activo')->default(true);
