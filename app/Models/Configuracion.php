@@ -34,6 +34,7 @@ class Configuracion extends Model
         'mercadopago_public_key',
         'mercadopago_access_token',
         'mercadopago_device_id',
+        'mercadopago_webhook_secret',
         'zona_horaria',
         'terminos_garantia',
         'instagram',

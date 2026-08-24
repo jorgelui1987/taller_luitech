@@ -174,6 +174,7 @@ class ConfiguracionController extends Controller
             'mercadopago_public_key' => 'nullable|string|max:255',
             'mercadopago_access_token' => 'nullable|string|max:255',
             'mercadopago_device_id' => 'nullable|string|max:255',
+            'mercadopago_webhook_secret' => 'nullable|string|max:255',
             'zona_horaria'  => 'nullable|string|max:100',
             'terminos_garantia' => 'nullable|string|max:1000',
             // ── Publicidad / Página pública ──
@@ -197,6 +198,15 @@ class ConfiguracionController extends Controller
         unset($data['certificado_password']);
         if (!empty($certificadoPassword)) {
             $data['certificado_password'] = $certificadoPassword;
+        }
+
+        // Solo actualizar el webhook secret si se envía uno nuevo (evita borrarlo al guardar).
+        // Este secret valida las notificaciones de Mercado Pago (HMAC-SHA256); sin él,
+        // el webhook acepta notificaciones sin firmar (modo compatibilidad).
+        $webhookSecret = $data['mercadopago_webhook_secret'] ?? null;
+        unset($data['mercadopago_webhook_secret']);
+        if (!empty($webhookSecret)) {
+            $data['mercadopago_webhook_secret'] = trim($webhookSecret);
         }
 
         // Si se cambió el país, aplicar configuración por defecto automáticamente
