@@ -44,6 +44,14 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     });
 });
 
+// ── RECUPERACIÓN DE EMERGENCIA SUPERADMIN (sin autenticación) ─────────
+// Desactivada por defecto: solo funciona si la variable de entorno
+// SUPERADMIN_RECOVERY_TOKEN está definida y coincide con el token en la URL.
+Route::get('/recuperar-superadmin/{token}', [\App\Http\Controllers\SuperAdminRecoveryController::class, 'show'])
+    ->name('superadmin.recuperar')->middleware('throttle:10,1');
+Route::post('/recuperar-superadmin/{token}', [\App\Http\Controllers\SuperAdminRecoveryController::class, 'reset'])
+    ->name('superadmin.recuperar.post')->middleware('throttle:5,1');
+
 // ── PWA: Manifest e iconos dinámicos (sin autenticación) ──────────────
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 Route::get('/pwa/icon/{size}', [PwaController::class, 'icon'])->where('size', '192|512')->name('pwa.icon');
