@@ -56,7 +56,7 @@
                                 <td class="text-center">{{ $det->cantidad_recibida }}</td>
                                 <td class="text-center">{{ $det->pendiente_recibir }}</td>
                                 <td class="text-end">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->precio_unitario, 2) }}</td>
-                                <td class="text-end">{{ $det->descuento > 0 ? '{{ $empresa->simbolo_moneda ?? '$' }} '.number_format($det->descuento, 2) : '—' }}</td>
+<td class="text-end">{{ $det->descuento > 0 ? ($empresa->simbolo_moneda ?? '$').' '.number_format($det->descuento, 2) : '—' }}</td>
                                 <td class="text-end" style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($det->subtotal, 2) }}</td>
                             </tr>
                             @endforeach

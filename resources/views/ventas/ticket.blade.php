@@ -124,7 +124,7 @@ hr.dotted{border-top:1px dashed #000}
 @if(($empresa->whatsapp ?? '') || ($empresa->instagram ?? '') || ($empresa->facebook ?? '') || ($empresa->horario_atencion ?? ''))
 <div class="contacto">
 @if($empresa->whatsapp ?? '')WhatsApp: {{ $empresa->whatsapp }}<br>@endif
-@if($empresa->instagram ?? '')IG: {{ $empresa->instagram }}@endif@if(($empresa->instagram ?? '') && ($empresa->facebook ?? '')) | @endif@if($empresa->facebook ?? '')FB: {{ $empresa->facebook }}@endif
+@if($empresa->instagram ?? '')IG: {{ $empresa->instagram }} @endif @if(($empresa->instagram ?? '') && ($empresa->facebook ?? '')) | @endif @if($empresa->facebook ?? '')FB: {{ $empresa->facebook }} @endif
 @if($empresa->horario_atencion ?? '')<br>Horario: {{ $empresa->horario_atencion }}@endif
 </div>
 @endif

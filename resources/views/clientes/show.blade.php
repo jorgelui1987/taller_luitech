@@ -260,7 +260,7 @@
                                             @php $label=str_replace('_',' ',ucfirst($r->estado)); @endphp
                                             <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 8px; font-size:11px;">{{ $label }}</span>
                                         </td>
-                                        <td style="font-weight:600;">{{ $r->costo_final > 0 ? '{{ $empresa->simbolo_moneda ?? '$' }} '.number_format($r->costo_final,2) : '—' }}</td>
+<td style="font-weight:600;">{{ $r->costo_final > 0 ? ($empresa->simbolo_moneda ?? '$').' '.number_format($r->costo_final,2) : '—' }}</td>
                                         <td><a href="{{ route('reparaciones.show', $r) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
                                     </tr>
                                     @endforeach
