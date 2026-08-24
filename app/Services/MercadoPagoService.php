@@ -130,7 +130,9 @@ class MercadoPagoService
                 'config'            => [
                     'point' => [
                         'terminal_id'       => $config->mercadopago_device_id,
-                        'print_on_terminal' => 'no_ticket',
+                        // El Point imprime su comprobante de pago;
+                        // el CRM imprime su propio ticket por separado.
+                        'print_on_terminal' => 'seller_ticket',
                     ],
                     'payment_method' => [
                         'default_type' => 'credit_card',
@@ -263,7 +265,9 @@ class MercadoPagoService
                 'config'            => [
                     'point' => [
                         'terminal_id'       => $config->mercadopago_device_id,
-                        'print_on_terminal' => 'no_ticket',
+                        // El Point imprime su comprobante de pago;
+                        // el CRM imprime su propio ticket por separado.
+                        'print_on_terminal' => 'seller_ticket',
                     ],
                     'payment_method' => [
                         'default_type' => 'credit_card',
