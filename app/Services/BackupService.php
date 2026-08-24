@@ -82,7 +82,13 @@ class BackupService
             $sql .= "-- --------------------------------------------------------------\n";
             $sql .= "-- Tabla: {$tabla}\n";
             $sql .= "-- --------------------------------------------------------------\n";
-            $sql .= "DROP TABLE IF EXISTS {$t};\n";
+
+            // PostgreSQL verifica dependencias de FK al hacer DROP aunque las
+            // triggers estén desactivadas: CASCADE elimina también las FKs de
+            // otras tablas que apuntan a esta, sin importar el orden.
+            $sql .= $driver === 'pgsql'
+                ? "DROP TABLE IF EXISTS {$t} CASCADE;\n"
+                : "DROP TABLE IF EXISTS {$t};\n";
 
             $sql .= $driver === 'pgsql'
                 ? $this->generarCreatePostgres($pdo, $tabla)
@@ -215,6 +221,7 @@ class BackupService
      */
     public function restaurarDesdeContenido(string $contenido): array
     {
+        $driver = DB::connection()->getDriverName();
         $sentencias = $this->dividirSentencias($contenido);
 
         if (empty($sentencias)) {
@@ -233,6 +240,15 @@ class BackupService
 
         try {
             foreach ($sentencias as $stmt) {
+                // PostgreSQL: agregar CASCADE a los DROP TABLE que no lo traigan.
+                // Los backups antiguos no lo incluyen y el DROP falla cuando otra
+                // tabla tiene una FK hacia la tabla a eliminar.
+                if ($driver === 'pgsql'
+                    && preg_match('/^DROP TABLE IF EXISTS\s+(.+)$/i', $stmt, $m)
+                    && !str_contains(strtoupper($stmt), 'CASCADE')) {
+                    $stmt = 'DROP TABLE IF EXISTS ' . trim($m[1]) . ' CASCADE';
+                }
+
                 $upper = strtoupper($stmt);
 
                 $bloqueada = false;
@@ -263,6 +279,29 @@ class BackupService
                     ]);
                     if (count($stats['errores']) < self::MAX_ERRORES_REPORTE) {
                         $stats['errores'][] = mb_substr($e->getMessage(), 0, 160);
+                    }
+                }
+            }
+
+            // PostgreSQL: reajustar las secuencias de los IDs tras restaurar
+            // filas con IDs explícitos. Sin esto, la secuencia sigue en 1 y el
+            // próximo INSERT duplica la clave primaria.
+            if ($driver === 'pgsql') {
+                $tablas = DB::select(
+                    "SELECT table_name FROM information_schema.tables
+                     WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
+                );
+                foreach ($tablas as $t) {
+                    $tabla = $t->table_name;
+                    try {
+                        if ($tabla !== 'migrations' && Schema::hasColumn($tabla, 'id')) {
+                            DB::statement(
+                                "SELECT setval(pg_get_serial_sequence('{$tabla}', 'id'), "
+                                . "COALESCE((SELECT MAX(id) FROM \"{$tabla}\"), 0) + 1, false)"
+                            );
+                        }
+                    } catch (\Throwable) {
+                        // Tablas sin secuencia (sin serial id): omitir
                     }
                 }
             }
