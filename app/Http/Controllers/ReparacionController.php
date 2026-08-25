@@ -384,6 +384,21 @@ class ReparacionController extends Controller
     }
 
     /**
+     * Orden de servicio profesional en MEDIA HOJA CARTA (impresora normal).
+     * Un solo comprobante ocupando la mitad superior de la hoja.
+     */
+    public function printTicketCarta(Reparacion $reparacion)
+    {
+        $reparacion->load(['cliente', 'tecnico']);
+
+        // Obtener URL de la mini página web
+        $tenant = $reparacion->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+
+        return view('reparaciones.ticket-carta', compact('reparacion', 'urlMiniWeb'));
+    }
+
+    /**
      * Genera el ticket de reparación como texto formateado y abre WhatsApp.
      */
     public function enviarWhatsApp(Reparacion $reparacion)
