@@ -102,7 +102,7 @@ td.val{font-weight:600}
                 <div class="fiscal-linea">
                     @if($empresa?->rut_emisor ?? $empresa?->ruc){{ ($empresa?->pais ?? '') === 'CL' ? 'R.U.T.' : 'R.U.C.' }}: {{ $empresa->rut_emisor ?? $empresa->ruc }}@endif
                     @if($empresa?->giro) · {{ $empresa->giro }}@endif
-                    @if($empresa?->direccion) · {{ $empresa->direccion }}@if($empresa?->comuna_ciudad){{ ', '.$empresa->comuna_ciudad }}@endif@endif
+                @if($empresa?->direccion) · {{ $empresa->direccion }} @if($empresa?->comuna_ciudad){{ ', '.$empresa->comuna_ciudad }} @endif @endif
                 </div>
             </div>
         </div>
