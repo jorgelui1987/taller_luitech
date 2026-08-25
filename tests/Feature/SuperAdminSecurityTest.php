@@ -413,4 +413,105 @@ class SuperAdminSecurityTest extends TestCase
 
         $this->assertDatabaseMissing('users', ['email' => 'debil@test.com']);
     }
+
+    // ------------------------------------------------------------------
+    // Backups del SuperAdmin (/superadmin/backups)
+    // ------------------------------------------------------------------
+
+    private function crearSuperAdmin(): User
+    {
+        return User::create([
+            'name' => 'Super Admin Test',
+            'email' => 'sa-backups@test.com',
+            'password' => Hash::make('PasswordSecreta99'),
+            'rol' => 'superadmin',
+            'activo' => true,
+            'tenant_id' => null,
+        ]);
+    }
+
+    private function crearArchivoBackup(string $nombre): string
+    {
+        $dir = storage_path('app/backups');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        $ruta = $dir . '/' . $nombre;
+        file_put_contents($ruta, "-- Backup de prueba\nSELECT 1;\n");
+
+        return $ruta;
+    }
+
+    protected function borrarBackupsPrueba(): void
+    {
+        foreach (glob(storage_path('app/backups') . '/backup_test_*.sql') ?: [] as $f) {
+            @unlink($f);
+        }
+    }
+
+    public function test_superadmin_puede_ver_lista_de_backups(): void
+    {
+        $this->borrarBackupsPrueba();
+        $this->crearArchivoBackup('backup_test_2026-01-01.sql');
+
+        $response = $this->actingAs($this->crearSuperAdmin())->get('/superadmin/backups');
+
+        $response->assertStatus(200);
+        $response->assertSee('backup_test_2026-01-01.sql');
+
+        $this->borrarBackupsPrueba();
+    }
+
+    public function test_superadmin_puede_descargar_backup(): void
+    {
+        $this->borrarBackupsPrueba();
+        $ruta = $this->crearArchivoBackup('backup_test_2026-01-02.sql');
+
+        $response = $this->actingAs($this->crearSuperAdmin())
+            ->get('/superadmin/backups/descargar/backup_test_2026-01-02.sql');
+
+        // BinaryFileResponse: el contenido se transmite por stream,
+        // se verifica la cabecera de descarga y el tamaño declarado.
+        $response->assertStatus(200);
+        $this->assertStringContainsString(
+            'backup_test_2026-01-02.sql',
+            (string) $response->headers->get('Content-Disposition')
+        );
+        $this->assertEquals(filesize($ruta), (int) $response->headers->get('Content-Length'));
+
+        $this->borrarBackupsPrueba();
+    }
+
+    public function test_descarga_rechaza_path_traversal(): void
+    {
+        $this->actingAs($this->crearSuperAdmin())
+            ->get('/superadmin/backups/descargar/' . rawurlencode('../../.env'))
+            ->assertStatus(404);
+    }
+
+    public function test_descarga_rechaza_archivos_no_sql(): void
+    {
+        $this->actingAs($this->crearSuperAdmin())
+            ->get('/superadmin/backups/descargar/cualquier.txt')
+            ->assertStatus(404);
+    }
+
+    public function test_usuario_normal_no_accede_a_backups_superadmin(): void
+    {
+        $usuario = User::create([
+            'name' => 'Admin Tenant',
+            'email' => 'admin-backups@test.com',
+            'password' => Hash::make('PasswordSecreta99'),
+            'rol' => 'admin',
+            'activo' => true,
+            'tenant_id' => 1,
+        ]);
+
+        $this->actingAs($usuario)->get('/superadmin/backups')->assertForbidden();
+    }
+
+    public function test_backups_requiere_sesion(): void
+    {
+        $this->get('/superadmin/backups')->assertRedirect();
+    }
 }

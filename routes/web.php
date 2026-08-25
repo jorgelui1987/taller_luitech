@@ -38,6 +38,10 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::get('/tenants/{id}/usuarios', [SuperAdminController::class, 'tenantUsers'])->name('tenants.users');
         Route::post('/usuarios/{usuario}/cambiar-password', [SuperAdminController::class, 'changeUserPassword'])->name('usuarios.change-password')->middleware('throttle:10,1');
 
+        // Backups (solo listar y descargar; restaurar/resetear queda en el panel admin)
+        Route::get('/backups', [SuperAdminController::class, 'backups'])->name('backups');
+        Route::get('/backups/descargar/{nombre}', [SuperAdminController::class, 'descargarBackup'])->name('backups.descargar');
+
         // Gestión de precios de planes
         Route::get('/planes-precios', [SuperAdminController::class, 'planPreciosIndex'])->name('planes-precios');
         Route::put('/planes-precios/{planPrecio}', [SuperAdminController::class, 'planPreciosUpdate'])->name('planes-precios.update');

@@ -439,4 +439,48 @@ class SuperAdminController extends Controller
         return redirect()->route('superadmin.planes-precios')
             ->with('success', "Precio del plan {$planPrecio->nombre} actualizado correctamente.");
     }
+
+    // ─── Backups (solo lectura y descarga) ──────────────────────────────
+
+    /**
+     * Lista los archivos de backup disponibles para descarga.
+     * El superadmin NO puede restaurar ni resetear desde aquí: eso se
+     * restringe al panel admin de cada empresa para evitar accidentes.
+     */
+    public function backups()
+    {
+        $backupDir = storage_path('app/backups');
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        $archivos = glob($backupDir . '/*.sql') ?: [];
+        $backups = [];
+
+        foreach ($archivos as $archivo) {
+            $backups[] = [
+                'nombre'  => basename($archivo),
+                'tamanio' => filesize($archivo),
+                'fecha'   => \Carbon\Carbon::createFromTimestamp(filemtime($archivo)),
+            ];
+        }
+
+        usort($backups, fn ($a, $b) => $b['fecha'] <=> $a['fecha']);
+
+        return view('superadmin.backups', compact('backups'));
+    }
+
+    /**
+     * Descarga un archivo de backup. Solo acepta nombres simples terminados
+     * en .sql (bloquea path traversal como ../../.env).
+     */
+    public function descargarBackup(string $nombre)
+    {
+        abort_unless(basename($nombre) === $nombre && str_ends_with($nombre, '.sql'), 404, 'Archivo no encontrado.');
+
+        $ruta = storage_path('app/backups/' . $nombre);
+        abort_unless(file_exists($ruta), 404, 'Archivo no encontrado.');
+
+        return response()->download($ruta);
+    }
 }

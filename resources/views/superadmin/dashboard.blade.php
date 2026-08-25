@@ -13,6 +13,7 @@
             <div class="ms-auto">
                 <a href="{{ route('superadmin.tenants') }}" class="btn btn-outline-light btn-sm me-2">Tenants</a>
                 <a href="{{ route('superadmin.planes-precios') }}" class="btn btn-outline-light btn-sm me-2">Precios</a>
+                <a href="{{ route('superadmin.backups') }}" class="btn btn-outline-light btn-sm me-2">Backups</a>
                 <a href="{{ route('superadmin.logout') }}" class="btn btn-outline-light btn-sm"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar Sesión</a>
                 <form id="logout-form" action="{{ route('superadmin.logout') }}" method="POST" class="d-none">@csrf</form>
