@@ -18,17 +18,22 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Boleta {{ $venta->numero_venta }} — Media carta</title>
+<title>Boleta {{ $venta->numero_venta }} — 2 por hoja carta</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:16px;display:flex;flex-direction:column;align-items:center}
 .aviso{background:#ffd54f;color:#333;padding:8px 16px;border-radius:8px;font-size:13px;text-align:center;max-width:800px;margin-bottom:14px}
 
-/* ═══ BOLETA MEDIA CARTA: 21.6 cm ancho × 13.95 cm alto ═══
-   Se imprime en la MITAD SUPERIOR de una hoja carta completa
-   (página carta vertical 21.6 × 27.94 cm). La mitad inferior
-   queda en blanco para cortar y reutilizar → ahorras papel. */
-.boleta{width:216mm;height:139.5mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.45);padding:5mm 6mm;display:flex;flex-direction:column;overflow:hidden}
+/* ═══ HOJA CARTA VERTICAL (216 × 279.4 mm) = 2 BOLETAS DE MEDIA CARTA ═══
+   Cada boleta mide 216 × 139.4 mm. Se imprimen las 2 copias juntas
+   (Cliente arriba, Local abajo) + línea de corte al medio.
+   NUNCA se reintroducen medias hojas en la impresora → sin escalados.
+   Se deja holgura para que todo quepa en UNA sola página. */
+.boleta{width:216mm;height:139.4mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.45);padding:5mm 6mm;display:flex;flex-direction:column;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+
+/* Línea de corte punteada entre las dos boletas */
+.linea-corte{width:216mm;height:0;border-top:1.5px dashed #b5b5b5;position:relative;flex-shrink:0}
+.linea-corte .tijera{position:absolute;left:2mm;top:-9px;background:#525659;color:#ddd;font-size:12px;line-height:1;padding:0 2mm}
 
 /* ═══ ENCABEZADO ═══ */
 .encabezado{display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #1a1a1a;padding-bottom:2.5mm}
@@ -39,6 +44,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:16px;dis
 .doc-bloque{text-align:right}
 .doc-tipo{display:inline-block;background:#1a1a1a;color:#fff;font-size:8px;font-weight:700;letter-spacing:2px;padding:1mm 4mm;border-radius:3px}
 .doc-numero{font-size:16px;font-weight:800;margin-top:.5mm;letter-spacing:.5px}
+.ejemplar{display:inline-block;font-size:7px;font-weight:700;letter-spacing:1.5px;color:#1e3a5f;border:1px solid #1e3a5f;border-radius:3px;padding:.4mm 2mm;margin-top:1mm;text-transform:uppercase}
 .cancelada{font-size:11px;font-weight:800;border:2px solid #000;padding:1mm 3mm;margin-top:1mm;display:inline-block;letter-spacing:1px}
 
 /* ═══ CUERPO EN 2 COLUMNAS ═══ */
@@ -77,17 +83,17 @@ tr:nth-child(even) td{background:#fafbfc}
  body{display:block;background:#fff;padding:0;margin:0}
  .aviso,.btn-print{display:none!important}
  .boleta{box-shadow:none}
- /* Página = HOJA CARTA COMPLETA vertical (igual al papel físico,
-    así la impresora NO escala nada). La boleta ocupa solo la
-    mitad superior; la inferior queda en blanco para reutilizar. */
+ /* Al imprimir la tijera desaparece; la línea punteada queda como guía de corte */
+ .linea-corte .tijera{background:#fff;color:#fff}
  @page{size:216mm 279.4mm;margin:0}
 }
 </style>
 </head>
 <body>
 
-<div class="aviso">📄 <b>1 sola boleta</b> tamaño <b>MEDIA CARTA</b> (21.6 × 13.97 cm) impresa en la <b>mitad superior</b> de la hoja. La mitad inferior queda en blanco: córtala y reutilízala para la próxima boleta. El botón azul no se imprime.</div>
+<div class="aviso">📄 Formato <b>CARTA VERTICAL</b> · <b>2 boletas idénticas por hoja</b> (media carta c/u: 21.6 × 13.94 cm): <b>Ejemplar Cliente</b> arriba y <b>Ejemplar Local</b> abajo. Imprime UNA vez, corta por la línea punteada. <b>No reintroduzcas medias hojas</b> en la impresora.</div>
 
+@foreach(['Ejemplar Cliente', 'Ejemplar Local'] as $copiaLabel)
 <div class="boleta">
 
     <!-- ═══ ENCABEZADO ═══ -->
@@ -106,7 +112,8 @@ tr:nth-child(even) td{background:#fafbfc}
         <div class="doc-bloque">
             <span class="doc-tipo">BOLETA DE VENTA</span>
             <div class="doc-numero">N° {{ $venta->numero_venta }}</div>
-            @if($venta->estado === 'cancelada')<span class="cancelada">*** CANCELADA ***</span>@endif
+            <span class="ejemplar">{{ $copiaLabel }}</span>
+            @if($venta->estado === 'cancelada')<br><span class="cancelada">*** CANCELADA ***</span>@endif
         </div>
     </div>
 
@@ -188,8 +195,12 @@ tr:nth-child(even) td{background:#fafbfc}
     </div>
 
 </div>
+@if(!$loop->last)
+<div class="linea-corte"><span class="tijera">✂</span></div>
+@endif
+@endforeach
 
-<button class="btn-print" onclick="window.print()">🖨️ Imprimir boleta (mitad de hoja carta)</button>
+<button class="btn-print" onclick="window.print()">🖨️ Imprimir 2 boletas en 1 hoja carta</button>
 
 <script>window.onload=function(){window.print()};window.onafterprint=function(){window.close()};</script>
 </body>
