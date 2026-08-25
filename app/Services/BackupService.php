@@ -66,17 +66,7 @@ class BackupService
             ? self::SQL_PGSQL_REPLICA . ";\n\n"
             : "SET NAMES utf8mb4;\n" . self::SQL_MYSQL_FK_OFF . ";\n\n";
 
-        // PostgreSQL no tiene la función DATABASE() (es de MySQL)
-        $queryTablas = $driver === 'pgsql'
-            ? "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
-            : "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()";
-
-        $tablas = array_map(
-            fn (array $fila) => $fila[0],
-            $pdo->query($queryTablas)->fetchAll(PDO::FETCH_NUM)
-        );
-
-        foreach ($tablas as $tabla) {
+        foreach ($this->tablasDelMotor() as $tabla) {
             if (in_array($tabla, self::TABLAS_EXCLUIDAS, true)) {
                 continue;
             }
@@ -94,9 +84,7 @@ class BackupService
                 ? "DROP TABLE IF EXISTS {$t} CASCADE;\n"
                 : "DROP TABLE IF EXISTS {$t};\n";
 
-            $sql .= $driver === 'pgsql'
-                ? $this->generarCreatePostgres($pdo, $tabla)
-                : $this->generarCreateMysql($pdo, $tabla);
+            $sql .= $this->generarCreateSegunMotor($pdo, $driver, $tabla);
 
             $sql .= $this->generarDatosTabla($pdo, $driver, $tabla);
         }
@@ -106,6 +94,113 @@ class BackupService
             : self::SQL_MYSQL_FK_ON . ";\n";
 
         return $sql;
+    }
+
+    /**
+     * Genera un backup PARCIAL con únicamente los datos de una empresa (tenant).
+     *
+     * El archivo resultante contiene los CREATE TABLE de referencia y los INSERT
+     * filtrados por tenant_id. NO incluye sentencias DROP: restaurarlo requiere
+     * procedimiento selectivo (contactar soporte), nunca ejecutarlo directo sobre
+     * la base de datos completa.
+     */
+    public function generarSQLPorTenant(int $tenantId): string
+    {
+        $driver = DB::connection()->getDriverName();
+        $pdo    = DB::connection()->getPdo();
+
+        $tenant  = DB::table('tenants')->where('id', $tenantId)->first();
+        $empresa = $tenant->empresa ?? ("Tenant #{$tenantId}");
+        $ahora   = now()->format('d/m/Y H:i:s');
+
+        $sql  = "-- ==============================================================\n";
+        $sql .= "--  CRM Tienda Celulares — Backup POR EMPRESA\n";
+        $sql .= "--  Empresa   : {$empresa} (ID {$tenantId})\n";
+        $sql .= "--  Generado  : {$ahora}\n";
+        $sql .= "--  Motor     : {$driver}\n";
+        $sql .= "--  ⚠ BACKUP PARCIAL: contiene solo los datos de esta empresa.\n";
+        $sql .= "--  ⚠ NO ejecutar directamente sobre la base de datos completa;\n";
+        $sql .= "--  ⚠ la restauración selectiva debe realizarla soporte técnico.\n";
+        $sql .= "-- ==============================================================\n\n";
+
+        foreach ($this->tablasConColumna('tenant_id') as $tabla) {
+            $total = $pdo->query(
+                'SELECT COUNT(*) FROM ' . $this->quoteIdent($tabla, $driver)
+                . " WHERE tenant_id = {$tenantId}"
+            )->fetch(PDO::FETCH_NUM)[0];
+
+            if ((int) $total === 0) {
+                continue; // Sin datos de esta empresa: omitir tabla
+            }
+
+            $sql .= "-- --------------------------------------------------------------\n";
+            $sql .= "-- Tabla: {$tabla} ({$total} registros de esta empresa)\n";
+            $sql .= "-- --------------------------------------------------------------\n";
+
+            $sql .= $this->generarCreateSegunMotor($pdo, $driver, $tabla);
+
+            $sql .= $this->generarDatosTabla($pdo, $driver, $tabla, "tenant_id = {$tenantId}");
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Lista las tablas de la base de datos actual según el motor.
+     *
+     * @return string[]
+     */
+    private function tablasDelMotor(): array
+    {
+        $driver = DB::connection()->getDriverName();
+
+        $query = match ($driver) {
+            'pgsql'  => "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'",
+            'sqlite' => "SELECT name AS table_name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'",
+            default  => 'SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()',
+        };
+
+        return array_map(
+            fn ($fila) => (string) $fila->table_name,
+            DB::select($query)
+        );
+    }
+
+    /**
+     * Devuelve las tablas que poseen la columna indicada.
+     *
+     * @return string[]
+     */
+    private function tablasConColumna(string $columna): array
+    {
+        return array_values(array_filter(
+            $this->tablasDelMotor(),
+            fn (string $tabla) => Schema::hasColumn($tabla, $columna)
+        ));
+    }
+
+    /**
+     * Genera el CREATE TABLE según el motor de base de datos actual.
+     */
+    private function generarCreateSegunMotor(PDO $pdo, string $driver, string $tabla): string
+    {
+        return match ($driver) {
+            'pgsql'  => $this->generarCreatePostgres($pdo, $tabla),
+            'sqlite' => $this->generarCreateSqlite($pdo, $tabla),
+            default  => $this->generarCreateMysql($pdo, $tabla),
+        };
+    }
+
+    /**
+     * Genera el CREATE TABLE original desde sqlite_master (SQLite).
+     */
+    private function generarCreateSqlite(PDO $pdo, string $tabla): string
+    {
+        $fila = $pdo->query(
+            "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = " . $pdo->quote($tabla)
+        )->fetch(PDO::FETCH_ASSOC);
+
+        return ($fila['sql'] ?? '') . ";\n\n";
     }
 
     private function generarCreateMysql(PDO $pdo, string $tabla): string
@@ -174,10 +269,12 @@ class BackupService
     /**
      * Genera los INSERT de una tabla con lista de columnas explícita.
      */
-    private function generarDatosTabla(PDO $pdo, string $driver, string $tabla): string
+    private function generarDatosTabla(PDO $pdo, string $driver, string $tabla, ?string $where = null): string
     {
-        $rows = $pdo->query('SELECT * FROM ' . $this->quoteIdent($tabla, $driver))
-            ->fetchAll(PDO::FETCH_ASSOC);
+        $consulta = 'SELECT * FROM ' . $this->quoteIdent($tabla, $driver)
+            . ($where !== null ? " WHERE {$where}" : '');
+
+        $rows = $pdo->query($consulta)->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($rows)) {
             return '';

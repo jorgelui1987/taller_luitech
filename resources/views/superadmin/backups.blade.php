@@ -45,6 +45,7 @@
                         <tr>
                             <th>Archivo</th>
                             <th>Tipo</th>
+                            <th>Empresa</th>
                             <th>Tamaño</th>
                             <th>Fecha</th>
                             <th class="text-end">Acción</th>
@@ -56,13 +57,25 @@
                             <td class="font-monospace small">{{ $backup['nombre'] }}</td>
                             <td>
                                 @if(str_starts_with($backup['nombre'], 'backup_auto_'))
-                                    <span class="badge bg-primary">Automático</span>
+                                    <span class="badge bg-primary">Automático global</span>
                                 @elseif(str_starts_with($backup['nombre'], 'pre_reset_'))
                                     <span class="badge bg-warning text-dark">Pre-Reset</span>
                                 @elseif(str_starts_with($backup['nombre'], 'pre_restore_'))
                                     <span class="badge bg-warning text-dark">Pre-Restaurar</span>
                                 @else
                                     <span class="badge bg-success">Manual</span>
+                                @endif
+                            </td>
+                            <td>
+                                @php
+                                    // backup_empresa-{slug}_{fecha}.sql → nombre legible de la empresa
+                                    preg_match('/^backup_empresa-(.+)_\d{4}-\d{2}-\d{2}/', $backup['nombre'], $mEmpresa);
+                                    $empresaNombre = isset($mEmpresa[1]) ? ucfirst(str_replace('-', ' ', $mEmpresa[1])) : '—';
+                                @endphp
+                                @if($empresaNombre !== '—')
+                                    <span class="badge bg-info text-dark">{{ $empresaNombre }}</span>
+                                @else
+                                    <span class="text-muted">Todas</span>
                                 @endif
                             </td>
                             <td>{{ number_format($backup['tamanio'] / 1024, 1) }} KB</td>
@@ -89,6 +102,8 @@
             <strong>💡 Recomendación:</strong> descarga el último backup a tu computadora al menos
             una vez por semana. Los archivos viven solo en el servidor; si el servidor falla,
             solo podrás recuperar lo que hayas descargado.
+            <br><strong>Backups por empresa:</strong> se generan automáticamente cada día junto al
+            global y se conservan 30 días. Contienen únicamente los datos de esa empresa.
         </div>
     </div>
 </body>
