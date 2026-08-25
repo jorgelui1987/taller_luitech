@@ -214,19 +214,32 @@ class BackupController extends Controller
         DB::table('ventas')->delete();
         DB::table('reparaciones')->delete();
 
+        // Las cajas en estado "abierta" quedarían huérfanas (sus ventas fueron
+        // eliminadas): se eliminan para evitar inconsistencias. Los cierres
+        // CERRADOS se conservan como historial contable, excepto en el reset total.
+        if (Schema::hasTable('cierres_caja')) {
+            DB::table('cierres_caja')->where('estado', 'abierta')->delete();
+        }
+
         switch ($tipo) {
             case 'ventas':
-                return 'Ventas y reparaciones eliminadas. Clientes, productos y usuarios conservados.';
+                return 'Ventas y reparaciones eliminadas. Clientes, productos y usuarios conservados. '
+                    . 'Los cierres de caja cerrados se conservan como historial.';
 
             case 'datos':
                 DB::table('clientes')->delete();
                 DB::table('productos')->delete();
-                return 'Datos comerciales eliminados. Usuarios, categorías y marcas conservados.';
+                return 'Datos comerciales eliminados. Usuarios, categorías y marcas conservados. '
+                    . 'Los cierres de caja cerrados se conservan como historial.';
 
             case 'total':
                 DB::table('clientes')->delete();
                 DB::table('productos')->delete();
                 DB::table('users')->where('rol', '!=', 'admin')->delete();
+                // Estado de fábrica: también se elimina el historial de cierres de caja
+                if (Schema::hasTable('cierres_caja')) {
+                    DB::table('cierres_caja')->delete();
+                }
                 return 'Sistema reseteado a estado de fábrica. Solo el administrador fue conservado.';
 
             default:

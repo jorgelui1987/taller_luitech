@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use PDO;
 use RuntimeException;
 
@@ -31,6 +32,9 @@ class BackupService
     private const SQL_PGSQL_DEFAULT = 'SET session_replication_role = DEFAULT';
     private const SQL_MYSQL_FK_OFF  = 'SET FOREIGN_KEY_CHECKS=0';
     private const SQL_MYSQL_FK_ON   = 'SET FOREIGN_KEY_CHECKS=1';
+
+    /** Tablas que deben existir tras una restauración completa y válida. */
+    private const TABLAS_CRITICAS = ['users', 'clientes', 'productos', 'ventas', 'reparaciones'];
 
     /** Comandos que nunca deben ejecutarse durante una restauración. */
     private const COMANDOS_BLOQUEADOS = [
@@ -225,6 +229,12 @@ class BackupService
     public function restaurarDesdeContenido(string $contenido): array
     {
         $driver = DB::connection()->getDriverName();
+
+        // Rechazar de inmediato backups generados en otro motor de base de datos:
+        // restaurar sintaxis MySQL en PostgreSQL (o viceversa) corrompe el esquema
+        // dejando tablas parciales — causa conocida de bases de datos dañadas.
+        $this->validarCompatibilidadMotor($contenido);
+
         $sentencias = $this->dividirSentencias($contenido);
 
         if (empty($sentencias)) {
@@ -313,7 +323,73 @@ class BackupService
             $this->activarFK();
         }
 
+        // Verificación de integridad: si faltan tablas críticas tras la
+        // restauración, el resultado quedó PARCIAL (p. ej. proceso interrumpido
+        // o backup incompleto). Se reporta para que el usuario restaure de nuevo
+        // con un backup íntegro en lugar de quedarse con una BD rota.
+        $faltantes = $this->tablasCriticasFaltantes();
+        if (!empty($faltantes)) {
+            $stats['errores'][] = 'Restauración INCOMPLETA: faltan tablas críticas: '
+                . implode(', ', $faltantes)
+                . '. No uses esta base de datos; restaura nuevamente con un backup completo.';
+            Log::error('Backup restore: restauración incompleta detectada', [
+                'tablas_faltantes' => $faltantes,
+            ]);
+        }
+
         return $stats;
+    }
+
+    /**
+     * Compara el motor declarado en la cabecera del backup con el motor actual.
+     * Los backups generados por generarSQL() incluyen "--  Motor     : {driver}".
+     */
+    private function validarCompatibilidadMotor(string $contenido): void
+    {
+        if (!preg_match('/--\s*Motor\s*:\s*([A-Za-z]+)/i', $contenido, $m)) {
+            return; // Sin cabecera reconocible: no se puede determinar (se permite)
+        }
+
+        $motorBackup = strtolower(trim($m[1]));
+        $motorActual = strtolower(DB::connection()->getDriverName());
+
+        $normalizar = fn (string $m) => match ($m) {
+            'postgresql'          => 'pgsql',
+            'mariadb'             => 'mysql',
+            default               => $m,
+        };
+
+        if ($normalizar($motorBackup) !== $normalizar($motorActual)) {
+            throw new RuntimeException(
+                "Backup incompatible: fue generado para '{$motorBackup}' pero la base de datos "
+                . "actual es '{$motorActual}'. Restaurar entre motores distintos corrompe el esquema."
+            );
+        }
+    }
+
+    /**
+     * Devuelve las tablas críticas del sistema que NO existen actualmente.
+     *
+     * @return string[]
+     */
+    private function tablasCriticasFaltantes(): array
+    {
+        try {
+            $existentes = collect(DB::select(
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"
+            ))->pluck('table_name')->map(fn ($t) => strtolower((string) $t))->all();
+        } catch (\Throwable) {
+            // information_schema con DATABASE() es de MySQL/MariaDB; variante estándar:
+            try {
+                $existentes = collect(DB::select(
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema()"
+                ))->pluck('table_name')->map(fn ($t) => strtolower((string) $t))->all();
+            } catch (\Throwable) {
+                return []; // No se pudo verificar: no reportar falsos positivos
+            }
+        }
+
+        return array_values(array_diff(self::TABLAS_CRITICAS, $existentes));
     }
 
     /**

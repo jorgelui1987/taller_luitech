@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Categoria;
@@ -129,6 +131,13 @@ class DatabaseSeeder extends Seeder
 
             // Datos demo: ventas, reparaciones (solo desarrollo)
             $this->call(DemoDataSeeder::class);
+        }
+
+        // PostgreSQL: reajustar secuencias tras los seeders. Los INSERT con IDs
+        // explícitos no avanzan las secuencias y causan "duplicate key value
+        // violates unique constraint" en los siguientes registros creados.
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            Artisan::call('db:fix-sequences');
         }
     }
 }
