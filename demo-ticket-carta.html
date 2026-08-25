@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Demostración — Ticket Media Carta (1 por hoja)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.aviso{background:#ffd54f;color:#333;padding:10px 18px;border-radius:8px;font-size:14px;max-width:800px;text-align:center}
+.aviso b{color:#b8860b}
+
+/* ═══ LA HOJA CARTA ═══ */
+.hoja{width:216mm;height:279mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.45);padding:8mm 10mm;display:flex;flex-direction:column}
+
+/* ═══ TICKET = MEDIA HOJA SUPERIOR ═══ */
+.ticket{height:139mm;border:1.5px solid #c9c9c9;border-radius:6px;padding:5mm 7mm;display:flex;flex-direction:column;background:#fff}
+.zona-vacia{flex:1;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:12px;letter-spacing:1px}
+
+/* ═══ CONTENIDO PROFESIONAL COMPACTO ═══ */
+.encabezado{text-align:center;border-bottom:2.5px solid #1a1a1a;padding-bottom:3mm}
+.logo-demo{width:52mm;height:14mm;background:linear-gradient(135deg,#1e3a5f,#2d5a8a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;letter-spacing:1px;border-radius:4px;margin:0 auto 2mm}
+.tienda-nombre{font-size:15px;font-weight:800;color:#111}
+.fiscal-linea{font-size:8.5px;color:#444;margin-top:.8mm}
+.doc-tipo{display:inline-block;margin-top:1.5mm;background:#1a1a1a;color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;padding:1.2mm 5mm;border-radius:3px}
+.doc-numero{font-size:16px;font-weight:800;margin-top:1mm;letter-spacing:.5px}
+
+.datos-grid{display:flex;justify-content:space-between;font-size:9px;color:#333;margin:2.5mm 0;padding:1.8mm 2.5mm;background:#f5f6f8;border-radius:4px}
+.datos-grid div b{display:block;font-size:7.5px;text-transform:uppercase;color:#888;letter-spacing:.5px}
+
+.seccion{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#1e3a5f;margin:2.5mm 0 1.2mm;border-bottom:1px solid #dde1e6;padding-bottom:1mm}
+
+table{width:100%;border-collapse:collapse;font-size:9.5px}
+th{background:#1e3a5f;color:#fff;text-align:left;padding:1.5mm 2mm;font-size:8px;text-transform:uppercase;letter-spacing:.5px}
+th.c,td.c{text-align:center} th.p,td.p{text-align:right}
+td{padding:1.4mm 2mm;border-bottom:.5px solid #e8eaed}
+tr:nth-child(even) td{background:#fafbfc}
+
+.totales{margin-top:auto}
+.tot-fila{display:flex;justify-content:space-between;font-size:9.5px;padding:1mm 2mm;color:#333}
+.tot-final{display:flex;justify-content:space-between;background:#1e3a5f;color:#fff;font-size:13px;font-weight:800;padding:2mm 3mm;border-radius:4px;margin-top:1.2mm}
+
+.pie{display:flex;justify-content:space-between;align-items:center;margin-top:2.5mm;padding-top:2mm;border-top:1px solid #dde1e6;font-size:8px;color:#666}
+.qr-demo{width:12mm;height:12mm;background:
+ repeating-linear-gradient(0deg,#222 0 2px,transparent 2px 4px),
+ repeating-linear-gradient(90deg,#222 0 2px,#fff 2px 4px);
+ border:2px solid #222;border-radius:2px}
+.garantia-box{font-size:8px;color:#555;line-height:1.4;background:#fdf9ee;border:1px solid #eadfb8;border-radius:4px;padding:1.8mm 2.2mm;margin-top:2mm}
+.firma-zona{display:flex;gap:8mm;margin-top:2.5mm}
+.firma{flex:1;text-align:center}
+.firma .linea{border-top:1px solid #333;margin-top:7mm}
+.firma .lbl{font-size:7.5px;color:#777;margin-top:1mm;text-transform:uppercase;letter-spacing:.5px}
+
+/* Botón imprimir */
+.btn-print{position:fixed;bottom:24px;right:24px;background:#0070e0;color:#fff;border:none;border-radius:30px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,112,224,.4)}
+@media print{
+ body{background:#fff;padding:0}
+ .aviso,.btn-print{display:none!important}
+ .hoja{box-shadow:none;width:auto;height:auto;padding:8mm}
+}
+</style>
+</head>
+<body>
+
+<div class="aviso">📄 <b>MAQUETA VISUAL</b> — Formato CARTA con <b>UN SOLO ticket</b> ocupando <b>apenas la MITAD SUPERIOR</b> de la hoja. La mitad inferior queda libre.</div>
+
+<div class="hoja">
+
+    <!-- ═══ TICKET ÚNICO — MEDIA HOJA SUPERIOR ═══ -->
+    <div class="ticket">
+        <div class="encabezado">
+            <div class="logo-demo">LOGO EMPRESA</div>
+            <div class="tienda-nombre">LUITECH SERENA</div>
+            <div class="fiscal-linea">R.U.T.: 76.123.456-7 · Servicios técnicos y venta de celulares</div>
+            <div class="doc-tipo">BOLETA DE VENTA</div>
+            <div class="doc-numero">N° V-000123</div>
+        </div>
+
+        <div class="datos-grid">
+            <div><b>Cliente</b>María García López</div>
+            <div><b>Fecha</b>25/08/2026 14:30</div>
+            <div><b>Pago</b>Efectivo</div>
+            <div><b>Vendedor</b>Juan P.</div>
+        </div>
+
+        <div class="seccion">Detalle de productos</div>
+        <table>
+            <thead><tr><th>Producto</th><th class="c">Cant.</th><th class="p">P. Unit.</th><th class="p">Subtotal</th></tr></thead>
+            <tbody>
+                <tr><td>Samsung Galaxy A54 <br><small style="color:#888">IMEI: 356789102345678</small></td><td class="c">1</td><td class="p">$899.990</td><td class="p">$899.990</td></tr>
+                <tr><td>Funda transparente A54</td><td class="c">1</td><td class="p">$8.990</td><td class="p">$8.990</td></tr>
+                <tr><td>Vidrio templado premium</td><td class="c">2</td><td class="p">$5.990</td><td class="p">$11.980</td></tr>
+            </tbody>
+        </table>
+
+        <div class="totales">
+            <div class="tot-fila"><span>Neto</span><span>$791.400</span></div>
+            <div class="tot-fila"><span>IVA (19%)</span><span>$150.366</span></div>
+            <div class="tot-final"><span>TOTAL</span><span>$941.766</span></div>
+        </div>
+
+        <div class="garantia-box">
+            <b>🛡️ GARANTÍA:</b> 90 días por defectos de fábrica. No cubre daños físicos ni humedad.
+        </div>
+
+        <div class="pie">
+            <div style="max-width:60%">📍 Av. Libertad 1234, La Serena<br>📞 +56 9 1234 5678 · IG: @luitech.serena</div>
+            <div style="text-align:center">
+                <div class="qr-demo"></div>
+                <div style="font-size:7px;margin-top:.8mm">Escanea para ver estado</div>
+            </div>
+            <div style="text-align:right;font-weight:600">¡Gracias por su<br>preferencia!</div>
+        </div>
+
+        <div class="firma-zona">
+            <div class="firma"><div class="linea"></div><div class="lbl">Firma cliente</div></div>
+            <div class="firma"><div class="linea"></div><div class="lbl">Sello / Vendedor</div></div>
+        </div>
+    </div>
+
+    <!-- ═══ MITAD INFERIOR VACÍA ═══ -->
+    <div class="zona-vacia">— mitad inferior de la hoja queda libre —</div>
+
+</div>
+
+<button class="btn-print" onclick="window.print()">🖨️ Probar impresión</button>
+
+</body>
+</html>
