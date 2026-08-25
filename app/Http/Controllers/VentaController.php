@@ -310,6 +310,21 @@ class VentaController extends Controller
     }
 
     /**
+     * Ticket profesional en MEDIA HOJA CARTA (para impresora normal).
+     * Un solo comprobante ocupando la mitad superior de la hoja.
+     */
+    public function printTicketCarta(Venta $venta)
+    {
+        $venta->load(['cliente', 'vendedor', 'detalles.producto.marca']);
+
+        // Obtener URL de la mini página web
+        $tenant = $venta->tenant;
+        $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
+
+        return view('ventas.ticket-carta', compact('venta', 'urlMiniWeb'));
+    }
+
+    /**
      * Genera el ticket como texto formateado (estilo 80mm) y abre WhatsApp.
      */
     public function enviarWhatsApp(Venta $venta)

@@ -34,6 +34,9 @@
         <a href="{{ route('ventas.ticket', $venta) }}" target="_blank" class="btn btn-outline-primary px-4">
             <i class="fas fa-receipt me-2"></i>Ticket 80mm
         </a>
+        <a href="{{ route('ventas.ticket-carta', $venta) }}" target="_blank" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-file-invoice me-2"></i>Formato carta (media hoja)
+        </a>
         <button onclick="window.print()" class="btn btn-outline-primary px-4">
             <i class="fas fa-print me-2"></i>Imprimir
         </button>
