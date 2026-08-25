@@ -31,7 +31,7 @@
 body{font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.25;color:#000;width:72mm}
 @page{size:80mm auto;margin:0;padding:1.5mm}
 .hdr{text-align:center;padding:2px 0}
-.hdr .logo{max-height:30px;max-width:120px;margin:1px auto}
+.hdr .logo{width:100%;max-width:72mm;max-height:24mm;height:auto;margin:1px auto;display:block}
 .hdr .tienda{font-size:14px;font-weight:700}
 .hdr .inf{font-size:9px;color:#000}
 .hdr .nro{font-size:17px;font-weight:700;letter-spacing:1px;margin:2px 0}

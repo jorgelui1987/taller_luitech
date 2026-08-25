@@ -52,7 +52,7 @@ hr.dotted{border-top:1px dashed #000}
 </head>
 <body>
 <div class="hdr">
-@if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="max-height:60px;max-width:100px">@endif
+@if($empresa && $empresa->logo)<img src="{{ asset($empresa->logo) }}" alt="" style="width:100%;max-width:72mm;max-height:24mm;height:auto;margin:0 auto;display:block">@endif
 <div class="tienda">{{ $empresa->nombre_tienda ?? 'CRM Celulares' }}</div>
 </div>
 {{-- Bloque fiscal del emisor (estilo documento tributario) --}}
