@@ -25,36 +25,39 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Orden {{ $reparacion->numero_orden }} — Media Carta Horizontal</title>
+<title>Orden {{ $reparacion->numero_orden }} — Media carta</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:16px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.aviso{background:#ffd54f;color:#333;padding:8px 16px;border-radius:8px;font-size:13px;text-align:center;max-width:800px}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:16px;display:flex;flex-direction:column;align-items:center}
+.aviso{background:#ffd54f;color:#333;padding:8px 16px;border-radius:8px;font-size:13px;text-align:center;max-width:800px;margin-bottom:14px}
 
-/* ═══ BOLETA: 27.94 cm ancho × 10.795 cm alto ═══ */
-.boleta{width:279.4mm;height:107.95mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.45);padding:5mm 6mm;display:flex;flex-direction:column}
+/* ═══ ORDEN MEDIA CARTA: 21.6 cm ancho × 13.97 cm alto ═══
+   Es la mitad de una hoja carta vertical (21.6 × 27.94 cm).
+   Una hoja carta completa rinde para 2 órdenes → ahorras papel.
+   Se deja 0.2 mm de holgura para evitar desbordes al imprimir. */
+.boleta{width:216mm;height:139.5mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.45);padding:5mm 6mm;display:flex;flex-direction:column;overflow:hidden}
 
-/* ═══ ENCABEZADO HORIZONTAL ═══ */
+/* ═══ ENCABEZADO ═══ */
 .encabezado{display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #1a1a1a;padding-bottom:2.5mm}
-.logo{width:42mm;max-height:13mm;object-fit:contain}
+.logo{width:38mm;max-height:14mm;object-fit:contain}
 .tienda-bloque{text-align:left;margin-left:4mm}
-.tienda-nombre{font-size:14px;font-weight:800;color:#111}
-.fiscal-linea{font-size:7.5px;color:#444;line-height:1.35}
+.tienda-nombre{font-size:15px;font-weight:800;color:#111}
+.fiscal-linea{font-size:8px;color:#444;line-height:1.35}
 .doc-bloque{text-align:right}
 .doc-tipo{display:inline-block;background:#1a1a1a;color:#fff;font-size:8px;font-weight:700;letter-spacing:2px;padding:1mm 4mm;border-radius:3px}
-.doc-numero{font-size:15px;font-weight:800;margin-top:.5mm;letter-spacing:.5px}
+.doc-numero{font-size:16px;font-weight:800;margin-top:.5mm;letter-spacing:.5px}
 
 /* ═══ CUERPO EN 2 COLUMNAS ═══ */
-.cuerpo{display:flex;gap:5mm;flex:1;margin-top:2.5mm}
-.col-izq{flex:1.4}
+.cuerpo{display:flex;gap:5mm;flex:1;margin-top:2.5mm;min-height:0}
+.col-izq{flex:1.5;min-width:0}
 .col-der{flex:1;display:flex;flex-direction:column}
 
-.datos-grid{font-size:8px;color:#333;margin-bottom:1.5mm;line-height:1.45}
+.datos-grid{font-size:8.5px;color:#333;margin-bottom:1.5mm;line-height:1.45}
 .datos-grid b{font-size:7px;text-transform:uppercase;color:#888;letter-spacing:.5px}
 
 .seccion{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#1e3a5f;margin-bottom:1mm;border-bottom:1px solid #dde1e6;padding-bottom:.8mm}
 
-table{width:100%;border-collapse:collapse;font-size:8.5px}
+table{width:100%;border-collapse:collapse;font-size:9px}
 th{background:#1e3a5f;color:#fff;text-align:left;padding:1.2mm 1.5mm;font-size:7px;text-transform:uppercase;letter-spacing:.5px}
 td{padding:1.2mm 1.5mm;border-bottom:.5px solid #e8eaed;vertical-align:top}
 td.lbl{font-size:7px;font-weight:700;text-transform:uppercase;color:#888;width:30%}
@@ -62,38 +65,40 @@ td.val{font-weight:600}
 
 .bx{font-size:8.5px;line-height:1.45;color:#222;word-break:break-word}
 
-.tot-fila{display:flex;justify-content:space-between;font-size:9px;padding:.9mm 2mm;color:#333}
-.tot-final{display:flex;justify-content:space-between;background:#1e3a5f;color:#fff;font-size:13px;font-weight:800;padding:1.8mm 3mm;border-radius:4px;margin-top:1mm}
+.tot-fila{display:flex;justify-content:space-between;font-size:9.5px;padding:.9mm 2mm;color:#333}
+.tot-final{display:flex;justify-content:space-between;background:#1e3a5f;color:#fff;font-size:14px;font-weight:800;padding:1.8mm 3mm;border-radius:4px;margin-top:1mm}
 
-.garantia-box{font-size:7px;color:#555;line-height:1.4;background:#fdf9ee;border:1px solid #eadfb8;border-radius:4px;padding:1.5mm 2mm;margin-top:auto}
-.notas{font-size:7.5px;color:#555;margin-top:1.5mm}
+.garantia-box{font-size:7.5px;color:#555;line-height:1.4;background:#fdf9ee;border:1px solid #eadfb8;border-radius:4px;padding:1.5mm 2mm;margin-top:auto}
+.notas{font-size:8px;color:#555;margin-top:1.5mm}
 
-/* ═══ PIE HORIZONTAL ═══ */
+/* ═══ PIE ═══ */
 .pie{display:flex;justify-content:space-between;align-items:center;margin-top:2.5mm;padding-top:2mm;border-top:1px solid #dde1e6;font-size:7.5px;color:#666}
 .qr{width:11mm;height:11mm}
 .miniweb{font-weight:700;color:#0000EE;word-break:break-all;font-size:8px}
-.firma-zona{display:flex;gap:10mm;margin-right:4mm}
-.firma{text-align:center;width:32mm}
+.firma-zona{display:flex;gap:10mm;margin-right:2mm}
+.firma{text-align:center;width:30mm}
 .firma .linea{border-top:1px solid #333;margin-top:5mm}
 .firma img{max-width:100%;max-height:10mm;object-fit:contain}
 .firma .lbl{font-size:6.5px;color:#777;margin-top:.8mm;text-transform:uppercase;letter-spacing:.5px}
 
 .btn-print{position:fixed;bottom:24px;right:24px;background:#0070e0;color:#fff;border:none;border-radius:30px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,112,224,.4)}
 @media print{
- body{background:#fff;padding:0}
+ body{display:block;background:#fff;padding:0;margin:0}
  .aviso,.btn-print{display:none!important}
- .boleta{box-shadow:none;width:auto;height:auto}
- @page{size:279.4mm 107.95mm;margin:0}
+ .boleta{box-shadow:none}
+ /* Página = media carta vertical (mitad superior de una hoja carta).
+    La mitad inferior queda libre para la siguiente orden. */
+ @page{size:216mm 139.7mm;margin:0}
 }
 </style>
 </head>
 <body>
 
-<div class="aviso">🖨️ Formato <b>MEDIA CARTA HORIZONTAL</b> (27.94 × 10.795 cm). Usa tu impresora normal. El botón azul no se imprime.</div>
+<div class="aviso">📄 Formato <b>MEDIA CARTA</b> (21.6 × 13.97 cm) · <b>1 sola orden por impresión</b>. Una hoja carta completa rinde para <b>2 órdenes</b>: imprime, corta por la mitad y reutiliza la otra mitad. El botón azul no se imprime.</div>
 
 <div class="boleta">
 
-    <!-- ═══ ENCABEZADO HORIZONTAL ═══ -->
+    <!-- ═══ ENCABEZADO ═══ -->
     <div class="encabezado">
         <div style="display:flex;align-items:center">
             @if($logoSrc)<img src="{{ $logoSrc }}" alt="" class="logo">@endif
@@ -102,7 +107,7 @@ td.val{font-weight:600}
                 <div class="fiscal-linea">
                     @if($empresa?->rut_emisor ?? $empresa?->ruc){{ ($empresa?->pais ?? '') === 'CL' ? 'R.U.T.' : 'R.U.C.' }}: {{ $empresa->rut_emisor ?? $empresa->ruc }}@endif
                     @if($empresa?->giro) · {{ $empresa->giro }}@endif
-                @if($empresa?->direccion) · {{ $empresa->direccion }} @if($empresa?->comuna_ciudad){{ ', '.$empresa->comuna_ciudad }} @endif @endif
+                    @if($empresa?->direccion) · {{ $empresa->direccion }} @if($empresa?->comuna_ciudad){{ ', '.$empresa->comuna_ciudad }} @endif @endif
                 </div>
             </div>
         </div>
@@ -181,7 +186,7 @@ td.val{font-weight:600}
         </div>
     </div>
 
-    <!-- ═══ PIE HORIZONTAL ═══ -->
+    <!-- ═══ PIE ═══ -->
     <div class="pie">
         @if($urlMiniWeb)
         <div>🌐 Visita nuestra tienda online:<br><span class="miniweb">{{ $urlMiniWeb }}</span></div>
@@ -211,7 +216,7 @@ td.val{font-weight:600}
 
 </div>
 
-<button class="btn-print" onclick="window.print()">🖨️ Imprimir formato carta</button>
+<button class="btn-print" onclick="window.print()">🖨️ Imprimir orden (media carta)</button>
 
 <script>window.onload=function(){window.print()};window.onafterprint=function(){window.close()};</script>
 </body>
