@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Demostración — Boleta Media Carta 10.795 × 27.94 cm</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.aviso{background:#ffd54f;color:#333;padding:10px 18px;border-radius:8px;font-size:13px;text-align:center;max-width:700px}
+.aviso b{color:#b8860b}
+.medida{color:#fff;font-size:12px;opacity:.85;letter-spacing:.5px}
+
+/* ═══ LA BOLETA: 10.795 cm × 27.94 cm (media carta vertical) ═══ */
+.boleta{width:107.95mm;height:279.4mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.45);padding:7mm 6mm;display:flex;flex-direction:column}
+
+/* ═══ CONTENIDO PROFESIONAL ═══ */
+.encabezado{text-align:center;border-bottom:2.5px solid #1a1a1a;padding-bottom:4mm;margin-bottom:3mm}
+.logo-demo{width:60mm;height:16mm;background:linear-gradient(135deg,#1e3a5f,#2d5a8a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;letter-spacing:1px;border-radius:4px;margin:0 auto 2.5mm}
+.tienda-nombre{font-size:15px;font-weight:800;color:#111}
+.fiscal-linea{font-size:8px;color:#444;margin-top:.8mm;line-height:1.4}
+.doc-tipo{display:inline-block;margin-top:2mm;background:#1a1a1a;color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;padding:1.2mm 4mm;border-radius:3px}
+.doc-numero{font-size:17px;font-weight:800;margin-top:1mm;letter-spacing:.5px}
+
+.datos-grid{font-size:9px;color:#333;margin:3mm 0;padding:2mm 2.5mm;background:#f5f6f8;border-radius:4px}
+.datos-grid div{margin-bottom:1mm}
+.datos-grid div:last-child{margin-bottom:0}
+.datos-grid b{display:inline-block;font-size:7.5px;text-transform:uppercase;color:#888;letter-spacing:.5px;width:22mm}
+
+.seccion{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#1e3a5f;margin:3mm 0 1.2mm;border-bottom:1px solid #dde1e6;padding-bottom:1mm}
+
+table{width:100%;border-collapse:collapse;font-size:9px}
+th{background:#1e3a5f;color:#fff;text-align:left;padding:1.5mm 1.8mm;font-size:7.5px;text-transform:uppercase;letter-spacing:.5px}
+th.c,td.c{text-align:center} th.p,td.p{text-align:right}
+td{padding:1.5mm 1.8mm;border-bottom:.5px solid #e8eaed;vertical-align:top}
+tr:nth-child(even) td{background:#fafbfc}
+.sub{color:#888;font-size:7.5px}
+
+.totales{margin-top:auto}
+.tot-fila{display:flex;justify-content:space-between;font-size:9.5px;padding:1.2mm 2mm;color:#333}
+.tot-final{display:flex;justify-content:space-between;background:#1e3a5f;color:#fff;font-size:14px;font-weight:800;padding:2.2mm 3mm;border-radius:4px;margin-top:1.5mm}
+
+.pie{text-align:center;margin-top:3mm;padding-top:2.5mm;border-top:1px solid #dde1e6;font-size:8px;color:#666;line-height:1.5}
+.qr-demo{width:16mm;height:16mm;background:
+ repeating-linear-gradient(0deg,#222 0 2px,transparent 2px 4px),
+ repeating-linear-gradient(90deg,#222 0 2px,#fff 2px 4px);
+ border:2px solid #222;border-radius:2px;margin:0 auto 1mm}
+.garantia-box{font-size:7.5px;color:#555;line-height:1.45;background:#fdf9ee;border:1px solid #eadfb8;border-radius:4px;padding:2mm 2.2mm;margin-top:3mm}
+.miniweb-box{text-align:center;border:1.5px dashed #1e3a5f;border-radius:4px;padding:2mm;margin-top:3mm;font-size:8.5px;font-weight:700}
+.miniweb-box .url{color:#0000EE;word-break:break-all}
+.firma-zona{margin-top:6mm}
+.firma{text-align:center;width:70%;margin:0 auto}
+.firma .linea{border-top:1px solid #333;margin-top:9mm}
+.firma .lbl{font-size:7.5px;color:#777;margin-top:1mm;text-transform:uppercase;letter-spacing:.5px}
+
+.btn-print{position:fixed;bottom:24px;right:24px;background:#0070e0;color:#fff;border:none;border-radius:30px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,112,224,.4)}
+@media print{
+ body{background:#fff;padding:0}
+ .aviso,.btn-print,.medida{display:none!important}
+ .boleta{box-shadow:none;width:auto;height:auto}
+ @page{size:107.95mm 279.4mm;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="aviso">📄 <b>MAQUETA VISUAL</b> — Boleta en <b>MEDIA CARTA VERTICAL: 10.795 cm ancho × 27.94 cm alto</b> (medidas exactas que pediste). Datos ficticios.</div>
+<div class="medida">⬇ Ancho: 10.795 cm &nbsp;·&nbsp; Alto: 27.94 cm ⬇</div>
+
+<div class="boleta">
+
+    <!-- ═══ ENCABEZADO ═══ -->
+    <div class="encabezado">
+        <div class="logo-demo">LOGO EMPRESA</div>
+        <div class="tienda-nombre">LUITECH SERENA</div>
+        <div class="fiscal-linea">
+            R.U.T.: 76.123.456-7<br>
+            Servicios técnicos y venta de celulares<br>
+            Av. Libertad 1234, La Serena
+        </div>
+        <div class="doc-tipo">BOLETA DE VENTA</div>
+        <div class="doc-numero">N° V-000123</div>
+    </div>
+
+    <!-- ═══ DATOS ═══ -->
+    <div class="datos-grid">
+        <div><b>Cliente:</b> María García López</div>
+        <div><b>Teléfono:</b> +56 9 8765 4321</div>
+        <div><b>Fecha:</b> 25/08/2026 14:30</div>
+        <div><b>Pago:</b> Efectivo</div>
+        <div><b>Vendedor:</b> Juan Pérez</div>
+    </div>
+
+    <!-- ═══ PRODUCTOS ═══ -->
+    <div class="seccion">Detalle de productos</div>
+    <table>
+        <thead><tr><th>Producto</th><th class="c">Cant.</th><th class="p">Subtotal</th></tr></thead>
+        <tbody>
+            <tr>
+                <td>Samsung Galaxy A54 128GB<br><span class="sub">IMEI: 356789102345678</span></td>
+                <td class="c">1</td>
+                <td class="p">$899.990</td>
+            </tr>
+            <tr>
+                <td>Funda transparente A54</td>
+                <td class="c">1</td>
+                <td class="p">$8.990</td>
+            </tr>
+            <tr>
+                <td>Vidrio templado premium 9H</td>
+                <td class="c">2</td>
+                <td class="p">$11.980</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ═══ TOTALES ═══ -->
+    <div class="totales">
+        <div class="tot-fila"><span>Neto</span><span>$791.400</span></div>
+        <div class="tot-fila"><span>IVA (19%)</span><span>$150.366</span></div>
+        <div class="tot-fila"><span>Efectivo recibido</span><span>$1.000.000</span></div>
+        <div class="tot-fila" style="font-weight:800"><span>VUELTO</span><span>$79.040</span></div>
+        <div class="tot-final"><span>TOTAL</span><span>$941.766</span></div>
+    </div>
+
+    <!-- ═══ GARANTÍA ═══ -->
+    <div class="garantia-box">
+        <b>🛡️ GARANTÍA:</b> 90 días por defectos de fábrica desde la fecha de compra.
+        No cubre daños físicos, humedad ni mal uso del equipo.
+        Presentar este comprobante para hacerla efectiva.
+    </div>
+
+    <!-- ═══ MINI WEB ═══ -->
+    <div class="miniweb-box">
+        🌐 Visita nuestra tienda online:<br>
+        <span class="url">luitech.fun/t/luitech-serena</span>
+    </div>
+
+    <!-- ═══ QR + CONTACTO ═══ -->
+    <div style="text-align:center;margin-top:3mm">
+        <div class="qr-demo"></div>
+        <div style="font-size:7.5px;font-weight:700;">Escanea para ver estado</div>
+    </div>
+
+    <div class="pie">
+        📞 +56 9 1234 5678 · 📷 IG: @luitech.serena<br>
+        🕘 Lun–Sáb 10:00–19:00<br>
+        <b style="font-size:9.5px">¡Gracias por su preferencia!</b>
+    </div>
+
+    <!-- ═══ FIRMA ═══ -->
+    <div class="firma-zona">
+        <div class="firma">
+            <div class="linea"></div>
+            <div class="lbl">Firma y sello del cliente</div>
+        </div>
+    </div>
+
+</div>
+
+<button class="btn-print" onclick="window.print()">🖨️ Probar impresión</button>
+
+</body>
+</html>
