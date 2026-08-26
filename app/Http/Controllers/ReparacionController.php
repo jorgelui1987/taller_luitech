@@ -247,6 +247,16 @@ class ReparacionController extends Controller
             }
         }
 
+        // Respuesta JSON para envío AJAX del formulario (fotos adjuntadas por JS)
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success'      => true,
+                'message'      => 'Orden de reparación registrada correctamente.',
+                'redirect'     => route('reparaciones.show', $reparacion),
+                'whatsapp_url' => $whatsappUrl,
+            ]);
+        }
+
         $redirect = redirect()->route('reparaciones.show', $reparacion)
             ->with('success', 'Orden de reparación registrada correctamente.');
 

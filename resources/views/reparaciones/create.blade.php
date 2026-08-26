@@ -370,7 +370,11 @@
                                         <input type="file" id="inputFotoCamara" class="form-control form-control-sm" accept="image/*" capture="environment" onchange="agregarEvidenciaFoto(this)">
                                     </div>
                                     <div class="row g-1" id="galeriaEvidenciasPrevias"></div>
-                                    <div id="contenedorInputsFotosHidden"></div>
+                                    <label for="inputFotosEvidencia" class="visually-hidden">Fotos de evidencia seleccionadas</label>
+                                    <input type="file" id="inputFotosEvidencia" name="fotos[]" multiple hidden>
+                                    <div id="contenedorInputsFotosHidden">
+                                        <div id="contenedorTiposFotos"></div>
+                                    </div>
                                 </div>
 
                                 {{-- Pestaña: Firma --}}
@@ -574,9 +578,10 @@ function eliminarFotoPrevia(id) {
 
 function renderizarFotosPrevias() {
     const galeria = document.getElementById('galeriaEvidenciasPrevias');
-    const hiddenContainer = document.getElementById('contenedorInputsFotosHidden');
+    const fileInput = document.getElementById('inputFotosEvidencia');
+    const tiposContainer = document.getElementById('contenedorTiposFotos');
     galeria.innerHTML = '';
-    hiddenContainer.innerHTML = '';
+    tiposContainer.innerHTML = '';
 
     const dt = new DataTransfer();
 
@@ -598,19 +603,84 @@ function renderizarFotosPrevias() {
         hiddenTipo.type = 'hidden';
         hiddenTipo.name = 'fotos_tipos[]';
         hiddenTipo.value = foto.tipo;
-        hiddenContainer.appendChild(hiddenTipo);
+        tiposContainer.appendChild(hiddenTipo);
 
         dt.items.add(foto.file);
     });
 
-    if (listaFotosEvidencia.length > 0) {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.name = 'fotos[]';
-        fileInput.multiple = true;
-        fileInput.style.display = 'none';
-        fileInput.files = dt.files;
-        hiddenContainer.appendChild(fileInput);
+    fileInput.files = dt.files;
+}
+
+// ── Mostrar errores de validación del formulario de forma visible ──
+function mostrarErrorFormulario(mensaje) {
+    let alerta = document.getElementById('alertaErroresForm');
+    if (!alerta) {
+        alerta = document.createElement('div');
+        alerta.id = 'alertaErroresForm';
+        alerta.className = 'alert alert-danger';
+        const form = document.getElementById('orderCreateForm');
+        form.prepend(alerta);
+    }
+    alerta.innerHTML = '<ul class="mb-0 ps-3"><li style="font-size:13px;">' + mensaje + '</li></ul>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Envío AJAX con fotos adjuntadas manualmente ──
+// Evita el fallo silencioso de DataTransfer.files en algunos navegadores
+// móviles/webviews, donde el input oculto queda vacío y las fotos nunca llegan.
+async function enviarFormularioConFotos(form) {
+    const btnSubmit = form.querySelector('button[type="submit"]');
+    const textoOriginal = btnSubmit ? btnSubmit.innerHTML : '';
+    if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando orden...';
+    }
+
+    try {
+        // Construir FormData con todos los campos del formulario (incluye _token)
+        const formData = new FormData(form);
+
+        // Descartar lo que el navegador haya puesto en 'fotos' (puede venir vacío/roto)
+        formData.delete('fotos');
+        formData.delete('fotos[]');
+
+        // Adjuntar las fotos directamente desde la lista en memoria
+        listaFotosEvidencia.forEach((foto, index) => {
+            formData.append('fotos[]', foto.file, foto.file.name || ('foto_' + index + '.jpg'));
+            formData.append('fotos_tipos[]', foto.tipo);
+        });
+
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            window.location.href = data.redirect;
+            return;
+        }
+
+        if (response.status === 422) {
+            const data = await response.json();
+            const errores = Object.values(data.errors || {}).flat().join('<br>');
+            mostrarErrorFormulario(errores || data.message || 'Datos inválidos.');
+            return;
+        }
+
+        mostrarErrorFormulario('Error del servidor (' + response.status + '). Intenta nuevamente.');
+    } catch (err) {
+        console.error('Error al enviar la orden:', err);
+        mostrarErrorFormulario('Error de conexión al guardar la orden. Verifica tu conexión e intenta de nuevo.');
+    } finally {
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = textoOriginal;
+        }
     }
 }
 
@@ -634,8 +704,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Espera un momento mientras se preparan las fotos.');
                 return;
             }
+            renderizarFotosPrevias();
             if (signaturePadCreate && !signaturePadCreate.isEmpty()) {
                 document.getElementById('firmaRecepcionDataInput').value = signaturePadCreate.toDataURL('image/png');
+            }
+
+            // Si hay fotos capturadas, enviar por AJAX adjuntándolas manualmente
+            if (listaFotosEvidencia.length > 0) {
+                event.preventDefault();
+                enviarFormularioConFotos(form);
             }
         });
     }
