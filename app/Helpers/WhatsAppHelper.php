@@ -81,18 +81,22 @@ class WhatsAppHelper
 
     /**
      * Genera el mensaje de "Recibido" para una orden de reparación.
+     * Formato moderno: negritas + emojis (sin líneas ASCII).
      */
     public static function mensajeRecibido($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null): string
     {
-        $mensaje = "🔧 *{$nombreTienda} - Orden de Reparación*\n\n" .
-            "📋 N° Orden: {$reparacion->numero_orden}\n" .
+        $clienteNombre = $reparacion->cliente?->nombre_completo ?? '';
+        $saludo = $clienteNombre ? "Hola *{$clienteNombre}* 👋\n\n" : '';
+
+        $mensaje = "🔧 *{$nombreTienda}*\n" .
+            "\n📋 *ORDEN {$reparacion->numero_orden}* — Recibida\n" .
             "📱 Equipo: {$reparacion->dispositivo} {$reparacion->marca} {$reparacion->modelo}\n" .
-            "📝 Falla: {$reparacion->falla_reportada}\n" .
+            "⚠️ Falla: {$reparacion->falla_reportada}\n" .
             "📅 Recibido: " . optional($reparacion->fecha_recepcion)->format('d/m/Y H:i') . "\n\n" .
             "✅ Su equipo ha sido recibido en nuestro taller. Le mantendremos informado del avance. ¡Gracias!";
 
         if ($urlEstado) {
-            $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
+            $mensaje .= "\n\n🔗 *Sigue tu reparación aquí:*\n{$urlEstado}";
         }
 
         $urlMiniWeb = self::obtenerUrlMiniWeb($reparacion);
@@ -100,27 +104,30 @@ class WhatsAppHelper
             $mensaje .= "\n\n🌐 *Visita nuestra tienda:*\n{$urlMiniWeb}";
         }
 
-        return $mensaje;
+        return $saludo . $mensaje;
     }
 
     /**
      * Genera el mensaje de "Listo para entregar" para una orden de reparación.
+     * Formato moderno: negritas + emojis (sin líneas ASCII).
      */
     public static function mensajeListo($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null): string
     {
         $costo = number_format($reparacion->costo_final ?: $reparacion->presupuesto ?: 0, 2);
-
         $simbolo = PaisHelper::simboloMoneda();
 
-        $mensaje = "🔧 *{$nombreTienda} - Orden de Reparación*\n\n" .
-            "📋 N° Orden: {$reparacion->numero_orden}\n" .
+        $clienteNombre = $reparacion->cliente?->nombre_completo ?? '';
+        $saludo = $clienteNombre ? "Hola *{$clienteNombre}* 👋\n\n" : '';
+
+        $mensaje = "🔧 *{$nombreTienda}*\n" .
+            "\n📋 *ORDEN {$reparacion->numero_orden}*\n" .
             "📱 Equipo: {$reparacion->dispositivo} {$reparacion->marca} {$reparacion->modelo}\n" .
-            "✅ *¡Su equipo está listo para recoger!*\n" .
+            "🎉 *¡Su equipo está listo para recoger!*\n" .
             "💰 Costo: {$simbolo} {$costo}\n\n" .
-            "📍 Lo esperamos en nuestro local para realizar la entrega. ¡Gracias por su preferencia!";
+            "📍 Lo esperamos en nuestro local para realizar la entrega. ¡Gracias por su preferencia! 🙌";
 
         if ($urlEstado) {
-            $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
+            $mensaje .= "\n\n🔗 *Sigue tu reparación aquí:*\n{$urlEstado}";
         }
 
         $urlMiniWeb = self::obtenerUrlMiniWeb($reparacion);
@@ -128,7 +135,7 @@ class WhatsAppHelper
             $mensaje .= "\n\n🌐 *Visita nuestra tienda:*\n{$urlMiniWeb}";
         }
 
-        return $mensaje;
+        return $saludo . $mensaje;
     }
 
     /**

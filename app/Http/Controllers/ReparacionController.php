@@ -434,112 +434,109 @@ class ReparacionController extends Controller
             $telefono = $codigoPais . $telefono;
         }
 
-        // Líneas del ticket
-        $linea = str_repeat('─', 32);
-        $lineaDoble = str_repeat('═', 32);
-
-        $tipoDispositivo = ['celular' => 'Celular', 'tablet' => 'Tablet', 'portatil' => 'Portatil', 'otros' => 'Otros'];
+        // ── Formato moderno para WhatsApp (negritas + emojis, sin líneas ASCII) ──
+        $simbolo = PaisHelper::simboloMoneda();
+        $tipoDispositivo = ['celular' => 'Celular', 'tablet' => 'Tablet', 'portatil' => 'Portátil', 'otros' => 'Otro'];
         $estadoLabel = str_replace('_', ' ', ucfirst($reparacion->estado));
 
-        $texto = $lineaDoble . "\n";
-        $texto .= str_pad($empresa?->nombre_tienda ?? 'CRM Celulares', 32, ' ', STR_PAD_BOTH) . "\n";
+        // Encabezado de la tienda
+        $texto = "🔧 *" . ($empresa?->nombre_tienda ?? 'CRM Celulares') . "*\n";
         if ($empresa?->ruc) {
-            $texto .= str_pad('RUC: ' . $empresa->ruc, 32, ' ', STR_PAD_BOTH) . "\n";
+            $texto .= "RUC: " . $empresa->ruc . "\n";
         }
         if ($empresa?->direccion) {
-            $texto .= str_pad($empresa->direccion, 32, ' ', STR_PAD_BOTH) . "\n";
+            $texto .= "📍 " . $empresa->direccion . "\n";
         }
-        $texto .= $lineaDoble . "\n";
-        $texto .= str_pad($reparacion->numero_orden, 32, ' ', STR_PAD_BOTH) . "\n";
-        $texto .= str_pad($estadoLabel, 32, ' ', STR_PAD_BOTH) . "\n";
-        $texto .= $linea . "\n";
 
-        // Cliente
-        $texto .= 'CLIENTE: ' . ($reparacion->cliente->nombre_completo ?? '—') . "\n";
+        // Orden y estado
+        $texto .= "\n📋 *ORDEN " . $reparacion->numero_orden . "* — " . $estadoLabel . "\n";
+
+        // Cliente y técnico
+        $texto .= "\n👤 *" . ($reparacion->cliente->nombre_completo ?? '—') . "*\n";
         if ($reparacion->cliente?->telefono) {
-            $texto .= 'TEL: ' . $reparacion->cliente->telefono . "\n";
+            $texto .= "📞 " . $reparacion->cliente->telefono . "\n";
         }
-        $texto .= 'TECNICO: ' . ($reparacion->tecnico->name ?? '—') . "\n";
-        $texto .= $linea . "\n";
+        if ($reparacion->tecnico?->name) {
+            $texto .= "👨‍🔧 Técnico: " . $reparacion->tecnico->name . "\n";
+        }
 
         // Equipo
-        $texto .= 'TIPO: ' . ($tipoDispositivo[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?? '—') . "\n";
-        if ($reparacion->marca) {
-            $texto .= 'MARCA: ' . $reparacion->marca . "\n";
-        }
-        if ($reparacion->modelo) {
-            $texto .= 'MODELO: ' . $reparacion->modelo . "\n";
+        $equipo = trim(($tipoDispositivo[$reparacion->tipo_dispositivo] ?? $reparacion->tipo_dispositivo ?? '') .
+            ' ' . ($reparacion->marca ?? '') . ' ' . ($reparacion->modelo ?? ''));
+        $texto .= "\n📱 *Equipo:* " . $equipo . "\n";
+        if ($reparacion->color) {
+            $texto .= "🎨 Color: " . $reparacion->color . "\n";
         }
         if ($reparacion->imei) {
-            $texto .= 'IMEI: ' . $reparacion->imei . "\n";
+            $texto .= "🔢 IMEI: " . $reparacion->imei . "\n";
         }
-        if ($reparacion->color) {
-            $texto .= 'COLOR: ' . $reparacion->color . "\n";
-        }
-        if ($reparacion->fecha_recepcion) {
-            $texto .= 'RECIBIDO: ' . $reparacion->fecha_recepcion->format('d/m/Y H:i') . "\n";
-        }
-        if ($reparacion->fecha_estimada) {
-            $texto .= 'EST. ENTREGA: ' . $reparacion->fecha_estimada->format('d/m/Y') . "\n";
-        }
-        $texto .= $linea . "\n";
 
-        // Falla y diagnóstico
+        // Falla, diagnóstico y solución
         if ($reparacion->falla_reportada) {
-            $texto .= 'FALLA: ' . $reparacion->falla_reportada . "\n";
+            $texto .= "\n⚠️ *Falla:* " . $reparacion->falla_reportada . "\n";
         }
         if ($reparacion->diagnostico) {
-            $texto .= 'DIAGNOSTICO: ' . $reparacion->diagnostico . "\n";
+            $texto .= "🔍 Diagnóstico: " . $reparacion->diagnostico . "\n";
         }
         if ($reparacion->solucion) {
-            $texto .= 'SOLUCION: ' . $reparacion->solucion . "\n";
+            $texto .= "✅ Solución: " . $reparacion->solucion . "\n";
         }
 
         // Precios
+        $textoPrecios = '';
         if ($reparacion->presupuesto > 0) {
-            $texto .= 'PRESUPUESTO: S/ ' . number_format($reparacion->presupuesto, 2) . "\n";
+            $textoPrecios .= "💰 Presupuesto: " . $simbolo . " " . number_format($reparacion->presupuesto, 2) . "\n";
         }
         if ($reparacion->costo_final > 0) {
-            $texto .= 'COSTO FINAL: S/ ' . number_format($reparacion->costo_final, 2) . "\n";
+            $textoPrecios .= "💵 Costo final: " . $simbolo . " " . number_format($reparacion->costo_final, 2) . "\n";
         }
         if ($reparacion->abono > 0) {
-            $texto .= 'ABONO: S/ ' . number_format($reparacion->abono, 2) . "\n";
+            $textoPrecios .= "💳 Abono: " . $simbolo . " " . number_format($reparacion->abono, 2) . "\n";
         }
         if ($reparacion->impuesto > 0) {
             $nombreImpuesto = $empresa?->pais == 'CL' ? 'IVA' : 'IGV';
-            $texto .= $nombreImpuesto . ': S/ ' . number_format($reparacion->impuesto, 2) . "\n";
+            $textoPrecios .= $nombreImpuesto . ": " . $simbolo . " " . number_format($reparacion->impuesto, 2) . "\n";
         }
         if ($reparacion->total > 0) {
-            $texto .= $lineaDoble . "\n";
-            $texto .= 'TOTAL: S/ ' . number_format($reparacion->total, 2) . "\n";
-            $texto .= $lineaDoble . "\n";
+            $textoPrecios .= "🧾 *TOTAL: " . $simbolo . " " . number_format($reparacion->total, 2) . "*\n";
+        }
+        if ($textoPrecios !== '') {
+            $texto .= "\n" . $textoPrecios;
         }
 
-        // Garantía
-        if ($reparacion->garantia) {
-            $texto .= "\nGarantía: " . $reparacion->dias_garantia . " días\n";
+        // Fechas
+        if ($reparacion->fecha_recepcion) {
+            $texto .= "\n📅 Recibido: " . $reparacion->fecha_recepcion->format('d/m/Y H:i') . "\n";
+        }
+        if ($reparacion->fecha_estimada) {
+            $texto .= "📦 Entrega estimada: " . $reparacion->fecha_estimada->format('d/m/Y') . "\n";
+        }
+
+        // Garantía (resumida)
+        if ($reparacion->garantia && $reparacion->dias_garantia > 0) {
+            $texto .= "\n🛡️ *Garantía: " . $reparacion->dias_garantia . " días*\n";
         }
         if ($empresa?->terminos_garantia) {
-            $texto .= "\nGARANTÍA:\n" . $empresa->terminos_garantia . "\n";
+            $texto .= $empresa->terminos_garantia . "\n";
         }
 
         // Notas
         if ($reparacion->notas) {
-            $texto .= "\nNOTAS: " . $reparacion->notas . "\n";
+            $texto .= "\n📝 Notas: " . $reparacion->notas . "\n";
         }
-
-        $texto .= "\n" . str_pad('¡Gracias por su preferencia!', 32, ' ', STR_PAD_BOTH) . "\n";
 
         // Link para ver el estado en línea (lo que muestra el QR en la impresión)
         $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
-        $texto .= "\n🔗 *Sigue el estado de tu reparación:*\n" . $urlEstado . "\n";
+        $texto .= "\n🔗 *Sigue tu reparación aquí:*\n" . $urlEstado;
 
         // URL de la mini página web
         $tenant = $reparacion->tenant;
         $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
         if ($urlMiniWeb) {
-            $texto .= "\n🌐 *Visita nuestra tienda:*\n" . $urlMiniWeb . "\n";
+            $texto .= "\n\n🌐 *Visita nuestra tienda:*\n" . $urlMiniWeb;
         }
+
+        $texto .= "\n\n¡Gracias por su preferencia! 🙌";
 
         // URL de WhatsApp
         $url = 'https://wa.me/' . $telefono . '?text=' . urlencode($texto);
@@ -813,17 +810,22 @@ class ReparacionController extends Controller
             if ($nuevoEstado === 'listo') {
                 $mensaje = WhatsAppHelper::mensajeListo($reparacion, $nombreTienda, $urlEstado);
             } else {
+                $simbolo = PaisHelper::simboloMoneda();
                 $costo = number_format($reparacion->costo_final ?: $reparacion->presupuesto ?: 0, 2);
-                $mensaje = "✅ *{$nombreTienda} - Orden de Reparación* - *ENTREGADO*\n\n" .
-                    "📋 N° Orden: {$reparacion->numero_orden}\n" .
+                $clienteNombre = $cliente?->nombre_completo ?? '';
+                $saludo = $clienteNombre ? "Hola *{$clienteNombre}* 👋\n\n" : '';
+
+                $mensaje = $saludo .
+                    "🔧 *{$nombreTienda}*\n" .
+                    "\n📋 *ORDEN {$reparacion->numero_orden}* — Entregada\n" .
                     "📱 Equipo: {$reparacion->dispositivo} {$reparacion->marca} {$reparacion->modelo}\n" .
                     "✅ *¡Equipo entregado al cliente!*\n" .
-                    "💰 Cobrado: S/ {$costo}\n" .
+                    "💰 Cobrado: {$simbolo} {$costo}\n" .
                     "📅 Entregado: " . now()->format('d/m/Y H:i') . "\n\n" .
-                    "¡Gracias por su preferencia!";
+                    "¡Gracias por su preferencia! 🙌";
 
                 if ($urlEstado) {
-                    $mensaje .= "\n\n🔗 *Estado en línea:*\n{$urlEstado}";
+                    $mensaje .= "\n\n🔗 *Sigue tu reparación aquí:*\n{$urlEstado}";
                 }
 
                 // URL de la mini página web
