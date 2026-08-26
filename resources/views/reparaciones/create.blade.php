@@ -510,8 +510,33 @@ function limpiarFirmaCreate() {
 
 // ── MANEJO DE FOTOS DE EVIDENCIA ──
 let listaFotosEvidencia = [];
+let fotosProcesando = 0;
 
-function agregarEvidenciaFoto(input) {
+function optimizarFoto(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const image = new Image();
+            image.onload = function() {
+                const maxDimension = 1600;
+                const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(image.width * scale));
+                canvas.height = Math.max(1, Math.round(image.height * scale));
+                canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(function(blob) {
+                    resolve(blob ? new File([blob], 'foto_' + Date.now() + '.jpg', { type: 'image/jpeg' }) : file);
+                }, 'image/jpeg', 0.82);
+            };
+            image.onerror = function() { resolve(file); };
+            image.src = e.target.result;
+        };
+        reader.onerror = function() { resolve(file); };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function agregarEvidenciaFoto(input) {
     if (!input.files || !input.files[0]) return;
 
     const file = input.files[0];
@@ -519,20 +544,27 @@ function agregarEvidenciaFoto(input) {
     const tipo = tipoSelect ? tipoSelect.value : 'general';
     const tipoLabel = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : tipo;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const fotoObj = {
+    fotosProcesando++;
+    const fotoOptimizada = await optimizarFoto(file);
+    const previewReader = new FileReader();
+    previewReader.onload = function(e) {
+        listaFotosEvidencia.push({
             id: Date.now() + Math.random(),
-            file: file,
+            file: fotoOptimizada,
             tipo: tipo,
             tipoLabel: tipoLabel,
             dataUrl: e.target.result
-        };
-        listaFotosEvidencia.push(fotoObj);
+        });
         renderizarFotosPrevias();
         input.value = '';
+        fotosProcesando--;
     };
-    reader.readAsDataURL(file);
+    previewReader.onerror = function() {
+        input.value = '';
+        fotosProcesando--;
+        alert('No se pudo leer la foto capturada.');
+    };
+    previewReader.readAsDataURL(fotoOptimizada);
 }
 
 function eliminarFotoPrevia(id) {
@@ -596,7 +628,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const form = document.getElementById('orderCreateForm');
     if (form) {
-        form.addEventListener('submit', function() {
+        form.addEventListener('submit', function(event) {
+            if (fotosProcesando > 0) {
+                event.preventDefault();
+                alert('Espera un momento mientras se preparan las fotos.');
+                return;
+            }
             if (signaturePadCreate && !signaturePadCreate.isEmpty()) {
                 document.getElementById('firmaRecepcionDataInput').value = signaturePadCreate.toDataURL('image/png');
             }
