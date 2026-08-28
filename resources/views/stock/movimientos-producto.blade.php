@@ -2,8 +2,8 @@
 @section('title', 'Movimientos - ' . $producto->nombre)
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.show', $producto) }}" style="color:#a855f7;">{{ $producto->nombre }}</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.show', $producto) }}" style="color:#0891b2;">{{ $producto->nombre }}</a></li></ul>
     <ul><li class="breadcrumb-item active">Movimientos de Stock</li></ul>
 @endsection
 

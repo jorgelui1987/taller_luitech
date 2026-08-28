@@ -2,7 +2,7 @@
 @section('title', 'Alertas de Stock Bajo')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
     <ul><li class="breadcrumb-item active">Alertas de Stock</li></ul>
 @endsection
 
@@ -126,7 +126,7 @@
                                          style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
                                 @else
                                     <div style="width:40px; height:40px; border-radius:8px;
-                                        background:linear-gradient(135deg,#a855f7,#ec4899);
+                                        background:linear-gradient(135deg,#0891b2,#3b82f6);
                                         display:flex; align-items:center; justify-content:center;">
                                         <i class="fas fa-mobile-alt" style="color:#fff; font-size:14px;"></i>
                                     </div>
@@ -173,7 +173,7 @@
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 <a href="{{ route('productos.edit', $producto) }}"
-                                   class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;" title="Editar">
+                                   class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;" title="Editar">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </a>
                                 <a href="{{ route('stock.bajo.whatsapp', $producto) }}"

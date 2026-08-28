@@ -23,11 +23,11 @@
     }
     .caja-card .caja-value { font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
     .caja-card .caja-label { font-size: 12px; opacity: .85; margin-bottom: 6px; }
-    .bg-grad-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .bg-grad-purple { background: linear-gradient(135deg, #0891b2, #0e7490); }
     .bg-grad-green  { background: linear-gradient(135deg, #10b981, #059669); }
     .bg-grad-cyan   { background: linear-gradient(135deg, #06b6d4, #0284c7); }
     .bg-grad-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-    .bg-grad-pink   { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .bg-grad-pink   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 </style>
 @endpush
 

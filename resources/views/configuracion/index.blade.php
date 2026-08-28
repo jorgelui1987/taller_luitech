@@ -24,7 +24,7 @@
 <!-- ── Header ── -->
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
-        <h4 class="fw-bold mb-1" style="color:#1e1b4b;">Configuración del Sistema</h4>
+        <h4 class="fw-bold mb-1" style="color:#0f172a;">Configuración del Sistema</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Gestión de la empresa, usuarios y parámetros generales</p>
     </div>
 </div>
@@ -33,7 +33,7 @@
 <ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="configTabs" style="border-bottom:2px solid #f3f4f6; padding-bottom:12px;">
     <li class="nav-item">
         <button class="nav-link active px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-empresa" type="button" role="tab">
-            <i class="fas fa-store me-1" style="color:#a855f7;"></i> Empresa
+            <i class="fas fa-store me-1" style="color:#0891b2;"></i> Empresa
         </button>
     </li>
     <li class="nav-item">
@@ -63,7 +63,7 @@
         <!-- ── Datos de la Empresa ── -->
         <div class="card mb-4">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-store me-2" style="color:#a855f7;"></i>Datos de la Empresa</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-store me-2" style="color:#0891b2;"></i>Datos de la Empresa</h6>
 
                 <form action="{{ route('configuracion.updateEmpresa') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -74,7 +74,7 @@
                             <img src="{{ asset($empresa->logo) }}" alt="Logo"
                                  style="max-width:120px; max-height:80px; border-radius:8px; object-fit:contain;">
                         @else
-                            <div style="width:80px;height:80px;background:linear-gradient(135deg,#a855f7,#ec4899);
+                            <div style="width:80px;height:80px;background:linear-gradient(135deg,#0891b2,#3b82f6);
                                         border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto;">
                                 <i class="fas fa-store" style="color:#fff;font-size:32px;"></i>
                             </div>
@@ -127,7 +127,7 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <h6 class="fw-bold mb-1" style="font-size:14px;">
-                                        <i class="fas fa-file-invoice me-2" style="color:#7c3aed;"></i>
+                                        <i class="fas fa-file-invoice me-2" style="color:#0e7490;"></i>
                                         Facturación Electrónica
                                     </h6>
                                     <p class="text-muted mb-0" style="font-size:12px;">
@@ -374,7 +374,7 @@
         <!-- Zona horaria -->
         <div class="card mb-4">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-clock me-2" style="color:#a855f7;"></i>Zona Horaria</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-clock me-2" style="color:#0891b2;"></i>Zona Horaria</h6>
                 <p class="text-muted" style="font-size:12px;">Configura la zona horaria de tu empresa para que las fechas y horas se muestren correctamente.</p>
 
                 <form action="{{ route('configuracion.updateZonaHoraria') }}" method="POST">
@@ -415,9 +415,9 @@
                     <div class="d-flex align-items-center gap-2">
                         <a href="{{ route('two-factor.setup') }}" class="btn btn-outline-secondary btn-sm" style="border-radius:20px;"
                            title="Configurar verificación en dos pasos para tu cuenta">
-                            <i class="fas fa-shield-halved me-1" style="color:#a855f7;"></i> Mi 2FA
+                            <i class="fas fa-shield-halved me-1" style="color:#0891b2;"></i> Mi 2FA
                         </a>
-                        <span style="background:#ede9fe;color:#7c3aed;border-radius:20px;padding:3px 12px;font-size:12px;">
+                        <span style="background:#cffafe;color:#0e7490;border-radius:20px;padding:3px 12px;font-size:12px;">
                             {{ $usuarios->count() }} usuarios
                         </span>
                         <button type="button" class="btn btn-primary btn-sm" style="border-radius:20px;"
@@ -429,7 +429,7 @@
 
                 <!-- Leyenda de roles -->
                 <div class="d-flex gap-3 mb-4" style="font-size:12px;">
-                    <span><span style="display:inline-block;width:10px;height:10px;background:#a855f7;border-radius:50%;margin-right:4px;"></span>Admin</span>
+                    <span><span style="display:inline-block;width:10px;height:10px;background:#0891b2;border-radius:50%;margin-right:4px;"></span>Admin</span>
                     <span><span style="display:inline-block;width:10px;height:10px;background:#06b6d4;border-radius:50%;margin-right:4px;"></span>Vendedor</span>
                     <span><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:50%;margin-right:4px;"></span>Técnico</span>
                 </div>
@@ -437,9 +437,9 @@
                 <div class="row g-3">
                     @foreach($usuarios as $usuario)
                     @php
-                        $rolColor = ['admin'=>'#a855f7','vendedor'=>'#06b6d4','tecnico'=>'#f59e0b'][$usuario->rol] ?? '#9ca3af';
-                        $rolBg    = ['admin'=>'#ede9fe','vendedor'=>'#e0f2fe','tecnico'=>'#fef3c7'][$usuario->rol] ?? '#f3f4f6';
-                        $rolTxt   = ['admin'=>'#7c3aed','vendedor'=>'#0369a1','tecnico'=>'#92400e'][$usuario->rol] ?? '#374151';
+                        $rolColor = ['admin'=>'#0891b2','vendedor'=>'#06b6d4','tecnico'=>'#f59e0b'][$usuario->rol] ?? '#9ca3af';
+                        $rolBg    = ['admin'=>'#cffafe','vendedor'=>'#e0f2fe','tecnico'=>'#fef3c7'][$usuario->rol] ?? '#f3f4f6';
+                        $rolTxt   = ['admin'=>'#0e7490','vendedor'=>'#0369a1','tecnico'=>'#92400e'][$usuario->rol] ?? '#374151';
                         $inicial  = strtoupper(substr($usuario->name, 0, 1));
                     @endphp
                     <div class="col-12">
@@ -522,11 +522,11 @@
         <!-- Información de seguridad -->
         <div class="card mt-4">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt me-2" style="color:#a855f7;"></i>Políticas de Acceso</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt me-2" style="color:#0891b2;"></i>Políticas de Acceso</h6>
                 <div class="row g-3" style="font-size:13px;">
                     <div class="col-md-4">
-                        <div class="p-3 rounded-3" style="background:#f8f5ff;border-left:3px solid #a855f7;">
-                            <div class="fw-600 mb-1" style="font-weight:600;color:#7c3aed;">Admin</div>
+                        <div class="p-3 rounded-3" style="background:#f8f5ff;border-left:3px solid #0891b2;">
+                            <div class="fw-600 mb-1" style="font-weight:600;color:#0e7490;">Admin</div>
                             <div class="text-muted" style="font-size:12px;">Acceso completo a todos los módulos, configuración y reportes.</div>
                         </div>
                     </div>
@@ -559,9 +559,9 @@
             $slugPublico = $tenantActual?->slug_publico;
             $urlPublica = $slugPublico ? url('/t/' . $slugPublico) : null;
         @endphp
-        <div class="card mb-4" style="border:2px solid #a855f7;">
+        <div class="card mb-4" style="border:2px solid #0891b2;">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-bullhorn me-2" style="color:#a855f7;"></i>Publicidad y Página Pública</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-bullhorn me-2" style="color:#0891b2;"></i>Publicidad y Página Pública</h6>
 
                 @if($urlPublica)
                 <div class="p-3 mb-3 text-center" style="background:#f0fdf4;border-radius:12px;border:1px dashed #10b981;">
@@ -731,7 +731,7 @@
         <div class="modal-content" style="border-radius:16px;border:none;">
             <div class="modal-header" style="border-bottom:1px solid #f3f4f6;padding:20px 24px;">
                 <h6 class="modal-title fw-bold">
-                    <i class="fas fa-user-plus me-2" style="color:#a855f7;"></i>Nuevo Usuario
+                    <i class="fas fa-user-plus me-2" style="color:#0891b2;"></i>Nuevo Usuario
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -811,7 +811,7 @@
         <div class="modal-content" style="border-radius:16px;border:none;">
             <div class="modal-header" style="border-bottom:1px solid #f3f4f6;padding:20px 24px;">
                 <h6 class="modal-title fw-bold">
-                    <i class="fas fa-user-edit me-2" style="color:#a855f7;"></i>Editar Usuario
+                    <i class="fas fa-user-edit me-2" style="color:#0891b2;"></i>Editar Usuario
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>

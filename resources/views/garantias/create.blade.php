@@ -28,7 +28,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
-        <h4 class="fw-bold mb-1" style="color:#1e1b4b;"><i class="fas fa-shield-alt me-2" style="color:#10b981;"></i>Registrar Garantía</h4>
+        <h4 class="fw-bold mb-1" style="color:#0f172a;"><i class="fas fa-shield-alt me-2" style="color:#10b981;"></i>Registrar Garantía</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Registra un producto que ingresa por garantía (sin reembolso de dinero)</p>
     </div>
     <a href="{{ route('garantias.index') }}" class="btn btn-outline-secondary">

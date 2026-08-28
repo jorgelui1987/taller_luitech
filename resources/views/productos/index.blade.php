@@ -136,7 +136,7 @@
                                          style="width:44px; height:44px; border-radius:10px; object-fit:cover;">
                                 @else
                                     <div style="width:44px; height:44px; border-radius:10px;
-                                        background:linear-gradient(135deg,#a855f7,#ec4899);
+                                        background:linear-gradient(135deg,#0891b2,#3b82f6);
                                         display:flex; align-items:center; justify-content:center;">
                                         <i class="fas fa-mobile-alt" style="color:#fff;"></i>
                                     </div>
@@ -157,7 +157,7 @@
                             @if($producto->color) <div class="mt-1">{{ $producto->color }}</div> @endif
                         </td>
                         <td style="font-size:13px; color:#6b7280;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_compra, 2) }}</td>
-                        <td style="font-size:13px; font-weight:600; color:#1e1b4b;">
+                        <td style="font-size:13px; font-weight:600; color:#0f172a;">
                             {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}
                             <div style="font-size:11px; color:#10b981; font-weight:400;">
                                 +{{ number_format($producto->margen, 1) }}% margen
@@ -203,7 +203,7 @@
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 <a href="{{ route('productos.edit', $producto) }}"
-                                   class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;" title="Editar">
+                                   class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;" title="Editar">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </a>
                                 @if(Auth::user()->esAdmin() || Auth::user()->esSuperAdmin())

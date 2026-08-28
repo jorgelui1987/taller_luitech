@@ -31,12 +31,12 @@
         background: rgba(255,255,255,.2); border-radius: 20px;
         padding: 2px 8px; font-size: 11px;
     }
-    .bg-gradient-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
-    .bg-gradient-pink   { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .bg-gradient-purple { background: linear-gradient(135deg, #0891b2, #0e7490); }
+    .bg-gradient-pink   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
     .bg-gradient-cyan   { background: linear-gradient(135deg, #06b6d4, #0284c7); }
     .bg-gradient-green  { background: linear-gradient(135deg, #10b981, #059669); }
     .bg-gradient-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-    .bg-gradient-indigo { background: linear-gradient(135deg, #6366f1, #4338ca); }
+    .bg-gradient-indigo { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
     .bg-gradient-teal   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
     .bg-gradient-rose   { background: linear-gradient(135deg, #f43f5e, #e11d48); }
     .text-value { font-size: 22px; font-weight: 700; color: var(--text-dark); }
@@ -257,15 +257,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         label: 'Ingresos',
                         data: serie.map(s => s.ingresos),
-                        backgroundColor: 'rgba(168,85,247,0.6)',
-                        borderColor: '#a855f7',
+                        backgroundColor: 'rgba(6, 182, 212,0.6)',
+                        borderColor: '#0891b2',
                         borderWidth: 1
                     },
                     {
                         label: 'Costos',
                         data: serie.map(s => s.costos),
-                        backgroundColor: 'rgba(236,72,153,0.6)',
-                        borderColor: '#ec4899',
+                        backgroundColor: 'rgba(59, 130, 246,0.6)',
+                        borderColor: '#3b82f6',
                         borderWidth: 1
                     },
                     {
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: metodosPago.map(m => m.metodo_pago.charAt(0).toUpperCase() + m.metodo_pago.slice(1)),
                 datasets: [{
                     data: metodosPago.map(m => parseFloat(m.monto)),
-                    backgroundColor: ['#a855f7', '#ec4899', '#06b6d4', '#10b981', '#f97316'],
+                    backgroundColor: ['#0891b2', '#3b82f6', '#06b6d4', '#10b981', '#f97316'],
                     borderWidth: 0
                 }]
             },
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const categorias = @json($ingresosPorCategoria);
     const ctx3 = document.getElementById('chartCategorias');
     if (ctx3 && categorias.length > 0) {
-        const colores = ['#a855f7','#ec4899','#06b6d4','#10b981','#f97316','#6366f1','#14b8a6','#f43f5e'];
+        const colores = ['#0891b2','#3b82f6','#06b6d4','#10b981','#f97316','#3b82f6','#14b8a6','#f43f5e'];
         new Chart(ctx3, {
             type: 'pie',
             data: {

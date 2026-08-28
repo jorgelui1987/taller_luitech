@@ -8,7 +8,7 @@
 
 @push('styles')
 <style>
-    .pl-section { font-weight: 700; font-size: 15px; color: var(--text-dark); padding: 8px 0; border-bottom: 2px solid #e9d5ff; }
+    .pl-section { font-weight: 700; font-size: 15px; color: var(--text-dark); padding: 8px 0; border-bottom: 2px solid #a5f3fc; }
     .pl-line { padding: 6px 0; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
     .pl-line-total { font-weight: 700; font-size: 16px; }
     .pl-positive { color: #10b981; }
@@ -50,7 +50,7 @@
 <div class="row">
     <div class="col-md-8 mx-auto">
         <div class="card">
-            <div class="card-header" style="background: linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; border-radius:16px 16px 0 0;">
+            <div class="card-header" style="background: linear-gradient(135deg, #0891b2, #0e7490); color:#fff; border-radius:16px 16px 0 0;">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0" style="font-weight:600;">
                         <i class="fas fa-chart-pie me-2"></i>Estado de Resultados
@@ -61,7 +61,7 @@
             <div class="card-body p-4">
 
                 {{-- INGRESOS --}}
-                <div class="pl-section" style="color:#7c3aed;">INGRESOS</div>
+                <div class="pl-section" style="color:#0e7490;">INGRESOS</div>
 
                 <div class="pl-line">
                     <span class="pl-label">Ventas de Productos ({{ $ventas->cantidad }} transacciones)</span>
@@ -99,7 +99,7 @@
                 </div>
 
                 {{-- COSTOS --}}
-                <div class="pl-section mt-3" style="color:#db2777;">COSTOS</div>
+                <div class="pl-section mt-3" style="color:#2563eb;">COSTOS</div>
 
                 <div class="pl-line">
                     <span class="pl-label">Costo de Ventas (productos)</span>

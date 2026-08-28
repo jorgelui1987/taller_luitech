@@ -2,8 +2,8 @@
 @section('title', 'Ajuste de Inventario')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
-    <ul><li class="breadcrumb-item"><a href="{{ route('stock.movimientos') }}" style="color:#a855f7;">Movimientos</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('stock.movimientos') }}" style="color:#0891b2;">Movimientos</a></li></ul>
     <ul><li class="breadcrumb-item active">Nuevo Ajuste</li></ul>
 @endsection
 
@@ -54,7 +54,7 @@
 
                         <div class="col-md-6">
                             <span class="form-label d-block">Stock Resultante</span>
-                            <div class="form-control" id="stockResultanteDisplay" style="background:#f9fafb; font-weight:600; font-size:18px; color:#7c3aed;">
+                            <div class="form-control" id="stockResultanteDisplay" style="background:#f9fafb; font-weight:600; font-size:18px; color:#0e7490;">
                                 —
                             </div>
                         </div>
@@ -180,7 +180,7 @@ function calcularStockResultante() {
         stockResultanteEl.style.color = '#dc2626';
         advertencia.style.display = 'block';
     } else {
-        stockResultanteEl.style.color = '#7c3aed';
+        stockResultanteEl.style.color = '#0e7490';
         advertencia.style.display = 'none';
     }
 }

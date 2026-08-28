@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a0a3e 0%, #2d1254 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #2d1254 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -50,7 +50,7 @@
             margin-bottom: 30px;
         }
         .btn-home {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             color: #ffffff;
             border: none;
             padding: 12px 30px;

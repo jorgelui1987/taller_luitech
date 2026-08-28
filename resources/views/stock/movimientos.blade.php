@@ -2,7 +2,7 @@
 @section('title', 'Movimientos de Stock')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
     <ul><li class="breadcrumb-item active">Movimientos de Stock</li></ul>
 @endsection
 
@@ -104,7 +104,7 @@
                         </td>
                         <td>
                             <a href="{{ route('productos.show', $mov->producto) }}"
-                               style="color:#7c3aed; font-weight:500; font-size:13px;">
+                               style="color:#0e7490; font-weight:500; font-size:13px;">
                                 {{ $mov->producto->nombre ?? '—' }}
                             </a>
                             <div style="font-size:11px; color:#9ca3af;">{{ $mov->producto->codigo ?? '' }}</div>

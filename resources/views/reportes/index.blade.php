@@ -156,7 +156,7 @@
                             <tr>
                                 <td>
                                     <div style="width:24px; height:24px; border-radius:6px; font-size:11px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center;
-                                        background:{{ ['linear-gradient(135deg,#a855f7,#7c3aed)','linear-gradient(135deg,#ec4899,#db2777)','linear-gradient(135deg,#06b6d4,#0284c7)','linear-gradient(135deg,#10b981,#059669)','linear-gradient(135deg,#f59e0b,#d97706)'][$i] ?? '#6b7280' }};">
+                                        background:{{ ['linear-gradient(135deg,#0891b2,#0e7490)','linear-gradient(135deg,#3b82f6,#2563eb)','linear-gradient(135deg,#06b6d4,#0284c7)','linear-gradient(135deg,#10b981,#059669)','linear-gradient(135deg,#f59e0b,#d97706)'][$i] ?? '#6b7280' }};">
                                         {{ $i+1 }}
                                     </div>
                                 </td>
@@ -165,7 +165,7 @@
                                     <div style="font-size:11px; color:#9ca3af;">{{ $p->codigo }}</div>
                                 </td>
                                 <td class="text-center">{{ $p->unidades }}</td>
-                                <td class="text-end fw-bold" style="color:#1e1b4b;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($p->ingresos, 2) }}</td>
+                                <td class="text-end fw-bold" style="color:#0f172a;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($p->ingresos, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -199,13 +199,13 @@
                             <tr>
                                 <td>
                                     <div style="width:24px; height:24px; border-radius:6px; font-size:11px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center;
-                                        background:{{ ['linear-gradient(135deg,#a855f7,#7c3aed)','linear-gradient(135deg,#ec4899,#db2777)','linear-gradient(135deg,#06b6d4,#0284c7)','linear-gradient(135deg,#10b981,#059669)','linear-gradient(135deg,#f59e0b,#d97706)'][$i] ?? '#6b7280' }};">
+                                        background:{{ ['linear-gradient(135deg,#0891b2,#0e7490)','linear-gradient(135deg,#3b82f6,#2563eb)','linear-gradient(135deg,#06b6d4,#0284c7)','linear-gradient(135deg,#10b981,#059669)','linear-gradient(135deg,#f59e0b,#d97706)'][$i] ?? '#6b7280' }};">
                                         {{ $i+1 }}
                                     </div>
                                 </td>
                                 <td style="font-weight:500;">{{ $c->nombre }}</td>
                                 <td class="text-center">{{ $c->compras }}</td>
-                                <td class="text-end fw-bold" style="color:#1e1b4b;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($c->total, 2) }}</td>
+                                <td class="text-end fw-bold" style="color:#0f172a;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($c->total, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -258,7 +258,7 @@
                                 <td class="text-center" style="color:#9ca3af;">{{ $p->stock_minimo }}</td>
                                 <td class="text-end">
                                     <a href="{{ route('productos.edit', $p) }}"
-                                       style="color:#a855f7; font-size:12px; text-decoration:none;">
+                                       style="color:#0891b2; font-size:12px; text-decoration:none;">
                                         Reponer <i class="fas fa-arrow-right fa-xs"></i>
                                     </a>
                                 </td>
@@ -283,7 +283,7 @@
             <div class="card-body p-4">
                 <h6 class="fw-bold mb-3">Reparaciones por Estado</h6>
                 @php
-                    $estCfg = ['recibido'=>['📥','#ede9fe','#6d28d9'],'en_diagnostico'=>['🔍','#e0f2fe','#0369a1'],'esperando_repuesto'=>['⏳','#fef9c3','#92400e'],'en_reparacion'=>['🔧','#dbeafe','#1d4ed8'],'listo'=>['✅','#d1fae5','#065f46'],'entregado'=>['📦','#f3f4f6','#374151'],'no_reparable'=>['❌','#fee2e2','#991b1b']];
+                    $estCfg = ['recibido'=>['📥','#cffafe','#0e7490'],'en_diagnostico'=>['🔍','#e0f2fe','#0369a1'],'esperando_repuesto'=>['⏳','#fef9c3','#92400e'],'en_reparacion'=>['🔧','#dbeafe','#1d4ed8'],'listo'=>['✅','#d1fae5','#065f46'],'entregado'=>['📦','#f3f4f6','#374151'],'no_reparable'=>['❌','#fee2e2','#991b1b']];
                     $totalRep = $repPorEstado->sum('total');
                 @endphp
                 @forelse($repPorEstado->sortByDesc('total') as $rep)
@@ -315,8 +315,8 @@ const diasTotales = @json($ventasPorDia->pluck('total'));
 
 const ctxDias = document.getElementById('chartDias').getContext('2d');
 const grad = ctxDias.createLinearGradient(0, 0, 0, 220);
-grad.addColorStop(0, 'rgba(168,85,247,.3)');
-grad.addColorStop(1, 'rgba(236,72,153,.02)');
+grad.addColorStop(0, 'rgba(6, 182, 212,.3)');
+grad.addColorStop(1, 'rgba(59, 130, 246,.02)');
 
 new Chart(ctxDias, {
     type: 'bar',
@@ -326,7 +326,7 @@ new Chart(ctxDias, {
             {
                 label: 'Ventas ({{ $empresa->simbolo_moneda ?? '$' }})',
                 data: diasTotales,
-                backgroundColor: 'rgba(168,85,247,.75)',
+                backgroundColor: 'rgba(6, 182, 212,.75)',
                 borderRadius: 6,
                 borderSkipped: false,
             }
@@ -354,7 +354,7 @@ new Chart(document.getElementById('chartPago'), {
         labels: pagoLabels,
         datasets: [{
             data: pagoMontos,
-            backgroundColor: ['#a855f7','#ec4899','#06b6d4','#10b981'],
+            backgroundColor: ['#0891b2','#3b82f6','#06b6d4','#10b981'],
             borderWidth: 0,
             hoverOffset: 8
         }]

@@ -118,7 +118,7 @@
                 <tbody>
                     @forelse($reparaciones as $rep)
                     <tr>
-                        <td class="ps-4" style="font-weight:600;color:#a855f7;">{{ $rep->numero_orden }}</td>
+                        <td class="ps-4" style="font-weight:600;color:#0891b2;">{{ $rep->numero_orden }}</td>
                         <td>{{ $rep->cliente->nombre_completo ?? '—' }}</td>
                         <td>{{ $rep->tecnico->name ?? '—' }}</td>
                         <td style="font-size:12px;">{{ $rep->marca }} {{ $rep->modelo }}</td>

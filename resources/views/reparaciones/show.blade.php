@@ -2,7 +2,7 @@
 @section('title', 'Orden '.$reparacion->numero_orden)
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#a855f7;">Reparaciones</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#0891b2;">Reparaciones</a></li></ul>
     <ul><li class="breadcrumb-item active">{{ $reparacion->numero_orden }}</li></ul>
 @endsection
 
@@ -11,12 +11,12 @@
 /* Timeline minimal */
 .timeline-bar { display:flex; align-items:center; gap:4px; margin-top:8px; }
 .timeline-step { flex:1; height:6px; border-radius:3px; background:#e5e7eb; position:relative; }
-.timeline-step.active { background:linear-gradient(90deg, #a855f7, #7c3aed); }
-.timeline-step.current { background:#7c3aed; box-shadow:0 0 0 2px #ede9fe; }
+.timeline-step.active { background:linear-gradient(90deg, #0891b2, #0e7490); }
+.timeline-step.current { background:#0e7490; box-shadow:0 0 0 2px #cffafe; }
 .timeline-step.done { background:#10b981; }
 .timeline-step .dot { position:absolute; top:-4px; right:-2px; width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid #e5e7eb; }
 .timeline-step.done .dot { background:#10b981; border-color:#10b981; }
-.timeline-step.current .dot { background:#7c3aed; border-color:#7c3aed; }
+.timeline-step.current .dot { background:#0e7490; border-color:#0e7490; }
 
 @media print {
     .sidebar,.topbar,.breadcrumb,.btn-acciones { display:none!important; }
@@ -114,9 +114,9 @@
     color: #9ca3af;
 }
 .foto-upload-box:hover {
-    border-color: #a855f7;
+    border-color: #0891b2;
     background: #f8f5ff;
-    color: #a855f7;
+    color: #0891b2;
 }
 .foto-upload-box input[type="file"] {
     display: none;
@@ -206,7 +206,7 @@
 </div>
 
 @php
-    $stColors = ['recibido'=>['#ede9fe','#6d28d9'],'en_diagnostico'=>['#e0f2fe','#0369a1'],'esperando_repuesto'=>['#fef9c3','#92400e'],'en_reparacion'=>['#dbeafe','#1d4ed8'],'listo'=>['#d1fae5','#065f46'],'entregado'=>['#f3f4f6','#374151'],'no_reparable'=>['#fee2e2','#991b1b']];
+    $stColors = ['recibido'=>['#cffafe','#0e7490'],'en_diagnostico'=>['#e0f2fe','#0369a1'],'esperando_repuesto'=>['#fef9c3','#92400e'],'en_reparacion'=>['#dbeafe','#1d4ed8'],'listo'=>['#d1fae5','#065f46'],'entregado'=>['#f3f4f6','#374151'],'no_reparable'=>['#fee2e2','#991b1b']];
     $priCol = ['urgente'=>['#fee2e2','#991b1b','🔴'],'alta'=>['#ffedd5','#9a3412','🟠'],'media'=>['#fef9c3','#713f12','🟡'],'baja'=>['#d1fae5','#065f46','🟢']];
     $pr = $priCol[$reparacion->prioridad] ?? ['#f3f4f6','#374151','⚪'];
     $tipos = ['celular'=>'📱 Celular','tablet'=>'📟 Tablet','portatil'=>'💻 Portátil','otros'=>'🔧 Otros'];
@@ -214,7 +214,7 @@
 
 {{-- Tarjeta de Resumen (datos clave de un vistazo) --}}
 <div class="card mb-4">
-    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#ecfeff,#fdf4ff); border-bottom:1px solid #cffafe;">
         <div class="row g-3 align-items-center">
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Estado</div>
@@ -234,7 +234,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total, 2) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total, 2) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Cliente</div>
@@ -336,27 +336,27 @@
         <ul class="nav nav-tabs card-header-tabs" id="reparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
             <li class="nav-item">
                 <button class="nav-link active" id="tab-equipo-tab" data-bs-toggle="tab" data-bs-target="#tab-equipo" type="button" role="tab" aria-controls="tab-equipo" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-mobile-alt me-1" style="color:#a855f7;"></i>📱 Equipo
+                    <i class="fas fa-mobile-alt me-1" style="color:#0891b2;"></i>📱 Equipo
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="tab-diagnostico-tab" data-bs-toggle="tab" data-bs-target="#tab-diagnostico" type="button" role="tab" aria-controls="tab-diagnostico" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-stethoscope me-1" style="color:#a855f7;"></i>🔍 Diagnóstico
+                    <i class="fas fa-stethoscope me-1" style="color:#0891b2;"></i>🔍 Diagnóstico
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="tab-costos-tab" data-bs-toggle="tab" data-bs-target="#tab-costos" type="button" role="tab" aria-controls="tab-costos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-dollar-sign me-1" style="color:#a855f7;"></i>💰 Costos
+                    <i class="fas fa-dollar-sign me-1" style="color:#0891b2;"></i>💰 Costos
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="tab-fotos-tab" data-bs-toggle="tab" data-bs-target="#tab-fotos" type="button" role="tab" aria-controls="tab-fotos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-camera me-1" style="color:#a855f7;"></i>📷 Fotos
+                    <i class="fas fa-camera me-1" style="color:#0891b2;"></i>📷 Fotos
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="tab-firmas-tab" data-bs-toggle="tab" data-bs-target="#tab-firmas" type="button" role="tab" aria-controls="tab-firmas" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-pen me-1" style="color:#a855f7;"></i>✍️ Firmas
+                    <i class="fas fa-pen me-1" style="color:#0891b2;"></i>✍️ Firmas
                 </button>
             </li>
         </ul>
@@ -459,7 +459,7 @@
                 @endif
                 @if($reparacion->notas)
                 <div class="p-3 rounded-3 d-flex align-items-start gap-2" style="background:#f9fafb; font-size:13px; color:#6b7280;">
-                    <i class="fas fa-sticky-note mt-1" style="color:#a855f7;"></i>
+                    <i class="fas fa-sticky-note mt-1" style="color:#0891b2;"></i>
                     <div>{{ $reparacion->notas }}</div>
                 </div>
                 @endif
@@ -471,7 +471,7 @@
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#f8f5ff;">
                             <div style="font-size:10px; color:#9ca3af;">PRESUPUESTO</div>
-                            <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ $reparacion->presupuesto ? number_format($reparacion->presupuesto, 2) : '0.00' }}</div>
+                            <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ $reparacion->presupuesto ? number_format($reparacion->presupuesto, 2) : '0.00' }}</div>
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
@@ -550,7 +550,7 @@
                 </div>
                 <div id="fotoUploadProgress" style="display:none; margin-top:8px;">
                     <div class="progress" style="height:5px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%; background:#a855f7;"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%; background:#0891b2;"></div>
                     </div>
                     <p class="text-muted mt-1" style="font-size:11px;">Subiendo foto...</p>
                 </div>

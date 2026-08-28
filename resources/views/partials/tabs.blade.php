@@ -21,7 +21,7 @@
                         aria-controls="tab-{{ $tab['id'] }}"
                         aria-selected="{{ $tab['id'] === $activeId ? 'true' : 'false' }}"
                         style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="{{ $tab['icon'] ?? 'fas fa-circle' }} me-1" style="color:#a855f7;"></i>{{ $tab['label'] }}
+                    <i class="{{ $tab['icon'] ?? 'fas fa-circle' }} me-1" style="color:#0891b2;"></i>{{ $tab['label'] }}
                 </button>
             </li>
             @endforeach

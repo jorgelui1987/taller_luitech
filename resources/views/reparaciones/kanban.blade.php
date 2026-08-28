@@ -92,8 +92,8 @@
     font-weight: 600;
 }
 .kanban-column.drag-over {
-    background: #e0e7ff;
-    border: 2px dashed #6366f1;
+    background: #dbeafe;
+    border: 2px dashed #3b82f6;
 }
 </style>
 
@@ -108,7 +108,7 @@
             @foreach($reparaciones->where('estado', $estadoKey) as $rep)
             <div class="kanban-card" draggable="true" data-id="{{ $rep->id }}" data-estado="{{ $estadoKey }}">
                 <div class="card-title">
-                    <a href="{{ route('reparaciones.show', $rep) }}" style="color:#1e1b4b;text-decoration:none;">
+                    <a href="{{ route('reparaciones.show', $rep) }}" style="color:#0f172a;text-decoration:none;">
                         {{ $rep->dispositivo ?: 'Dispositivo' }}
                     </a>
                 </div>
@@ -125,7 +125,7 @@
                         {{ ucfirst($rep->prioridad) }}
                     </span>
                     @if($rep->fecha_estimada)
-                        <span class="badge-prioridad" style="background:#e0e7ff;color:#3730a3;">
+                        <span class="badge-prioridad" style="background:#dbeafe;color:#1e3a8a;">
                             <i class="fas fa-calendar me-1"></i>{{ $rep->fecha_estimada->format('d/m') }}
                         </span>
                     @endif

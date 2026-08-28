@@ -135,7 +135,7 @@
         top: 44px;
         bottom: -20px;
         width: 2px;
-        background: #e9d5ff;
+        background: #a5f3fc;
     }
 
     .paso-numero {
@@ -150,7 +150,7 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 3px 8px rgba(168,85,247,.3);
+        box-shadow: 0 3px 8px rgba(6, 182, 212,.3);
         z-index: 1;
     }
 
@@ -237,7 +237,7 @@
         padding: 10px 14px;
         font-weight: 600;
         color: var(--text-dark);
-        border-bottom: 2px solid #e9d5ff;
+        border-bottom: 2px solid #a5f3fc;
         text-align: left;
     }
 
@@ -251,7 +251,7 @@
 
     /* ── Encabezado con empresa ── */
     .ayuda-hero {
-        background: linear-gradient(135deg, #1a0a3e, #7c3aed);
+        background: linear-gradient(135deg, #0f172a, #0e7490);
         border-radius: 20px;
         padding: 32px;
         color: #fff;
@@ -259,7 +259,7 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        box-shadow: 0 8px 24px rgba(124,58,237,.25);
+        box-shadow: 0 8px 24px rgba(14, 116, 144,.25);
     }
 
     .ayuda-hero .hero-logo {
@@ -313,7 +313,7 @@
 
     .ayuda-buscador input:focus {
         border-color: var(--accent1);
-        box-shadow: 0 0 0 4px rgba(168,85,247,.15);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212,.15);
     }
 
     .ayuda-buscador i {
@@ -362,7 +362,7 @@
 
     .ayuda-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(168,85,247,.15);
+        box-shadow: 0 8px 20px rgba(6, 182, 212,.15);
         border-color: var(--accent1);
     }
 
@@ -444,7 +444,7 @@
         background: var(--gradient);
         color: #fff;
         border: none;
-        box-shadow: 0 4px 15px rgba(168,85,247,.4);
+        box-shadow: 0 4px 15px rgba(6, 182, 212,.4);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -644,7 +644,7 @@
         {{-- ── GRID DE TARJETAS (acceso rápido) ── --}}
         <div class="ayuda-grid" id="ayudaGrid">
             <a class="ayuda-card" href="#dashboard" data-rol="admin">
-                <div class="card-icon" style="background:linear-gradient(135deg,#a855f7,#7c3aed);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#0891b2,#0e7490);">
                     <i class="fas fa-th-large"></i>
                 </div>
                 <h3 class="card-titulo">Dashboard</h3>
@@ -671,7 +671,7 @@
             </a>
 
             <a class="ayuda-card" href="#compras" data-rol="admin">
-                <div class="card-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <h3 class="card-titulo">Órdenes de Compra</h3>
@@ -698,7 +698,7 @@
             </a>
 
             <a class="ayuda-card" href="#codigos-barras" data-rol="admin">
-                <div class="card-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
                     <i class="fas fa-barcode"></i>
                 </div>
                 <h3 class="card-titulo">Códigos de Barras</h3>
@@ -707,7 +707,7 @@
             </a>
 
             <a class="ayuda-card" href="#ventas" data-rol="vendedor">
-                <div class="card-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <h3 class="card-titulo">Ventas</h3>
@@ -725,7 +725,7 @@
             </a>
 
             <a class="ayuda-card" href="#reparaciones" data-rol="tecnico">
-                <div class="card-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
                     <i class="fas fa-tools"></i>
                 </div>
                 <h3 class="card-titulo">Reparaciones</h3>
@@ -761,7 +761,7 @@
             </a>
 
             <a class="ayuda-card" href="#auditoria" data-rol="admin">
-                <div class="card-icon" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#0e7490,#164e63);">
                     <i class="fas fa-clipboard-check"></i>
                 </div>
                 <h3 class="card-titulo">Auditoría</h3>
@@ -779,7 +779,7 @@
             </a>
 
             <a class="ayuda-card" href="#pwa" data-rol="todos">
-                <div class="card-icon" style="background:linear-gradient(135deg,#a855f7,#ec4899);">
+                <div class="card-icon" style="background:linear-gradient(135deg,#0891b2,#3b82f6);">
                     <i class="fas fa-mobile-alt"></i>
                 </div>
                 <h3 class="card-titulo">Instalar App</h3>
@@ -849,7 +849,7 @@
         {{-- ── DASHBOARD ── --}}
         <section class="ayuda-seccion" id="dashboard">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#a855f7,#7c3aed);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#0891b2,#0e7490);">
                     <i class="fas fa-th-large"></i>
                 </div>
                 <div>
@@ -1003,7 +1003,7 @@
         {{-- ── ÓRDENES DE COMPRA ── --}}
         <section class="ayuda-seccion" id="compras">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <div>
@@ -1170,7 +1170,7 @@
         {{-- ── VENTAS ── --}}
         <section class="ayuda-seccion" id="ventas">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <div>
@@ -1300,7 +1300,7 @@
         {{-- ── REPARACIONES ── --}}
         <section class="ayuda-seccion" id="reparaciones">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
                     <i class="fas fa-tools"></i>
                 </div>
                 <div>
@@ -1611,7 +1611,7 @@
         {{-- ── FACTURACIÓN ELECTRÓNICA ── --}}
         <section class="ayuda-seccion" id="facturacion-electronica">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#0e7490,#0e7490);">
                     <i class="fas fa-file-invoice"></i>
                 </div>
                 <div>
@@ -1776,7 +1776,7 @@
         {{-- ── PÁGINA PÚBLICA (MINI WEB) ── --}}
         <section class="ayuda-seccion" id="pagina-publica">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#4f46e5,#3730a3);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#2563eb,#1e3a8a);">
                     <i class="fas fa-globe"></i>
                 </div>
                 <div>
@@ -1944,7 +1944,7 @@
         {{-- ── CÓDIGOS DE BARRAS ── --}}
         <section class="ayuda-seccion" id="codigos-barras">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
                     <i class="fas fa-barcode"></i>
                 </div>
                 <div>
@@ -2110,7 +2110,7 @@
         {{-- ── AUDITORÍA ── --}}
         <section class="ayuda-seccion" id="auditoria">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#0e7490,#164e63);">
                     <i class="fas fa-clipboard-check"></i>
                 </div>
                 <div>
@@ -2153,7 +2153,7 @@
         {{-- ── INSTALAR APP (PWA) ── --}}
         <section class="ayuda-seccion" id="pwa">
             <div class="seccion-header">
-                <div class="seccion-icon" style="background:linear-gradient(135deg,#a855f7,#ec4899);">
+                <div class="seccion-icon" style="background:linear-gradient(135deg,#0891b2,#3b82f6);">
                     <i class="fas fa-mobile-alt"></i>
                 </div>
                 <div>

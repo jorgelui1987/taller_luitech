@@ -16,11 +16,11 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body d-flex align-items-center gap-3 py-3">
-                    <div style="width:48px;height:48px;background:#ede9fe;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#7c3aed;">
+                    <div style="width:48px;height:48px;background:#cffafe;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#0e7490;">
                         <i class="fas fa-list"></i>
                     </div>
                     <div>
-                        <div style="font-size:22px;font-weight:700;color:#1e1b4b;">{{ $stats['total'] }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#0f172a;">{{ $stats['total'] }}</div>
                         <div style="font-size:12px;color:#6b7280;">Total de registros</div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                         <i class="fas fa-calendar-day"></i>
                     </div>
                     <div>
-                        <div style="font-size:22px;font-weight:700;color:#1e1b4b;">{{ $stats['hoy'] }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#0f172a;">{{ $stats['hoy'] }}</div>
                         <div style="font-size:12px;color:#6b7280;">Acciones hoy</div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                         <i class="fas fa-tag"></i>
                     </div>
                     <div>
-                        <div style="font-size:22px;font-weight:700;color:#1e1b4b;">{{ $stats['acciones'] }}</div>
+                        <div style="font-size:22px;font-weight:700;color:#0f172a;">{{ $stats['acciones'] }}</div>
                         <div style="font-size:12px;color:#6b7280;">Tipos de acciones</div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                                 @endif
                             </td>
                             <td>
-                                <span class="badge-estado" style="background:#ede9fe;color:#7c3aed;">{{ $aud->accion }}</span>
+                                <span class="badge-estado" style="background:#cffafe;color:#0e7490;">{{ $aud->accion }}</span>
                             </td>
                             <td>
                                 <div style="font-size:12.5px;">{{ $aud->entidad ?? '—' }}</div>

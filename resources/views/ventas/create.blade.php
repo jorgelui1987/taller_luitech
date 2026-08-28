@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Nueva Venta')
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#a855f7;">Ventas</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#0891b2;">Ventas</a></li></ul>
     <ul><li class="breadcrumb-item active">Nueva Venta</li></ul>
 @endsection
 @section('content')
@@ -63,13 +63,13 @@
                         <input type="file" id="scannerInput" accept="image/*" capture="environment" style="display:none;" onchange="procesarFotoCodigo(this)">
                         <div id="scannerContainer" style="display:none; max-width:400px; margin-top:8px;" class="card p-2">
                             <div id="scannerMensaje" style="font-size:13px; padding:10px; text-align:center; color:#6b7280;">
-                                <i class="fas fa-camera fa-2x mb-2" style="color:#a855f7;"></i><br>
+                                <i class="fas fa-camera fa-2x mb-2" style="color:#0891b2;"></i><br>
                                 Preparando escáner...
                             </div>
                             <div id="scannerVideoWrap" style="position:relative; display:none;">
                                 <video id="scannerVideo" playsinline muted style="width:100%; border-radius:8px; background:#000;"></video>
                                 <div id="scannerOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
-                                    <div id="scannerBox" style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:80%; height:60px; border:3px solid #a855f7; border-radius:8px; box-shadow:0 0 0 9999px rgba(0,0,0,0.4);"></div>
+                                    <div id="scannerBox" style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:80%; height:60px; border:3px solid #0891b2; border-radius:8px; box-shadow:0 0 0 9999px rgba(0,0,0,0.4);"></div>
                                     <div id="scannerLine" style="position:absolute; left:10%; width:80%; height:2px; background:#22c55e; box-shadow:0 0 8px #22c55e; animation:scanline 2s linear infinite;"></div>
                                 </div>
                             </div>
@@ -152,7 +152,7 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <hr>
-                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#a855f7;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#0891b2;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <button type="submit" class="btn btn-primary w-100 py-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
                 </form>
             </div>
@@ -431,7 +431,7 @@ function iniciarEscaneoEnVivo() {
     let mensaje = document.getElementById('scannerMensaje');
     
     videoWrap.style.display = 'block';
-    mensaje.innerHTML = '<i class="fas fa-camera fa-2x mb-2" style="color:#a855f7;"></i><br>Apuntando la cámara al código...<br><small style="color:#6b7280;">Alinea el código dentro del recuadro morado</small>';
+    mensaje.innerHTML = '<i class="fas fa-camera fa-2x mb-2" style="color:#0891b2;"></i><br>Apuntando la cámara al código...<br><small style="color:#6b7280;">Alinea el código dentro del recuadro morado</small>';
     
     // Solicitar acceso a la cámara trasera
     navigator.mediaDevices.getUserMedia({
@@ -593,7 +593,7 @@ function detenerScanner() {
     
     // Restablecer recuadro
     let box = document.getElementById('scannerBox');
-    if (box) box.style.borderColor = '#a855f7';
+    if (box) box.style.borderColor = '#0891b2';
     
     // Ocultar video
     let videoWrap = document.getElementById('scannerVideoWrap');

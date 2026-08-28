@@ -2,7 +2,7 @@
 @section('title', 'Códigos de Barras')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
     <ul><li class="breadcrumb-item active">🏷️ Códigos de Barras</li></ul>
 @endsection
 
@@ -59,7 +59,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered" style="font-size:13px;">
                         <thead>
-                            <tr style="background:#f8f5ff; color:#1e1b4b;">
+                            <tr style="background:#f8f5ff; color:#0f172a;">
                                 <th>Código</th>
                                 <th>Producto</th>
                                 <th>Categoría</th>
@@ -72,7 +72,7 @@
                         <tbody>
                             @forelse($productos as $p)
                             <tr id="fila-{{ $p->id }}">
-                                <td><span class="badge" style="background:#ede9fe; color:#7c3aed; font-weight:600;">{{ $p->codigo }}</span></td>
+                                <td><span class="badge" style="background:#cffafe; color:#0e7490; font-weight:600;">{{ $p->codigo }}</span></td>
                                 <td>
                                     <div style="font-weight:600;">{{ $p->nombre }}</div>
                                     <div class="text-muted" style="font-size:11px;">{{ $p->marca->nombre ?? '' }}</div>

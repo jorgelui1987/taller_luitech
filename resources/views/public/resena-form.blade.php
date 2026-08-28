@@ -12,7 +12,7 @@
         .star-input { font-size: 40px; cursor: pointer; color: #d1d5db; transition: color .2s; }
         .star-input.active { color: #f59e0b; }
         .star-input:hover { color: #f59e0b; }
-        .btn-primary { background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; border-radius: 10px; padding: 12px; font-weight: 600; }
+        .btn-primary { background: linear-gradient(135deg, #0891b2, #0e7490); border: none; border-radius: 10px; padding: 12px; font-weight: 600; }
         .btn-primary:hover { opacity: .9; }
     </style>
 </head>
@@ -20,7 +20,7 @@
     <div class="card p-4">
         <div class="text-center mb-4">
             <div style="font-size:50px;">⭐</div>
-            <h3 class="fw-bold mt-2" style="color:#1e1b4b;">¿Cómo fue tu experiencia?</h3>
+            <h3 class="fw-bold mt-2" style="color:#0f172a;">¿Cómo fue tu experiencia?</h3>
             <p class="text-muted">Tu opinión nos ayuda a mejorar</p>
             @if($reparacion)
                 <div class="p-2" style="background:#f3f4f6;border-radius:10px;font-size:13px;">

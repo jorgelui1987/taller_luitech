@@ -20,7 +20,7 @@
 <div class="row g-3 mb-4">
     @php
         $estats = [
-            ['label'=>'Recibidos', 'value'=>$estadisticas['recibidos'], 'icon'=>'fa-inbox', 'color'=>'#7c3aed', 'bg'=>'#ede9fe'],
+            ['label'=>'Recibidos', 'value'=>$estadisticas['recibidos'], 'icon'=>'fa-inbox', 'color'=>'#0e7490', 'bg'=>'#cffafe'],
             ['label'=>'En Proceso', 'value'=>$estadisticas['en_proceso'], 'icon'=>'fa-wrench', 'color'=>'#0284c7', 'bg'=>'#e0f2fe'],
             ['label'=>'Listos', 'value'=>$estadisticas['listos'], 'icon'=>'fa-check-circle', 'color'=>'#059669', 'bg'=>'#d1fae5'],
             ['label'=>'Entregados', 'value'=>$estadisticas['entregados'], 'icon'=>'fa-box', 'color'=>'#374151', 'bg'=>'#f3f4f6'],
@@ -118,7 +118,7 @@
                     @forelse($reparaciones as $rep)
                     <tr>
                         <td class="ps-4">
-                            <span style="font-weight:600; color:#a855f7;">{{ $rep->numero_orden }}</span>
+                            <span style="font-weight:600; color:#0891b2;">{{ $rep->numero_orden }}</span>
                         </td>
                         <td style="font-size:13px;">
                             <div style="font-weight:500;">{{ $rep->dispositivo }}</div>
@@ -140,7 +140,7 @@
                         <td>
                             @php
                                 $stColors = [
-                                    'recibido'           => ['#ede9fe','#6d28d9'],
+                                    'recibido'           => ['#cffafe','#0e7490'],
                                     'en_diagnostico'     => ['#e0f2fe','#0369a1'],
                                     'esperando_repuesto' => ['#fef9c3','#92400e'],
                                     'en_reparacion'      => ['#dbeafe','#1d4ed8'],
@@ -173,7 +173,7 @@
                         <td class="text-end pe-4">
                             <div class="d-flex gap-1 justify-content-end">
                                 <a href="{{ route('reparaciones.show', $rep) }}"
-                                   class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;">
+                                   class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;">
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 <a href="{{ route('reparaciones.edit', $rep) }}"
@@ -216,7 +216,7 @@
             @forelse($reparaciones as $rep)
                 @php
                     $stColors = [
-                        'recibido'=>['#ede9fe','#6d28d9','#7c3aed'],
+                        'recibido'=>['#cffafe','#0e7490','#0e7490'],
                         'en_diagnostico'=>['#e0f2fe','#0369a1','#0284c7'],
                         'esperando_repuesto'=>['#fef9c3','#92400e','#d97706'],
                         'en_reparacion'=>['#dbeafe','#1d4ed8','#2563eb'],
@@ -234,7 +234,7 @@
                     {{-- Header: N° Orden + Estado --}}
                     <div class="card-header-info">
                         <div>
-                            <span style="font-weight:700; color:#a855f7; font-size:14px;">{{ $rep->numero_orden }}</span>
+                            <span style="font-weight:700; color:#0891b2; font-size:14px;">{{ $rep->numero_orden }}</span>
                             <div style="font-size:12px; font-weight:500;">{{ $rep->dispositivo }}</div>
                             <div style="font-size:11px; color:#9ca3af;">{{ $rep->marca }} {{ $rep->modelo }}</div>
                         </div>
@@ -257,7 +257,7 @@
                                 {{ $pr[0] }} {{ ucfirst($rep->prioridad) }}
                             </span>
                             @if($rep->presupuesto > 0)
-                                <div style="font-size:13px; font-weight:700; color:#7c3aed; margin-top:4px;">
+                                <div style="font-size:13px; font-weight:700; color:#0e7490; margin-top:4px;">
                                     {{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($rep->presupuesto, 2) }}
                                 </div>
                             @endif
@@ -265,7 +265,7 @@
                     </div>
                     {{-- Footer: Acciones --}}
                     <div class="card-footer-actions">
-                        <a href="{{ route('reparaciones.show', $rep) }}" class="btn btn-sm flex-fill" style="background:#ede9fe; color:#7c3aed; border-radius:8px; font-size:12px;">
+                        <a href="{{ route('reparaciones.show', $rep) }}" class="btn btn-sm flex-fill" style="background:#cffafe; color:#0e7490; border-radius:8px; font-size:12px;">
                             <i class="fas fa-eye me-1"></i>Ver
                         </a>
                         <a href="{{ route('reparaciones.edit', $rep) }}" class="btn btn-sm flex-fill" style="background:#e0f2fe; color:#0369a1; border-radius:8px; font-size:12px;">

@@ -2,7 +2,7 @@
 @section('title', 'Nuevo Producto')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
     <ul><li class="breadcrumb-item active">Nuevo Producto</li></ul>
 @endsection
 
@@ -28,7 +28,7 @@
                     <div class="row g-4">
                         {{-- Columna izquierda --}}
                         <div class="col-lg-8">
-                            <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Información General</h6>
+                            <h6 class="fw-600 mb-3" style="font-weight:600; color:#0f172a;">Información General</h6>
                             <div class="row g-3">
 
                                 {{-- TIPO DE PRODUCTO --}}
@@ -172,7 +172,7 @@
                             </div>
 
                             <hr class="my-4">
-                            <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Precios y Stock</h6>
+                            <h6 class="fw-600 mb-3" style="font-weight:600; color:#0f172a;">Precios y Stock</h6>
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label for="precio_compra" class="form-label">Precio de Compra ({{ $empresa->simbolo_moneda ?? '$' }}) <span class="text-danger">*</span></label>
@@ -213,7 +213,7 @@
 
                         {{-- Columna derecha - imagen --}}
                         <div class="col-lg-4">
-                            <h6 class="fw-600 mb-3" style="font-weight:600; color:#1e1b4b;">Imagen del Producto</h6>
+                            <h6 class="fw-600 mb-3" style="font-weight:600; color:#0f172a;">Imagen del Producto</h6>
                             <div id="dropZone"
                                  role="button"
                                  tabindex="0"
@@ -222,7 +222,7 @@
                                         text-align:center; cursor:pointer; background:#fafafa; transition:.2s; display:block;"
                                  onclick="document.getElementById('imagenInput').click();"
                                  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('imagenInput').click();}"
-                                 ondragover="event.preventDefault(); this.style.borderColor='#a855f7';"
+                                 ondragover="event.preventDefault(); this.style.borderColor='#0891b2';"
                                  ondragleave="this.style.borderColor='#d1d5db';"
                                  ondrop="handleDrop(event)">
                                 <label for="imagenInput" style="display:block; cursor:pointer; margin:0;">
@@ -278,7 +278,7 @@
 <div class="modal fade" id="modalMarca" tabindex="-1">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content" style="border-radius:16px;">
-            <div class="modal-header" style="background:linear-gradient(135deg,#a855f7,#7c3aed); color:#fff; border-radius:16px 16px 0 0;">
+            <div class="modal-header" style="background:linear-gradient(135deg,#0891b2,#0e7490); color:#fff; border-radius:16px 16px 0 0;">
                 <h6 class="modal-title fw-bold"><i class="fas fa-tag me-2"></i>Nueva Marca</h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>

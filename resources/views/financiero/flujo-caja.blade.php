@@ -163,12 +163,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         label: 'Saldo Acumulado',
                         data: data.map(d => d.saldo_acum),
-                        borderColor: '#a855f7',
+                        borderColor: '#0891b2',
                         backgroundColor: 'transparent',
                         borderWidth: 2,
                         borderDash: [5, 5],
                         tension: 0.3,
-                        pointBackgroundColor: '#a855f7'
+                        pointBackgroundColor: '#0891b2'
                     }
                 ]
             },

@@ -27,7 +27,7 @@
         'garantia'        => ['🛡️ Garantía', '#e0f2fe', '#0369a1'],
         'defecto'         => ['⚠️ Defecto', '#fee2e2', '#dc2626'],
         'cambio_opinion'  => ['💭 Cambio de opinión', '#fef3c7', '#92400e'],
-        'error_venta'     => ['❌ Error de venta', '#f3e8ff', '#7c3aed'],
+        'error_venta'     => ['❌ Error de venta', '#cffafe', '#0e7490'],
         'otro'            => ['📦 Otro', '#f3f4f6', '#374151'],
     ];
     $mot = $motivoBadge[$devolucion->motivo] ?? ['📦 Otro', '#f3f4f6', '#374151'];
@@ -37,8 +37,8 @@
 <!-- ── Header ── -->
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
-        <h4 class="fw-bold mb-1" style="color:#1e1b4b;">
-            <i class="fas fa-undo-alt me-2" style="color:#a855f7;"></i>{{ $devolucion->numero_devolucion }}
+        <h4 class="fw-bold mb-1" style="color:#0f172a;">
+            <i class="fas fa-undo-alt me-2" style="color:#0891b2;"></i>{{ $devolucion->numero_devolucion }}
         </h4>
         <div class="d-flex align-items-center gap-2 mt-1">
             <span class="badge" style="background:{{ $mot[1] }};color:{{ $mot[2] }};font-size:11px;">{{ $mot[0] }}</span>
@@ -67,7 +67,7 @@
 
 {{-- Tarjeta de Resumen --}}
 <div class="card mb-4">
-    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#ecfeff,#fdf4ff); border-bottom:1px solid #cffafe;">
         <div class="row g-3 align-items-center">
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Devolución</div>
@@ -87,7 +87,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total devuelto</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ number_format($devolucion->total, 2) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ number_format($devolucion->total, 2) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Estado</div>
@@ -106,7 +106,7 @@
     <div class="col-lg-4">
         <div class="card mb-4">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2" style="color:#a855f7;"></i>Detalle de la Devolución</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2" style="color:#0891b2;"></i>Detalle de la Devolución</h6>
                 <div style="font-size:13px;">
                     <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid #f3f4f6;">
                         <span class="text-muted">N° Devolución</span>
@@ -175,9 +175,9 @@
                         <span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }}</span>
                         <strong>{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($devolucion->impuesto, 2) }}</strong>
                     </div>
-                    <div class="d-flex justify-content-between py-2" style="border-top:2px solid #e9d5ff;margin-top:4px;">
+                    <div class="d-flex justify-content-between py-2" style="border-top:2px solid #a5f3fc;margin-top:4px;">
                         <span style="font-weight:600;">Total devuelto</span>
-                        <strong style="color:#7c3aed;font-size:16px;">{{ number_format($devolucion->total, 2) }}</strong>
+                        <strong style="color:#0e7490;font-size:16px;">{{ number_format($devolucion->total, 2) }}</strong>
                     </div>
                 </div>
             </div>
@@ -188,7 +188,7 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-box me-2" style="color:#a855f7;"></i>Productos Devueltos</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-box me-2" style="color:#0891b2;"></i>Productos Devueltos</h6>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>

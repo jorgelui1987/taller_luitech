@@ -28,7 +28,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
-        <h4 class="fw-bold mb-1" style="color:#1e1b4b;">
+        <h4 class="fw-bold mb-1" style="color:#0f172a;">
             <i class="fas fa-shield-alt me-2" style="color:#10b981;"></i>{{ $garantia->numero_garantia }}
         </h4>
         <div class="d-flex align-items-center gap-2 mt-1">

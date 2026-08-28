@@ -29,7 +29,7 @@
 <!-- ── Header ── -->
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
-        <h4 class="fw-bold mb-1" style="color:#1e1b4b;"><i class="fas fa-undo-alt me-2" style="color:#a855f7;"></i>Registrar Devolución</h4>
+        <h4 class="fw-bold mb-1" style="color:#0f172a;"><i class="fas fa-undo-alt me-2" style="color:#0891b2;"></i>Registrar Devolución</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Selecciona la venta y los productos que el cliente devuelve</p>
     </div>
     <a href="{{ route('devoluciones.index') }}" class="btn btn-outline-secondary">
@@ -45,7 +45,7 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3"><i class="fas fa-shopping-cart me-2" style="color:#a855f7;"></i>Venta Original</h6>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-shopping-cart me-2" style="color:#0891b2;"></i>Venta Original</h6>
 
                     <div class="mb-3">
                         <label for="ventaSelect" class="form-label">Seleccionar venta <span class="text-danger">*</span></label>
@@ -63,13 +63,13 @@
                     </div>
 
                     <div id="ventaInfo" class="mb-3 p-3 rounded-3" style="background:#f8f5ff;display:none;">
-                        <div style="font-size:12px;color:#7c3aed;font-weight:600;">Datos de la venta</div>
+                        <div style="font-size:12px;color:#0e7490;font-weight:600;">Datos de la venta</div>
                         <div id="ventaInfoContenido" style="font-size:12px;margin-top:6px;"></div>
                     </div>
 
                     <hr>
 
-                    <h6 class="fw-bold mb-3"><i class="fas fa-tag me-2" style="color:#a855f7;"></i>Información de la Devolución</h6>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-tag me-2" style="color:#0891b2;"></i>Información de la Devolución</h6>
 
                     <div class="mb-3">
                         <span class="form-label d-block">Tipo de devolución <span class="text-danger">*</span></span>
@@ -131,8 +131,8 @@
             <div class="card">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h6 class="fw-bold mb-0"><i class="fas fa-box me-2" style="color:#a855f7;"></i>Productos a Devolver</h6>
-                        <span class="badge" style="background:#f3e8ff;color:#7c3aed;font-size:11px;">Seleccione una venta primero</span>
+                        <h6 class="fw-bold mb-0"><i class="fas fa-box me-2" style="color:#0891b2;"></i>Productos a Devolver</h6>
+                        <span class="badge" style="background:#cffafe;color:#0e7490;font-size:11px;">Seleccione una venta primero</span>
                     </div>
 
                     <div id="sinVentaMsg" class="text-center py-5">
@@ -170,7 +170,7 @@
                                 <hr style="margin:8px 0;">
                                 <div class="d-flex justify-content-between">
                                     <span style="font-weight:600;">Total a devolver</span>
-                                    <strong style="color:#7c3aed;font-size:16px;" id="resumenTotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</strong>
+                                    <strong style="color:#0e7490;font-size:16px;" id="resumenTotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</strong>
                                 </div>
                             </div>
                         </div>

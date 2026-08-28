@@ -73,7 +73,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div style="width:38px; height:38px; border-radius:50%;
-                                    background: linear-gradient(135deg,#a855f7,#ec4899);
+                                    background: linear-gradient(135deg,#0891b2,#3b82f6);
                                     display:flex; align-items:center; justify-content:center;
                                     color:#fff; font-weight:600; font-size:14px; flex-shrink:0;">
                                     {{ strtoupper(substr($cliente->nombre, 0, 1)) }}
@@ -116,7 +116,7 @@
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 <a href="{{ route('clientes.edit', $cliente) }}"
-                                   class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;">
+                                   class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </a>
                                 @if(auth()->user()->esAdmin() || auth()->user()->esSuperAdmin())

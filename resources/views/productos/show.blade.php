@@ -2,7 +2,7 @@
 @section('title', $producto->nombre)
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
     <ul><li class="breadcrumb-item active">{{ $producto->nombre }}</li></ul>
 @endsection
 
@@ -15,7 +15,7 @@
 
 {{-- Tarjeta de Resumen --}}
 <div class="card mb-4">
-    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#ecfeff,#fdf4ff); border-bottom:1px solid #cffafe;">
         <div class="row g-3 align-items-center">
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Producto</div>
@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Precio venta</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Condición</div>
@@ -58,7 +58,7 @@
                          alt="{{ $producto->nombre }}"
                          style="width:100%; max-height:240px; object-fit:cover; border-radius:14px; margin-bottom:16px;">
                 @else
-                    <div style="width:100%; height:180px; background:linear-gradient(135deg,#a855f7,#ec4899);
+                    <div style="width:100%; height:180px; background:linear-gradient(135deg,#0891b2,#3b82f6);
                                 border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
                         <i class="fas fa-mobile-alt" style="font-size:64px; color:rgba(255,255,255,.6);"></i>
                     </div>
@@ -66,7 +66,7 @@
 
                 <h5 class="fw-bold mb-1">{{ $producto->nombre }}</h5>
                 <div class="d-flex justify-content-center gap-2 mb-3">
-                    <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 10px; font-size:12px;">
+                    <span style="background:#cffafe; color:#0e7490; border-radius:20px; padding:3px 10px; font-size:12px;">
                         {{ $producto->marca->nombre ?? '—' }}
                     </span>
                     <span style="background:#f3f4f6; color:#374151; border-radius:20px; padding:3px 10px; font-size:12px;">
@@ -123,7 +123,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-2" style="font-size:13.5px;">
                     <span class="text-muted">Precio Venta</span>
-                    <span style="font-weight:700; color:#1e1b4b;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</span>
+                    <span style="font-weight:700; color:#0f172a;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta, 2) }}</span>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between" style="font-size:13.5px;">
@@ -135,7 +135,7 @@
                     <span style="color:#10b981;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->precio_venta - $producto->precio_compra, 2) }}</span>
                 </div>
                 <div class="mt-3 p-2 rounded-3 text-center" style="background:#f8f5ff; font-size:12px; color:#6b7280;">
-                    Valor en stock: <strong style="color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->stock * $producto->precio_venta, 2) }}</strong>
+                    Valor en stock: <strong style="color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($producto->stock * $producto->precio_venta, 2) }}</strong>
                 </div>
             </div>
         </div>
@@ -148,12 +148,12 @@
                 <ul class="nav nav-tabs card-header-tabs" id="productoTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
                     <li class="nav-item">
                         <button class="nav-link active" id="tab-especificaciones-tab" data-bs-toggle="tab" data-bs-target="#tab-especificaciones" type="button" role="tab" aria-controls="tab-especificaciones" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                            <i class="fas fa-cogs me-1" style="color:#a855f7;"></i>⚙️ Especificaciones
+                            <i class="fas fa-cogs me-1" style="color:#0891b2;"></i>⚙️ Especificaciones
                         </button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="tab-historial-tab" data-bs-toggle="tab" data-bs-target="#tab-historial" type="button" role="tab" aria-controls="tab-historial" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                            <i class="fas fa-shopping-cart me-1" style="color:#a855f7;"></i>🛒 Historial de Ventas
+                            <i class="fas fa-shopping-cart me-1" style="color:#0891b2;"></i>🛒 Historial de Ventas
                         </button>
                     </li>
                 </ul>
@@ -233,7 +233,7 @@
                     <div class="tab-pane fade" id="tab-historial" role="tabpanel" aria-labelledby="tab-historial-tab">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <h6 class="fw-bold mb-0">Historial de Ventas</h6>
-                            <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 12px; font-size:12px;">
+                            <span style="background:#cffafe; color:#0e7490; border-radius:20px; padding:3px 12px; font-size:12px;">
                                 {{ $producto->detalleVentas->count() }} ventas
                             </span>
                         </div>
@@ -256,7 +256,7 @@
                                     <tr>
                                         <td>
                                             <a href="{{ route('ventas.show', $det->venta) }}"
-                                               style="color:#a855f7; font-weight:500;">
+                                               style="color:#0891b2; font-weight:500;">
                                                 {{ $det->venta->numero_venta ?? '—' }}
                                             </a>
                                         </td>

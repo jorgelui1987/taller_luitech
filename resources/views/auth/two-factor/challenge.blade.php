@@ -9,7 +9,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a0a3e 0%, #2d1b69 50%, #4c1d95 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #2d1b69 50%, #083344 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -27,7 +27,7 @@
         .challenge-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -44,12 +44,12 @@
             transition: border-color .2s, box-shadow .2s;
         }
         .form-control:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168,85,247,.15);
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212,.15);
             outline: none;
         }
         .btn-verify {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             border: none;
             border-radius: 10px;
             padding: 11px;
@@ -61,7 +61,7 @@
             transition: opacity .2s, transform .2s;
         }
         .btn-verify:hover { opacity: .92; transform: translateY(-1px); }
-        .text-accent { color: #a855f7; }
+        .text-accent { color: #0891b2; }
     </style>
 </head>
 <body>
@@ -70,7 +70,7 @@
             <i class="fas fa-shield-halved"></i>
         </div>
 
-        <h2 class="text-center mb-2" style="font-size:20px; font-weight:700; color:#1e1b4b;">Verificación en Dos Pasos</h2>
+        <h2 class="text-center mb-2" style="font-size:20px; font-weight:700; color:#0f172a;">Verificación en Dos Pasos</h2>
         <p class="text-center text-muted mb-4" style="font-size:13px;">
             Ingresa el código de 6 dígitos de tu aplicación de autenticación.
         </p>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $ordenCompra->numero_orden)
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#0891b2;">Órdenes de Compra</a></li></ul>
     <ul><li class="breadcrumb-item active">{{ $ordenCompra->numero_orden }}</li></ul>
 @endsection
 @section('content')
@@ -9,7 +9,7 @@
     <div>
         <h4 class="mb-1 fw-bold">{{ $ordenCompra->numero_orden }}</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Proveedor: @if($ordenCompra->proveedor)<a href="{{ route('proveedores.show', $ordenCompra->proveedor) }}" style="color:#7c3aed;">{{ $ordenCompra->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif
+            Proveedor: @if($ordenCompra->proveedor)<a href="{{ route('proveedores.show', $ordenCompra->proveedor) }}" style="color:#0e7490;">{{ $ordenCompra->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif
             · Fecha: {{ $ordenCompra->fecha_orden->format('d/m/Y') }}
             · Creado por: {{ $ordenCompra->user->name ?? '—' }}
         </p>
@@ -89,7 +89,7 @@
                     </div>
                     <div class="d-flex justify-content-between py-2">
                         <span class="fw-bold">Total</span>
-                        <span style="font-weight:700;font-size:18px;color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ordenCompra->total, 2) }}</span>
+                        <span style="font-weight:700;font-size:18px;color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ordenCompra->total, 2) }}</span>
                     </div>
                 </div>
                 @if($ordenCompra->fecha_estimada)

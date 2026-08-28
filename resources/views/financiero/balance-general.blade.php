@@ -8,7 +8,7 @@
 
 @push('styles')
 <style>
-    .bs-section { font-weight: 700; font-size: 16px; padding: 10px 0; border-bottom: 2px solid #e9d5ff; margin-top: 16px; }
+    .bs-section { font-weight: 700; font-size: 16px; padding: 10px 0; border-bottom: 2px solid #a5f3fc; margin-top: 16px; }
     .bs-line { padding: 6px 0; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
     .bs-line-total { font-weight: 700; font-size: 16px; border-top: 2px solid var(--text-dark); padding-top: 8px; margin-top: 4px; }
     .bs-positive { color: #10b981; }
@@ -65,7 +65,7 @@
                     <span class="bs-value bs-positive">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalActivoCorriente, 2) }}</span>
                 </div>
 
-                <div class="bs-section mt-3" style="color:#7c3aed;">ACTIVO NO CORRIENTE</div>
+                <div class="bs-section mt-3" style="color:#0e7490;">ACTIVO NO CORRIENTE</div>
 
                 <div class="bs-line">
                     <span>Activo Fijo (estimado)</span>
@@ -89,13 +89,13 @@
 
     <div class="col-md-6">
         <div class="card h-100">
-            <div class="card-header" style="background:linear-gradient(135deg, #ec4899, #db2777); color:#fff; border-radius:16px 16px 0 0;">
+            <div class="card-header" style="background:linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; border-radius:16px 16px 0 0;">
                 <h5 class="mb-0" style="font-weight:600;"><i class="fas fa-credit-card me-2"></i>PASIVOS Y PATRIMONIO</h5>
                 <small>Al {{ $fechaCorte->format('d/m/Y') }}</small>
             </div>
             <div class="card-body p-4">
 
-                <div class="bs-section" style="color:#db2777;">PASIVO CORRIENTE</div>
+                <div class="bs-section" style="color:#2563eb;">PASIVO CORRIENTE</div>
 
                 <div class="bs-line">
                     <span>Cuentas por Pagar</span>
@@ -108,7 +108,7 @@
                     <span class="bs-value bs-negative">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($pasivosCortoPlazo, 2) }}</span>
                 </div>
 
-                <div class="bs-section mt-3" style="color:#7c3aed;">PASIVO NO CORRIENTE</div>
+                <div class="bs-section mt-3" style="color:#0e7490;">PASIVO NO CORRIENTE</div>
 
                 <div class="bs-line">
                     <span>Pasivos a Largo Plazo</span>
@@ -172,7 +172,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="text-center p-3" style="background:#fdf2f8; border-radius:12px;">
+                        <div class="text-center p-3" style="background:#eff6ff; border-radius:12px;">
                             <div style="font-size:12px; color:var(--text-muted);">Prueba Ácida</div>
                             <div style="font-size:28px; font-weight:700; color:var(--accent2);">{{ $pruebaAcida }}</div>
                             <div style="font-size:11px; color:var(--text-muted);">(Act. Corriente - Inventario) / Pasivo Corriente</div>

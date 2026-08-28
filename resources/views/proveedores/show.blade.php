@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $proveedor->nombre)
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('proveedores.index') }}" style="color:#a855f7;">Proveedores</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('proveedores.index') }}" style="color:#0891b2;">Proveedores</a></li></ul>
     <ul><li class="breadcrumb-item active">{{ $proveedor->nombre }}</li></ul>
 @endsection
 @section('content')
@@ -13,7 +13,7 @@
 
 {{-- Tarjeta de Resumen --}}
 <div class="card mb-4">
-    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#ecfeff,#fdf4ff); border-bottom:1px solid #cffafe;">
         <div class="row g-3 align-items-center">
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Proveedor</div>
@@ -35,7 +35,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Órdenes</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $totalOrdenes }}</div>
+                <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $totalOrdenes }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total compras</div>
@@ -51,7 +51,7 @@
         <div class="card">
             <div class="card-body p-4">
                 <div class="text-center mb-3">
-                    <div style="width:64px;height:64px;background:linear-gradient(135deg,#a855f7,#ec4899);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                    <div style="width:64px;height:64px;background:linear-gradient(135deg,#0891b2,#3b82f6);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
                         <i class="fas fa-truck" style="font-size:28px;color:#fff;"></i>
                     </div>
                     <h5 class="fw-bold mb-1">{{ $proveedor->nombre }}</h5>
@@ -98,12 +98,12 @@
                 <ul class="nav nav-tabs card-header-tabs" id="proveedorTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
                     <li class="nav-item">
                         <button class="nav-link active" id="tab-ordenes-tab" data-bs-toggle="tab" data-bs-target="#tab-ordenes" type="button" role="tab" aria-controls="tab-ordenes" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                            <i class="fas fa-clipboard-list me-1" style="color:#a855f7;"></i>📋 Órdenes de Compra
+                            <i class="fas fa-clipboard-list me-1" style="color:#0891b2;"></i>📋 Órdenes de Compra
                         </button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="tab-notas-tab" data-bs-toggle="tab" data-bs-target="#tab-notas" type="button" role="tab" aria-controls="tab-notas" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                            <i class="fas fa-sticky-note me-1" style="color:#a855f7;"></i>📝 Notas
+                            <i class="fas fa-sticky-note me-1" style="color:#0891b2;"></i>📝 Notas
                         </button>
                     </li>
                 </ul>
@@ -120,7 +120,7 @@
                                 <tbody>
                                     @foreach($proveedor->ordenesCompra as $oc)
                                     <tr>
-                                        <td><a href="{{ route('compras.show', $oc) }}" style="color:#a855f7;font-weight:500;">{{ $oc->numero_orden ?? '—' }}</a></td>
+                                        <td><a href="{{ route('compras.show', $oc) }}" style="color:#0891b2;font-weight:500;">{{ $oc->numero_orden ?? '—' }}</a></td>
                                         <td style="color:#6b7280;">{{ $oc->fecha_orden ? \Carbon\Carbon::parse($oc->fecha_orden)->format('d/m/Y') : '—' }}</td>
                                         <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($oc->total ?? 0, 2) }}</td>
                                         <td><span style="background:{{ $oc->estado_bg ?? '#f3f4f6' }};color:{{ $oc->estado_color ?? '#6b7280' }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_', ' ', $oc->estado ?? 'pendiente')) }}</span></td>
@@ -141,7 +141,7 @@
                     <div class="tab-pane fade" id="tab-notas" role="tabpanel" aria-labelledby="tab-notas-tab">
                         @if($proveedor->notas)
                         <div class="p-3 rounded-3" style="background:#f8f5ff; font-size:13px; color:#374151;">
-                            <i class="fas fa-sticky-note me-1" style="color:#a855f7;"></i>{{ $proveedor->notas }}
+                            <i class="fas fa-sticky-note me-1" style="color:#0891b2;"></i>{{ $proveedor->notas }}
                         </div>
                         @else
                         <div class="text-center py-4 text-muted" style="font-size:13px;">

@@ -2,7 +2,7 @@
 @section('title', 'Editar Cliente')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#0891b2;">Clientes</a></li></ul>
     <ul><li class="breadcrumb-item active">Editar</li></ul>
 @endsection
 
@@ -28,13 +28,13 @@
                     <div class="mb-4">
                         <span class="form-label d-block">Tipo de Cliente</span>
                         <div class="d-flex gap-3">
-                            <label for="tipo_particular" style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='particular'?'#a855f7':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
-                                <input type="radio" name="tipo" id="tipo_particular" value="particular" style="accent-color:#a855f7;"
+                            <label for="tipo_particular" style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='particular'?'#0891b2':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
+                                <input type="radio" name="tipo" id="tipo_particular" value="particular" style="accent-color:#0891b2;"
                                        {{ old('tipo',$cliente->tipo)=='particular'?'checked':'' }}>
                                 <span style="font-size:13.5px; margin-left:6px;"><i class="fas fa-user me-1 text-muted"></i> Particular</span>
                             </label>
-                            <label for="tipo_empresa" style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='empresa'?'#a855f7':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
-                                <input type="radio" name="tipo" id="tipo_empresa" value="empresa" style="accent-color:#a855f7;"
+                            <label for="tipo_empresa" style="padding:10px 20px; border:1.5px solid {{ old('tipo',$cliente->tipo)=='empresa'?'#0891b2':'#e5e7eb' }}; border-radius:10px; cursor:pointer; flex:1;">
+                                <input type="radio" name="tipo" id="tipo_empresa" value="empresa" style="accent-color:#0891b2;"
                                        {{ old('tipo',$cliente->tipo)=='empresa'?'checked':'' }}>
                                 <span style="font-size:13.5px; margin-left:6px;"><i class="fas fa-building me-1 text-muted"></i> Empresa</span>
                             </label>

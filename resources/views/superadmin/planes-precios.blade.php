@@ -54,8 +54,8 @@
                                     $colores = [
                                         'gratis' => '#6b7280',
                                         'basico' => '#06b6d4',
-                                        'profesional' => '#7c3aed',
-                                        'empresarial' => '#1e1b4b',
+                                        'profesional' => '#0e7490',
+                                        'empresarial' => '#0f172a',
                                     ];
                                 @endphp
                                 <span style="font-size:2rem;">{{ $iconos[$plan->plan_key] ?? '📋' }}</span>

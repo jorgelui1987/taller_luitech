@@ -24,7 +24,7 @@
 @forelse($ordenes as $oc)
 <tr>
     <td class="ps-4" style="font-weight:600;">{{ $oc->numero_orden }}</td>
-    <td>@if($oc->proveedor)<a href="{{ route('proveedores.show', $oc->proveedor) }}" style="color:#7c3aed;font-weight:500;font-size:13px;">{{ $oc->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif</td>
+    <td>@if($oc->proveedor)<a href="{{ route('proveedores.show', $oc->proveedor) }}" style="color:#0e7490;font-weight:500;font-size:13px;">{{ $oc->proveedor->nombre }}</a>@else<span class="text-muted">—</span>@endif</td>
     <td style="font-size:13px;color:#6b7280;">{{ $oc->fecha_orden->format('d/m/Y') }}</td>
     <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($oc->total, 2) }}</td>
     <td><span style="background:{{ $oc->estado_bg }};color:{{ $oc->estado_color }};border-radius:20px;padding:3px 10px;font-size:11px;">{{ ucfirst(str_replace('_',' ',$oc->estado)) }}</span></td>
@@ -32,7 +32,7 @@
     <td class="text-end pe-4"><div class="d-flex gap-1 justify-content-end">
         <a href="{{ route('compras.show', $oc) }}" class="btn btn-sm" style="background:#f3f4f6;color:#374151;border-radius:8px;padding:5px 10px;" title="Ver"><i class="fas fa-eye fa-sm"></i></a>
         @if(in_array($oc->estado, ['pendiente','aprobada']))
-        <a href="{{ route('compras.edit', $oc) }}" class="btn btn-sm" style="background:#ede9fe;color:#7c3aed;border-radius:8px;padding:5px 10px;" title="Editar"><i class="fas fa-edit fa-sm"></i></a>
+        <a href="{{ route('compras.edit', $oc) }}" class="btn btn-sm" style="background:#cffafe;color:#0e7490;border-radius:8px;padding:5px 10px;" title="Editar"><i class="fas fa-edit fa-sm"></i></a>
         <form action="{{ route('compras.destroy', $oc) }}" method="POST" onsubmit="return confirm('¿Eliminar {{ $oc->numero_orden }}?')" style="display:inline;">@csrf @method('DELETE')<button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border-radius:8px;padding:5px 10px;" title="Eliminar"><i class="fas fa-trash fa-sm"></i></button></form>
         @endif
     </div></td>

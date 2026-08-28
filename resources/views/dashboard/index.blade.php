@@ -15,7 +15,7 @@
             @elseif(auth()->user()->esVendedor())
                 · <span style="color:#06b6d4;">Vendedor</span>
             @else
-                · <span style="color:#a855f7;">Administrador</span>
+                · <span style="color:#0891b2;">Administrador</span>
             @endif
         </p>
     </div>
@@ -263,7 +263,7 @@
                 @forelse($topProductos as $i => $prod)
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div style="width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff;
-                            background: {{ ['linear-gradient(135deg,#a855f7,#7c3aed)', 'linear-gradient(135deg,#ec4899,#db2777)', 'linear-gradient(135deg,#06b6d4,#0284c7)', 'linear-gradient(135deg,#10b981,#059669)', 'linear-gradient(135deg,#f59e0b,#d97706)'][$i] }};">
+                            background: {{ ['linear-gradient(135deg,#0891b2,#0e7490)', 'linear-gradient(135deg,#3b82f6,#2563eb)', 'linear-gradient(135deg,#06b6d4,#0284c7)', 'linear-gradient(135deg,#10b981,#059669)', 'linear-gradient(135deg,#f59e0b,#d97706)'][$i] }};">
                             {{ $i + 1 }}
                         </div>
                         <div class="flex-1" style="min-width:0; flex:1;">
@@ -272,7 +272,7 @@
                             </div>
                             <div style="font-size:11px; color:#9ca3af;">{{ $prod->total_vendido }} unidades</div>
                         </div>
-                        <div style="font-size:13px; font-weight:600; color:#1e1b4b; white-space:nowrap;">
+                        <div style="font-size:13px; font-weight:600; color:#0f172a; white-space:nowrap;">
                             {{ \App\Helpers\FormatoHelper::moneda($prod->ingresos) }}
                         </div>
                     </div>
@@ -322,7 +322,7 @@
                             <tr>
                                 <td>
                                     <a href="{{ route('ventas.show', $venta) }}"
-                                       style="color:#a855f7; font-weight:500; font-size:13px; text-decoration:none;">
+                                       style="color:#0891b2; font-weight:500; font-size:13px; text-decoration:none;">
                                         {{ $venta->numero_venta }}
                                     </a>
                                     <div style="font-size:11px; color:#9ca3af;">
@@ -383,7 +383,7 @@
                 <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
                     @php
                         $bgEstado = [
-                            'recibido'           => '#ede9fe',
+                            'recibido'           => '#cffafe',
                             'en_diagnostico'     => '#e0f2fe',
                             'esperando_repuesto' => '#fef9c3',
                             'en_reparacion'      => '#dbeafe',
@@ -528,7 +528,7 @@
                 <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
                     @php
                         $bgEstado = [
-                            'recibido'           => '#ede9fe',
+                            'recibido'           => '#cffafe',
                             'en_diagnostico'     => '#e0f2fe',
                             'esperando_repuesto' => '#fef9c3',
                             'en_reparacion'      => '#dbeafe',
@@ -602,8 +602,8 @@ const diasTotales = @json($diasSemana->pluck('total'));
 const ctxDias = document.getElementById('chartVentasDias').getContext('2d');
 
 const gradientFill = ctxDias.createLinearGradient(0, 0, 0, 200);
-gradientFill.addColorStop(0, 'rgba(168, 85, 247, 0.3)');
-gradientFill.addColorStop(1, 'rgba(236, 72, 153, 0.03)');
+gradientFill.addColorStop(0, 'rgba(6, 182, 212, 0.3)');
+gradientFill.addColorStop(1, 'rgba(59, 130, 246, 0.03)');
 
 new Chart(ctxDias, {
     type: 'line',
@@ -612,12 +612,12 @@ new Chart(ctxDias, {
         datasets: [{
             label: 'Ventas',
             data: diasTotales,
-            borderColor: '#a855f7',
+            borderColor: '#0891b2',
             backgroundColor: gradientFill,
             borderWidth: 2.5,
             fill: true,
             tension: 0.4,
-            pointBackgroundColor: '#a855f7',
+            pointBackgroundColor: '#0891b2',
             pointBorderColor: '#fff',
             pointBorderWidth: 2,
             pointRadius: 5,
@@ -629,7 +629,7 @@ new Chart(ctxDias, {
         plugins: {
             legend: { display: false },
             tooltip: {
-                backgroundColor: '#1e1b4b',
+                backgroundColor: '#0f172a',
                 titleFont: { family: 'Poppins', size: 12 },
                 bodyFont: { family: 'Poppins', size: 13 },
                 callbacks: {

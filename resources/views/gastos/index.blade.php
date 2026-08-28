@@ -50,7 +50,7 @@
                         </td>
                         <td>
                             @if($gasto->categoria)
-                                <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 10px; font-size:11px;">
+                                <span style="background:#cffafe; color:#0e7490; border-radius:20px; padding:3px 10px; font-size:11px;">
                                     {{ $gasto->categoria }}
                                 </span>
                             @else
@@ -72,7 +72,7 @@
                         </td>
                         <td class="text-end pe-4">
                             <div class="d-flex gap-1 justify-content-end">
-                                <button class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;"
+                                <button class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;"
                                         onclick="editarGasto({{ $gasto->id }}, '{{ addslashes($gasto->nombre) }}', '{{ $gasto->monto }}', '{{ $gasto->categoria }}', '{{ $gasto->descripcion }}', '{{ $gasto->fecha ? $gasto->fecha->format('Y-m-d') : '' }}')">
                                     <i class="fas fa-edit fa-sm"></i>
                                 </button>
@@ -113,7 +113,7 @@
         <div class="modal-content" style="border-radius:16px;border:none;">
             <div class="modal-header" style="border-bottom:1px solid #f3f4f6;padding:20px 24px;">
                 <h6 class="modal-title fw-bold">
-                    <i class="fas fa-receipt me-2" style="color:#a855f7;"></i>Nuevo Gasto Fijo
+                    <i class="fas fa-receipt me-2" style="color:#0891b2;"></i>Nuevo Gasto Fijo
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -169,7 +169,7 @@
         <div class="modal-content" style="border-radius:16px;border:none;">
             <div class="modal-header" style="border-bottom:1px solid #f3f4f6;padding:20px 24px;">
                 <h6 class="modal-title fw-bold">
-                    <i class="fas fa-edit me-2" style="color:#a855f7;"></i>Editar Gasto Fijo
+                    <i class="fas fa-edit me-2" style="color:#0891b2;"></i>Editar Gasto Fijo
                 </h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>

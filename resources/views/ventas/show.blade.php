@@ -2,7 +2,7 @@
 @section('title', 'Detalle Venta '.$venta->numero_venta)
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#a855f7;">Ventas</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#0891b2;">Ventas</a></li></ul>
     <ul><li class="breadcrumb-item active">{{ $venta->numero_venta }}</li></ul>
 @endsection
 
@@ -62,7 +62,7 @@
 
 {{-- Tarjeta de Resumen --}}
 <div class="card mb-4">
-    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#ecfeff,#fdf4ff); border-bottom:1px solid #cffafe;">
         <div class="row g-3 align-items-center">
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Estado</div>
@@ -80,7 +80,7 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total, 2) }}</div>
+                <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total, 2) }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Vendedor</div>
@@ -164,17 +164,17 @@
         <ul class="nav nav-tabs card-header-tabs" id="ventaTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
             <li class="nav-item">
                 <button class="nav-link active" id="tab-productos-tab" data-bs-toggle="tab" data-bs-target="#tab-productos" type="button" role="tab" aria-controls="tab-productos" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-box-open me-1" style="color:#a855f7;"></i>📦 Productos
+                    <i class="fas fa-box-open me-1" style="color:#0891b2;"></i>📦 Productos
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="tab-totales-tab" data-bs-toggle="tab" data-bs-target="#tab-totales" type="button" role="tab" aria-controls="tab-totales" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-dollar-sign me-1" style="color:#a855f7;"></i>💰 Totales
+                    <i class="fas fa-dollar-sign me-1" style="color:#0891b2;"></i>💰 Totales
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="tab-resumen-tab" data-bs-toggle="tab" data-bs-target="#tab-resumen" type="button" role="tab" aria-controls="tab-resumen" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                    <i class="fas fa-info-circle me-1" style="color:#a855f7;"></i>ℹ️ Resumen
+                    <i class="fas fa-info-circle me-1" style="color:#0891b2;"></i>ℹ️ Resumen
                 </button>
             </li>
         </ul>
@@ -187,7 +187,7 @@
                 <div class="table-responsive">
                     <table class="table mb-0" style="font-size:13.5px;">
                         <thead>
-                            <tr style="border-bottom:2px solid #e9d5ff;">
+                            <tr style="border-bottom:2px solid #a5f3fc;">
                                 <th style="padding:8px 0; color:#6b7280; font-size:12px; text-transform:uppercase;">Producto</th>
                                 <th style="padding:8px 0; color:#6b7280; font-size:12px; text-transform:uppercase; text-align:center;">Cant.</th>
                                 <th style="padding:8px 0; color:#6b7280; font-size:12px; text-transform:uppercase; text-align:right;">P. Unit.</th>
@@ -226,7 +226,7 @@
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded-3 text-center" style="background:#f8f5ff;">
                             <div style="font-size:10px; color:#9ca3af;">SUBTOTAL</div>
-                            <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->subtotal, 2) }}</div>
+                            <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->subtotal, 2) }}</div>
                         </div>
                     </div>
                     @if($venta->descuento > 0)
@@ -244,7 +244,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 col-6">
-                        <div class="p-3 rounded-3 text-center" style="background:linear-gradient(135deg,#a855f7,#ec4899);">
+                        <div class="p-3 rounded-3 text-center" style="background:linear-gradient(135deg,#0891b2,#3b82f6);">
                             <div style="font-size:10px; color:#fff;">TOTAL</div>
                             <div style="font-weight:700; font-size:18px; color:#fff;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($venta->total, 2) }}</div>
                         </div>

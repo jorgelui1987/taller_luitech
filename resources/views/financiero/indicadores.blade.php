@@ -39,7 +39,7 @@
     .gauge-green { background: linear-gradient(135deg, #10b981, #059669); }
     .gauge-yellow { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .gauge-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-    .gauge-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .gauge-purple { background: linear-gradient(135deg, #0891b2, #0e7490); }
     .gauge-blue { background: linear-gradient(135deg, #06b6d4, #0284c7); }
 </style>
 @endpush
@@ -71,7 +71,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="kpi-box" style="background:#fdf2f8;">
+        <div class="kpi-box" style="background:#eff6ff;">
             <div class="lbl">Reparaciones</div>
             <div class="num" style="color:var(--accent2);">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['totalReparaciones'], 0) }}</div>
         </div>
@@ -163,7 +163,7 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="indicator-card" style="background:#fdf2f8;">
+                        <div class="indicator-card" style="background:#eff6ff;">
                             <div class="indicator-label">Cuentas x Cobrar</div>
                             <div class="indicator-value" style="color:var(--accent2);">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($indicadores['cuentasPorCobrar'], 0) }}</div>
                         </div>
@@ -275,16 +275,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         label: 'Ingresos',
                         data: data.map(d => d.ingresos),
-                        backgroundColor: 'rgba(168,85,247,0.6)',
-                        borderColor: '#a855f7',
+                        backgroundColor: 'rgba(6, 182, 212,0.6)',
+                        borderColor: '#0891b2',
                         borderWidth: 1,
                         order: 2
                     },
                     {
                         label: 'Costos',
                         data: data.map(d => d.costos),
-                        backgroundColor: 'rgba(236,72,153,0.6)',
-                        borderColor: '#ec4899',
+                        backgroundColor: 'rgba(59, 130, 246,0.6)',
+                        borderColor: '#3b82f6',
                         borderWidth: 1,
                         order: 2
                     },

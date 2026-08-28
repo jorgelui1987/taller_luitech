@@ -2,8 +2,8 @@
 @section('title', 'Actualizar Reparación')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#a855f7;">Reparaciones</a></li></ul>
-    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.show', $reparacion) }}" style="color:#a855f7;">{{ $reparacion->numero_orden }}</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.index') }}" style="color:#0891b2;">Reparaciones</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('reparaciones.show', $reparacion) }}" style="color:#0891b2;">{{ $reparacion->numero_orden }}</a></li></ul>
     <ul><li class="breadcrumb-item active">Editar</li></ul>
 @endsection
 
@@ -74,27 +74,27 @@
                             <ul class="nav nav-tabs card-header-tabs" id="editReparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
                                 <li class="nav-item">
                                     <button class="nav-link active" id="tab-estado-tab" data-bs-toggle="tab" data-bs-target="#tab-estado" type="button" role="tab" aria-controls="tab-estado" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-tasks me-1" style="color:#a855f7;"></i>📋 Estado
+                                        <i class="fas fa-tasks me-1" style="color:#0891b2;"></i>📋 Estado
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-equipo-tab" data-bs-toggle="tab" data-bs-target="#tab-equipo" type="button" role="tab" aria-controls="tab-equipo" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-mobile-alt me-1" style="color:#a855f7;"></i>📱 Equipo
+                                        <i class="fas fa-mobile-alt me-1" style="color:#0891b2;"></i>📱 Equipo
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-diagnostico-tab" data-bs-toggle="tab" data-bs-target="#tab-diagnostico" type="button" role="tab" aria-controls="tab-diagnostico" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-stethoscope me-1" style="color:#a855f7;"></i>🔍 Diagnóstico
+                                        <i class="fas fa-stethoscope me-1" style="color:#0891b2;"></i>🔍 Diagnóstico
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-costos-tab" data-bs-toggle="tab" data-bs-target="#tab-costos" type="button" role="tab" aria-controls="tab-costos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-dollar-sign me-1" style="color:#a855f7;"></i>💰 Costos
+                                        <i class="fas fa-dollar-sign me-1" style="color:#0891b2;"></i>💰 Costos
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-entrega-tab" data-bs-toggle="tab" data-bs-target="#tab-entrega" type="button" role="tab" aria-controls="tab-entrega" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-truck me-1" style="color:#a855f7;"></i>📦 Entrega
+                                        <i class="fas fa-truck me-1" style="color:#0891b2;"></i>📦 Entrega
                                     </button>
                                 </li>
                             </ul>
@@ -220,9 +220,9 @@
                                                 <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:140px; margin:0 auto;">
                                                     @for($i=1;$i<=9;$i++)
                                                     <button type="button" class="patron-punto" data-pos="{{ $i }}"
-                                                         style="width:40px; height:40px; border-radius:50%; border:2px solid #a855f7;
+                                                         style="width:40px; height:40px; border-radius:50%; border:2px solid #0891b2;
                                                                 display:flex; align-items:center; justify-content:center;
-                                                                font-size:13px; color:#a855f7; cursor:pointer; background:#f8f5ff;
+                                                                font-size:13px; color:#0891b2; cursor:pointer; background:#f8f5ff;
                                                                 transition:all .2s; user-select:none; padding:0;"
                                                          onclick="togglePuntoEdit(this)" aria-label="Punto {{ $i }} del patrón">
                                                         {{ $i }}
@@ -381,7 +381,7 @@
                                     @endphp
                                     @if($urlRecibido)
                                     <div class="mb-3">
-                                        <div class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
+                                        <div class="form-label fw-600" style="font-size:13px; color:#0f172a;">
                                             <i class="fab fa-whatsapp me-1" style="color:#25D366;"></i>Notificar al Cliente por WhatsApp
                                         </div>
                                         <div class="d-flex gap-2">
@@ -402,8 +402,8 @@
 
                                     {{-- ✍️ FIRMA DE ENTREGA (solo si se marca como entregado) --}}
                                     <div class="mb-3" id="firmaEntregaSection" style="display:none;">
-                                        <div class="form-label fw-600" style="font-size:13px; color:#1e1b4b;">
-                                            <i class="fas fa-pen me-1" style="color:#a855f7;"></i>Firma de Entrega
+                                        <div class="form-label fw-600" style="font-size:13px; color:#0f172a;">
+                                            <i class="fas fa-pen me-1" style="color:#0891b2;"></i>Firma de Entrega
                                         </div>
                                         <p class="text-muted" style="font-size:12px;">Haz que el cliente firme al entregar el equipo.</p>
                                         @if($reparacion->firma_entrega)
@@ -581,7 +581,7 @@ function togglePuntoEdit(el) {
 
     if (idx === -1) {
         patronPuntosEdit.push(pos);
-        el.style.background = 'linear-gradient(135deg, #a855f7, #ec4899)';
+        el.style.background = 'linear-gradient(135deg, #0891b2, #3b82f6)';
         el.style.color = '#fff';
         el.style.borderColor = 'transparent';
         el.style.transform = 'scale(1.1)';
@@ -589,8 +589,8 @@ function togglePuntoEdit(el) {
     } else {
         patronPuntosEdit.splice(idx, 1);
         el.style.background = '#f8f5ff';
-        el.style.color = '#a855f7';
-        el.style.borderColor = '#a855f7';
+        el.style.color = '#0891b2';
+        el.style.borderColor = '#0891b2';
         el.style.transform = 'scale(1)';
         patronPuntosEdit.forEach((p, i) => {
             const punto = container.querySelector(`.patron-punto[data-pos="${p}"]`);
@@ -605,8 +605,8 @@ function limpiarPatronEdit() {
     patronPuntosEdit = [];
     document.querySelectorAll('.patron-punto').forEach(el => {
         el.style.background = '#f8f5ff';
-        el.style.color = '#a855f7';
-        el.style.borderColor = '#a855f7';
+        el.style.color = '#0891b2';
+        el.style.borderColor = '#0891b2';
         el.style.transform = 'scale(1)';
         el.textContent = el.dataset.pos;
     });

@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
+            --primary: #2563eb;
+            --primary-dark: #1e3a8a;
             --accent: #06b6d4;
             --success: #10b981;
             --warning: #f59e0b;
@@ -29,7 +29,7 @@
         }
         /* ── Hero ── */
         .hero {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4f46e5 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #2563eb 100%);
             color: #fff;
             padding: 80px 0 100px;
             position: relative;
@@ -179,8 +179,8 @@
 
         /* ── Reseñas ── */
         .resena-card {
-            background: #faf5ff;
-            border-left: 4px solid #a855f7;
+            background: #ecfeff;
+            border-left: 4px solid #0891b2;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
@@ -498,7 +498,7 @@
                 <!-- ¿Reparaste con nosotros? -->
                 <div class="card-modern mb-4 animate-fade animate-delay-3">
                     <div class="card-header-modern">
-                        <div class="icon-circle" style="background:#f3e8ff;color:#a855f7;">
+                        <div class="icon-circle" style="background:#cffafe;color:#0891b2;">
                             <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                         </div>
                         <h5 class="fw-bold mb-0">¿Reparaste con nosotros?</h5>

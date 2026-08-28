@@ -2,7 +2,7 @@
 @section('title', 'Importar Productos')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#a855f7;">Inventario</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('productos.index') }}" style="color:#0891b2;">Inventario</a></li></ul>
     <ul><li class="breadcrumb-item active">Importar Productos</li></ul>
 @endsection
 
@@ -27,7 +27,7 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="p-4 rounded-3 text-center" style="background:#f8f5ff; border:2px dashed #d1d5db;">
-                            <i class="fas fa-file-csv fa-4x mb-3" style="color:#a855f7;"></i>
+                            <i class="fas fa-file-csv fa-4x mb-3" style="color:#0891b2;"></i>
                             <h6 class="fw-bold">Subir archivo CSV</h6>
                             <p style="font-size:12px; color:#6b7280;">
                                 El archivo debe tener cabeceras en la primera fila

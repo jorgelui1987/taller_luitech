@@ -11,7 +11,7 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a0a3e 0%, #2d1b69 50%, #4c1d95 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #2d1b69 50%, #083344 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -32,7 +32,7 @@
         /* Panel izquierdo decorativo */
         .login-left {
             flex: 1;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             padding: 48px 40px;
             display: flex;
             flex-direction: column;
@@ -133,7 +133,7 @@
         .login-right h2 {
             font-size: 24px;
             font-weight: 700;
-            color: #1e1b4b;
+            color: #0f172a;
             margin-bottom: 6px;
         }
 
@@ -159,8 +159,8 @@
         }
 
         .form-control:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168,85,247,.15);
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212,.15);
             outline: none;
         }
 
@@ -178,11 +178,11 @@
         }
 
         .input-group:focus-within .input-group-text {
-            border-color: #a855f7;
+            border-color: #0891b2;
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             border: none;
             border-radius: 10px;
             padding: 11px;
@@ -213,12 +213,12 @@
         }
 
         .form-check-input:checked {
-            background-color: #a855f7;
-            border-color: #a855f7;
+            background-color: #0891b2;
+            border-color: #0891b2;
         }
 
-        .text-accent { color: #a855f7; }
-        .text-accent:hover { color: #9333ea; }
+        .text-accent { color: #0891b2; }
+        .text-accent:hover { color: #0e7490; }
 
         .alert { border-radius: 10px; font-size: 13px; }
 

@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" href="{{ route('pwa.icon', ['size' => 192]) }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ route('pwa.icon', ['size' => 192]) }}">
     <link rel="icon" type="image/png" sizes="512x512" href="{{ route('pwa.icon', ['size' => 512]) }}">
-    <meta name="theme-color" content="#1a0a3e">
+    <meta name="theme-color" content="#0f172a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,29 +22,29 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --sidebar-bg:    #1a0a3e;
+            --sidebar-bg:    #0f172a;
             --sidebar-width: 260px;
-            --accent1:       #a855f7;
-            --accent2:       #ec4899;
+            --accent1:       #0891b2;
+            --accent2:       #3b82f6;
             --accent3:       #06b6d4;
             --gradient:      linear-gradient(135deg, var(--accent1), var(--accent2));
             --card-bg:       #ffffff;
-            --page-bg:       #f4f0fb;
-            --text-dark:     #1e1b4b;
+            --page-bg:       #f1f5f9;
+            --text-dark:     #0f172a;
             --text-muted:    #6b7280;
             --sidebar-text:  rgba(255,255,255,0.75);
             --sidebar-active:#ffffff;
-            --nav-hover-bg:  rgba(168,85,247,0.2);
+            --nav-hover-bg:  rgba(6, 182, 212,0.2);
         }
 
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--page-bg);
             color: var(--text-dark);
             margin: 0;
@@ -327,8 +327,8 @@
             font-size: 11px;
         }
 
-        .bg-grad-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
-        .bg-grad-pink   { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .bg-grad-purple { background: linear-gradient(135deg, #0891b2, #0e7490); }
+        .bg-grad-pink   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .bg-grad-cyan   { background: linear-gradient(135deg, #06b6d4, #0284c7); }
         .bg-grad-green  { background: linear-gradient(135deg, #10b981, #059669); }
         .bg-grad-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
@@ -339,7 +339,7 @@
             background: #f8f5ff;
             font-weight: 600;
             color: var(--text-dark);
-            border-bottom: 2px solid #e9d5ff;
+            border-bottom: 2px solid #a5f3fc;
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: .5px;
@@ -381,7 +381,7 @@
         }
         .form-control:focus, .form-select:focus {
             border-color: var(--accent1);
-            box-shadow: 0 0 0 3px rgba(168,85,247,.15);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212,.15);
         }
 
         .form-label { font-size: 13px; font-weight: 500; color: var(--text-dark); }
@@ -655,7 +655,7 @@
             background: var(--gradient);
             color: #fff;
             border: none;
-            box-shadow: 0 4px 15px rgba(168,85,247,0.4);
+            box-shadow: 0 4px 15px rgba(6, 182, 212,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -667,7 +667,7 @@
         }
         .fab-mobile:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(168,85,247,0.5);
+            box-shadow: 0 6px 20px rgba(6, 182, 212,0.5);
             color: #fff;
         }
         @media (min-width: 576px) {
@@ -730,7 +730,7 @@
             font-size: 12px;
             font-weight: 500;
             font-family: inherit;
-            box-shadow: 0 3px 10px rgba(168,85,247,0.35);
+            box-shadow: 0 3px 10px rgba(6, 182, 212,0.35);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -741,7 +741,7 @@
         }
         .pwa-install-btn:hover {
             transform: scale(1.04);
-            box-shadow: 0 4px 14px rgba(168,85,247,0.45);
+            box-shadow: 0 4px 14px rgba(6, 182, 212,0.45);
         }
         .pwa-install-btn.d-none {
             display: none !important;
@@ -813,7 +813,7 @@
             align-items: stretch;
             justify-content: space-around;
             z-index: 1100;
-            box-shadow: 0 -4px 20px rgba(26, 10, 62, 0.08);
+            box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
             padding-bottom: env(safe-area-inset-bottom);
         }
 
@@ -897,7 +897,7 @@
             align-items: center;
             justify-content: center;
             font-size: 22px;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.45);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.45);
             border: 4px solid #fff;
             transition: transform .2s;
         }

@@ -2,7 +2,7 @@
 @section('title', 'Perfil Cliente')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#0891b2;">Clientes</a></li></ul>
     <ul><li class="breadcrumb-item active">{{ $cliente->nombre_completo }}</li></ul>
 @endsection
 
@@ -19,7 +19,7 @@
 
 {{-- Tarjeta de Resumen --}}
 <div class="card mb-4">
-    <div class="card-header p-3" style="background:linear-gradient(135deg,#faf5ff,#fdf4ff); border-bottom:1px solid #f3e8ff;">
+    <div class="card-header p-3" style="background:linear-gradient(135deg,#ecfeff,#fdf4ff); border-bottom:1px solid #cffafe;">
         <div class="row g-3 align-items-center">
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Nombre</div>
@@ -27,13 +27,13 @@
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Tipo</div>
-                <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; display:inline-block;">
+                <span style="background:#cffafe; color:#0e7490; border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; display:inline-block;">
                     {{ ucfirst($cliente->tipo) }}
                 </span>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Compras</div>
-                <div style="font-weight:700; font-size:16px; color:#7c3aed;">{{ $stats['compras'] }}</div>
+                <div style="font-weight:700; font-size:16px; color:#0e7490;">{{ $stats['compras'] }}</div>
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total gastado</div>
@@ -57,12 +57,12 @@
     <div class="col-lg-4">
         <div class="card mb-3">
             <div class="card-body p-4 text-center">
-                <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#a855f7,#ec4899);
+                <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#0891b2,#3b82f6);
                             display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:28px; color:#fff; font-weight:700;">
                     {{ strtoupper(substr($cliente->nombre, 0, 1)) }}
                 </div>
                 <h5 class="fw-bold mb-1">{{ $cliente->nombre_completo }}</h5>
-                <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:4px 14px; font-size:12px; font-weight:500;">
+                <span style="background:#cffafe; color:#0e7490; border-radius:20px; padding:4px 14px; font-size:12px; font-weight:500;">
                     {{ ucfirst($cliente->tipo) }}
                 </span>
                 @if(!$cliente->activo)
@@ -74,41 +74,41 @@
                 <div class="text-start" style="font-size:13.5px;">
                     @if($cliente->email)
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-envelope" style="color:#a855f7; width:16px;"></i>
+                        <i class="fas fa-envelope" style="color:#0891b2; width:16px;"></i>
                         <span>{{ $cliente->email }}</span>
                     </div>
                     @endif
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-phone" style="color:#a855f7; width:16px;"></i>
+                        <i class="fas fa-phone" style="color:#0891b2; width:16px;"></i>
                         <span>{{ $cliente->telefono }}</span>
                     </div>
                     @if($cliente->celular)
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-mobile-alt" style="color:#a855f7; width:16px;"></i>
+                        <i class="fas fa-mobile-alt" style="color:#0891b2; width:16px;"></i>
                         <span>{{ $cliente->celular }}</span>
                     </div>
                     @endif
                     @if($cliente->dni)
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-id-card" style="color:#a855f7; width:16px;"></i>
+                        <i class="fas fa-id-card" style="color:#0891b2; width:16px;"></i>
                         <span>DNI: {{ $cliente->dni }}</span>
                     </div>
                     @endif
                     @if($cliente->direccion)
                     <div class="d-flex align-items-start gap-2 mb-2">
-                        <i class="fas fa-map-marker-alt" style="color:#a855f7; width:16px; margin-top:2px;"></i>
+                        <i class="fas fa-map-marker-alt" style="color:#0891b2; width:16px; margin-top:2px;"></i>
                         <span>{{ $cliente->direccion }}{{ $cliente->ciudad ? ', '.$cliente->ciudad : '' }}</span>
                     </div>
                     @endif
                     @if($cliente->fecha_nacimiento)
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-birthday-cake" style="color:#a855f7; width:16px;"></i>
+                        <i class="fas fa-birthday-cake" style="color:#0891b2; width:16px;"></i>
                         <span>{{ $cliente->fecha_nacimiento->format('d/m/Y') }}</span>
                     </div>
                     @endif
                     @if($cliente->empresa)
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-building" style="color:#a855f7; width:16px;"></i>
+                        <i class="fas fa-building" style="color:#0891b2; width:16px;"></i>
                         <span>{{ $cliente->empresa }} @if($cliente->ruc)({{ $empresa->pais == 'CL' ? 'RUT' : 'RUC' }}: {{ $cliente->ruc }})@endif</span>
                     </div>
                     @endif
@@ -140,8 +140,8 @@
                 <h6 class="fw-bold mb-3">Estadísticas</h6>
                 <div class="row g-2 text-center">
                     <div class="col-6">
-                        <div style="background:#ede9fe; border-radius:12px; padding:16px;">
-                            <div style="font-size:22px; font-weight:700; color:#7c3aed;">
+                        <div style="background:#cffafe; border-radius:12px; padding:16px;">
+                            <div style="font-size:22px; font-weight:700; color:#0e7490;">
                                 {{ $cliente->ventas->count() }}
                             </div>
                             <div style="font-size:11px; color:#9ca3af;">Compras</div>
@@ -183,12 +183,12 @@
                 <ul class="nav nav-tabs card-header-tabs" id="clienteTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
                     <li class="nav-item">
                         <button class="nav-link active" id="tab-ventas-tab" data-bs-toggle="tab" data-bs-target="#tab-ventas" type="button" role="tab" aria-controls="tab-ventas" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                            <i class="fas fa-shopping-cart me-1" style="color:#a855f7;"></i>🛒 Compras
+                            <i class="fas fa-shopping-cart me-1" style="color:#0891b2;"></i>🛒 Compras
                         </button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="tab-reparaciones-tab" data-bs-toggle="tab" data-bs-target="#tab-reparaciones" type="button" role="tab" aria-controls="tab-reparaciones" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                            <i class="fas fa-tools me-1" style="color:#a855f7;"></i>🔧 Reparaciones
+                            <i class="fas fa-tools me-1" style="color:#0891b2;"></i>🔧 Reparaciones
                         </button>
                     </li>
                 </ul>
@@ -214,7 +214,7 @@
                                 <tbody>
                                     @foreach($cliente->ventas->sortByDesc('fecha_venta') as $v)
                                     <tr>
-                                        <td style="color:#a855f7; font-weight:600;">{{ $v->numero_venta }}</td>
+                                        <td style="color:#0891b2; font-weight:600;">{{ $v->numero_venta }}</td>
                                         <td>{{ $v->fecha_venta->format('d/m/Y') }}</td>
                                         <td>{{ $v->detalles->count() }} ítem(s)</td>
                                         <td style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($v->total, 2) }}</td>
@@ -222,7 +222,7 @@
                                             @php $cfg=['completada'=>['#d1fae5','#065f46'],'cancelada'=>['#fee2e2','#991b1b'],'pendiente'=>['#fef3c7','#92400e']]; $c=$cfg[$v->estado]??['#f3f4f6','#374151']; @endphp
                                             <span style="background:{{ $c[0] }}; color:{{ $c[1] }}; border-radius:20px; padding:3px 8px; font-size:11px;">{{ ucfirst($v->estado) }}</span>
                                         </td>
-                                        <td><a href="{{ route('ventas.show', $v) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
+                                        <td><a href="{{ route('ventas.show', $v) }}" style="color:#0891b2; font-size:12px;">Ver</a></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -253,15 +253,15 @@
                                 <tbody>
                                     @foreach($cliente->reparaciones->sortByDesc('fecha_recepcion') as $r)
                                     <tr>
-                                        <td style="color:#a855f7; font-weight:600;">{{ $r->numero_orden }}</td>
+                                        <td style="color:#0891b2; font-weight:600;">{{ $r->numero_orden }}</td>
                                         <td>{{ $r->dispositivo }}<div style="font-size:11px;color:#9ca3af;">{{ $r->marca }} {{ $r->modelo }}</div></td>
                                         <td style="max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $r->falla_reportada }}</td>
                                         <td>
                                             @php $label=str_replace('_',' ',ucfirst($r->estado)); @endphp
-                                            <span style="background:#ede9fe; color:#7c3aed; border-radius:20px; padding:3px 8px; font-size:11px;">{{ $label }}</span>
+                                            <span style="background:#cffafe; color:#0e7490; border-radius:20px; padding:3px 8px; font-size:11px;">{{ $label }}</span>
                                         </td>
 <td style="font-weight:600;">{{ $r->costo_final > 0 ? ($empresa->simbolo_moneda ?? '$').' '.number_format($r->costo_final,2) : '—' }}</td>
-                                        <td><a href="{{ route('reparaciones.show', $r) }}" style="color:#a855f7; font-size:12px;">Ver</a></td>
+                                        <td><a href="{{ route('reparaciones.show', $r) }}" style="color:#0891b2; font-size:12px;">Ver</a></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

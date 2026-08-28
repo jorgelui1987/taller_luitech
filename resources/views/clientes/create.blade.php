@@ -2,7 +2,7 @@
 @section('title', 'Nuevo Cliente')
 
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#a855f7;">Clientes</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('clientes.index') }}" style="color:#0891b2;">Clientes</a></li></ul>
     <ul><li class="breadcrumb-item active">Nuevo Cliente</li></ul>
 @endsection
 
@@ -38,17 +38,17 @@
                             <ul class="nav nav-tabs card-header-tabs" id="clienteCreateTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
                                 <li class="nav-item">
                                     <button class="nav-link active" id="tab-datos-tab" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button" role="tab" aria-controls="tab-datos" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-user me-1" style="color:#a855f7;"></i>👤 Datos Personales
+                                        <i class="fas fa-user me-1" style="color:#0891b2;"></i>👤 Datos Personales
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-empresa-tab" data-bs-toggle="tab" data-bs-target="#tab-empresa" type="button" role="tab" aria-controls="tab-empresa" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-building me-1" style="color:#a855f7;"></i>🏢 Empresa
+                                        <i class="fas fa-building me-1" style="color:#0891b2;"></i>🏢 Empresa
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-notas-tab" data-bs-toggle="tab" data-bs-target="#tab-notas" type="button" role="tab" aria-controls="tab-notas" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-sticky-note me-1" style="color:#a855f7;"></i>📝 Notas
+                                        <i class="fas fa-sticky-note me-1" style="color:#0891b2;"></i>📝 Notas
                                     </button>
                                 </li>
                             </ul>
@@ -66,7 +66,7 @@
                                                    style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:10px; cursor:pointer; flex:1; transition:.2s;">
                                                 <input type="radio" name="tipo" id="tipo_particular" value="particular"
                                                        {{ old('tipo','particular')=='particular'?'checked':'' }}
-                                                       style="accent-color:#a855f7;">
+                                                       style="accent-color:#0891b2;">
                                                 <span style="font-size:13.5px;">
                                                     <i class="fas fa-user me-1 text-muted"></i> Particular
                                                 </span>
@@ -75,7 +75,7 @@
                                                    style="padding:10px 20px; border:1.5px solid #e5e7eb; border-radius:10px; cursor:pointer; flex:1; transition:.2s;">
                                                 <input type="radio" name="tipo" id="tipo_empresa_radio" value="empresa"
                                                        {{ old('tipo')=='empresa'?'checked':'' }}
-                                                       style="accent-color:#a855f7;">
+                                                       style="accent-color:#0891b2;">
                                                 <span style="font-size:13.5px;">
                                                     <i class="fas fa-building me-1 text-muted"></i> Empresa
                                                 </span>

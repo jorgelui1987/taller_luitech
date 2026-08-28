@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a0a3e 0%, #2d1254 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #2d1254 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -33,7 +33,7 @@
         .error-code {
             font-size: 96px;
             font-weight: 800;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             line-height: 1;
@@ -50,7 +50,7 @@
             margin-bottom: 30px;
         }
         .btn-home {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #0891b2, #3b82f6);
             color: #ffffff;
             border: none;
             padding: 12px 30px;
@@ -72,7 +72,7 @@
 <body>
     <div class="error-card">
         <div class="mb-3">
-            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ec4899;"></i>
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #3b82f6;"></i>
         </div>
         <div class="error-code">404</div>
         <h1 class="error-title">Página No Encontrada</h1>

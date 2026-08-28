@@ -19,11 +19,11 @@
     <td style="font-size:13px;">{{ $p->telefono ?: '—' }}</td>
     <td style="font-size:13px;">{{ $p->email ?: '—' }}</td>
     <td style="font-size:13px;">{{ $p->ruc ?: '—' }}</td>
-    <td><span style="background:#ede9fe;color:#7c3aed;border-radius:20px;padding:3px 10px;font-size:12px;">{{ $p->ordenes_compra_count }}</span></td>
+    <td><span style="background:#cffafe;color:#0e7490;border-radius:20px;padding:3px 10px;font-size:12px;">{{ $p->ordenes_compra_count }}</span></td>
     <td>@if($p->activo)<span style="background:#d1fae5;color:#065f46;border-radius:20px;padding:3px 10px;font-size:11px;">Activo</span>@else<span style="background:#fee2e2;color:#dc2626;border-radius:20px;padding:3px 10px;font-size:11px;">Inactivo</span>@endif</td>
     <td class="text-end pe-4"><div class="d-flex gap-1 justify-content-end">
         <a href="{{ route('proveedores.show', $p) }}" class="btn btn-sm" style="background:#f3f4f6;color:#374151;border-radius:8px;padding:5px 10px;" title="Ver"><i class="fas fa-eye fa-sm"></i></a>
-        <a href="{{ route('proveedores.edit', $p) }}" class="btn btn-sm" style="background:#ede9fe;color:#7c3aed;border-radius:8px;padding:5px 10px;" title="Editar"><i class="fas fa-edit fa-sm"></i></a>
+        <a href="{{ route('proveedores.edit', $p) }}" class="btn btn-sm" style="background:#cffafe;color:#0e7490;border-radius:8px;padding:5px 10px;" title="Editar"><i class="fas fa-edit fa-sm"></i></a>
         <form action="{{ route('proveedores.toggle', $p) }}" method="POST" style="display:inline;">@csrf @method('PATCH') <button type="submit" class="btn btn-sm" style="background:#fef3c7;color:#92400e;border-radius:8px;padding:5px 10px;" title="{{ $p->activo ? 'Desactivar' : 'Activar' }}"><i class="fas fa-{{ $p->activo ? 'ban' : 'check' }} fa-sm"></i></button></form>
         @if(Auth::user()->esAdmin() || Auth::user()->esSuperAdmin())
         <form action="{{ route('proveedores.destroy', $p) }}" method="POST" onsubmit="return confirm('¿Eliminar {{ addslashes($p->nombre) }}?{{ $p->ordenes_compra_count > 0 ? ' Se eliminarán también sus ' . $p->ordenes_compra_count . ' órdenes de compra.' : '' }}')" style="display:inline;">@csrf @method('DELETE')<button type="submit" class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border-radius:8px;padding:5px 10px;" title="Eliminar"><i class="fas fa-trash fa-sm"></i></button></form>

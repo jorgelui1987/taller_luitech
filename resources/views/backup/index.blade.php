@@ -9,7 +9,7 @@
 <style>
     /* ── Módulo Backup ─────────────────────────────────────── */
     .backup-hero {
-        background: linear-gradient(135deg, #1a0a3e 0%, #2d1068 50%, #1a0a3e 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #2d1068 50%, #0f172a 100%);
         border-radius: 20px;
         padding: 32px 36px;
         color: #fff;
@@ -22,7 +22,7 @@
         position: absolute;
         top: -60px; right: -60px;
         width: 220px; height: 220px;
-        background: radial-gradient(circle, rgba(168,85,247,.35), transparent 70%);
+        background: radial-gradient(circle, rgba(6, 182, 212,.35), transparent 70%);
         border-radius: 50%;
     }
     .backup-hero::after {
@@ -30,7 +30,7 @@
         position: absolute;
         bottom: -40px; left: 30%;
         width: 160px; height: 160px;
-        background: radial-gradient(circle, rgba(236,72,153,.2), transparent 70%);
+        background: radial-gradient(circle, rgba(59, 130, 246,.2), transparent 70%);
         border-radius: 50%;
     }
     .stat-pill {
@@ -79,12 +79,12 @@
         background: #fafbff;
     }
     .drop-zone:hover, .drop-zone.dragover {
-        border-color: #a855f7;
+        border-color: #0891b2;
         background: #fdf4ff;
     }
     .drop-zone input[type=file] { display: none; }
     .drop-zone .dz-icon { font-size: 40px; color: #d1d5db; margin-bottom: 12px; transition: color .3s; }
-    .drop-zone:hover .dz-icon { color: #a855f7; }
+    .drop-zone:hover .dz-icon { color: #0891b2; }
 
     /* ── Backup list ──────────────────────────────────────── */
     .backup-item {
@@ -98,14 +98,14 @@
         transition: all .2s;
         background: #fff;
     }
-    .backup-item:hover { border-color: #e9d5ff; background: #fdf4ff; }
+    .backup-item:hover { border-color: #a5f3fc; background: #fdf4ff; }
     .backup-item .bi-icon {
         width: 40px; height: 40px;
         border-radius: 10px;
-        background: #ede9fe;
+        background: #cffafe;
         display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
-        color: #7c3aed;
+        color: #0e7490;
         font-size: 16px;
     }
 
@@ -214,7 +214,7 @@
             <div class="d-flex flex-wrap gap-2 mt-3">
                 <span class="stat-pill"><span class="dot" style="background:#10b981;"></span>{{ $stats['ventas'] }} ventas</span>
                 <span class="stat-pill"><span class="dot" style="background:#06b6d4;"></span>{{ $stats['clientes'] }} clientes</span>
-                <span class="stat-pill"><span class="dot" style="background:#a855f7;"></span>{{ $stats['productos'] }} productos</span>
+                <span class="stat-pill"><span class="dot" style="background:#0891b2;"></span>{{ $stats['productos'] }} productos</span>
                 <span class="stat-pill"><span class="dot" style="background:#f59e0b;"></span>{{ $stats['reparaciones'] }} reparaciones</span>
             </div>
         </div>
@@ -239,8 +239,8 @@
         <div class="card action-card">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="card-icon-circle" style="background:#ede9fe;">
-                        <i class="fas fa-cloud-download-alt" style="color:#7c3aed;"></i>
+                    <div class="card-icon-circle" style="background:#cffafe;">
+                        <i class="fas fa-cloud-download-alt" style="color:#0e7490;"></i>
                     </div>
                     <div>
                         <h6 class="fw-bold mb-0">Crear Backup</h6>
@@ -248,9 +248,9 @@
                     </div>
                 </div>
 
-                <div class="rounded-3 p-3 mb-4" style="background:#f8f5ff;border:1px solid #e9d5ff;font-size:12px;color:#6b7280;">
+                <div class="rounded-3 p-3 mb-4" style="background:#f8f5ff;border:1px solid #a5f3fc;font-size:12px;color:#6b7280;">
                     <div class="d-flex align-items-center gap-2 mb-1">
-                        <i class="fas fa-info-circle" style="color:#a855f7;"></i>
+                        <i class="fas fa-info-circle" style="color:#0891b2;"></i>
                         <strong style="color:#374151;">¿Qué incluye?</strong>
                     </div>
                     <ul class="mb-0 ps-4" style="line-height:1.9;">
@@ -545,10 +545,10 @@ function updateDropZone(file) {
     const size = file.size >= 1048576
         ? (file.size / 1048576).toFixed(1) + ' MB'
         : (file.size / 1024).toFixed(1) + ' KB';
-    dzText.innerHTML = `<span style="color:#7c3aed;">📄 ${file.name}</span><br><small style="color:#059669;font-size:11px;">${size} — listo para restaurar</small>`;
+    dzText.innerHTML = `<span style="color:#0e7490;">📄 ${file.name}</span><br><small style="color:#059669;font-size:11px;">${size} — listo para restaurar</small>`;
     btnRestore.style.opacity = '1';
     btnRestore.classList.remove('disabled');
-    dropZone.style.borderColor = '#a855f7';
+    dropZone.style.borderColor = '#0891b2';
 }
 
 function confirmarRestore() {

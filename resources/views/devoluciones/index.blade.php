@@ -8,9 +8,9 @@
 @section('content')
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
-        <h4 class="mb-1 fw-bold"><i class="fas fa-undo-alt me-2" style="color:#a855f7;"></i>Devoluciones</h4>
+        <h4 class="mb-1 fw-bold"><i class="fas fa-undo-alt me-2" style="color:#0891b2;"></i>Devoluciones</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Total del mes: <strong style="color:#a855f7;">{{ formatoMoneda($totalMes) }}</strong>
+            Total del mes: <strong style="color:#0891b2;">{{ formatoMoneda($totalMes) }}</strong>
         </p>
     </div>
     <a href="{{ route('devoluciones.create') }}" class="btn btn-primary px-4">
@@ -28,7 +28,7 @@
                 </div>
                 <div>
                     <div style="font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Devoluciones del mes</div>
-                    <div style="font-size:22px;font-weight:700;color:#1e1b4b;">{{ $totalCompletadas }}</div>
+                    <div style="font-size:22px;font-weight:700;color:#0f172a;">{{ $totalCompletadas }}</div>
                 </div>
             </div>
         </div>
@@ -150,7 +150,7 @@
                     @forelse($devoluciones as $devolucion)
                     <tr>
                         <td class="ps-4">
-                            <span style="font-weight:600; color:#a855f7;">{{ $devolucion->numero_devolucion }}</span>
+                            <span style="font-weight:600; color:#0891b2;">{{ $devolucion->numero_devolucion }}</span>
                         </td>
                         <td style="font-size:13px;">
                             <a href="{{ route('ventas.show', $devolucion->venta) }}" class="text-decoration-none">
@@ -190,7 +190,7 @@
                             @endphp
                             {{ $motivos[$devolucion->motivo] ?? ucfirst($devolucion->motivo) }}
                         </td>
-                        <td style="font-weight:700; color:#1e1b4b;">
+                        <td style="font-weight:700; color:#0f172a;">
                             {{ formatoMoneda($devolucion->total) }}
                         </td>
                         <td>
@@ -209,7 +209,7 @@
                         <td class="text-end pe-4">
                             <div class="d-flex gap-1 justify-content-end">
                                 <a href="{{ route('devoluciones.show', $devolucion) }}"
-                                   class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;">
+                                   class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;">
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 @if($devolucion->estado === 'completada')

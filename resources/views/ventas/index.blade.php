@@ -10,7 +10,7 @@
     <div>
         <h4 class="mb-1 fw-bold">Ventas</h4>
         <p class="text-muted mb-0" style="font-size:13px;">
-            Total del mes: <strong style="color:#a855f7;">{{ formatoMoneda($totalMes) }}</strong>
+            Total del mes: <strong style="color:#0891b2;">{{ formatoMoneda($totalMes) }}</strong>
         </p>
     </div>
     <a href="{{ route('ventas.create') }}" class="btn btn-primary px-4">
@@ -77,7 +77,7 @@
                     @forelse($ventas as $venta)
                     <tr>
                         <td class="ps-4">
-                            <span style="font-weight:600; color:#a855f7;">{{ $venta->numero_venta }}</span>
+                            <span style="font-weight:600; color:#0891b2;">{{ $venta->numero_venta }}</span>
                         </td>
                         <td style="font-size:13px;">
                             <div>{{ $venta->cliente?->nombre_completo ?? '—' }}</div>
@@ -96,7 +96,7 @@
                                 {{ $iconos[$venta->metodo_pago] ?? '' }} {{ ucfirst($venta->metodo_pago) }}
                             </span>
                         </td>
-                        <td style="font-weight:700; color:#1e1b4b;">
+                        <td style="font-weight:700; color:#0f172a;">
                             {{ formatoMoneda($venta->total) }}
                         </td>
                         <td>
@@ -117,7 +117,7 @@
                         <td class="text-end pe-4">
                             <div class="d-flex gap-1 justify-content-end">
                                 <a href="{{ route('ventas.show', $venta) }}"
-                                   class="btn btn-sm" style="background:#ede9fe; color:#7c3aed; border-radius:8px; padding:5px 10px;">
+                                   class="btn btn-sm" style="background:#cffafe; color:#0e7490; border-radius:8px; padding:5px 10px;">
                                     <i class="fas fa-eye fa-sm"></i>
                                 </a>
                                 @if(in_array($venta->estado, ['completada', 'pendiente']))

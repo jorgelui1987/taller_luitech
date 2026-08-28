@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Nueva Orden de Compra')
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#a855f7;">Órdenes de Compra</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('compras.index') }}" style="color:#0891b2;">Órdenes de Compra</a></li></ul>
     <ul><li class="breadcrumb-item active">Nueva Orden</li></ul>
 @endsection
 @section('content')
