@@ -557,11 +557,11 @@
 @endsection
 
 @push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="{{ asset('leaflet/leaflet.css') }}">
 @endpush
 
 @push('external-scripts')
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="{{ asset('leaflet/leaflet.js') }}"></script>
 @endpush
 
 @push('scripts')
@@ -588,6 +588,13 @@
         L.marker(coords).addTo(mapa)
             .bindPopup('<b style="color:#22d3ee">' + tiendaNombre + '</b><br><span style="font-size:12px">' + tiendaDireccion + '</span>')
             .openPopup();
+    } else if (mapEl) {
+        // Respaldo si la librería del mapa no pudiera cargar
+        const tiendaDir = @json($empresa->direccion ?? '');
+        mapEl.innerHTML = '<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13.5px;text-align:center;padding:20px;">'
+            + '<i class="fa-solid fa-location-dot" style="font-size:26px;color:#22d3ee;"></i>'
+            + '<span><b style="color:#e2e8f0;">Visítanos</b><br>' + tiendaDir + '</span>'
+            + '</div>';
     }
 
     // Acordeón de planes: plegado por defecto, se despliega al hacer clic
