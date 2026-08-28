@@ -120,10 +120,14 @@
             </a>
         </div>
 
-        <div class="lp-card" id="cotizador" style="max-width:760px;margin:34px auto 0;">
-            <h3><i class="fa-solid fa-bolt"></i> Cotizador de Reparaciones al Instante</h3>
-            <p>Obtén un presupuesto estimado para tu servicio técnico en segundos.</p>
-            <form id="cotizador-form" novalidate>
+        <div class="lp-card lp-tool" id="cotizador" style="max-width:760px;margin:34px auto 0;">
+            <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="cotizador-body" data-open-text="Abrir cotizador">
+                <span class="lp-tool-title"><i class="fa-solid fa-bolt"></i> Cotizador de Reparaciones al Instante</span>
+                <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i> <span>Abrir cotizador</span></span>
+            </button>
+            <div class="lp-tool-body" id="cotizador-body">
+                <p>Obtén un presupuesto estimado para tu servicio técnico en segundos.</p>
+                <form id="cotizador-form" novalidate>
                 <div class="lp-form-grid">
                     <div>
                         <label class="lp-label" for="cot-tipo">Tipo de Dispositivo</label>
@@ -166,12 +170,17 @@
                     <i class="fa-brands fa-whatsapp"></i> Agendar esta cotización por WhatsApp
                 </button>
             </form>
+            </div>
         </div>
 
-        <div class="lp-card" id="test-salud" style="max-width:760px;margin:34px auto 0;">
-            <h3><i class="fa-solid fa-heart-pulse"></i> Test de Salud de Equipos</h3>
-            <p>Responde 5 preguntas rápidas y descubre la condición real de tu equipo.</p>
-            <form id="salud-form" novalidate>
+        <div class="lp-card lp-tool" id="test-salud" style="max-width:760px;margin:34px auto 0;">
+            <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="test-salud-body" data-open-text="Abrir test">
+                <span class="lp-tool-title"><i class="fa-solid fa-heart-pulse"></i> Test de Salud de Equipos</span>
+                <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i> <span>Abrir test</span></span>
+            </button>
+            <div class="lp-tool-body" id="test-salud-body">
+                <p>Responde 5 preguntas rápidas y descubre la condición real de tu equipo.</p>
+                <form id="salud-form" novalidate>
                 <div class="lp-form-grid">
                     <div>
                         <label class="lp-label" for="sal-tipo">Tipo de equipo *</label>
@@ -237,6 +246,7 @@
                     <button type="button" id="salud-wa" class="lp-btn lp-btn-primary"><i class="fa-brands fa-whatsapp"></i> Enviar mi resultado a un técnico</button>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 </section>
@@ -249,7 +259,12 @@
             <p>Cuéntanos qué le pasa a tu equipo y coordinamos tu visita. Te respondemos por WhatsApp.</p>
         </div>
         @if($waNumber)
-            <div class="lp-card" style="max-width:720px;margin:0 auto;">
+        <div class="lp-card lp-tool" style="max-width:720px;margin:0 auto;">
+            <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="agendar-body" data-open-text="Abrir formulario">
+                <span class="lp-tool-title"><i class="fa-solid fa-calendar-check"></i> Formulario de agendamiento</span>
+                <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i> <span>Abrir formulario</span></span>
+            </button>
+            <div class="lp-tool-body" id="agendar-body">
                 <form id="agendar-form" novalidate>
                     <div class="lp-form-grid">
                         <div>
@@ -285,6 +300,7 @@
                     </button>
                     <p class="lp-hint">Al enviar se abrirá WhatsApp con tu solicitud lista para enviarnos. Sin registros ni contraseñas.</p>
                 </form>
+            </div>
             </div>
         @else
             <div class="lp-callout lp-callout-plain" style="max-width:720px;margin:0 auto;">
@@ -499,6 +515,37 @@
             setPlanes(true);
         @endif
     }
+
+    // Acordeones de herramientas: solo una abierta a la vez
+    const toolCards = document.querySelectorAll('.lp-tool');
+    const abrirTool = (card, abrir) => {
+        const head = card.querySelector('.lp-tool-head');
+        const body = document.getElementById(head.getAttribute('aria-controls'));
+        if (!head || !body) return;
+        card.classList.toggle('is-open', abrir);
+        head.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+        const lbl = head.querySelector('.lp-tool-toggle span');
+        if (lbl) lbl.textContent = abrir ? 'Cerrar' : (head.getAttribute('data-open-text') || 'Abrir');
+        if (abrir) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+    };
+    toolCards.forEach(card => {
+        card.querySelector('.lp-tool-head').addEventListener('click', () => {
+            const abrir = !card.classList.contains('is-open');
+            toolCards.forEach(c => { if (c !== card) abrirTool(c, false); });
+            abrirTool(card, abrir);
+        });
+    });
+    // Los accesos directos (#cotizador, #test-salud, #agendar) abren su herramienta
+    document.querySelectorAll('a[href="#cotizador"], a[href="#test-salud"], a[href="#agendar"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            const card = document.getElementById(a.getAttribute('href').slice(1));
+            if (card && card.classList.contains('lp-tool')) {
+                toolCards.forEach(c => { if (c !== card) abrirTool(c, false); });
+                abrirTool(card, true);
+            }
+        });
+    });
 
     // Test de Salud de Equipos: cuestionario interactivo con puntaje
     const SALUD_PENAL = {

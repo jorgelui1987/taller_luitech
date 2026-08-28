@@ -344,3 +344,17 @@ a.lp-feature{display:block;cursor:pointer}
 .lp-salud-nivel{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
 .lp-salud-detalle{flex:1;min-width:220px}
 .lp-salud-detalle p{margin:0 0 12px;color:#cbd5e1;font-size:13.5px;line-height:1.6}
+
+/* ── Acordeones de herramientas (solo una abierta a la vez) ── */
+.lp-tool{padding:0;overflow:hidden;scroll-margin-top:90px}
+.lp-tool-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0;color:#fff;padding:18px 22px;cursor:pointer;font-family:inherit;text-align:left;transition:background .2s}
+.lp-tool-head:hover{background:rgba(6,182,212,.06)}
+.lp-tool-title{font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px}
+.lp-tool-title i{color:var(--cyan);font-size:15px}
+.lp-tool-toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--cyan);background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.35);padding:7px 14px;border-radius:999px;white-space:nowrap;transition:all .2s}
+.lp-tool-head:hover .lp-tool-toggle{background:rgba(6,182,212,.2)}
+.lp-tool-toggle i{transition:transform .3s}
+.lp-tool-head[aria-expanded="true"] .lp-tool-toggle i{transform:rotate(180deg)}
+.lp-tool-head[aria-expanded="true"] .lp-tool-toggle{background:rgba(6,182,212,.18)}
+.lp-tool-body{max-height:0;opacity:0;overflow:hidden;transition:max-height .6s ease,opacity .4s ease,padding .4s ease;padding:0 22px;text-align:left}
+.lp-tool.is-open .lp-tool-body{max-height:2800px;opacity:1;padding-bottom:22px}
