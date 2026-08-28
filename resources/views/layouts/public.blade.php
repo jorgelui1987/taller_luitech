@@ -95,6 +95,8 @@
         <div class="lp-footer-base">© {{ date('Y') }} {{ $brandName }} — Todos los derechos reservados.</div>
     </footer>
 
+    @stack('external-scripts')
+
     <script>
         // Sistema de notificaciones (toasts) del portal público
         function lpToast(message, tipo = 'error') {

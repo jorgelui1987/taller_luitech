@@ -284,3 +284,23 @@ body.tv-idle .tv-controls{opacity:0;pointer-events:none}
   .tv-brand p{display:none}
   .tv-clock-time{font-size:26px}
 }
+
+/* ── Formulario de agendamiento ── */
+.lp-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lp-form-grid .full{grid-column:1/-1}
+select.lp-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+select.lp-input option{background:#0a1120;color:#f1f5f9}
+textarea.lp-input{min-height:110px;resize:vertical;letter-spacing:normal;font-weight:500;line-height:1.6}
+input[type="date"].lp-input{color-scheme:dark}
+
+/* ── Mapa oscuro (Leaflet) ── */
+.lp-map{height:340px;border-radius:var(--r-lg);border:1px solid var(--border);z-index:1;position:relative}
+.leaflet-container{background:var(--bg-deep)!important;font-family:'Inter',sans-serif!important}
+.lp-map.dark-map .leaflet-tile-container{filter:invert(100%) hue-rotate(180deg) brightness(95%) contrast(85%)}
+.leaflet-popup-content-wrapper{background:#0f172a!important;color:#f1f5f9!important;border:1px solid #334155;border-radius:12px!important}
+.leaflet-popup-tip{background:#0f172a!important}
+.leaflet-bar a{background:#1e293b!important;color:#f1f5f9!important;border-bottom:1px solid #334155!important}
+.leaflet-bar a:hover{background:#334155!important;color:#22d3ee!important}
+.leaflet-control-attribution{background:rgba(2,6,23,.75)!important;color:#64748b!important;font-size:10px!important}
+.leaflet-control-attribution a{color:#22d3ee!important}
+@media (max-width:640px){.lp-form-grid{grid-template-columns:1fr}.lp-map{height:280px}}
