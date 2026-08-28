@@ -277,6 +277,13 @@ else
     echo "✓ Cron ya estaba configurado"
 fi
 
+# ── Limpiar cachés anteriores ───────────────────────────────────────
+# El volumen de storage persiste entre deploys: sin este paso, vistas
+# compiladas / rutas / config cacheadas del deploy anterior pueden
+# sobrevivir y hacer que los cambios nuevos "no salgan".
+echo "Limpiando cachés antiguas (views/config/routes)..."
+runuser -u appuser -- php artisan optimize:clear 2>/dev/null || true
+
 # ── Optimizar Laravel ───────────────────────────────────────────────
 echo "Optimizando Laravel..."
 runuser -u appuser -- php artisan optimize 2>/dev/null || true
