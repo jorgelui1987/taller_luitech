@@ -27,7 +27,7 @@
         <div class="lp-container lp-header-inner">
             <a class="lp-logo" href="{{ url('/estado') }}">
                 @if(!empty($empresa->logo))
-                    <img class="lp-logo-img" src="{{ route('storage.serve', ['path' => $empresa->logo]) }}" alt="{{ $brandName }}">
+                    <img class="lp-logo-img" src="{{ route('storage.serve', ['path' => preg_replace('#^storage/#', '', ltrim($empresa->logo, '/'))]) }}" alt="{{ $brandName }}">
                 @else
                     <span class="lp-logo-chip"><i class="fa-solid fa-microchip"></i></span>
                 @endif
@@ -57,7 +57,7 @@
             <div>
                 <a class="lp-logo" href="{{ url('/estado') }}">
                     @if(!empty($empresa->logo))
-                        <img class="lp-logo-img" src="{{ route('storage.serve', ['path' => $empresa->logo]) }}" alt="{{ $brandName }}">
+                        <img class="lp-logo-img" src="{{ route('storage.serve', ['path' => preg_replace('#^storage/#', '', ltrim($empresa->logo, '/'))]) }}" alt="{{ $brandName }}">
                     @else
                         <span class="lp-logo-chip"><i class="fa-solid fa-microchip"></i></span>
                     @endif

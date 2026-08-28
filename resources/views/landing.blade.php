@@ -148,6 +148,105 @@
     </div>
 </section>
 
+<section id="planes" class="lp-section lp-section-alt">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Planes y precios</span>
+            <h2>Elige tu plan</h2>
+            <p>Empieza gratis y crece a tu ritmo. Sin contratos forzosos, cancela cuando quieras.</p>
+        </div>
+        @php
+            $planesPrecios = \App\Models\PlanPrecio::getPlanesActivos();
+            $planGratis = $planesPrecios['gratis'] ?? null;
+            $planBasico = $planesPrecios['basico'] ?? null;
+            $planProfesional = $planesPrecios['profesional'] ?? null;
+            $planEmpresarial = $planesPrecios['empresarial'] ?? null;
+            $mostrarPrecio = function ($plan, $default) {
+                if (!$plan) return $default;
+                if (is_object($plan) && method_exists($plan, 'precioFormateado')) {
+                    return $plan->precioFormateado();
+                }
+                if (isset($plan->simbolo) && isset($plan->precio_mensual)) {
+                    $p = $plan->precio_mensual;
+                    return $plan->simbolo . ($p == 0 ? '0' : ($p == floor($p) ? number_format($p, 0) : number_format($p, 2)));
+                }
+                return $default;
+            };
+        @endphp
+        <div class="lp-pricing">
+            {{-- GRATIS --}}
+            <div class="lp-plan">
+                <h4><i class="fa-solid fa-seedling" style="color:#34d399;"></i> {{ $planGratis->nombre ?? 'Gratis' }}</h4>
+                <p class="lp-plan-desc">{{ $planGratis->descripcion ?? 'Para empezar' }}</p>
+                <div class="lp-plan-price">{{ $mostrarPrecio($planGratis, 'S/0') }} <small>/mes</small></div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> Hasta 3 usuarios</li>
+                    <li><i class="fa-solid fa-check"></i> Hasta 50 productos</li>
+                    <li><i class="fa-solid fa-check"></i> Ventas básicas</li>
+                    <li><i class="fa-solid fa-check"></i> Reparaciones básicas</li>
+                    <li><i class="fa-solid fa-check"></i> Reportes básicos</li>
+                    <li class="no"><i class="fa-solid fa-xmark"></i> Exportar a Excel</li>
+                    <li class="no"><i class="fa-solid fa-xmark"></i> Notificaciones WhatsApp</li>
+                    <li class="no"><i class="fa-solid fa-xmark"></i> Soporte prioritario</li>
+                </ul>
+                <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-ghost lp-btn-block">Comenzar gratis</a>
+            </div>
+            {{-- BÁSICO --}}
+            <div class="lp-plan">
+                <h4><i class="fa-solid fa-rocket" style="color:#22d3ee;"></i> {{ $planBasico->nombre ?? 'Básico' }}</h4>
+                <p class="lp-plan-desc">{{ $planBasico->descripcion ?? 'Para negocios pequeños' }}</p>
+                <div class="lp-plan-price">{{ $mostrarPrecio($planBasico, 'S/49') }} <small>/mes</small></div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> Hasta 5 usuarios</li>
+                    <li><i class="fa-solid fa-check"></i> Hasta 200 productos</li>
+                    <li><i class="fa-solid fa-check"></i> Ventas completas</li>
+                    <li><i class="fa-solid fa-check"></i> Reparaciones completas</li>
+                    <li><i class="fa-solid fa-check"></i> Reportes avanzados</li>
+                    <li><i class="fa-solid fa-check"></i> Exportar a Excel</li>
+                    <li><i class="fa-solid fa-check"></i> Notificaciones WhatsApp</li>
+                    <li class="no"><i class="fa-solid fa-xmark"></i> Soporte prioritario</li>
+                </ul>
+                <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-ghost lp-btn-block">Lo quiero</a>
+            </div>
+            {{-- PROFESIONAL (destacado) --}}
+            <div class="lp-plan is-popular">
+                <span class="lp-plan-badge">Más popular</span>
+                <h4><i class="fa-solid fa-star" style="color:#22d3ee;"></i> {{ $planProfesional->nombre ?? 'Profesional' }}</h4>
+                <p class="lp-plan-desc">{{ $planProfesional->descripcion ?? 'Para negocios en crecimiento' }}</p>
+                <div class="lp-plan-price">{{ $mostrarPrecio($planProfesional, 'S/99') }} <small>/mes</small></div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> Hasta 15 usuarios</li>
+                    <li><i class="fa-solid fa-check"></i> Hasta 1,000 productos</li>
+                    <li><i class="fa-solid fa-check"></i> Ventas completas</li>
+                    <li><i class="fa-solid fa-check"></i> Reparaciones completas</li>
+                    <li><i class="fa-solid fa-check"></i> Reportes avanzados</li>
+                    <li><i class="fa-solid fa-check"></i> Exportar a Excel</li>
+                    <li><i class="fa-solid fa-check"></i> Notificaciones WhatsApp</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte prioritario</li>
+                </ul>
+                <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-primary lp-btn-block">Lo quiero</a>
+            </div>
+            {{-- EMPRESARIAL --}}
+            <div class="lp-plan">
+                <h4><i class="fa-solid fa-building" style="color:#3b82f6;"></i> {{ $planEmpresarial->nombre ?? 'Empresarial' }}</h4>
+                <p class="lp-plan-desc">{{ $planEmpresarial->descripcion ?? 'Para grandes tiendas' }}</p>
+                <div class="lp-plan-price">{{ $mostrarPrecio($planEmpresarial, 'S/199') }} <small>/mes</small></div>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> Usuarios ilimitados</li>
+                    <li><i class="fa-solid fa-check"></i> Productos ilimitados</li>
+                    <li><i class="fa-solid fa-check"></i> Todas las funcionalidades</li>
+                    <li><i class="fa-solid fa-check"></i> Múltiples sucursales</li>
+                    <li><i class="fa-solid fa-check"></i> API personalizada</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte 24/7</li>
+                    <li><i class="fa-solid fa-check"></i> Capacitación del equipo</li>
+                    <li><i class="fa-solid fa-check"></i> Dominio personalizado</li>
+                </ul>
+                <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-ghost lp-btn-block">Contactar</a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="lp-section">
     <div class="lp-container">
         <div class="lp-section-head">
@@ -157,7 +256,7 @@
         </div>
         <div class="lp-hero-actions" style="justify-content:center;">
             <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-primary"><i class="fa-solid fa-store"></i> Registra tu tienda gratis</a>
-            <a href="{{ route('planes') }}" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-tags"></i> Ver planes</a>
+            <a href="#planes" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-tags"></i> Ver planes</a>
             <a href="{{ route('login') }}" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-right-to-bracket"></i> Acceso del personal</a>
         </div>
     </div>
