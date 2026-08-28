@@ -295,6 +295,17 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
         });
 
+        // Laboratorio Digital (contenido de la portada — solo admin)
+        Route::middleware('check.admin')->group(function () {
+            Route::get('/laboratorio', [\App\Http\Controllers\LaboratorioController::class, 'index'])->name('laboratorio.admin');
+            Route::post('/laboratorio/precios/guardar', [\App\Http\Controllers\LaboratorioController::class, 'guardarPrecios'])->name('laboratorio.precios.guardar');
+            Route::post('/laboratorio/precios/agregar', [\App\Http\Controllers\LaboratorioController::class, 'agregarPrecio'])->name('laboratorio.precios.agregar');
+            Route::delete('/laboratorio/precios/{precio}', [\App\Http\Controllers\LaboratorioController::class, 'eliminarPrecio'])->name('laboratorio.precios.eliminar');
+            Route::post('/laboratorio/faq/guardar', [\App\Http\Controllers\LaboratorioController::class, 'guardarFaq'])->name('laboratorio.faq.guardar');
+            Route::post('/laboratorio/faq/agregar', [\App\Http\Controllers\LaboratorioController::class, 'agregarFaq'])->name('laboratorio.faq.agregar');
+            Route::delete('/laboratorio/faq/{faq}', [\App\Http\Controllers\LaboratorioController::class, 'eliminarFaq'])->name('laboratorio.faq.eliminar');
+        });
+
         // Estado Financiero (solo admin)
         Route::middleware('check.admin')->group(function () {
             Route::get('/financiero', [\App\Http\Controllers\FinancieroController::class, 'index'])->name('financiero.index');

@@ -1111,6 +1111,12 @@
             Backup & Restore
         </a>
 
+        <a href="{{ route('laboratorio.admin') }}"
+           class="nav-link {{ request()->routeIs('laboratorio.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-flask"></i></span>
+            Laboratorio Digital
+        </a>
+
         <a href="{{ route('auditoria.index') }}"
            class="nav-link {{ request()->routeIs('auditoria.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-clipboard-check"></i></span>

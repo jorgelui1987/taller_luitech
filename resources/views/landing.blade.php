@@ -7,6 +7,18 @@
     $waNumber = $waDigits !== '' ? (str_starts_with($waDigits, '56') ? $waDigits : '56' . $waDigits) : null;
     // Coordenadas del local (ajustar según la ubicación real del taller)
     $mapCoords = [-29.9024, -71.2482];
+    // Cotizador y FAQ desde la base de datos (editables en el panel: /laboratorio)
+    $cotizadorPrecios = \App\Models\CotizadorPrecio::where('activo', true)->orderBy('orden')->orderBy('id')->get();
+    $cotizadorJs = [];
+    $cotServiciosVisibles = [];
+    foreach ($cotizadorPrecios as $cp) {
+        if (!isset($cotizadorJs[$cp->servicio])) {
+            $cotizadorJs[$cp->servicio] = ['precios' => []];
+            $cotServiciosVisibles[$cp->servicio] = $cp->servicio_label;
+        }
+        $cotizadorJs[$cp->servicio]['precios'][$cp->dispositivo] = [(int) $cp->precio_min, (int) $cp->precio_max];
+    }
+    $faqsPortada = \App\Models\PreguntaFrecuente::where('activo', true)->orderBy('orden')->orderBy('id')->get();
 @endphp
 
 @section('content')
@@ -182,15 +194,19 @@
                     <div class="full">
                         <label class="lp-label" for="cot-servicio">Falla o Servicio</label>
                         <select class="lp-input" id="cot-servicio">
-                            <option value="pantalla" selected>Cambio de Pantalla</option>
-                            <option value="bateria">Cambio de Batería</option>
-                            <option value="puerto">Puerto de Carga</option>
-                            <option value="mantenimiento">Mantenimiento / Limpieza</option>
-                            <option value="software">Software / Sistema</option>
-                            <option value="placa">Reparación de Placa</option>
-                            <option value="camara">Cámara / Audio</option>
-                            <option value="datos">Recuperación de Datos</option>
-                            <option value="otro">Otro / No sé</option>
+                            @forelse($cotServiciosVisibles as $sClave => $sLabel)
+                                <option value="{{ $sClave }}" @selected($sClave === 'pantalla')>{{ $sLabel }}</option>
+                            @empty
+                                <option value="pantalla" selected>Cambio de Pantalla</option>
+                                <option value="bateria">Cambio de Batería</option>
+                                <option value="puerto">Puerto de Carga</option>
+                                <option value="mantenimiento">Mantenimiento / Limpieza</option>
+                                <option value="software">Software / Sistema</option>
+                                <option value="placa">Reparación de Placa</option>
+                                <option value="camara">Cámara / Audio</option>
+                                <option value="datos">Recuperación de Datos</option>
+                                <option value="otro">Otro / No sé</option>
+                            @endforelse
                         </select>
                     </div>
                 </div>
@@ -461,6 +477,7 @@
     </div>
 </section>
 
+@if($faqsPortada->count())
 <section id="faq" class="lp-section">
     <div class="lp-container">
         <div class="lp-section-head">
@@ -469,54 +486,21 @@
             <p>Lo que más nos preguntan antes de dejar su equipo.</p>
         </div>
         <div class="lp-faq">
-            <div class="lp-card lp-tool" data-group="faq">
-                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-1" data-open-text="Ver respuesta">
-                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Cuánto tarda una reparación?</span>
-                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="lp-tool-body" id="faq-1">
-                    <p>La mayoría de las reparaciones (pantallas, baterías, puertos de carga) están listas en 24 a 72 horas. Los casos de placa o repuestos importados pueden demorar más, y te avisamos por WhatsApp en cuanto tengamos novedades.</p>
+            @foreach($faqsPortada as $faqItem)
+                <div class="lp-card lp-tool" data-group="faq">
+                    <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-{{ $faqItem->id }}" data-open-text="Ver respuesta">
+                        <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> {{ $faqItem->pregunta }}</span>
+                        <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                    </button>
+                    <div class="lp-tool-body" id="faq-{{ $faqItem->id }}">
+                        <p>{{ $faqItem->respuesta }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="lp-card lp-tool" data-group="faq">
-                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-2" data-open-text="Ver respuesta">
-                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿El diagnóstico tiene costo?</span>
-                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="lp-tool-body" id="faq-2">
-                    <p>No. El diagnóstico es sin costo y te entregamos el presupuesto antes de tocar tu equipo. Solo continuamos con la reparación si tú la apruebas.</p>
-                </div>
-            </div>
-            <div class="lp-card lp-tool" data-group="faq">
-                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-3" data-open-text="Ver respuesta">
-                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Qué garantía tienen las reparaciones?</span>
-                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="lp-tool-body" id="faq-3">
-                    <p>Todas nuestras reparaciones incluyen 3 meses de garantía escrita, tanto en repuestos como en mano de obra.</p>
-                </div>
-            </div>
-            <div class="lp-card lp-tool" data-group="faq">
-                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-4" data-open-text="Ver respuesta">
-                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Necesito la boleta para retirar mi equipo?</span>
-                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="lp-tool-body" id="faq-4">
-                    <p>Presenta tu boleta o el código de la orden (RPT-XXXXXX). Sin comprobante no entregamos el equipo, por la seguridad de tus datos y tu inversión.</p>
-                </div>
-            </div>
-            <div class="lp-card lp-tool" data-group="faq">
-                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-5" data-open-text="Ver respuesta">
-                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Pierdo mis datos con la reparación?</span>
-                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
-                </button>
-                <div class="lp-tool-body" id="faq-5">
-                    <p>En reparaciones de hardware (pantalla, batería, puerto de carga) tus datos no se tocan. En servicios de software hacemos respaldo previo siempre que el equipo lo permita.</p>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
+@endif
 
 <section id="contacto" class="lp-section lp-section-alt">
     <div class="lp-container">
@@ -731,8 +715,9 @@
         });
     }
 
-    // Cotizador de reparaciones al instante (precios referenciales CLP)
-    const COT_SERVICIOS = {
+    // Cotizador de reparaciones al instante (precios desde el panel /laboratorio, con fallback)
+    const COT_DB = @json($cotizadorJs);
+    const COT_DEFAULT = {
         pantalla: { precios: { celular:[45000,90000], tablet:[60000,120000], notebook:[90000,180000], pc:[70000,150000], consola:[90000,180000] } },
         bateria:  { precios: { celular:[25000,45000], tablet:[35000,60000], notebook:[45000,90000], consola:[40000,70000] } },
         puerto:   { precios: { celular:[20000,40000], tablet:[25000,45000], notebook:[30000,60000], pc:[15000,35000], consola:[30000,60000] } },
@@ -743,6 +728,7 @@
         datos:    { precios: { celular:[30000,80000], tablet:[35000,90000], notebook:[40000,120000], pc:[30000,90000] } },
         otro:     { precios: {} }
     };
+    const COT_SERVICIOS = Object.keys(COT_DB).length ? COT_DB : COT_DEFAULT;
     const clp = n => '$' + n.toLocaleString('es-CL');
     const cotTipo = document.getElementById('cot-tipo');
     const cotServicio = document.getElementById('cot-servicio');
