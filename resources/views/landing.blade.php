@@ -52,7 +52,7 @@
 </section>
 <section class="lp-strip" aria-label="Nuestras garantías">
     <div class="lp-container lp-strip-inner">
-        <span class="lp-strip-item"><i class="fa-solid fa-shield-halved"></i> 3 meses de garantía escrita</span>
+        <span class="lp-strip-item"><i class="fa-solid fa-shield-halved"></i> 30 días de garantía escrita</span>
         <span class="lp-strip-item"><i class="fa-solid fa-magnifying-glass"></i> Diagnóstico sin costo</span>
         <span class="lp-strip-item"><i class="fa-solid fa-bolt"></i> Reparaciones en 24-72 horas</span>
         <span class="lp-strip-item"><i class="fa-solid fa-microchip"></i> Repuestos de calidad</span>
