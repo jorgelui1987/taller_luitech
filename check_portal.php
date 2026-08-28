@@ -53,4 +53,9 @@ $html5 = renderView($c->pantalla(\Illuminate\Http\Request::create('/pantalla')))
 echo '[6] /pantalla render: ' . strlen($html5) . ' chars '
     . (strpos($html5, 'tv-app') !== false ? 'OK' : 'FALLO') . PHP_EOL;
 
+// 7) Landing pública (con y sin empresa para probar fallbacks)
+$html6 = renderView(view('landing', ['empresa' => null]));
+echo '[7] landing render (sin empresa): ' . strlen($html6) . ' chars '
+    . (strpos($html6, 'lp-hero') !== false ? 'OK' : 'FALLO') . PHP_EOL;
+
 echo 'SMOKE TEST COMPLETO' . PHP_EOL;

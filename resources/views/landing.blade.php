@@ -1,229 +1,149 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Celulares - Gestión para tu tienda</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
-    <style>
-        .pricing-card { transition: transform 0.3s, box-shadow 0.3s; border-radius: 16px; }
-        .pricing-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .pricing-card.popular { border: 2px solid #0d6efd; }
-        .pricing-card .card-body { padding: 2rem; }
-        .price { font-size: 2.5rem; font-weight: 800; color: #1e1b4b; }
-        .price small { font-size: 1rem; font-weight: 400; color: #6b7280; }
-        .feature-list { list-style: none; padding: 0; }
-        .feature-list li { padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
-        .feature-list li:last-child { border-bottom: none; }
-        .feature-list .feature-yes { color: #10b981; margin-right: 8px; }
-        .feature-list .feature-no { color: #dc2626; margin-right: 8px; }
-        .hero-section { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%); }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1b4b;">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="#" style="text-decoration:none;">
-                <img src="{{ asset('logo-luitech.png') }}" alt="LUITECH Logo" style="width:40px;height:40px;border-radius:12px;object-fit:contain;">
-                <span style="font-size:22px;font-weight:800;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;">LUITECH</span>
-            </a>
-            <div class="ms-auto">
-                <a href="{{ route('registro.tenant') }}" class="btn btn-light me-2">Comenzar Gratis</a>
-                <a href="{{ route('login') }}" class="btn btn-outline-light">Iniciar Sesión</a>
+@extends('layouts.public')
+
+@section('title', ($empresa->nombre_tienda ?? 'LUITECH') . ' · Servicio Técnico de Celulares y Computadores')
+
+@section('content')
+<section class="lp-hero">
+    <div class="lp-container lp-hero-grid">
+        <div>
+            <span class="lp-hero-chip"><i class="fa-solid fa-location-dot"></i> {{ $empresa->direccion ?? 'Atención personalizada' }}</span>
+            <h1 class="lp-hero-title">Tu tecnología en manos de <span class="lp-hero-grad">expertos</span>.</h1>
+            <p class="lp-hero-text">Reparación de celulares, tablets, notebooks y PC con repuestos de calidad, garantía escrita y seguimiento en línea de tu orden, paso a paso.</p>
+            <div class="lp-hero-actions">
+                <a href="#consulta" class="lp-btn lp-btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Consultar mi orden</a>
+                <a href="#servicios" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-screwdriver-wrench"></i> Ver servicios</a>
             </div>
         </div>
-    </nav>
 
-    <!-- Hero -->
-    <header class="hero-section text-white text-center py-5">
-        <div class="container">
-            <h1 class="display-4 fw-bold">Gestiona tu tienda de celulares como nunca antes</h1>
-            <div class="row justify-content-center g-3">
-                <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
-                        <div style="font-size:2.5rem;">🛒</div>
-                        <h5 class="mt-2 fw-bold">Ventas</h5>
-                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Carrito, múltiples pagos, tickets</p>
-                    </div>
+        <div class="lp-card" id="consulta">
+            <span class="lp-card-corner">Rápido</span>
+            <h3><i class="fa-solid fa-route"></i> Consulta Express</h3>
+            <p>¿Dejaste tu equipo con nosotros? Ingresa el código de tu boleta y mira el avance actual de tu reparación.</p>
+            <form method="GET" action="{{ route('reparaciones.public-status.search') }}">
+                <label class="lp-label" for="express-code">Código de reparación</label>
+                <div class="lp-input-group">
+                    <span class="lp-input-prefix">RPT-</span>
+                    <input class="lp-input" type="text" id="express-code" name="numero_orden" placeholder="001024" inputmode="numeric" autocomplete="off" required>
                 </div>
-                <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
-                        <div style="font-size:2.5rem;">🔧</div>
-                        <h5 class="mt-2 fw-bold">Reparaciones</h5>
-                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Órdenes, estados, WhatsApp</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
-                        <div style="font-size:2.5rem;">📦</div>
-                        <h5 class="mt-2 fw-bold">Inventario</h5>
-                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Stock, IMEI, alertas</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="p-3" style="background:rgba(255,255,255,0.15);border-radius:12px;border:1px solid rgba(255,255,255,0.25);">
-                        <div style="font-size:2.5rem;">📈</div>
-                        <h5 class="mt-2 fw-bold">Reportes</h5>
-                        <p class="small mb-0" style="color:rgba(255,255,255,0.8);">Dashboard, gráficos, PDF</p>
-                    </div>
-                </div>
-            </div>
-            <a href="{{ route('registro.tenant') }}" class="btn btn-light btn-lg mt-4">Comenzar gratis →</a>
+                <button type="submit" class="lp-btn lp-btn-primary lp-btn-block"><i class="fa-solid fa-search"></i> Consultar estado</button>
+                <p class="lp-hint">El código completo se ve así: <strong>RPT-001024</strong>. También puedes pegarlo completo.</p>
+            </form>
         </div>
-    </header>
-
-    <!-- ═══════════ PLANES Y PRECIOS ═══════════ -->
-    @php
-        $planesPrecios = \App\Models\PlanPrecio::getPlanesActivos();
-        $planGratis = $planesPrecios['gratis'] ?? null;
-        $planBasico = $planesPrecios['basico'] ?? null;
-        $planProfesional = $planesPrecios['profesional'] ?? null;
-        $planEmpresarial = $planesPrecios['empresarial'] ?? null;
-
-        // Helper para formatear precio incluso si es objeto de respaldo
-        $mostrarPrecio = function($plan, $default) {
-            if (!$plan) return $default;
-            if (is_object($plan) && method_exists($plan, 'precioFormateado')) {
-                return $plan->precioFormateado();
-            }
-            if (isset($plan->simbolo) && isset($plan->precio_mensual)) {
-                $p = $plan->precio_mensual;
-                return $plan->simbolo . ($p == 0 ? '0' : ($p == floor($p) ? number_format($p, 0) : number_format($p, 2)));
-            }
-            return $default;
-        };
-    @endphp
-    <section class="py-5" id="precios">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold" style="color:#1e1b4b;">Planes y Precios</h2>
-                <p class="text-muted">Elige el plan que mejor se adapte a tu negocio</p>
+    </div>
+</section>
+<section id="servicios" class="lp-section">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">¿Qué ofrecemos?</span>
+            <h2>Nuestras especialidades</h2>
+            <p>Diagnóstico honesto, repuestos de calidad y garantía escrita en cada trabajo.</p>
+        </div>
+        <div class="lp-features">
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                <h4>Pantallas y cristales</h4>
+                <p>Reemplazo de pantallas OLED/IPS, vidrios templados e hidrogel para smartphones y tablets de todas las marcas.</p>
             </div>
-
-            <div class="row g-4 justify-content-center">
-                <!-- Plan GRATIS -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pricing-card h-100 shadow-sm">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">🌱 {{ $planGratis->nombre ?? 'Gratis' }}</h5>
-                            <p class="text-muted small">{{ $planGratis->descripcion ?? 'Para empezar' }}</p>
-                            <div class="price">{{ $mostrarPrecio($planGratis, 'S/0') }} <small>/mes</small></div>
-                            <ul class="feature-list text-start mt-3">
-                                <li><span class="feature-yes">✅</span> Hasta 3 usuarios</li>
-                                <li><span class="feature-yes">✅</span> Hasta 50 productos</li>
-                                <li><span class="feature-yes">✅</span> Ventas básicas</li>
-                                <li><span class="feature-yes">✅</span> Reparaciones básicas</li>
-                                <li><span class="feature-yes">✅</span> Reportes básicos</li>
-                                <li><span class="feature-no">❌</span> <span class="text-muted">Exportar a Excel</span></li>
-                                <li><span class="feature-no">❌</span> <span class="text-muted">Notificaciones WhatsApp</span></li>
-                                <li><span class="feature-no">❌</span> <span class="text-muted">Soporte prioritario</span></li>
-                            </ul>
-                            <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Comenzar Gratis</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Plan BÁSICO -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pricing-card h-100 shadow-sm">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">🚀 {{ $planBasico->nombre ?? 'Básico' }}</h5>
-                            <p class="text-muted small">{{ $planBasico->descripcion ?? 'Para negocios pequeños' }}</p>
-                            <div class="price">{{ $mostrarPrecio($planBasico, 'S/49') }} <small>/mes</small></div>
-                            <ul class="feature-list text-start mt-3">
-                                <li><span class="feature-yes">✅</span> Hasta 5 usuarios</li>
-                                <li><span class="feature-yes">✅</span> Hasta 200 productos</li>
-                                <li><span class="feature-yes">✅</span> Ventas completas</li>
-                                <li><span class="feature-yes">✅</span> Reparaciones completas</li>
-                                <li><span class="feature-yes">✅</span> Reportes avanzados</li>
-                                <li><span class="feature-yes">✅</span> Exportar a Excel</li>
-                                <li><span class="feature-yes">✅</span> Notificaciones WhatsApp</li>
-                                <li><span class="feature-no">❌</span> <span class="text-muted">Soporte prioritario</span></li>
-                            </ul>
-                            <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Lo quiero</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Plan PROFESIONAL (DESTACADO) -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pricing-card h-100 shadow popular" style="border-color: #0d6efd;">
-                        <div class="card-body text-center position-relative">
-                            <span class="badge bg-primary position-absolute" style="top: -12px; right: 20px; padding: 6px 16px;">MÁS POPULAR</span>
-                            <h5 class="fw-bold">⭐ {{ $planProfesional->nombre ?? 'Profesional' }}</h5>
-                            <p class="text-muted small">{{ $planProfesional->descripcion ?? 'Para negocios en crecimiento' }}</p>
-                            <div class="price">{{ $mostrarPrecio($planProfesional, 'S/99') }} <small>/mes</small></div>
-                            <ul class="feature-list text-start mt-3">
-                                <li><span class="feature-yes">✅</span> Hasta 15 usuarios</li>
-                                <li><span class="feature-yes">✅</span> Hasta 1,000 productos</li>
-                                <li><span class="feature-yes">✅</span> Ventas completas</li>
-                                <li><span class="feature-yes">✅</span> Reparaciones completas</li>
-                                <li><span class="feature-yes">✅</span> Reportes avanzados</li>
-                                <li><span class="feature-yes">✅</span> Exportar a Excel</li>
-                                <li><span class="feature-yes">✅</span> Notificaciones WhatsApp</li>
-                                <li><span class="feature-yes">✅</span> Soporte prioritario</li>
-                            </ul>
-                            <a href="{{ route('registro.tenant') }}" class="btn btn-primary w-100 mt-3">Lo quiero</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Plan EMPRESARIAL -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card pricing-card h-100 shadow-sm">
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">🏢 {{ $planEmpresarial->nombre ?? 'Empresarial' }}</h5>
-                            <p class="text-muted small">{{ $planEmpresarial->descripcion ?? 'Para grandes tiendas' }}</p>
-                            <div class="price">{{ $mostrarPrecio($planEmpresarial, 'S/199') }} <small>/mes</small></div>
-                            <ul class="feature-list text-start mt-3">
-                                <li><span class="feature-yes">✅</span> Usuarios ilimitados</li>
-                                <li><span class="feature-yes">✅</span> Productos ilimitados</li>
-                                <li><span class="feature-yes">✅</span> Todas las funcionalidades</li>
-                                <li><span class="feature-yes">✅</span> Múltiples sucursales</li>
-                                <li><span class="feature-yes">✅</span> API personalizada</li>
-                                <li><span class="feature-yes">✅</span> Soporte 24/7</li>
-                                <li><span class="feature-yes">✅</span> Capacitación del equipo</li>
-                                <li><span class="feature-yes">✅</span> Dominio personalizado</li>
-                            </ul>
-                            <a href="{{ route('registro.tenant') }}" class="btn btn-outline-primary w-100 mt-3">Contactar</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-battery-full"></i></div>
+                <h4>Baterías y carga</h4>
+                <p>Cambio de baterías, puertos de carga, fallas de energía y accesorios certificados.</p>
             </div>
-
-            <!-- Nota: al registrarse obtienen plan Gratis -->
-            <div class="text-center mt-4">
-                <p class="text-muted">
-                    ℹ️
-                    Al registrarse obtienes el plan <strong>Gratis</strong> automáticamente.
-                    Puedes upgradear cuando quieras contactándonos.
-                </p>
-                <p class="mt-2">
-                    💬
-                    Contáctanos por WhatsApp:
-                    <a href="https://wa.me/56982209690?text=Quiero%20información%20sobre%20los%20planes" target="_blank" class="text-success fw-bold">
-                        +56982209690
-                    </a>
-                    &nbsp;·&nbsp;
-                    ✉️
-                    <a href="mailto:luitechserena@gmail.com" class="text-primary fw-bold">luitechserena@gmail.com</a>
-                </p>
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-microchip"></i></div>
+                <h4>Placas y software</h4>
+                <p>Reparación de placa a nivel componente, recuperación de software, sistemas y datos.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-4">
-        <div class="container">
-            <p class="mb-0">© {{ date('Y') }} CRM Celulares. Todos los derechos reservados.</p>
-            <p class="small text-muted mt-1">
-                <a href="#precios" class="text-muted">Planes</a> ·
-                <a href="{{ route('registro.tenant') }}" class="text-muted">Registro</a> ·
-                <a href="{{ route('login') }}" class="text-muted">Iniciar Sesión</a>
-            </p>
+<section id="como-funciona" class="lp-section lp-section-alt">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Transparencia total</span>
+            <h2>¿Cómo funciona?</h2>
+            <p>Sabes qué pasa con tu equipo en todo momento, sin llamadas ni incertidumbre.</p>
         </div>
-    </footer>
-</body>
-</html>
+        <div class="lp-features">
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-receipt"></i></div>
+                <span class="lp-feature-n">PASO 1</span>
+                <h4>Deja tu equipo y guarda tu código</h4>
+                <p>Al recibir tu equipo entregamos una boleta con el código de la orden de reparación.</p>
+            </div>
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-stethoscope"></i></div>
+                <span class="lp-feature-n">PASO 2</span>
+                <h4>Diagnóstico y presupuesto</h4>
+                <p>Registramos la falla, el diagnóstico técnico y el presupuesto antes de tocar un solo tornillo.</p>
+            </div>
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-bell"></i></div>
+                <span class="lp-feature-n">PASO 3</span>
+                <h4>Aviso de retiro</h4>
+                <p>Te notificamos cuando esté listo. Presenta tu boleta o el código en el mesón para retirarlo.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="lp-section">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Para emprendedores</span>
+            <h2>¿Tienes una tienda de celulares?</h2>
+            <p>Este mismo sistema gestiona ventas, inventario, reparaciones, comisiones y reportes. Pruébalo gratis.</p>
+        </div>
+        <div class="lp-hero-actions" style="justify-content:center;">
+            <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-primary"><i class="fa-solid fa-store"></i> Registra tu tienda gratis</a>
+            <a href="{{ route('planes') }}" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-tags"></i> Ver planes</a>
+            <a href="{{ route('login') }}" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-right-to-bracket"></i> Acceso del personal</a>
+        </div>
+    </div>
+</section>
+
+<section id="contacto" class="lp-section lp-section-alt">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Visítanos</span>
+            <h2>Contacto</h2>
+            <p>Estamos para ayudarte con tu equipo. Escríbenos o ven al local.</p>
+        </div>
+        <div class="lp-features">
+            @if(!empty($empresa->direccion))
+                <div class="lp-feature">
+                    <div class="lp-feature-ico"><i class="fa-solid fa-location-dot"></i></div>
+                    <h4>Dirección</h4>
+                    <p>{{ $empresa->direccion }}</p>
+                </div>
+            @endif
+            @if(!empty($empresa->telefono))
+                @php
+                    $waDigits = preg_replace('/\D/', '', (string) $empresa->telefono);
+                    $waNumber = $waDigits !== '' ? (str_starts_with($waDigits, '56') ? $waDigits : '56' . $waDigits) : null;
+                @endphp
+                <div class="lp-feature">
+                    <div class="lp-feature-ico"><i class="fa-brands fa-whatsapp"></i></div>
+                    <h4>WhatsApp</h4>
+                    <p><a class="lp-wa" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, tengo una consulta sobre mi equipo') }}" target="_blank" rel="noopener">+{{ $waNumber }}</a></p>
+                </div>
+            @endif
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-tv"></i></div>
+                <h4>Sala de espera</h4>
+                <p>Sigue los turnos en vivo en la pantalla del local o desde <a href="{{ route('public.pantalla') }}" target="_blank" rel="noopener">tu celular</a>.</p>
+            </div>
+        </div>
+    </div>
+</section>
+@endsection
+
+@push('scripts')
+    // Solo caracteres válidos en el código express
+    const lpCode = document.getElementById('express-code');
+    if (lpCode) {
+        lpCode.addEventListener('input', () => {
+            lpCode.value = lpCode.value.replace(/[^0-9A-Za-z-]/g, '').toUpperCase();
+        });
+    }
+@endpush

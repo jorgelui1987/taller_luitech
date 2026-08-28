@@ -120,11 +120,14 @@ Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
     }
-    return view('landing');
+    // Empresa por defecto (primer tenant configurado) para el branding del portal
+    $empresa = \App\Models\Configuracion::withoutGlobalScopes()->orderBy('id')->first();
+    return view('landing', ['empresa' => $empresa]);
 })->name('landing');
 
 Route::get('/planes', function () {
-    return view('landing');
+    $empresa = \App\Models\Configuracion::withoutGlobalScopes()->orderBy('id')->first();
+    return view('landing', ['empresa' => $empresa]);
 })->name('planes')->withoutMiddleware([\App\Http\Middleware\CheckTenantStatus::class]);
 
 Route::get('/registro', [SuperAdminController::class, 'showRegistroTenant'])->name('registro.tenant');
