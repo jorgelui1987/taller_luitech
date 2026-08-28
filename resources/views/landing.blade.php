@@ -505,37 +505,33 @@
 <section id="contacto" class="lp-section lp-section-alt">
     <div class="lp-container">
         <div class="lp-section-head">
-            <span class="lp-section-chip">Visítanos</span>
-            <h2>Contacto</h2>
-            <p>Estamos para ayudarte con tu equipo. Escríbenos o ven al local.</p>
+            <span class="lp-section-chip">¿Dónde Estamos?</span>
+            <h2>Nuestra Sucursal</h2>
+            <p>Te esperamos en el centro comercial e histórico de La Serena. Puntos de excelente conectividad y locomoción directa.</p>
         </div>
         <div class="lp-features">
-            @if(!empty($empresa->direccion))
-                <div class="lp-feature">
-                    <div class="lp-feature-ico"><i class="fa-solid fa-location-dot"></i></div>
-                    <h4>Dirección</h4>
-                    <p>{{ $empresa->direccion }}</p>
-                </div>
-            @endif
-            @if(!empty($empresa->telefono))
-                @php
-                    $waDigits = preg_replace('/\D/', '', (string) $empresa->telefono);
-                    $waNumber = $waDigits !== '' ? (str_starts_with($waDigits, '56') ? $waDigits : '56' . $waDigits) : null;
-                @endphp
-                <div class="lp-feature">
-                    <div class="lp-feature-ico"><i class="fa-brands fa-whatsapp"></i></div>
-                    <h4>WhatsApp</h4>
-                    <p><a class="lp-wa" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, tengo una consulta sobre mi equipo') }}" target="_blank" rel="noopener">+{{ $waNumber }}</a></p>
-                </div>
-            @endif
             <div class="lp-feature">
-                <div class="lp-feature-ico"><i class="fa-solid fa-tv"></i></div>
-                <h4>Sala de espera</h4>
-                <p>Sigue los turnos en vivo en la pantalla del local o desde <a href="{{ route('public.pantalla') }}" target="_blank" rel="noopener">tu celular</a>.</p>
+                <div class="lp-feature-ico"><i class="fa-solid fa-map-location-dot"></i></div>
+                <h4>Dirección Oficial</h4>
+                <p>Persa Las Cenizas, Local 13<br>Calle Bernardo O'Higgins 564<br>Código Postal 1700000, La Serena, Coquimbo</p>
             </div>
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-solid fa-clock"></i></div>
+                <h4>Horario de Atención</h4>
+                <p>Lunes a Viernes: 09:30 - 18:00 hrs<br>Sábado y Domingo: Cerrado</p>
             </div>
+            <div class="lp-feature">
+                <div class="lp-feature-ico"><i class="fa-brands fa-whatsapp"></i></div>
+                <h4>Contacto Directo</h4>
+                <p>@if($waNumber)<a class="lp-wa" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, tengo una consulta sobre mi equipo') }}" target="_blank" rel="noopener">WhatsApp: +56 9 8220 9690</a>@else WhatsApp: +56 9 8220 9690 @endif<br><a href="mailto:contacto@luitech.cl">contacto@luitech.cl</a></p>
+            </div>
+        </div>
 
-            <div class="lp-map" id="map" style="margin-top:26px;"></div>
+        <div class="lp-map-wrap">
+            <div class="lp-map" id="map"></div>
+            <a class="lp-btn lp-btn-primary lp-como-llegar" href="https://www.google.com/maps/dir/?api=1&destination=-29.9024%2C-71.2482" target="_blank" rel="noopener">
+                <i class="fa-solid fa-diamond-turn-right"></i> Cómo llegar
+            </a>
         </div>
     </div>
 </section>
@@ -577,8 +573,6 @@
     const mapEl = document.getElementById('map');
     if (mapEl && typeof L !== 'undefined') {
         const coords = @json($mapCoords);
-        const tiendaNombre = @json($empresa->nombre_tienda ?? 'LUITECH');
-        const tiendaDireccion = @json($empresa->direccion ?? '');
         const mapa = L.map('map', { center: coords, zoom: 17, scrollWheelZoom: false });
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -586,7 +580,7 @@
         }).addTo(mapa);
         mapEl.classList.add('dark-map');
         L.marker(coords).addTo(mapa)
-            .bindPopup('<b style="color:#22d3ee">' + tiendaNombre + '</b><br><span style="font-size:12px">' + tiendaDireccion + '</span>')
+            .bindPopup('<b style="color:#22d3ee">LUITECH</b><br><span style="font-size:12px">Persa Las Cenizas, Local 13<br>Bernardo O\u2019Higgins 564<br>La Serena, Coquimbo</span>')
             .openPopup();
     } else if (mapEl) {
         // Respaldo si la librería del mapa no pudiera cargar
