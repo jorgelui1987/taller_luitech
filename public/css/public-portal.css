@@ -327,3 +327,12 @@ input[type="date"].lp-input{color-scheme:dark}
 #planes{overflow:hidden;transition:max-height .7s ease,opacity .5s ease,padding .5s ease;scroll-margin-top:90px}
 #planes.lp-collapsed{max-height:0;opacity:0;padding-top:0;padding-bottom:0;border-color:transparent}
 #planes.lp-open{max-height:3800px;opacity:1}
+
+/* ── Laboratorio digital / cotizador ── */
+a.lp-feature{display:block;cursor:pointer}
+.lp-quote-result{margin-top:18px;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.35);border-radius:var(--r-md);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lp-quote-result .lbl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.lp-quote-result .lbl + .lbl{text-align:right;line-height:1.5}
+.lp-quote-result .precio{font-size:26px;font-weight:900;color:var(--cyan);font-variant-numeric:tabular-nums;line-height:1.2}
+.lp-quote-disclaimer{margin:12px 0 0;font-size:11.5px;color:var(--faint);text-align:center}
+.lp-quote-disclaimer i{color:var(--cyan);margin-right:5px}

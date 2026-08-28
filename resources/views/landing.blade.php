@@ -94,6 +94,95 @@
         </div>
     </div>
 </section>
+<section id="laboratorio" class="lp-section">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Laboratorio Digital</span>
+            <h2>Herramientas inteligentes de diagnóstico</h2>
+            <p>Cotiza, evalúa la salud de tu equipo o chatea con nuestro asistente virtual en tiempo real.</p>
+        </div>
+
+        <div class="lp-features">
+            <a class="lp-feature" href="#cotizador">
+                <div class="lp-feature-ico"><i class="fa-solid fa-calculator"></i></div>
+                <h4>Cotizador Online</h4>
+                <p>Obtén un presupuesto estimado para tu servicio técnico en segundos.</p>
+            </a>
+            @if($waNumber)
+                <a class="lp-feature" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, quiero un TEST DE SALUD de mi equipo (batería, rendimiento y estado general)') }}" target="_blank" rel="noopener">
+                    <div class="lp-feature-ico"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h4>Test de Salud de Equipos</h4>
+                    <p>Evaluamos batería, rendimiento y estado general de tu dispositivo.</p>
+                </a>
+                <a class="lp-feature" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, tengo una consulta sobre mi equipo') }}" target="_blank" rel="noopener">
+                    <div class="lp-feature-ico"><i class="fa-solid fa-robot"></i></div>
+                    <h4>Asistente Virtual</h4>
+                    <p>Chatea con nuestro asistente y resuelve tus dudas al instante.</p>
+                </a>
+            @else
+                <a class="lp-feature" href="#contacto">
+                    <div class="lp-feature-ico"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h4>Test de Salud de Equipos</h4>
+                    <p>Evaluamos batería, rendimiento y estado general de tu dispositivo.</p>
+                </a>
+                <a class="lp-feature" href="#contacto">
+                    <div class="lp-feature-ico"><i class="fa-solid fa-robot"></i></div>
+                    <h4>Asistente Virtual</h4>
+                    <p>Chatea con nuestro asistente y resuelve tus dudas al instante.</p>
+                </a>
+            @endif
+        </div>
+
+        <div class="lp-card" id="cotizador" style="max-width:760px;margin:34px auto 0;">
+            <h3><i class="fa-solid fa-bolt"></i> Cotizador de Reparaciones al Instante</h3>
+            <p>Obtén un presupuesto estimado para tu servicio técnico en segundos.</p>
+            <form id="cotizador-form" novalidate>
+                <div class="lp-form-grid">
+                    <div>
+                        <label class="lp-label" for="cot-tipo">Tipo de Dispositivo</label>
+                        <select class="lp-input" id="cot-tipo">
+                            <option value="celular" selected>Celular / Smartphone</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="notebook">Notebook</option>
+                            <option value="pc">PC de Escritorio</option>
+                            <option value="consola">Consola</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="lp-label" for="cot-modelo">Modelo</label>
+                        <input class="lp-input" type="text" id="cot-modelo" placeholder="Ej: iPhone 13" autocomplete="off">
+                    </div>
+                    <div class="full">
+                        <label class="lp-label" for="cot-servicio">Falla o Servicio</label>
+                        <select class="lp-input" id="cot-servicio">
+                            <option value="pantalla" selected>Cambio de Pantalla</option>
+                            <option value="bateria">Cambio de Batería</option>
+                            <option value="puerto">Puerto de Carga</option>
+                            <option value="mantenimiento">Mantenimiento / Limpieza</option>
+                            <option value="software">Software / Sistema</option>
+                            <option value="placa">Reparación de Placa</option>
+                            <option value="camara">Cámara / Audio</option>
+                            <option value="datos">Recuperación de Datos</option>
+                            <option value="otro">Otro / No sé</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="lp-quote-result">
+                    <div>
+                        <div class="lbl">Presupuesto estimado</div>
+                        <div class="precio" id="cot-resultado-precio">—</div>
+                    </div>
+                    <div class="lbl" id="cot-resultado-nota">Selecciona dispositivo y servicio</div>
+                </div>
+                <p class="lp-quote-disclaimer"><i class="fa-solid fa-circle-info"></i> Precios referenciales en pesos chilenos. El presupuesto final se confirma tras el diagnóstico técnico, que no tiene costo.</p>
+                <button type="submit" class="lp-btn lp-btn-primary lp-btn-block" style="margin-top:14px;">
+                    <i class="fa-brands fa-whatsapp"></i> Agendar esta cotización por WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
 <section id="agendar" class="lp-section">
     <div class="lp-container">
         <div class="lp-section-head">
@@ -351,6 +440,62 @@
         @if(!empty($abrirPlanes))
             setPlanes(true);
         @endif
+    }
+
+    // Cotizador de reparaciones al instante (precios referenciales CLP)
+    const COT_SERVICIOS = {
+        pantalla: { precios: { celular:[45000,90000], tablet:[60000,120000], notebook:[90000,180000], pc:[70000,150000], consola:[90000,180000] } },
+        bateria:  { precios: { celular:[25000,45000], tablet:[35000,60000], notebook:[45000,90000], consola:[40000,70000] } },
+        puerto:   { precios: { celular:[20000,40000], tablet:[25000,45000], notebook:[30000,60000], pc:[15000,35000], consola:[30000,60000] } },
+        mantenimiento: { precios: { celular:[15000,25000], tablet:[18000,30000], notebook:[25000,45000], pc:[20000,40000], consola:[25000,40000] } },
+        software: { precios: { celular:[15000,30000], tablet:[15000,30000], notebook:[20000,40000], pc:[20000,40000], consola:[20000,35000] } },
+        placa:    { precios: { celular:[60000,150000], tablet:[70000,160000], notebook:[80000,180000], pc:[60000,150000], consola:[80000,200000] } },
+        camara:   { precios: { celular:[20000,50000], tablet:[25000,55000], notebook:[30000,60000], pc:[20000,45000] } },
+        datos:    { precios: { celular:[30000,80000], tablet:[35000,90000], notebook:[40000,120000], pc:[30000,90000] } },
+        otro:     { precios: {} }
+    };
+    const clp = n => '$' + n.toLocaleString('es-CL');
+    const cotTipo = document.getElementById('cot-tipo');
+    const cotServicio = document.getElementById('cot-servicio');
+    const cotModelo = document.getElementById('cot-modelo');
+    const cotPrecio = document.getElementById('cot-resultado-precio');
+    const cotNota = document.getElementById('cot-resultado-nota');
+    const cotActualizar = () => {
+        const serv = COT_SERVICIOS[cotServicio.value];
+        const rango = serv ? serv.precios[cotTipo.value] : null;
+        if (rango) {
+            cotPrecio.textContent = clp(rango[0]) + ' - ' + clp(rango[1]);
+            cotNota.textContent = 'Precio referencial · el presupuesto final se confirma tras el diagnóstico (sin costo)';
+        } else {
+            cotPrecio.textContent = 'A medida';
+            cotNota.textContent = 'Este servicio se cotiza personalizado — escríbenos por WhatsApp';
+        }
+    };
+    if (cotTipo && cotServicio) {
+        cotTipo.addEventListener('change', cotActualizar);
+        cotServicio.addEventListener('change', cotActualizar);
+        cotActualizar();
+    }
+    const cotForm = document.getElementById('cotizador-form');
+    if (cotForm) {
+        const WA_COT = @json($waNumber);
+        cotForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!WA_COT) {
+                lpToast('No hay teléfono de contacto configurado para cotizar.', 'error');
+                return;
+            }
+            const equipoTexto = cotTipo.options[cotTipo.selectedIndex].text + (cotModelo.value.trim() ? ' (' + cotModelo.value.trim() + ')' : '');
+            const servicioTexto = cotServicio.options[cotServicio.selectedIndex].text;
+            const rango = (COT_SERVICIOS[cotServicio.value] || { precios: {} }).precios[cotTipo.value];
+            const estimado = rango ? clp(rango[0]) + ' - ' + clp(rango[1]) : 'por evaluar';
+            let msg = 'Hola, quiero cotizar una reparación:\n';
+            msg += '• Equipo: ' + equipoTexto + '\n';
+            msg += '• Servicio: ' + servicioTexto + '\n';
+            msg += '• Estimado web: ' + estimado;
+            window.open('https://wa.me/' + WA_COT + '?text=' + encodeURIComponent(msg), '_blank');
+            lpToast('¡Cotización lista! Se abrió WhatsApp para enviarla.', 'success');
+        });
     }
 
     // Formulario de agendamiento → abre WhatsApp con la solicitud armada
