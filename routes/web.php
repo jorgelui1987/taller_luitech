@@ -67,10 +67,10 @@ Route::get('/estado', [\App\Http\Controllers\PublicReparacionController::class, 
     ->name('reparaciones.public-status.search');
 
 // ── MODO SALA DE ESPERA (pantalla TV, sin autenticación) ───────────────────
-Route::get('/pantalla', [\App\Http\Controllers\PublicReparacionController::class, 'pantalla'])
-    ->name('public.pantalla');
-Route::get('/pantalla/data', [\App\Http\Controllers\PublicReparacionController::class, 'pantallaData'])
+Route::get('/pantalla/data/{slug?}', [\App\Http\Controllers\PublicReparacionController::class, 'pantallaData'])
     ->name('public.pantalla.data');
+Route::get('/pantalla/{slug?}', [\App\Http\Controllers\PublicReparacionController::class, 'pantalla'])
+    ->name('public.pantalla');
 
 // ── PÁGINA PÚBLICA DE LA TIENDA (mini-web) ────────────────────────────────
 Route::get('/t/{slug}', [ComboPublicidadController::class, 'tiendaPublica'])->name('public.tienda');

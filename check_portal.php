@@ -58,4 +58,17 @@ $html6 = renderView(view('landing', ['empresa' => null]));
 echo '[7] landing render (sin empresa): ' . strlen($html6) . ' chars '
     . (strpos($html6, 'lp-hero') !== false ? 'OK' : 'FALLO') . PHP_EOL;
 
+// 8) TV por slug de tienda (/pantalla/{slug})
+$tenant = \App\Models\Tenant::first();
+if ($tenant && $tenant->slug_publico) {
+    $html8 = renderView($c->pantalla(new \Illuminate\Http\Request(), $tenant->slug_publico));
+    echo '[8] /pantalla/' . $tenant->slug_publico . ' render: ' . strlen($html8) . ' chars '
+        . (strpos($html8, 'tv-app') !== false ? 'OK' : 'FALLO') . PHP_EOL;
+    $d2 = $c->pantallaData(\Illuminate\Http\Request::create('/pantalla/data/' . $tenant->slug_publico))->getData(true);
+    echo '    pantallaData(slug): listos=' . count($d2['listos']) . ' proceso=' . count($d2['proceso'])
+        . ' tienda=' . (($d2['tienda']['nombre'] ?? '') ?: 'n/d') . PHP_EOL;
+} else {
+    echo "[8] sin tenants con slug (skip)" . PHP_EOL;
+}
+
 echo 'SMOKE TEST COMPLETO' . PHP_EOL;

@@ -92,8 +92,7 @@
     </footer>
 </div>
 <script>
-    const TIENDA_PARAM = @json($tiendaParam);
-    const DATA_URL = "{{ route('public.pantalla.data') }}" + (TIENDA_PARAM ? ('?tienda=' + encodeURIComponent(TIENDA_PARAM)) : '');
+    const DATA_URL = @js($slugPantalla ? route('public.pantalla.data', ['slug' => $slugPantalla]) : route('public.pantalla.data'));
     const CONSEJOS = @json($consejos);
 
     let prevReady = null;   // códigos "listos" vistos (1ª carga = referencia, sin chime)

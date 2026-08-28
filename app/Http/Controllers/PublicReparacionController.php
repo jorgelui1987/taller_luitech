@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reparacion;
+use App\Models\Tenant;
 use App\Models\Configuracion;
 use App\Models\Cliente;
 use App\Models\User;
@@ -90,8 +91,10 @@ class PublicReparacionController extends Controller
 
     /**
      * Modo Sala de Espera (TV): pantalla completa con los turnos del taller.
+     * Con slug (/pantalla/mitienda) muestra SOLO esa empresa; sin slug,
+     * usa el tenant con actividad más reciente (instancia de una sola empresa).
      */
-    public function pantalla(Request $request)
+    public function pantalla(Request $request, ?string $slug = null)
     {
         $consejos = [
             ['titulo' => 'Cuida tu batería', 'desc' => 'Evita que tu celular se descargue por debajo del 20% o se cargue por encima del 80% de forma habitual: extenderás la vida útil de tu batería.'],
@@ -102,26 +105,32 @@ class PublicReparacionController extends Controller
             ['titulo' => 'Humedad: actúa rápido', 'desc' => 'Si tu equipo se moja, apágalo de inmediato y no intentes cargarlo. Tráelo cuanto antes: el tiempo es clave para salvar la placa.'],
         ];
 
-        $tenantId = $this->resolverTenantPantalla($request);
+        $tenantId = $slug !== null
+            ? $this->resolverTenantPorSlug($slug)
+            : $this->resolverTenantPantalla($request);
+
         $empresa = $tenantId
             ? Configuracion::withoutGlobalScopes()->where('tenant_id', $tenantId)->first()
             : null;
 
         return view('public.pantalla', [
             'consejos'        => $consejos,
-            'tiendaParam'     => $request->query('tienda') ?: $tenantId,
             'empresaPantalla' => $empresa,
+            'slugPantalla'    => $slug,
         ]);
     }
 
     /**
      * Datos en vivo del modo TV (consultado por la pantalla cada 15 s).
+     * Con slug: solo esa empresa. Sin slug: fallback por actividad reciente.
      */
-    public function pantallaData(Request $request)
+    public function pantallaData(Request $request, ?string $slug = null)
     {
-        $estadosActivos = ['recibido', 'en_diagnostico', 'esperando_repuesto', 'en_reparacion', 'listo'];
+        $tenantId = $slug !== null
+            ? $this->resolverTenantPorSlug($slug)
+            : $this->resolverTenantPantalla($request);
 
-        $tenantId = $this->resolverTenantPantalla($request);
+        $estadosActivos = ['recibido', 'en_diagnostico', 'esperando_repuesto', 'en_reparacion', 'listo'];
 
         $query = Reparacion::withoutGlobalScopes()
             ->whereIn('estado', $estadosActivos)
@@ -189,8 +198,9 @@ class PublicReparacionController extends Controller
      */
     private function resolverTenantPantalla(Request $request): ?int
     {
-        if ($request->filled('tienda')) {
-            return (int) $request->query('tienda');
+        $param = $request->query('tienda');
+        if ($param !== null && ctype_digit((string) $param) && (int) $param > 0) {
+            return (int) $param;
         }
 
         $tenantId = Reparacion::withoutGlobalScopes()
@@ -199,5 +209,19 @@ class PublicReparacionController extends Controller
             ->value('tenant_id');
 
         return $tenantId !== null ? (int) $tenantId : null;
+    }
+
+    /**
+     * Resuelve el tenant por slug público de la tienda (/pantalla/mitienda).
+     */
+    private function resolverTenantPorSlug(string $slug): ?int
+    {
+        $tenant = Tenant::where('slug_publico', $slug)->first();
+
+        if (!$tenant || $tenant->estado !== 'activo') {
+            abort(404);
+        }
+
+        return (int) $tenant->id;
     }
 }
