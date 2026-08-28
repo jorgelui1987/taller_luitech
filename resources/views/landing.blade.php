@@ -99,7 +99,7 @@
         <div class="lp-section-head">
             <span class="lp-section-chip">Laboratorio Digital</span>
             <h2>Herramientas inteligentes de diagnóstico</h2>
-            <p>Cotiza, evalúa la salud de tu equipo o chatea con nuestro asistente virtual en tiempo real.</p>
+            <p>Cotiza tu reparación, evalúa la salud de tu equipo o sigue el avance de tu orden en tiempo real.</p>
         </div>
 
         <div class="lp-features">
@@ -108,29 +108,16 @@
                 <h4>Cotizador Online</h4>
                 <p>Obtén un presupuesto estimado para tu servicio técnico en segundos.</p>
             </a>
-            @if($waNumber)
-                <a class="lp-feature" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, quiero un TEST DE SALUD de mi equipo (batería, rendimiento y estado general)') }}" target="_blank" rel="noopener">
-                    <div class="lp-feature-ico"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <h4>Test de Salud de Equipos</h4>
-                    <p>Evaluamos batería, rendimiento y estado general de tu dispositivo.</p>
-                </a>
-                <a class="lp-feature" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, tengo una consulta sobre mi equipo') }}" target="_blank" rel="noopener">
-                    <div class="lp-feature-ico"><i class="fa-solid fa-robot"></i></div>
-                    <h4>Asistente Virtual</h4>
-                    <p>Chatea con nuestro asistente y resuelve tus dudas al instante.</p>
-                </a>
-            @else
-                <a class="lp-feature" href="#contacto">
-                    <div class="lp-feature-ico"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <h4>Test de Salud de Equipos</h4>
-                    <p>Evaluamos batería, rendimiento y estado general de tu dispositivo.</p>
-                </a>
-                <a class="lp-feature" href="#contacto">
-                    <div class="lp-feature-ico"><i class="fa-solid fa-robot"></i></div>
-                    <h4>Asistente Virtual</h4>
-                    <p>Chatea con nuestro asistente y resuelve tus dudas al instante.</p>
-                </a>
-            @endif
+            <a class="lp-feature" href="#test-salud">
+                <div class="lp-feature-ico"><i class="fa-solid fa-heart-pulse"></i></div>
+                <h4>Test de Salud de Equipos</h4>
+                <p>Responde 5 preguntas y descubre la condición real de tu equipo.</p>
+            </a>
+            <a class="lp-feature" href="{{ route('reparaciones.public-status.search') }}">
+                <div class="lp-feature-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <h4>Estado de mi Reparación</h4>
+                <p>Sigue el avance de tu equipo en tiempo real con tu código de orden.</p>
+            </a>
         </div>
 
         <div class="lp-card" id="cotizador" style="max-width:760px;margin:34px auto 0;">
@@ -179,6 +166,77 @@
                     <i class="fa-brands fa-whatsapp"></i> Agendar esta cotización por WhatsApp
                 </button>
             </form>
+        </div>
+
+        <div class="lp-card" id="test-salud" style="max-width:760px;margin:34px auto 0;">
+            <h3><i class="fa-solid fa-heart-pulse"></i> Test de Salud de Equipos</h3>
+            <p>Responde 5 preguntas rápidas y descubre la condición real de tu equipo.</p>
+            <form id="salud-form" novalidate>
+                <div class="lp-form-grid">
+                    <div>
+                        <label class="lp-label" for="sal-tipo">Tipo de equipo *</label>
+                        <select class="lp-input" id="sal-tipo">
+                            <option value="" disabled selected>Selecciona…</option>
+                            <option value="celular">Celular</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="notebook">Notebook</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="lp-label" for="sal-edad">¿Qué año lo compraste? *</label>
+                        <select class="lp-input" id="sal-edad">
+                            <option value="" disabled selected>Selecciona…</option>
+                            <option value="menos1">Menos de 1 año</option>
+                            <option value="a12">Entre 1 y 2 años</option>
+                            <option value="a34">Entre 3 y 4 años</option>
+                            <option value="a5mas">5 años o más</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="lp-label" for="sal-bateria">¿Cuánto aguanta la batería? *</label>
+                        <select class="lp-input" id="sal-bateria">
+                            <option value="" disabled selected>Selecciona…</option>
+                            <option value="mas1dia">Más de un día</option>
+                            <option value="mediadia">Medio día</option>
+                            <option value="menos3h">Menos de 3 horas</option>
+                            <option value="apaga">Se apaga solo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="lp-label" for="sal-fisico">Estado físico *</label>
+                        <select class="lp-input" id="sal-fisico">
+                            <option value="" disabled selected>Selecciona…</option>
+                            <option value="nuevo">Como nuevo</option>
+                            <option value="rayones">Rayones leves</option>
+                            <option value="trizado">Pantalla trizada o golpes</option>
+                        </select>
+                    </div>
+                    <div class="full">
+                        <label class="lp-label" for="sal-problemas">¿Presenta algún problema? *</label>
+                        <select class="lp-input" id="sal-problemas">
+                            <option value="" disabled selected>Selecciona…</option>
+                            <option value="ninguno">Ninguno</option>
+                            <option value="calienta">Se calienta</option>
+                            <option value="lento">Funciona lento</option>
+                            <option value="ambos">Ambos</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="lp-btn lp-btn-primary lp-btn-block" style="margin-top:14px;">
+                    <i class="fa-solid fa-heart-pulse"></i> Evaluar mi equipo
+                </button>
+            </form>
+            <div class="lp-salud-resultado" id="salud-resultado">
+                <div class="lp-salud-score-box">
+                    <div class="lbl" style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);">Condición</div>
+                    <div class="lp-salud-score" id="salud-score">—</div>
+                    <div class="lp-salud-nivel" id="salud-nivel"></div>
+                </div>
+                <div class="lp-salud-detalle">
+                    <p id="salud-mensaje"></p>
+                    <button type="button" id="salud-wa" class="lp-btn lp-btn-primary"><i class="fa-brands fa-whatsapp"></i> Enviar mi resultado a un técnico</button>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -440,6 +498,79 @@
         @if(!empty($abrirPlanes))
             setPlanes(true);
         @endif
+    }
+
+    // Test de Salud de Equipos: cuestionario interactivo con puntaje
+    const SALUD_PENAL = {
+        edad:      { menos1: 0, a12: -10, a34: -25, a5mas: -40 },
+        bateria:   { mas1dia: 0, mediadia: -15, menos3h: -30, apaga: -45 },
+        fisico:    { nuevo: 0, rayones: -10, trizado: -25 },
+        problemas: { ninguno: 0, calienta: -10, lento: -10, ambos: -20 }
+    };
+    const salForm = document.getElementById('salud-form');
+    const salBox = document.getElementById('salud-resultado');
+    let saludData = null;
+    if (salForm) {
+        const salVal = id => document.getElementById(id).value;
+        const salTxt = id => document.getElementById(id).options[document.getElementById(id).selectedIndex].text;
+        salForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const ids = ['sal-tipo', 'sal-edad', 'sal-bateria', 'sal-fisico', 'sal-problemas'];
+            for (const id of ids) {
+                if (!salVal(id)) {
+                    lpToast('Responde todas las preguntas para evaluar tu equipo.', 'error');
+                    return;
+                }
+            }
+            let score = 100;
+            score += SALUD_PENAL.edad[salVal('sal-edad')] || 0;
+            score += SALUD_PENAL.bateria[salVal('sal-bateria')] || 0;
+            score += SALUD_PENAL.fisico[salVal('sal-fisico')] || 0;
+            score += SALUD_PENAL.problemas[salVal('sal-problemas')] || 0;
+            score = Math.max(0, Math.min(100, score));
+            let nivel, color, mensaje;
+            if (score >= 80) {
+                nivel = 'Excelente estado'; color = '#34d399';
+                mensaje = 'Tu equipo está saludable. Sigue con las buenas prácticas de carga y limpieza.';
+            } else if (score >= 55) {
+                nivel = 'Estado regular'; color = '#fbbf24';
+                mensaje = 'Te recomendamos un mantenimiento preventivo para alargar su vida útil.';
+            } else {
+                nivel = 'Estado crítico'; color = '#f87171';
+                mensaje = 'Tu equipo necesita revisión urgente — probablemente batería agotada u otro desgaste interno.';
+            }
+            document.getElementById('salud-score').textContent = score + '/100';
+            document.getElementById('salud-score').style.color = color;
+            document.getElementById('salud-nivel').textContent = nivel;
+            document.getElementById('salud-nivel').style.color = color;
+            document.getElementById('salud-mensaje').textContent = mensaje;
+            salBox.style.display = 'flex';
+            saludData = {
+                tipo: salTxt('sal-tipo'), edad: salTxt('sal-edad'), bateria: salTxt('sal-bateria'),
+                fisico: salTxt('sal-fisico'), problemas: salTxt('sal-problemas'), score, nivel
+            };
+            salBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        const salWa = document.getElementById('salud-wa');
+        salWa.addEventListener('click', () => {
+            const WA_SAL = @json($waNumber);
+            if (!saludData) {
+                lpToast('Primero evalúa tu equipo.', 'error');
+                return;
+            }
+            if (!WA_SAL) {
+                lpToast('No hay teléfono de contacto configurado.', 'error');
+                return;
+            }
+            let msg = 'Hola, hice el TEST DE SALUD en la web:\n';
+            msg += '• Equipo: ' + saludData.tipo + '\n';
+            msg += '• Año de compra: ' + saludData.edad + '\n';
+            msg += '• Batería: ' + saludData.bateria + '\n';
+            msg += '• Estado físico: ' + saludData.fisico + '\n';
+            msg += '• Problemas: ' + saludData.problemas + '\n';
+            msg += '• Condición: ' + saludData.nivel + ' (' + saludData.score + '/100)';
+            window.open('https://wa.me/' + WA_SAL + '?text=' + encodeURIComponent(msg), '_blank');
+        });
     }
 
     // Cotizador de reparaciones al instante (precios referenciales CLP)
