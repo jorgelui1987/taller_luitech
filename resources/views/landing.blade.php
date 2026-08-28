@@ -38,6 +38,15 @@
         </div>
     </div>
 </section>
+<section class="lp-strip" aria-label="Nuestras garantías">
+    <div class="lp-container lp-strip-inner">
+        <span class="lp-strip-item"><i class="fa-solid fa-shield-halved"></i> 3 meses de garantía escrita</span>
+        <span class="lp-strip-item"><i class="fa-solid fa-magnifying-glass"></i> Diagnóstico sin costo</span>
+        <span class="lp-strip-item"><i class="fa-solid fa-bolt"></i> Reparaciones en 24-72 horas</span>
+        <span class="lp-strip-item"><i class="fa-solid fa-microchip"></i> Repuestos de calidad</span>
+    </div>
+</section>
+
 <section id="servicios" class="lp-section">
     <div class="lp-container">
         <div class="lp-section-head">
@@ -94,6 +103,33 @@
         </div>
     </div>
 </section>
+@php
+    $resenasPortada = \App\Models\Resena::withoutGlobalScopes()->publicadas()->conCalificacionMinima(4)->latest()->take(3)->get();
+@endphp
+@if($resenasPortada->count())
+<section id="testimonios" class="lp-section">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Testimonios</span>
+            <h2>Lo que dicen nuestros clientes</h2>
+            <p>Reseñas reales de equipos reparados en nuestro taller.</p>
+        </div>
+        <div class="lp-features">
+            @foreach($resenasPortada as $resena)
+                <div class="lp-feature lp-testi">
+                    <div class="lp-stars">@for($i = 0; $i < 5; $i++)<i class="fa-{{ $i < $resena->calificacion ? 'solid fa-star' : 'regular fa-star' }}"></i> @endfor</div>
+                    <p>"{{ $resena->comentario }}"</p>
+                    <div class="autor">
+                        <span class="avatar">{{ strtoupper(substr(trim($resena->nombre_publico ?? 'C') ?: 'C', 0, 1)) }}</span>
+                        <span><b>{{ $resena->nombre_publico ?? 'Cliente' }}</b><small>Cliente verificado</small></span>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 <section id="laboratorio" class="lp-section">
     <div class="lp-container">
         <div class="lp-section-head">
@@ -425,6 +461,63 @@
     </div>
 </section>
 
+<section id="faq" class="lp-section">
+    <div class="lp-container">
+        <div class="lp-section-head">
+            <span class="lp-section-chip">Preguntas frecuentes</span>
+            <h2>Resolvemos tus dudas</h2>
+            <p>Lo que más nos preguntan antes de dejar su equipo.</p>
+        </div>
+        <div class="lp-faq">
+            <div class="lp-card lp-tool" data-group="faq">
+                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-1" data-open-text="Ver respuesta">
+                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Cuánto tarda una reparación?</span>
+                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                </button>
+                <div class="lp-tool-body" id="faq-1">
+                    <p>La mayoría de las reparaciones (pantallas, baterías, puertos de carga) están listas en 24 a 72 horas. Los casos de placa o repuestos importados pueden demorar más, y te avisamos por WhatsApp en cuanto tengamos novedades.</p>
+                </div>
+            </div>
+            <div class="lp-card lp-tool" data-group="faq">
+                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-2" data-open-text="Ver respuesta">
+                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿El diagnóstico tiene costo?</span>
+                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                </button>
+                <div class="lp-tool-body" id="faq-2">
+                    <p>No. El diagnóstico es sin costo y te entregamos el presupuesto antes de tocar tu equipo. Solo continuamos con la reparación si tú la apruebas.</p>
+                </div>
+            </div>
+            <div class="lp-card lp-tool" data-group="faq">
+                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-3" data-open-text="Ver respuesta">
+                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Qué garantía tienen las reparaciones?</span>
+                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                </button>
+                <div class="lp-tool-body" id="faq-3">
+                    <p>Todas nuestras reparaciones incluyen 3 meses de garantía escrita, tanto en repuestos como en mano de obra.</p>
+                </div>
+            </div>
+            <div class="lp-card lp-tool" data-group="faq">
+                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-4" data-open-text="Ver respuesta">
+                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Necesito la boleta para retirar mi equipo?</span>
+                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                </button>
+                <div class="lp-tool-body" id="faq-4">
+                    <p>Presenta tu boleta o el código de la orden (RPT-XXXXXX). Sin comprobante no entregamos el equipo, por la seguridad de tus datos y tu inversión.</p>
+                </div>
+            </div>
+            <div class="lp-card lp-tool" data-group="faq">
+                <button type="button" class="lp-tool-head" aria-expanded="false" aria-controls="faq-5" data-open-text="Ver respuesta">
+                    <span class="lp-tool-title"><i class="fa-solid fa-circle-question"></i> ¿Pierdo mis datos con la reparación?</span>
+                    <span class="lp-tool-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+                </button>
+                <div class="lp-tool-body" id="faq-5">
+                    <p>En reparaciones de hardware (pantalla, batería, puerto de carga) tus datos no se tocan. En servicios de software hacemos respaldo previo siempre que el equipo lo permita.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section id="contacto" class="lp-section lp-section-alt">
     <div class="lp-container">
         <div class="lp-section-head">
@@ -459,6 +552,21 @@
             </div>
 
             <div class="lp-map" id="map" style="margin-top:26px;"></div>
+        </div>
+    </div>
+</section>
+
+<section class="lp-section">
+    <div class="lp-container">
+        <div class="lp-card" style="max-width:760px;margin:0 auto;text-align:center;padding:38px 30px;">
+            <h3 style="font-size:24px;font-weight:900;justify-content:center;"><i class="fa-solid fa-wrench" style="color:var(--cyan);"></i> ¿Listo para reparar tu equipo?</h3>
+            <p style="color:var(--muted);font-size:14.5px;line-height:1.6;margin:10px 0 22px;">Diagnóstico sin costo, presupuesto claro antes de empezar y garantía escrita. Agenda hoy y recupera tu tecnología.</p>
+            <div class="lp-hero-actions" style="justify-content:center;">
+                <a href="#agendar" class="lp-btn lp-btn-primary"><i class="fa-solid fa-calendar-check"></i> Agendar cita</a>
+                @if($waNumber)
+                    <a href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, quiero reparar mi equipo') }}" target="_blank" rel="noopener" class="lp-btn lp-btn-ghost"><i class="fa-brands fa-whatsapp"></i> Escríbenos</a>
+                @endif
+            </div>
         </div>
     </div>
 </section>
@@ -528,10 +636,12 @@
         if (lbl) lbl.textContent = abrir ? 'Cerrar' : (head.getAttribute('data-open-text') || 'Abrir');
         if (abrir) setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     };
+    const grupoDe = c => c.dataset.group || 'lab';
     toolCards.forEach(card => {
         card.querySelector('.lp-tool-head').addEventListener('click', () => {
             const abrir = !card.classList.contains('is-open');
-            toolCards.forEach(c => { if (c !== card) abrirTool(c, false); });
+            const grupo = grupoDe(card);
+            toolCards.forEach(c => { if (c !== card && grupoDe(c) === grupo) abrirTool(c, false); });
             abrirTool(card, abrir);
         });
     });
@@ -541,7 +651,8 @@
             e.preventDefault();
             const card = document.getElementById(a.getAttribute('href').slice(1));
             if (card && card.classList.contains('lp-tool')) {
-                toolCards.forEach(c => { if (c !== card) abrirTool(c, false); });
+                const grupo = grupoDe(card);
+                toolCards.forEach(c => { if (c !== card && grupoDe(c) === grupo) abrirTool(c, false); });
                 abrirTool(card, true);
             }
         });

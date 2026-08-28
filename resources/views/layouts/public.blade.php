@@ -6,6 +6,17 @@
     <meta name="theme-color" content="#020617">
     <title>@yield('title', 'Consulta tu reparación') — {{ $empresa->nombre_tienda ?? 'Luitech' }}</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('logo-luitech.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logo-luitech.png') }}">
+    <!-- Vista previa al compartir (Open Graph) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ $empresa->nombre_tienda ?? 'LUITECH' }}">
+    <meta property="og:title" content="{{ $empresa->nombre_tienda ?? 'LUITECH' }} · Servicio Técnico de Celulares y Computadores">
+    <meta property="og:description" content="Reparación de celulares, tablets y PC con garantía escrita. Cotiza online, sigue tu reparación en tiempo real y agenda por WhatsApp.">
+    <meta property="og:image" content="{{ asset('logo-luitech.png') }}">
+    <meta name="twitter:card" content="summary">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Inter (fuente del portal público) -->
@@ -19,6 +30,8 @@
 @php
     $brandName = $empresa->nombre_tienda ?? 'LUITECH';
     $brandSub  = ($empresa->direccion ?? '') !== '' ? $empresa->direccion : 'Servicio Técnico';
+    $waDigits  = preg_replace('/\D/', '', (string) ($empresa->telefono ?? ''));
+    $waNumber  = $waDigits !== '' ? (str_starts_with($waDigits, '56') ? $waDigits : '56' . $waDigits) : null;
 @endphp
 <body class="lp-body">
 
@@ -47,6 +60,13 @@
 
     <!-- Notificaciones flotantes -->
     <div id="lp-toasts" class="lp-toast-wrap" aria-live="polite"></div>
+
+    <!-- Botón flotante de WhatsApp -->
+    @if($waNumber)
+        <a class="lp-wa-float" href="https://wa.me/{{ $waNumber }}?text={{ rawurlencode('Hola, tengo una consulta sobre mi equipo') }}" target="_blank" rel="noopener" aria-label="Chatea con nosotros por WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+    @endif
 
     <main class="lp-main">
         @yield('content')
@@ -112,6 +132,16 @@
                 toast.classList.remove('is-show');
                 setTimeout(() => toast.remove(), 350);
             }, 4200);
+        }
+
+        // Revelado suave de secciones al hacer scroll
+        if ('IntersectionObserver' in window) {
+            const lpRevealEls = document.querySelectorAll('.lp-section-head, .lp-features > *, .lp-quote-result, .lp-salud-resultado, .lp-pricing > *');
+            lpRevealEls.forEach(el => el.classList.add('lp-reveal'));
+            const lpIO = new IntersectionObserver((entries) => {
+                entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('lp-visible'); lpIO.unobserve(en.target); } });
+            }, { threshold: .12 });
+            lpRevealEls.forEach(el => lpIO.observe(el));
         }
 
         @if(!empty($error))
