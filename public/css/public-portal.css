@@ -322,3 +322,8 @@ input[type="date"].lp-input{color-scheme:dark}
 .lp-plan ul li.no i{color:var(--faint)}
 @media (max-width:980px){.lp-pricing{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){.lp-pricing{grid-template-columns:1fr}}
+
+/* ── Acordeón de planes (plegado por defecto) ── */
+#planes{overflow:hidden;transition:max-height .7s ease,opacity .5s ease,padding .5s ease;scroll-margin-top:90px}
+#planes.lp-collapsed{max-height:0;opacity:0;padding-top:0;padding-bottom:0;border-color:transparent}
+#planes.lp-open{max-height:3800px;opacity:1}

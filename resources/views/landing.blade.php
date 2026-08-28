@@ -148,7 +148,7 @@
     </div>
 </section>
 
-<section id="planes" class="lp-section lp-section-alt">
+<section id="planes" class="lp-section lp-section-alt {{ empty($abrirPlanes) ? 'lp-collapsed' : 'lp-open' }}">
     <div class="lp-container">
         <div class="lp-section-head">
             <span class="lp-section-chip">Planes y precios</span>
@@ -256,7 +256,7 @@
         </div>
         <div class="lp-hero-actions" style="justify-content:center;">
             <a href="{{ route('registro.tenant') }}" class="lp-btn lp-btn-primary"><i class="fa-solid fa-store"></i> Registra tu tienda gratis</a>
-            <a href="#planes" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-tags"></i> Ver planes</a>
+            <button type="button" id="btn-planes" class="lp-btn lp-btn-ghost" aria-expanded="false" aria-controls="planes"><i class="fa-solid fa-tags"></i> <span>Ver planes</span></button>
             <a href="{{ route('login') }}" class="lp-btn lp-btn-ghost"><i class="fa-solid fa-right-to-bracket"></i> Acceso del personal</a>
         </div>
     </div>
@@ -333,6 +333,24 @@
         L.marker(coords).addTo(mapa)
             .bindPopup('<b style="color:#22d3ee">' + tiendaNombre + '</b><br><span style="font-size:12px">' + tiendaDireccion + '</span>')
             .openPopup();
+    }
+
+    // Acordeón de planes: plegado por defecto, se despliega al hacer clic
+    const btnPlanes = document.getElementById('btn-planes');
+    const secPlanes = document.getElementById('planes');
+    if (btnPlanes && secPlanes) {
+        const setPlanes = (abrir) => {
+            secPlanes.classList.toggle('lp-collapsed', !abrir);
+            secPlanes.classList.toggle('lp-open', abrir);
+            btnPlanes.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+            btnPlanes.querySelector('span').textContent = abrir ? 'Ocultar planes' : 'Ver planes';
+            btnPlanes.querySelector('i').className = abrir ? 'fa-solid fa-eye-slash' : 'fa-solid fa-tags';
+            if (abrir) setTimeout(() => secPlanes.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+        };
+        btnPlanes.addEventListener('click', () => setPlanes(secPlanes.classList.contains('lp-collapsed')));
+        @if(!empty($abrirPlanes))
+            setPlanes(true);
+        @endif
     }
 
     // Formulario de agendamiento → abre WhatsApp con la solicitud armada

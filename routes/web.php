@@ -127,7 +127,7 @@ Route::get('/', function () {
 
 Route::get('/planes', function () {
     $empresa = \App\Models\Configuracion::withoutGlobalScopes()->orderBy('id')->first();
-    return view('landing', ['empresa' => $empresa]);
+    return view('landing', ['empresa' => $empresa, 'abrirPlanes' => true]);
 })->name('planes')->withoutMiddleware([\App\Http\Middleware\CheckTenantStatus::class]);
 
 Route::get('/registro', [SuperAdminController::class, 'showRegistroTenant'])->name('registro.tenant');
