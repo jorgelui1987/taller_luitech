@@ -15,7 +15,7 @@ class CheckVentasAccess
     {
         $user = $request->user();
 
-        if (!$user || !in_array($user->rol, ['admin', 'vendedor'])) {
+        if (!$user || !$user->puedeVender()) {
             abort(403, 'Acceso denegado. Solo administradores y vendedores.');
         }
 

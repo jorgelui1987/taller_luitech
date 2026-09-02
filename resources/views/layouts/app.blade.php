@@ -1022,7 +1022,7 @@
         </a>
         @endif
 
-        @if(in_array(Auth::user()->rol, ['admin', 'vendedor']))
+        @if(Auth::user()->puedeVender())
         <a href="{{ route('ventas.index') }}"
            class="nav-link {{ request()->routeIs('ventas.*') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>
@@ -1042,7 +1042,7 @@
         </a>
         @endif
 
-        @if(in_array(Auth::user()->rol, ['admin', 'tecnico']))
+        @if(Auth::user()->puedeReparar())
         <a href="{{ route('reparaciones.index') }}"
            class="nav-link {{ request()->routeIs('reparaciones.*') && !request()->routeIs('reparaciones.kanban') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-tools"></i></span>
@@ -1059,7 +1059,7 @@
         </a>
         @endif
 
-        @if(in_array(Auth::user()->rol, ['admin', 'vendedor']))
+        @if(Auth::user()->puedeVender())
         <div class="nav-section-title">Caja</div>
 
         <a href="{{ route('caja.index') }}"

@@ -99,13 +99,26 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
-                                <select name="rol" id="rol" class="form-select @error('rol') is-invalid @enderror" required>
-                                    <option value="vendedor" {{ old('rol')=='vendedor'?'selected':'' }}>Vendedor</option>
-                                    <option value="tecnico" {{ old('rol')=='tecnico'?'selected':'' }}>Técnico</option>
-                                </select>
-                                @error('rol')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                <label class="form-label">Roles <span class="text-danger">*</span></label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles[]" value="vendedor" id="rol-vendedor" @checked(in_array('vendedor', old('roles', [])))>
+                                        <label class="form-check-label" for="rol-vendedor">Vendedor</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles[]" value="tecnico" id="rol-tecnico" @checked(in_array('tecnico', old('roles', [])))>
+                                        <label class="form-check-label" for="rol-tecnico">Técnico</label>
+                                    </div>
+                                    @if(auth()->user()?->esAdmin())
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="roles[]" value="admin" id="rol-admin" @checked(in_array('admin', old('roles', [])))>
+                                        <label class="form-check-label" for="rol-admin">Administrador</label>
+                                    </div>
+                                    @endif
+                                </div>
+                                <small class="text-muted d-block">Un usuario puede tener varios roles (ej. técnico + vendedor para talleres pequeños).</small>
+                                @error('roles')
+                                    <div class="text-danger small">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="mb-3">

@@ -140,8 +140,6 @@ Route::middleware(['tenant'])->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login',  [LoginController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
-        Route::get('/register',  [RegisterController::class, 'showRegistrationForm'])->name('register');
-        Route::post('/register', [RegisterController::class, 'register'])->name('register.post')->middleware('throttle:3,1');
 
         // Rutas 2FA challenge (usuario aún no autenticado)
         Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'showChallenge'])
@@ -157,6 +155,10 @@ Route::middleware(['tenant'])->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Creación de usuarios por el admin de la empresa (multi-rol)
+        Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+        Route::post('/register', [RegisterController::class, 'register'])->name('register.post')->middleware('throttle:10,1');
 
         // 2FA Management (usuario autenticado)
         Route::get('/configuracion/2fa', [\App\Http\Controllers\Auth\TwoFactorController::class, 'registro'])->name('two-factor.setup');

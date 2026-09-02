@@ -25,14 +25,19 @@ class DashboardController extends Controller
             return $this->dashboardAdmin($hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
         }
 
-        // ── VENDEDOR: Solo sus ventas ─────────────────────────────────────
-        if ($user->esVendedor()) {
-            return $this->dashboardVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
+        // ── TÉCNICO + VENDEDOR: dashboard combinado (multi-rol) ───────────
+        if ($user->esTecnico() && $user->esVendedor()) {
+            return $this->dashboardTecnicoVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
         }
 
         // ── TÉCNICO: Solo sus reparaciones y comisiones ───────────────────
         if ($user->esTecnico()) {
             return $this->dashboardTecnico($user, $inicioMes);
+        }
+
+        // ── VENDEDOR: Solo sus ventas ─────────────────────────────────────
+        if ($user->esVendedor()) {
+            return $this->dashboardVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior);
         }
 
         // Fallback: admin
@@ -123,6 +128,16 @@ class DashboardController extends Controller
      */
     private function dashboardVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior)
     {
+        return $this->renderDashboard(
+            $this->datosVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior)
+        );
+    }
+
+    /**
+     * Datos del dashboard de vendedor (reutilizable por el dashboard combinado).
+     */
+    private function datosVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior)
+    {
         $ventasHoy          = Venta::where('user_id', $user->id)->whereDate('fecha_venta', $hoy)->where('estado', 'completada')->sum('total');
         $ventasMes          = Venta::where('user_id', $user->id)->where('fecha_venta', '>=', $inicioMes)->where('estado', 'completada')->sum('total');
         $ventasMesAnterior  = Venta::where('user_id', $user->id)->whereBetween('fecha_venta', [$inicioMesAnterior, $finMesAnterior])->where('estado', 'completada')->sum('total');
@@ -163,7 +178,7 @@ class DashboardController extends Controller
         $ultimasReparaciones = collect([]);
         $miComisionPorcentaje = null;
 
-        return view('dashboard.index', compact(
+        return compact(
             'ventasHoy', 'ventasMes', 'crecimientoVentas',
             'totalClientes', 'clientesNuevosMes',
             'totalProductos', 'stockBajo',
@@ -171,13 +186,26 @@ class DashboardController extends Controller
             'diasSemana', 'ventasPorMes', 'topProductos',
             'ultimasVentas', 'ultimasReparaciones',
             'miComisionPorcentaje', 'misVentasHoy', 'misVentasMes'
-        ));
+        );
+    }
+
+    private function renderDashboard(array $datos)
+    {
+        return view('dashboard.index', $datos);
     }
 
     /**
      * Dashboard para TÉCNICO: solo sus reparaciones y comisiones
      */
     private function dashboardTecnico($user, $inicioMes)
+    {
+        return $this->renderDashboard($this->datosTecnico($user, $inicioMes));
+    }
+
+    /**
+     * Datos del dashboard de técnico (reutilizable por el dashboard combinado).
+     */
+    private function datosTecnico($user, $inicioMes)
     {
         // Mis reparaciones activas (no entregadas)
         $misReparacionesActivas = Reparacion::where('tecnico_id', $user->id)
@@ -232,7 +260,7 @@ class DashboardController extends Controller
         $topProductos = collect([]);
         $ultimasVentas = collect([]);
 
-        return view('dashboard.index', compact(
+        return compact(
             'ventasHoy', 'ventasMes', 'crecimientoVentas',
             'totalClientes', 'clientesNuevosMes',
             'totalProductos', 'stockBajo',
@@ -242,7 +270,21 @@ class DashboardController extends Controller
             'miComisionPorcentaje',
             'misReparacionesActivas', 'misReparacionesListas',
             'misEntregadasMes', 'misComisionesPendientes', 'misComisionesPagadas'
-        ));
+        );
+    }
+
+    /**
+     * Dashboard COMBINADO para usuarios técnico + vendedor (multi-rol):
+     * talleres pequeños donde la misma persona vende y repara.
+     */
+    private function dashboardTecnicoVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior)
+    {
+        $datos = array_merge(
+            $this->datosVendedor($user, $hoy, $inicioMes, $inicioMesAnterior, $finMesAnterior),
+            $this->datosTecnico($user, $inicioMes)
+        );
+
+        return $this->renderDashboard($datos);
     }
 
     /**

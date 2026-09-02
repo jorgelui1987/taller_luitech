@@ -65,11 +65,13 @@ class ReparacionController extends Controller
             ->orderBy('apellido')
             ->limit(50)
             ->get();
+        // Multi-rol: cualquier usuario activo del tenant que pueda reparar
         $tecnicos  = User::where('tenant_id', Auth::user()->tenant_id)
-            ->where('rol', 'tecnico')
             ->where('activo', true)
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->filter(fn ($u) => !$u->esSuperAdmin() && $u->puedeReparar())
+            ->values();
         return view('reparaciones.create', compact('clientes', 'tecnicos'));
     }
 

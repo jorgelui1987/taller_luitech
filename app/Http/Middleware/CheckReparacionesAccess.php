@@ -15,7 +15,7 @@ class CheckReparacionesAccess
     {
         $user = $request->user();
 
-        if (!$user || !in_array($user->rol, ['admin', 'tecnico'])) {
+        if (!$user || !$user->puedeReparar()) {
             abort(403, 'Acceso denegado. Solo administradores y técnicos.');
         }
 
