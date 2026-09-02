@@ -186,6 +186,7 @@ class SuperAdminController extends Controller
             $tenant = Tenant::create([
                 'empresa'          => $validated['empresa'],
                 'subdominio'       => $validated['subdominio'],
+                'slug_publico'     => $validated['subdominio'], // URL pública /pantalla/{slug}
                 'email_contacto'   => $validated['email_contacto'],
                 'telefono_contacto'=> $validated['telefono_contacto'],
                 'plan'             => $validated['plan'],
@@ -245,6 +246,7 @@ class SuperAdminController extends Controller
         $validated = $request->validate([
             'empresa'          => "required|string|max:255|unique:tenants,empresa,{$tenant->id}",
             'subdominio'       => "required|string|max:50|unique:tenants,subdominio,{$tenant->id}|regex:/^[a-z0-9-]+$/",
+            'slug_publico'     => "nullable|alpha_dash|max:50|unique:tenants,slug_publico,{$tenant->id}",
             'email_contacto'   => 'required|email|max:255',
             'telefono_contacto'=> 'nullable|string|max:20',
             'plan'             => 'required|in:gratis,basico,profesional,empresarial',
@@ -257,6 +259,12 @@ class SuperAdminController extends Controller
 
         $validated['max_usuarios']  = $limites['max_usuarios'];
         $validated['max_productos'] = $limites['max_productos'];
+
+        // Slug público: si el form lo envía vacío se mantiene el actual; y si el
+        // tenant aún no tiene slug, se autogenera para que /pantalla/{slug} funcione.
+        if (empty($validated['slug_publico'])) {
+            $validated['slug_publico'] = $tenant->slug_publico ?: Tenant::generarSlugUnico($validated['subdominio']);
+        }
 
         $tenant->update($validated);
 

@@ -44,6 +44,13 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <label for="slug_publico" class="form-label">Slug público (Sala de Espera / Pantalla TV)</label>
+                            <input type="text" name="slug_publico" id="slug_publico" class="form-control" value="{{ old('slug_publico', $tenant->slug_publico ?? '') }}" maxlength="50" placeholder="tecnicell">
+                            <small class="text-muted">URL pública: <code>/pantalla/{slug}</code>. Si se deja vacío se genera automáticamente.</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                             <label for="email_contacto" class="form-label">Email contacto *</label>
                             <input type="email" name="email_contacto" id="email_contacto" class="form-control" value="{{ old('email_contacto', $tenant->email_contacto ?? '') }}" required>
                         </div>

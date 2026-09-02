@@ -146,4 +146,27 @@ class Tenant extends Model
         $tenant = static::current();
         return $tenant?->id;
     }
+
+    /**
+     * Genera un slug público único a partir de un texto base.
+     * Si el slug ya existe agrega sufijos: -2, -3, ...
+     * Se usa para la URL pública de la Sala de Espera: /pantalla/{slug}.
+     */
+    public static function generarSlugUnico(?string $base): ?string
+    {
+        $base = trim((string) $base);
+        if ($base === '') {
+            return null;
+        }
+
+        $slug  = \Illuminate\Support\Str::slug($base) ?: 'tienda';
+        $unico = $slug;
+        $i     = 2;
+
+        while (static::withoutGlobalScopes()->where('slug_publico', $unico)->exists()) {
+            $unico = $slug . '-' . $i++;
+        }
+
+        return $unico;
+    }
 }

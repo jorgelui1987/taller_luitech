@@ -79,6 +79,7 @@ class TenantCreate extends Command
                 $tenant = Tenant::create([
                     'empresa'          => $data['empresa'],
                     'subdominio'       => $data['subdominio'],
+                    'slug_publico'     => $data['subdominio'], // URL pública /pantalla/{slug}
                     'email_contacto'   => $data['email'],
                     'plan'             => $data['plan'],
                     'estado'           => 'activo',

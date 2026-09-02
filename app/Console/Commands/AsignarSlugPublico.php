@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class AsignarSlugPublico extends Command
 {
@@ -14,7 +13,11 @@ class AsignarSlugPublico extends Command
 
     public function handle(): int
     {
-        $tenants = Tenant::whereNull('slug_publico')->get();
+        $tenants = Tenant::withoutGlobalScopes()
+            ->where(function ($q) {
+                $q->whereNull('slug_publico')->orWhere('slug_publico', '');
+            })
+            ->get();
 
         if ($tenants->isEmpty()) {
             $this->info('Todos los tenants ya tienen slug_publico.');
@@ -22,15 +25,9 @@ class AsignarSlugPublico extends Command
         }
 
         foreach ($tenants as $tenant) {
-            $base = Str::slug($tenant->empresa ?? $tenant->subdominio ?? 'tienda');
-            $slug = $base;
-            $contador = 1;
-
-            // Asegurar unicidad
-            while (Tenant::where('slug_publico', $slug)->exists()) {
-                $slug = $base . '-' . $contador;
-                $contador++;
-            }
+            // Prioridad del slug: subdominio (ya normalizado y único) → empresa
+            $base = $tenant->subdominio ?: $tenant->empresa ?: 'tienda';
+            $slug = Tenant::generarSlugUnico($base);
 
             $tenant->update(['slug_publico' => $slug]);
             $this->info("✓ {$tenant->empresa} → slug: {$slug}");
