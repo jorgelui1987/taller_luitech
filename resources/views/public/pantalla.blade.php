@@ -34,6 +34,12 @@
         </div>
     </header>
 
+    @if($empresaPantalla === null)
+        <div style="background:#7f1d1d;color:#fecaca;padding:10px 18px;text-align:center;font-weight:600;font-size:15px;">
+            Pantalla sin tienda asignada: abre la pantalla con la URL de tu tienda (ej. <b>/pantalla/tu-tienda</b>).
+        </div>
+    @endif
+
     <!-- Columnas de turnos -->
     <div class="tv-grid">
 

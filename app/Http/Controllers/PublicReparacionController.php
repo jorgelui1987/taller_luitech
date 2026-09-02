@@ -47,6 +47,18 @@ class PublicReparacionController extends Controller
             ]);
         }
 
+        // Aislamiento entre empresas: si la consulta se hace desde el portal de
+        // una empresa concreta (subdominio de la tienda o sesión de su personal),
+        // solo se pueden ver órdenes de ESA empresa. Si la orden pertenece a otra
+        // empresa, se informa "no encontrada" (sin revelar su existencia).
+        $tenantPortal = $this->resolverTenantPortal();
+        if ($tenantPortal !== null && (int) $reparacion->tenant_id !== $tenantPortal) {
+            return view('public.estado-search', [
+                'error'   => 'La orden ' . $candidatos[0] . ' no fue encontrada. Verifica el código de tu boleta e intenta nuevamente.',
+                'buscado' => request('numero_orden', $candidatos[0]),
+            ]);
+        }
+
         // Cargar relaciones SIN TenantScope para evitar que el scope
         // filtre por el tenant del usuario autenticado (que puede ser diferente
         // al tenant de la reparación cuando se accede desde el QR público)
@@ -91,8 +103,9 @@ class PublicReparacionController extends Controller
 
     /**
      * Modo Sala de Espera (TV): pantalla completa con los turnos del taller.
-     * Con slug (/pantalla/mitienda) muestra SOLO esa empresa; sin slug,
-     * usa el tenant con actividad más reciente (instancia de una sola empresa).
+     * Con slug (/pantalla/mitienda) muestra SOLO esa empresa. Sin slug,
+     * resuelve por ?tienda=, sesión del usuario o subdominio; si no hay
+     * empresa identificada, la pantalla queda vacía (nunca muestra otras).
      */
     public function pantalla(Request $request, ?string $slug = null)
     {
@@ -122,7 +135,9 @@ class PublicReparacionController extends Controller
 
     /**
      * Datos en vivo del modo TV (consultado por la pantalla cada 15 s).
-     * Con slug: solo esa empresa. Sin slug: fallback por actividad reciente.
+     * Con slug: solo esa empresa. Sin slug: resuelve por ?tienda=, sesión
+     * del usuario o subdominio. Si no hay empresa identificada responde
+     * vacío: jamás muestra órdenes de otras empresas.
      */
     public function pantallaData(Request $request, ?string $slug = null)
     {
@@ -130,17 +145,25 @@ class PublicReparacionController extends Controller
             ? $this->resolverTenantPorSlug($slug)
             : $this->resolverTenantPantalla($request);
 
-        $estadosActivos = ['recibido', 'en_diagnostico', 'esperando_repuesto', 'en_reparacion', 'listo'];
-
-        $query = Reparacion::withoutGlobalScopes()
-            ->whereIn('estado', $estadosActivos)
-            ->orderByDesc('updated_at');
-
-        if ($tenantId) {
-            $query->where('tenant_id', $tenantId);
+        // Sin empresa identificada: respuesta vacía (aislamiento entre empresas)
+        if (!$tenantId) {
+            return response()->json([
+                'tienda'    => ['nombre' => '', 'direccion' => '', 'telefono' => ''],
+                'listos'    => [],
+                'proceso'   => [],
+                'counts'    => ['listos' => 0, 'proceso' => 0],
+                'timestamp' => now()->format('H:i:s'),
+            ]);
         }
 
-        $ordenes = $query->limit(60)->get();
+        $estadosActivos = ['recibido', 'en_diagnostico', 'esperando_repuesto', 'en_reparacion', 'listo'];
+
+        $ordenes = Reparacion::withoutGlobalScopes()
+            ->whereIn('estado', $estadosActivos)
+            ->where('tenant_id', $tenantId)
+            ->orderByDesc('updated_at')
+            ->limit(60)
+            ->get();
 
         $avances = [
             'recibido' => 10, 'en_diagnostico' => 30, 'esperando_repuesto' => 45,
@@ -193,8 +216,14 @@ class PublicReparacionController extends Controller
 
     /**
      * Resuelve el tenant para la pantalla de sala de espera.
-     * Prioriza el parámetro ?tienda=; si no viene, usa el tenant con
-     * actividad más reciente entre las órdenes activas (monotienda).
+     * Orden de resolución:
+     *  1) slug en la URL (/pantalla/mitienda) — resuelto antes de llamar aquí;
+     *  2) parámetro ?tienda= (id explícito);
+     *  3) usuario autenticado (personal de la empresa);
+     *  4) subdominio/dominio del portal.
+     * Si no se puede identificar la empresa devuelve null: en ese caso la
+     * pantalla NO muestra órdenes (cada empresa debe abrir su propia URL,
+     * nunca se "adivina" la empresa con la actividad más reciente).
      */
     private function resolverTenantPantalla(Request $request): ?int
     {
@@ -203,12 +232,27 @@ class PublicReparacionController extends Controller
             return (int) $param;
         }
 
-        $tenantId = Reparacion::withoutGlobalScopes()
-            ->whereIn('estado', ['recibido', 'en_diagnostico', 'esperando_repuesto', 'en_reparacion', 'listo'])
-            ->orderByDesc('updated_at')
-            ->value('tenant_id');
+        if (auth()->check() && auth()->user()->tenant_id) {
+            return (int) auth()->user()->tenant_id;
+        }
 
-        return $tenantId !== null ? (int) $tenantId : null;
+        return Tenant::current()?->id;
+    }
+
+    /**
+     * Tenant del portal desde el que se hace una consulta pública:
+     *  1) usuario autenticado (personal de una empresa) → su tenant;
+     *  2) subdominio/dominio actual (Tenant::current()).
+     * Devuelve null cuando no hay forma de identificar la empresa
+     * (acceso por dominio principal), caso típico del QR de la boleta.
+     */
+    private function resolverTenantPortal(): ?int
+    {
+        if (auth()->check() && auth()->user()->tenant_id) {
+            return (int) auth()->user()->tenant_id;
+        }
+
+        return Tenant::current()?->id;
     }
 
     /**

@@ -32,6 +32,10 @@
     $brandSub  = ($empresa->direccion ?? '') !== '' ? $empresa->direccion : 'Servicio Técnico';
     $waDigits  = preg_replace('/\D/', '', (string) ($empresa->telefono ?? ''));
     $waNumber  = $waDigits !== '' ? (str_starts_with($waDigits, '56') ? $waDigits : '56' . $waDigits) : null;
+    // Enlace de la Sala de Espera: si hay tienda identificada (página pública
+    // por slug o subdominio), apunta a la pantalla de ESA tienda.
+    $pantallaSlug = ($tenant->slug_publico ?? null) ?: (\App\Models\Tenant::current()?->slug_publico ?? null);
+    $pantallaUrl  = route('public.pantalla', ['slug' => $pantallaSlug]);
 @endphp
 <body class="lp-body">
 
@@ -51,7 +55,7 @@
             </a>
             <nav class="lp-nav">
                 <a class="lp-nav-link" href="{{ route('reparaciones.public-status.search') }}">Consulta Express</a>
-                <a class="lp-btn lp-btn-ghost lp-btn-sm" href="{{ route('public.pantalla') }}" target="_blank" rel="noopener" title="Abrir pantalla de sala de espera">
+                <a class="lp-btn lp-btn-ghost lp-btn-sm" href="{{ $pantallaUrl }}" target="_blank" rel="noopener" title="Abrir pantalla de sala de espera">
                     <i class="fa-solid fa-tv"></i> Sala de Espera
                 </a>
             </nav>
@@ -91,7 +95,7 @@
             <div>
                 <h4>Enlaces</h4>
                 <p><a href="{{ route('reparaciones.public-status.search') }}">Consulta Express</a></p>
-                <p><a href="{{ route('public.pantalla') }}" target="_blank" rel="noopener">Pantalla de Sala de Espera</a></p>
+                <p><a href="{{ $pantallaUrl }}" target="_blank" rel="noopener">Pantalla de Sala de Espera</a></p>
             </div>
             <div>
                 <h4>Contacto</h4>
