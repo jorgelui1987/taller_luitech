@@ -108,4 +108,39 @@ class ColoresMarcaTest extends TestCase
         $tenant->refresh();
         $this->assertNull($tenant->configuracion_extra['color_primario'] ?? null);
     }
+
+    public function test_plantillas_whatsapp_se_guardan(): void
+    {
+        [$tenant, $admin] = $this->crearEmpresa();
+        $this->actingAs($admin);
+
+        $this->post(route('configuracion.whatsapp'), [
+            'plantilla_recibido' => 'Hola {cliente}, recibimos tu {equipo}. Código: {codigo} — {tienda}',
+            'plantilla_listo'    => '',
+        ]);
+
+        $tenant->refresh();
+        $this->assertSame(
+            'Hola {cliente}, recibimos tu {equipo}. Código: {codigo} — {tienda}',
+            $tenant->configuracion_extra['plantilla_recibido']
+        );
+        // Vacío → null (usa el mensaje por defecto)
+        $this->assertNull($tenant->configuracion_extra['plantilla_listo'] ?? null);
+    }
+
+    public function test_promos_se_guardan_desde_el_panel(): void
+    {
+        [$tenant, $admin] = $this->crearEmpresa();
+        $this->actingAs($admin);
+
+        $this->post(route('configuracion.promos'), [
+            'promos_texto' => 'Cristales desde $15 | Con vidrio templado incluido' . "\n" . 'Baterías promo',
+        ]);
+
+        $tenant->refresh();
+        $this->assertCount(2, $tenant->configuracion_extra['promos']);
+        $this->assertSame('Cristales desde $15', $tenant->configuracion_extra['promos'][0]['titulo']);
+        $this->assertSame('Con vidrio templado incluido', $tenant->configuracion_extra['promos'][0]['texto']);
+        $this->assertSame('Baterías promo', $tenant->configuracion_extra['promos'][1]['titulo']);
+    }
 }

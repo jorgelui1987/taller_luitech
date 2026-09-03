@@ -242,9 +242,10 @@ class ReparacionController extends Controller
             $telefono = $cliente->telefono ?? $cliente->celular;
             if ($telefono) {
                 $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
+                $plantillaRecibido = $reparacion->tenant?->configuracion_extra['plantilla_recibido'] ?? null;
                 $whatsappUrl = WhatsAppHelper::generarUrl(
                     $telefono,
-                    WhatsAppHelper::mensajeRecibido($reparacion, $nombreTienda, $urlEstado)
+                    WhatsAppHelper::mensajeRecibido($reparacion, $nombreTienda, $urlEstado, $plantillaRecibido)
                 );
             }
         }
@@ -816,7 +817,8 @@ class ReparacionController extends Controller
             $urlEstado = route('reparaciones.public-status', $reparacion->numero_orden);
 
             if ($nuevoEstado === 'listo') {
-                $mensaje = WhatsAppHelper::mensajeListo($reparacion, $nombreTienda, $urlEstado);
+                $plantillaListo = $reparacion->tenant?->configuracion_extra['plantilla_listo'] ?? null;
+        $mensaje = WhatsAppHelper::mensajeListo($reparacion, $nombreTienda, $urlEstado, $plantillaListo);
             } else {
                 $simbolo = PaisHelper::simboloMoneda();
                 $costo = number_format($reparacion->costo_final ?: $reparacion->presupuesto ?: 0, 2);

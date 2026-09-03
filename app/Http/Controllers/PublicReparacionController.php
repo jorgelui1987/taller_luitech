@@ -136,6 +136,20 @@ class PublicReparacionController extends Controller
             ? $this->resolverTenantPorSlug($slug)
             : $this->resolverTenantPantalla($request);
 
+        // Promociones del taller (Configuración → Promociones para la pantalla TV):
+        // se muestran primero en la rotación de la sala de espera.
+        if ($tenantId) {
+            $promos = \App\Models\Tenant::find($tenantId)?->configuracion_extra['promos'] ?? [];
+            foreach ($promos as $promo) {
+                if (!empty($promo['titulo'])) {
+                    array_unshift($consejos, [
+                        'titulo' => $promo['titulo'],
+                        'desc'   => $promo['texto'] ?? '',
+                    ]);
+                }
+            }
+        }
+
         $empresa = $tenantId
             ? Configuracion::withoutGlobalScopes()->where('tenant_id', $tenantId)->first()
             : null;

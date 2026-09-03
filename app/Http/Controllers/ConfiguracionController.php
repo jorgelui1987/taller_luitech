@@ -347,6 +347,65 @@ class ConfiguracionController extends Controller
         return back()->with('success', 'Colores de tu empresa actualizados correctamente.');
     }
 
+    // ── Plantillas de mensajes de WhatsApp ─────────────────────────────
+    public function updateWhatsApp(Request $request)
+    {
+        if (!auth()->user()?->esAdmin()) {
+            abort(403, 'Acceso denegado. Solo administradores pueden editar los mensajes.');
+        }
+
+        $validated = $request->validate([
+            'plantilla_recibido' => ['nullable', 'string', 'max:1000'],
+            'plantilla_listo'    => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $tenant = auth()->user()->tenant;
+        if (!$tenant) {
+            return back()->with('error', 'No tienes una empresa asignada.');
+        }
+
+        $extra = $tenant->configuracion_extra ?? [];
+        $extra['plantilla_recibido'] = trim($validated['plantilla_recibido'] ?? '') ?: null;
+        $extra['plantilla_listo']    = trim($validated['plantilla_listo'] ?? '') ?: null;
+        $tenant->update(['configuracion_extra' => $extra]);
+
+        return back()->with('success', 'Mensajes de WhatsApp actualizados correctamente.');
+    }
+
+    // ── Promociones para la pantalla TV ────────────────────────────────
+    public function updatePromos(Request $request)
+    {
+        if (!auth()->user()?->esAdmin()) {
+            abort(403, 'Acceso denegado. Solo administradores pueden editar las promociones.');
+        }
+
+        $validated = $request->validate([
+            'promos_texto' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $tenant = auth()->user()->tenant;
+        if (!$tenant) {
+            return back()->with('error', 'No tienes una empresa asignada.');
+        }
+
+        // Cada línea: "Título | Mensaje"
+        $promos = [];
+        foreach (preg_split('/\r\n|\r|\n/', trim($validated['promos_texto'] ?? '')) ?: [] as $linea) {
+            $linea = trim($linea);
+            if ($linea === '') {
+                continue;
+            }
+            [$titulo, $texto] = array_pad(array_map('trim', explode('|', $linea, 2)), 2, '');
+            $promos[] = ['titulo' => $titulo, 'texto' => $texto];
+        }
+
+        $extra = $tenant->configuracion_extra ?? [];
+        $extra['promos'] = array_slice($promos, 0, 8);
+        $tenant->update(['configuracion_extra' => $extra]);
+
+        return back()->with('success', 'Promociones de la pantalla TV actualizadas correctamente.');
+    }
+
     // ── Usuarios ───────────────────────────────────────────────────────
     public function storeUsuario(Request $request)
     {

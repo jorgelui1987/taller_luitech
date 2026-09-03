@@ -83,8 +83,15 @@ class WhatsAppHelper
      * Genera el mensaje de "Recibido" para una orden de reparación.
      * Formato moderno: negritas + emojis (sin líneas ASCII).
      */
-    public static function mensajeRecibido($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null): string
+    public static function mensajeRecibido($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null, ?string $plantilla = null): string
     {
+        $vars = self::variablesMensaje($reparacion, $nombreTienda, $urlEstado);
+
+        // Plantilla personalizada del taller (Configuración → Mensajes de WhatsApp)
+        if ($plantilla !== null && trim($plantilla) !== '') {
+            return self::componerPlantilla($plantilla, $vars);
+        }
+
         $clienteNombre = $reparacion->cliente?->nombre_completo ?? '';
         $saludo = $clienteNombre ? "Hola *{$clienteNombre}* 👋\n\n" : '';
 
@@ -111,8 +118,15 @@ class WhatsAppHelper
      * Genera el mensaje de "Listo para entregar" para una orden de reparación.
      * Formato moderno: negritas + emojis (sin líneas ASCII).
      */
-    public static function mensajeListo($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null): string
+    public static function mensajeListo($reparacion, string $nombreTienda = 'CRM Celulares', ?string $urlEstado = null, ?string $plantilla = null): string
     {
+        $vars = self::variablesMensaje($reparacion, $nombreTienda, $urlEstado);
+
+        // Plantilla personalizada del taller (Configuración → Mensajes de WhatsApp)
+        if ($plantilla !== null && trim($plantilla) !== '') {
+            return self::componerPlantilla($plantilla, $vars);
+        }
+
         $costo = number_format($reparacion->costo_final ?: $reparacion->presupuesto ?: 0, 2);
         $simbolo = PaisHelper::simboloMoneda();
 
@@ -136,6 +150,36 @@ class WhatsAppHelper
         }
 
         return $saludo . $mensaje;
+    }
+
+    /**
+     * Variables disponibles para las plantillas personalizadas del taller.
+     */
+    private static function variablesMensaje($reparacion, string $nombreTienda, ?string $urlEstado): array
+    {
+        $equipo  = trim(($reparacion->marca ?? '') . ' ' . ($reparacion->modelo ?? ''))
+            ?: ($reparacion->dispositivo ?? 'su equipo');
+        $costo   = number_format($reparacion->costo_final ?: $reparacion->presupuesto ?: 0, 2);
+        $simbolo = PaisHelper::simboloMoneda();
+
+        return [
+            '{cliente}' => $reparacion->cliente?->nombre_completo ?? '',
+            '{equipo}'  => $equipo,
+            '{codigo}'  => $reparacion->numero_orden ?? '',
+            '{falla}'   => $reparacion->falla_reportada ?? '',
+            '{costo}'   => $simbolo . ' ' . $costo,
+            '{tienda}'  => $nombreTienda,
+            '{url}'     => $urlEstado ?? '',
+            '{fecha}'   => optional($reparacion->fecha_recepcion)->format('d/m/Y') ?? '',
+        ];
+    }
+
+    /**
+     * Reemplaza las variables {xxx} en una plantilla del taller.
+     */
+    private static function componerPlantilla(string $plantilla, array $vars): string
+    {
+        return trim(str_replace(array_keys($vars), array_values($vars), $plantilla));
     }
 
     /**

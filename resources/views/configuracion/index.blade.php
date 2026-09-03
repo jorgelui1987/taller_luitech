@@ -136,6 +136,66 @@
     </div>
 </div>
 
+<!-- ══════════ MENSAJES DE WHATSAPP ══════════ -->
+@php
+    $extrasMarca = auth()->user()->tenant?->configuracion_extra ?? [];
+@endphp
+<div class="card mb-4" style="border-radius:16px; border:1px solid #e5e7eb;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-1" style="color:#0f172a;">
+            <i class="fab fa-whatsapp me-2" style="color:#25d366;"></i>Mensajes de WhatsApp
+        </h5>
+        <p class="text-muted mb-3" style="font-size:12.5px;">
+            Personaliza los mensajes automáticos a tus clientes. Variables:
+            <code>{cliente}</code> <code>{equipo}</code> <code>{codigo}</code> <code>{falla}</code> <code>{costo}</code> <code>{tienda}</code> <code>{url}</code>.
+            Déjalos vacíos para usar los mensajes por defecto.
+        </p>
+
+        <form method="POST" action="{{ route('configuracion.whatsapp') }}">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" style="font-size:12.5px;font-weight:600;">Al recibir el equipo</label>
+                    <textarea name="plantilla_recibido" class="form-control" rows="8"
+                              placeholder="(vacío = mensaje por defecto)">{{ old('plantilla_recibido', $extrasMarca['plantilla_recibido'] ?? '') }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" style="font-size:12.5px;font-weight:600;">Cuando el equipo esté listo</label>
+                    <textarea name="plantilla_listo" class="form-control" rows="8"
+                              placeholder="(vacío = mensaje por defecto)">{{ old('plantilla_listo', $extrasMarca['plantilla_listo'] ?? '') }}</textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3 px-4">
+                <i class="fas fa-save me-2"></i>Guardar mensajes
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ══════════ PROMOCIONES PARA LA PANTALLA TV ══════════ -->
+<div class="card mb-4" style="border-radius:16px; border:1px solid #e5e7eb;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-1" style="color:#0f172a;">
+            <i class="fas fa-tv me-2" style="color:#8b5cf6;"></i>Promociones para la pantalla TV
+        </h5>
+        <p class="text-muted mb-3" style="font-size:12.5px;">
+            Una promoción por línea con el formato <code>Título | Mensaje</code>. Rotan en la Sala de Espera. Máximo 8.
+        </p>
+
+        <form method="POST" action="{{ route('configuracion.promos') }}">
+            @csrf
+            <textarea name="promos_texto" class="form-control" rows="5"
+                      placeholder="Cristales desde $15.000 | Esta semana, cambio de pantalla con vidrio templado incluido">{{ old('promos_texto', collect($extrasMarca['promos'] ?? [])->map(fn ($p) => ($p['titulo'] ?? '') . ' | ' . ($p['texto'] ?? ''))->implode("\n")) }}</textarea>
+            @error('promos_texto')<div class="text-danger small">{{ $message }}</div>@enderror
+
+            <button type="submit" class="btn btn-primary mt-3 px-4">
+                <i class="fas fa-save me-2"></i>Guardar promociones
+            </button>
+        </form>
+    </div>
+</div>
+
 <!-- ══════════ PESTAÑAS DE CONFIGURACIÓN ══════════ -->
 <ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="configTabs" style="border-bottom:2px solid #f3f4f6; padding-bottom:12px;">
     <li class="nav-item">
