@@ -178,6 +178,8 @@ class ColoresMarcaTest extends TestCase
             ->assertSee('Mensajes de WhatsApp')
             ->assertSee('Promociones para la pantalla TV')
             // Las tarjetas viven dentro de sus pestañas
-            ->assertSee('tab-publicidad', false);
+            ->assertSee('tab-publicidad', false)
+            // La pestaña Colores existe con su botón y su panel
+            ->assertSee('tab-colores', false);
     }
 }
