@@ -115,19 +115,31 @@ Route::get('/health', function () {
 Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook'])
     ->name('webhooks.mercadopago');
 
-// ── RUTAS PÚBLICAS (Landing page para registrar nuevo tenant) ──────────────
+// ── RUTAS PÚBLICAS (Landing page de la plataforma) ─────────────────────────
+// El branding de la landing es de la PLATAFORMA (LUITECH), no de un tenant:
+// toma los valores del .env (PLATFORM_*) o los valores por defecto.
+if (!function_exists('brandingPlataforma')) {
+    function brandingPlataforma(): object
+    {
+        return (object) [
+            'nombre_tienda' => env('PLATFORM_BRAND_NAME', 'LUITECH'),
+            'direccion'     => env('PLATFORM_DIRECCION', "Bernardo O'Higgins 564, La Serena"),
+            'telefono'      => env('PLATFORM_TELEFONO', '+56 9 8220 9690'),
+            'email'         => env('PLATFORM_EMAIL', 'contacto@luitech.cl'),
+            'logo'          => null,
+        ];
+    }
+}
+
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
     }
-    // Empresa por defecto (primer tenant configurado) para el branding del portal
-    $empresa = \App\Models\Configuracion::withoutGlobalScopes()->orderBy('id')->first();
-    return view('landing', ['empresa' => $empresa]);
+    return view('landing', ['empresa' => brandingPlataforma()]);
 })->name('landing');
 
 Route::get('/planes', function () {
-    $empresa = \App\Models\Configuracion::withoutGlobalScopes()->orderBy('id')->first();
-    return view('landing', ['empresa' => $empresa, 'abrirPlanes' => true]);
+    return view('landing', ['empresa' => brandingPlataforma(), 'abrirPlanes' => true]);
 })->name('planes')->withoutMiddleware([\App\Http\Middleware\CheckTenantStatus::class]);
 
 Route::get('/registro', [SuperAdminController::class, 'showRegistroTenant'])->name('registro.tenant');
