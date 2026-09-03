@@ -171,28 +171,37 @@ class Tenant extends Model
     }
 
     /**
-     * Colores de marca de la empresa (guardados en configuracion_extra).
-     * Valores por defecto = tema Luitech.
+     * Colores de marca de la empresa (guardados en configuracion_extra)
+     * con contraste automático:
+     *  - primario/secundario: versión SIEMPRE legible (auto-oscurecida si el
+     *    color elegido era muy claro) → textos, enlaces e iconos.
+     *  - primario_puro/secundario_puro: el color tal cual lo eligió el dueño
+     *    → para FONDOS (botones, gradientes, hero).
+     *  - texto_sobre_primario: blanco o negro según luminancia (WCAG).
      */
     public function colores(): array
     {
         $extra = $this->configuracion_extra ?? [];
 
-        $primario   = $extra['color_primario']   ?? '#0891b2';
-        $secundario = $extra['color_secundario'] ?? '#3b82f6';
+        $puroP = self::normalizarHex($extra['color_primario']   ?? '#0891b2');
+        $puroS = self::normalizarHex($extra['color_secundario'] ?? '#3b82f6');
 
         return [
-            'primario'      => $primario,
-            'secundario'    => $secundario,
-            'primario_rgba' => self::hexARgba($primario, 0.18),
+            'primario'               => self::hexLegible($puroP),
+            'secundario'             => self::hexLegible($puroS),
+            'primario_puro'          => $puroP,
+            'secundario_puro'        => $puroS,
+            'texto_sobre_primario'   => self::textoSobre($puroP),
+            'texto_sobre_secundario' => self::textoSobre($puroS),
+            'primario_rgba'          => self::hexARgba(self::hexLegible($puroP), 0.18),
         ];
     }
 
     /**
-     * Oscurece un color hex (para texto/bordes legibles sobre blanco).
-     * Factor 0.3 = 30% más oscuro. Formato inválido → color por defecto.
+     * Normaliza cualquier entrada a #rrggbb (minúsculas).
+     * Formato inválido → color por defecto del tema Luitech.
      */
-    public static function oscurecerHex(string $hex, float $factor = 0.3): string
+    public static function normalizarHex(string $hex): string
     {
         $hex = ltrim(trim($hex), '#');
         if (strlen($hex) === 3) {
@@ -201,6 +210,61 @@ class Tenant extends Model
         if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
             $hex = '0891b2';
         }
+
+        // SIEMPRE con numeral: los consumos en vistas necesitan '#rrggbb'
+        return '#' . strtolower($hex);
+    }
+
+    /**
+     * Luminancia relativa WCAG (0 = negro, 1 = blanco).
+     */
+    public static function luminancia(string $hex): float
+    {
+        $hex = self::normalizarHex($hex);
+        $lin = function ($componente) {
+            $c = hexdec($componente) / 255;
+
+            return ($c <= 0.03928) ? $c / 12.92 : pow((($c + 0.055) / 1.055), 2.4);
+        };
+
+        return 0.2126 * $lin(substr($hex, 0, 2))
+             + 0.7152 * $lin(substr($hex, 2, 2))
+             + 0.0722 * $lin(substr($hex, 4, 2));
+    }
+
+    /**
+     * Color de TEXTO legible sobre un fondo del color dado:
+     * fondo claro → texto oscuro · fondo oscuro → texto blanco.
+     */
+    public static function textoSobre(string $hex): string
+    {
+        return self::luminancia($hex) > 0.45 ? '#0f172a' : '#ffffff';
+    }
+
+    /**
+     * Oscurece un hex hasta que su luminancia sea legible sobre blanco
+     * (usado para textos/enlaces de marca cuando el dueño elige colores claros).
+     */
+    public static function hexLegible(string $hex): string
+    {
+        $hex    = self::normalizarHex($hex);
+        $factor = 0.0;
+
+        while (self::luminancia($hex) > 0.45 && $factor < 0.9) {
+            $factor += 0.15;
+            $hex = self::oscurecerHex($hex, 0.15);
+        }
+
+        return $hex;
+    }
+
+    /**
+     * Oscurece un color hex (para texto/bordes legibles sobre blanco).
+     * Factor 0.3 = 30% más oscuro. Formato inválido → color por defecto.
+     */
+    public static function oscurecerHex(string $hex, float $factor = 0.3): string
+    {
+        $hex = ltrim(self::normalizarHex($hex), '#');
 
         return sprintf(
             '#%02x%02x%02x',
@@ -216,13 +280,7 @@ class Tenant extends Model
      */
     public static function hexARgba(string $hex, float $alpha = 1.0): string
     {
-        $hex = ltrim(trim($hex), '#');
-        if (strlen($hex) === 3) {
-            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-        }
-        if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
-            $hex = '0891b2';
-        }
+        $hex = ltrim(self::normalizarHex($hex), '#');
 
         return sprintf(
             'rgba(%d,%d,%d,%.2f)',

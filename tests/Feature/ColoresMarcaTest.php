@@ -81,8 +81,8 @@ class ColoresMarcaTest extends TestCase
         // La web pública del taller inyecta los colores como variables CSS
         $this->get(route('public.tienda', $tenant->slug_publico))
             ->assertOk()
-            ->assertSee('#FF6600', false)
-            ->assertSee('#00AA88', false);
+            ->assertSee('#ff6600', false)
+            ->assertSee('#00aa88', false);
     }
 
     public function test_solo_admin_puede_guardar_colores(): void
@@ -163,8 +163,34 @@ class ColoresMarcaTest extends TestCase
         // El panel (layout) debe inyectar los colores como variables en el <html>
         $this->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('#FF6600', false)
+            ->assertSee('#ff6600', false)
             ->assertSee('--accent1', false);
+    }
+
+    public function test_colores_muy_claros_se_oscurecen_automaticamente(): void
+    {
+        [$tenant] = $this->crearEmpresa('tienda-clara');
+        $tenant->update(['configuracion_extra' => [
+            'color_primario'   => '#ffff00',
+            'color_secundario' => '#ccffcc',
+        ]]);
+
+        $c = $tenant->fresh()->colores();
+
+        // El color PURO se mantiene tal cual (para fondos/botones)
+        $this->assertSame('#ffff00', $c['primario_puro']);
+        // Pero la versión para TEXTOS se oscurece automáticamente
+        $this->assertNotSame('#ffff00', $c['primario']);
+        $this->assertTrue(\App\Models\Tenant::luminancia($c['primario']) <= 0.45);
+        // Sobre un fondo amarillo, el texto debe ser oscuro
+        $this->assertSame('#0f172a', $c['texto_sobre_primario']);
+    }
+
+    public function test_texto_sobre_color_oscuro_es_blanco(): void
+    {
+        $this->assertSame('#ffffff', \App\Models\Tenant::textoSobre('#111827'));
+        $this->assertSame('#0f172a', \App\Models\Tenant::textoSobre('#ffffff'));
+        $this->assertSame('#ffffff', \App\Models\Tenant::textoSobre('#0891b2'));
     }
 
     public function test_vista_configuracion_renderiza_con_las_tarjetas_nuevas(): void
