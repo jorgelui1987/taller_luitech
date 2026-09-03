@@ -141,6 +141,22 @@ class ReparacionTest extends TestCase
         $this->assertEquals(200, $reparacion->montoComision());
     }
 
+    public function test_impuesto_chileno_se_descompone_del_total_con_iva_incluido(): void
+    {
+        // Chile: el cliente paga 50.000 CON IVA 19% incluido (la pantalla cuesta 10.000)
+        $reparacion = new Reparacion([
+            'costo_final'    => 50000,
+            'costo_repuesto' => 10000,
+        ]);
+        $reparacion->setRelation('tenant', $this->tenant);
+
+        $this->assertEquals(19.0, $reparacion->porcentajeImpuesto());
+        $this->assertEquals(7983.19, $reparacion->impuestoDe(50000));   // IVA del SII
+        $this->assertEquals(42016.81, $reparacion->neto());             // Neto real
+        // Base del técnico: cobrado − costo del repuesto
+        $this->assertEquals(40000, $reparacion->baseComision());
+    }
+
     public function test_crear_reparacion_asigna_tenant_id_automaticamente(): void
     {
         $reparacion = Reparacion::create([

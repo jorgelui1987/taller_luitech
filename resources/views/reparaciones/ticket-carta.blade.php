@@ -16,6 +16,7 @@
     $tipoDispositivo = ['celular'=>'Celular','tablet'=>'Tablet','portatil'=>'Portátil','otros'=>'Otros'];
     $tipoDispositivoLabel = $tipoDispositivo[$reparacion->tipo_dispositivo] ?? ($reparacion->tipo_dispositivo ?? '—');
     $nombreImpuesto = ($empresa?->pais ?? '') === 'CL' ? 'IVA' : 'IGV';
+    $impuestoPct = $reparacion->porcentajeImpuesto();
     $qrUrl = route('reparaciones.public-status', $reparacion->numero_orden);
 
     // Una sola firma: priorizar la de entrega
@@ -181,7 +182,9 @@ td.val{font-weight:600}
             <div class="tot-fila"><span>Abono</span><span>-{{ $empresa?->simbolo_moneda ?? '$' }} {{ number_format($reparacion->abono, 2) }}</span></div>
             @endif
             @if($reparacion->impuesto > 0)
-            <div class="tot-fila"><span>{{ $nombreImpuesto }} ({{ $empresa?->igv ?? 18 }}%)</span><span>{{ $empresa?->simbolo_moneda ?? '$' }} {{ number_format($reparacion->impuesto, 2) }}</span></div>
+            @php $netoRep = round((float) $reparacion->total - (float) $reparacion->impuesto, 2); @endphp
+            <div class="tot-fila"><span>NETO</span><span>{{ $empresa?->simbolo_moneda ?? '$' }} {{ number_format($netoRep, 2) }}</span></div>
+            <div class="tot-fila"><span>{{ $nombreImpuesto }} ({{ $impuestoPct }}%)</span><span>{{ $empresa?->simbolo_moneda ?? '$' }} {{ number_format($reparacion->impuesto, 2) }}</span></div>
             @endif
             @if($reparacion->total > 0)
             <div class="tot-final"><span>TOTAL A PAGAR</span><span>{{ $empresa?->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total, 2) }}</span></div>

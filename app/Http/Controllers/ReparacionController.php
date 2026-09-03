@@ -725,6 +725,10 @@ class ReparacionController extends Controller
                 $totalReparacion = max(0, $totalReparacion - $descuentoVenta);
             }
 
+            // ── Recalcular el IVA/IGV contenido (neto + impuesto) con el total final ──
+            $reparacion->impuesto = $reparacion->impuestoDe($totalReparacion);
+            $reparacion->save();
+
             // ── Calcular comisión del técnico ──
             // Fórmula: comisión = (Monto cobrado - costo_repuesto) × (% / 100)
             // El % puede venir del formulario (manual) o del perfil del técnico

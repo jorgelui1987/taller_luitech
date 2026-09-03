@@ -88,6 +88,53 @@ class Reparacion extends Model
     }
 
     /**
+     * % de impuesto según el país del taller (Chile = 19 IVA, Perú = 18 IGV...).
+     */
+    public function porcentajeImpuesto(): float
+    {
+        try {
+            $pais   = $this->tenant?->pais ?? 'CL';
+            $config = \App\Helpers\PaisHelper::configuracionPorPais($pais);
+
+            return (float) ($config['impuesto'] ?? 19);
+        } catch (\Throwable $e) {
+            return 19.0;
+        }
+    }
+
+    /**
+     * IVA/IGV CONTENIDO en el total cobrado (en Chile el precio al público
+     * YA INCLUYE el impuesto): impuesto = total − (total / (1 + %)).
+     */
+    public function impuestoDe(float $total): float
+    {
+        $total = (float) $total;
+        if ($total <= 0) {
+            return 0.0;
+        }
+
+        $pct = $this->porcentajeImpuesto();
+        if ($pct <= 0) {
+            return 0.0;
+        }
+
+        $neto = round($total / (1 + $pct / 100), 2);
+
+        return round($total - $neto, 2);
+    }
+
+    /**
+     * Neto de la orden: total cobrado menos el impuesto contenido.
+     */
+    public function neto(): float
+    {
+        $total = (float) ($this->costo_final ?: $this->presupuesto ?: $this->total ?: 0);
+        $imp   = $this->impuesto > 0 ? $this->impuesto : $this->impuestoDe($total);
+
+        return round($total - $imp, 2);
+    }
+
+    /**
      * Base de comision del tecnico = Monto cobrado - Costo de Repuesto(s)
      * Usa costo_final si existe, de lo contrario presupuesto.
      */
