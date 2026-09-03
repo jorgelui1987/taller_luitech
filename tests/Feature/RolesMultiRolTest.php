@@ -139,4 +139,51 @@ class RolesMultiRolTest extends TestCase
         $response->assertStatus(403);
         $this->assertDatabaseMissing('users', ['email' => 'intento-multirol@test.com']);
     }
+
+    public function test_configuracion_crea_usuario_con_roles_multiples(): void
+    {
+        $admin = $this->crearUsuario([
+            'rol'   => 'admin',
+            'roles' => ['admin'],
+            'email' => 'admin-config@test.com',
+        ]);
+        $this->actingAs($admin);
+
+        $this->post(route('configuracion.storeUsuario'), [
+            'name'                  => 'Multi Config',
+            'email'                 => 'config-multi@test.com',
+            'password'              => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'roles'                 => ['tecnico', 'vendedor'],
+        ]);
+
+        $user = User::where('email', 'config-multi@test.com')->first();
+        $this->assertNotNull($user);
+        $this->assertSame(['tecnico', 'vendedor'], $user->roles);
+        $this->assertTrue($user->puedeVender());
+        $this->assertTrue($user->puedeReparar());
+        $this->assertFalse($user->puedeEliminar());
+    }
+
+    public function test_configuracion_protege_al_ultimo_admin(): void
+    {
+        $admin = $this->crearUsuario([
+            'rol'   => 'admin',
+            'roles' => ['admin'],
+            'email' => 'ultimo-admin@test.com',
+        ]);
+        $this->actingAs($admin);
+
+        $this->put(route('configuracion.updateUsuario', $admin->id), [
+            'name'                  => 'Ultimo Admin',
+            'email'                 => 'ultimo-admin@test.com',
+            'roles'                 => ['vendedor'],
+            'password'              => '',
+            'password_confirmation' => '',
+        ]);
+
+        $admin->refresh();
+        $this->assertTrue($admin->esAdmin(), 'El único admin de la empresa no puede perder el rol admin');
+        $this->assertSame(['admin'], $admin->roles);
+    }
 }

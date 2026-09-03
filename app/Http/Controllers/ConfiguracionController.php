@@ -327,9 +327,10 @@ class ConfiguracionController extends Controller
     {
         $validated = $request->validate([
             'name'     => 'required|string|max:100|regex:/^[\pL\pM\s\-]+$/u',
-            'email'    => 'required|email:rfc,dns|unique:users,email',
+            'email'    => 'required|email:rfc|unique:users,email',
             'password' => 'required|string|min:12|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
-            'rol'      => 'required|in:admin,vendedor,tecnico',
+            'roles'    => 'required|array|min:1',
+            'roles.*'  => 'in:admin,vendedor,tecnico',
             'telefono' => 'nullable|string|max:20|regex:/^\+?[0-9\s-]{7,20}$/',
         ]);
 
@@ -339,11 +340,15 @@ class ConfiguracionController extends Controller
             return back()->with('error', 'Has alcanzado el límite de usuarios de tu plan (' . $tenant->max_usuarios . ').');
         }
 
+        // Multi-rol: casillas seleccionadas en el formulario
+        $roles = array_values(array_unique($validated['roles']));
+
         User::create([
             'name'      => trim($validated['name']),
             'email'     => strtolower($validated['email']),
             'password'  => Hash::make($validated['password']),
-            'rol'       => $validated['rol'],
+            'rol'       => $roles[0],
+            'roles'     => $roles,
             'telefono'  => $validated['telefono'] ?? null,
             'tenant_id' => auth()->user()->tenant_id,
             'activo'    => true,
@@ -356,22 +361,38 @@ class ConfiguracionController extends Controller
     {
         $validated = $request->validate([
             'name'     => 'required|string|max:100|regex:/^[\pL\pM\s\-]+$/u',
-            'email'    => 'required|email:rfc,dns|unique:users,email,' . $usuario->id,
-            'rol'      => 'required|in:admin,vendedor,tecnico',
+            'email'    => 'required|email:rfc|unique:users,email,' . $usuario->id,
+            'roles'    => 'required|array|min:1',
+            'roles.*'  => 'in:admin,vendedor,tecnico',
             'telefono' => 'nullable|string|max:20|regex:/^\+?[0-9\s-]{7,20}$/',
             'comision_porcentaje' => 'nullable|numeric|min:0|max:100',
             'password' => 'nullable|string|min:12|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
         ]);
 
+        // Multi-rol: casillas seleccionadas en el formulario
+        $roles = array_values(array_unique($validated['roles']));
+
+        // Protección: no dejar a la empresa sin administrador
+        if ($usuario->esAdmin() && !in_array('admin', $roles)) {
+            $hayOtroAdmin = User::where('tenant_id', $usuario->tenant_id)
+                ->where('id', '!=', $usuario->id)
+                ->get()
+                ->contains(fn ($u) => $u->esAdmin());
+            if (!$hayOtroAdmin) {
+                return back()->with('error', 'No puedes quitar el rol de administrador al único admin de la empresa.');
+            }
+        }
+
         $data = [
             'name'     => trim($validated['name']),
             'email'    => strtolower($validated['email']),
-            'rol'      => $validated['rol'],
+            'rol'      => $roles[0],
+            'roles'    => $roles,
             'telefono' => $validated['telefono'] ?? null,
         ];
 
-        // Solo guardar comisión si el usuario es técnico
-        if ($validated['rol'] === 'tecnico') {
+        // Solo guardar comisión si el usuario puede reparar (rol técnico)
+        if (in_array('tecnico', $roles)) {
             $data['comision_porcentaje'] = $validated['comision_porcentaje'] ?? null;
         }
 

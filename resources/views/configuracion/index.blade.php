@@ -437,9 +437,10 @@
                 <div class="row g-3">
                     @foreach($usuarios as $usuario)
                     @php
-                        $rolColor = ['admin'=>'#0891b2','vendedor'=>'#06b6d4','tecnico'=>'#f59e0b'][$usuario->rol] ?? '#9ca3af';
-                        $rolBg    = ['admin'=>'#cffafe','vendedor'=>'#e0f2fe','tecnico'=>'#fef3c7'][$usuario->rol] ?? '#f3f4f6';
-                        $rolTxt   = ['admin'=>'#0e7490','vendedor'=>'#0369a1','tecnico'=>'#92400e'][$usuario->rol] ?? '#374151';
+                        $rolesUsuario = $usuario->rolesEfectivos();
+                        $rolColor = ['admin'=>'#0891b2','vendedor'=>'#06b6d4','tecnico'=>'#f59e0b'][$rolesUsuario[0] ?? ''] ?? '#9ca3af';
+                        $rolBg    = ['admin'=>'#cffafe','vendedor'=>'#e0f2fe','tecnico'=>'#fef3c7'];
+                        $rolTxt   = ['admin'=>'#0e7490','vendedor'=>'#0369a1','tecnico'=>'#92400e'];
                         $inicial  = strtoupper(substr($usuario->name, 0, 1));
                     @endphp
                     <div class="col-12">
@@ -457,10 +458,12 @@
                             <div class="flex-grow-1" style="min-width:0;">
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <span class="fw-600" style="font-size:14px;font-weight:600;">{{ $usuario->name }}</span>
-                                    <span style="background:{{ $rolBg }};color:{{ $rolTxt }};
-                                                 border-radius:20px;padding:2px 8px;font-size:11px;">
-                                        {{ ucfirst($usuario->rol) }}
-                                    </span>
+                                    @foreach($rolesUsuario as $rolUsuario)
+                                        <span style="background:{{ $rolBg[$rolUsuario] ?? '#f3f4f6' }};color:{{ $rolTxt[$rolUsuario] ?? '#374151' }};
+                                                     border-radius:20px;padding:2px 8px;font-size:11px;">
+                                            {{ ucfirst($rolUsuario) }}
+                                        </span>
+                                    @endforeach
                                     @if($usuario->id === auth()->id())
                                         <span style="background:#d1fae5;color:#065f46;border-radius:20px;padding:2px 8px;font-size:11px;">
                                             Tú
@@ -485,7 +488,7 @@
                                 <!-- Editar -->
                                 <button class="btn btn-sm btn-outline-secondary" style="border-radius:8px;padding:4px 10px;"
                                         title="Editar usuario"
-                                        onclick="abrirModalEditar({{ $usuario->id }}, '{{ addslashes($usuario->name) }}', '{{ $usuario->email }}', '{{ $usuario->rol }}', '{{ $usuario->telefono }}', '{{ $usuario->comision_porcentaje }}')">
+                                        onclick="abrirModalEditar({{ $usuario->id }}, '{{ addslashes($usuario->name) }}', '{{ $usuario->email }}', '{{ implode(',', $usuario->rolesEfectivos()) }}', '{{ $usuario->telefono }}', '{{ $usuario->comision_porcentaje }}')">
                                     <i class="fas fa-edit" style="font-size:12px;"></i>
                                 </button>
 
@@ -778,14 +781,24 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="nuevoRol" class="form-label">Rol <span class="text-danger">*</span></label>
-                            <select name="rol" id="nuevoRol" class="form-select" required>
-                                <option value="">Seleccionar rol...</option>
-                                <option value="admin"    {{ old('rol')=='admin'?'selected':'' }}>👑 Administrador</option>
-                                <option value="vendedor" {{ old('rol')=='vendedor'?'selected':'' }}>🛒 Vendedor</option>
-                                <option value="tecnico"  {{ old('rol')=='tecnico'?'selected':'' }}>🔧 Técnico</option>
-                            </select>
+                        <div class="col-12">
+                            <label class="form-label">Roles <span class="text-danger">*</span></label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="vendedor" id="nuevoRolVendedor" @checked(in_array('vendedor', old('roles', [])))>
+                                    <label class="form-check-label" for="nuevoRolVendedor">🛒 Vendedor</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="tecnico" id="nuevoRolTecnico" @checked(in_array('tecnico', old('roles', [])))>
+                                    <label class="form-check-label" for="nuevoRolTecnico">🔧 Técnico</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="admin" id="nuevoRolAdmin" @checked(in_array('admin', old('roles', [])))>
+                                    <label class="form-check-label" for="nuevoRolAdmin">👑 Administrador</label>
+                                </div>
+                            </div>
+                            <small class="text-muted d-block">Marca varios si la persona hace más de un trabajo (ej. Técnico + Vendedor).</small>
+                            @error('roles')<div class="text-danger small">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
                             <label for="nuevoTelefono" class="form-label">Teléfono</label>
@@ -842,13 +855,23 @@
                             <input type="password" name="password_confirmation" id="editConfirmPassword" class="form-control"
                                    placeholder="Repetir nueva contraseña">
                         </div>
-                        <div class="col-md-6">
-                            <label for="editRol" class="form-label">Rol <span class="text-danger">*</span></label>
-                            <select name="rol" id="editRol" class="form-select" required>
-                                <option value="admin">👑 Administrador</option>
-                                <option value="vendedor">🛒 Vendedor</option>
-                                <option value="tecnico">🔧 Técnico</option>
-                            </select>
+                        <div class="col-12">
+                            <label class="form-label">Roles <span class="text-danger">*</span></label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="vendedor" id="editRolVendedor">
+                                    <label class="form-check-label" for="editRolVendedor">🛒 Vendedor</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="tecnico" id="editRolTecnico">
+                                    <label class="form-check-label" for="editRolTecnico">🔧 Técnico</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="roles[]" value="admin" id="editRolAdmin">
+                                    <label class="form-check-label" for="editRolAdmin">👑 Administrador</label>
+                                </div>
+                            </div>
+                            @error('roles')<div class="text-danger small">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
                             <label for="editTelefono" class="form-label">Teléfono</label>
@@ -959,14 +982,27 @@ document.addEventListener('DOMContentLoaded', function() {
 function abrirModalEditar(id, nombre, email, rol, telefono, comision) {
     document.getElementById('editNombre').value   = nombre;
     document.getElementById('editEmail').value    = email;
-    document.getElementById('editRol').value      = rol;
+    var seleccionados = (rol || '').split(',');
+    ['editRolVendedor', 'editRolTecnico', 'editRolAdmin'].forEach(function (inputId) {
+        var cb = document.getElementById(inputId);
+        cb.checked = seleccionados.indexOf(cb.value) !== -1;
+    });
     document.getElementById('editTelefono').value = telefono || '';
     document.getElementById('editComision').value = comision || '';
-    document.getElementById('comisionSection').style.display = rol === 'tecnico' ? 'block' : 'none';
+    actualizarComisionSection();
     document.getElementById('formEditarUsuario').action = '/configuracion/usuarios/' + id;
     var modal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
     modal.show();
 }
+
+function actualizarComisionSection() {
+    var tecnico = document.getElementById('editRolTecnico');
+    document.getElementById('comisionSection').style.display = (tecnico && tecnico.checked) ? 'block' : 'none';
+}
+
+['editRolVendedor', 'editRolTecnico', 'editRolAdmin'].forEach(function (inputId) {
+    document.getElementById(inputId).addEventListener('change', actualizarComisionSection);
+});
 
 function togglePass(inputId, iconId) {
     const input = document.getElementById(inputId);
