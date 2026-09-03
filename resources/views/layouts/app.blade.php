@@ -947,7 +947,11 @@
         .btn-outline-primary:hover { background: var(--accent1) !important; color: #fff !important; }
         .text-primary { color: var(--accent1) !important; }
         .bg-primary { background: var(--accent1) !important; }
-        .nav-link.active { color: var(--accent3) !important; }
+        /* Pestañas activas (Configuración y demás nav-pills) con fondo de marca */
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--accent1-puro), var(--accent2-puro)) !important;
+            color: var(--on-accent) !important;
+        }
         .badge-count { background: var(--accent1) !important; }
         .form-check-input:checked {
             background-color: var(--accent1) !important;
