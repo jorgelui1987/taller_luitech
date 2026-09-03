@@ -1122,6 +1122,12 @@
             <span class="nav-icon"><i class="fas fa-clipboard-check"></i></span>
             Auditoría
         </a>
+
+        <a href="{{ route('register') }}"
+           class="nav-link {{ request()->routeIs('register') ? 'active' : '' }}" onclick="closeSidebarMobile()">
+            <span class="nav-icon"><i class="fas fa-user-plus"></i></span>
+            Registrar Usuario
+        </a>
         @endif
 
         <a href="{{ route('ayuda.index') }}"
