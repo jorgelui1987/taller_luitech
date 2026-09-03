@@ -67,7 +67,20 @@ class ReparacionTest extends TestCase
         $numero = Reparacion::generarNumero();
 
         $this->assertStringStartsWith('RPT-', $numero);
-        $this->assertMatchesRegularExpression('/^RPT-\d{6}$/', $numero);
+        // Nuevo formato con sufijo anti-adivinanza: RPT-NNNNNN-XXXX
+        $this->assertMatchesRegularExpression('/^RPT-\d{6}-[A-Z0-9]{4}$/', $numero);
+        // El sufijo no usa caracteres ambiguos (0, O, 1, I, L)
+        $this->assertDoesNotMatchRegularExpression('/[0O1IL]/', substr($numero, -4));
+    }
+
+    public function test_generar_numero_orden_es_unico(): void
+    {
+        $numeros = [];
+        for ($i = 0; $i < 20; $i++) {
+            $numeros[] = Reparacion::generarNumero();
+        }
+
+        $this->assertCount(20, array_unique($numeros));
     }
 
     public function test_calcular_total_resta_abono(): void

@@ -24,6 +24,7 @@ class PublicReparacionIsolationTest extends TestCase
     private User $user2;
     private Reparacion $ordenTenant1;
     private Reparacion $ordenTenant2;
+    private Reparacion $ordenConSufijo;
 
     protected function setUp(): void
     {
@@ -99,6 +100,18 @@ class PublicReparacionIsolationTest extends TestCase
             'prioridad'        => 'media',
             'fecha_recepcion'  => now(),
             'tenant_id'        => $this->tenant2->id,
+        ]);
+
+        // Orden nueva con sufijo anti-adivinanza (formato nuevo)
+        $this->ordenConSufijo = Reparacion::create([
+            'numero_orden'     => 'RPT-000003-A2B4',
+            'cliente_id'       => $cliente1->id,
+            'dispositivo'      => 'Xiaomi Redmi Note 12',
+            'falla_reportada'  => 'No carga',
+            'estado'           => 'en_reparacion',
+            'prioridad'        => 'media',
+            'fecha_recepcion'  => now(),
+            'tenant_id'        => $this->tenant1->id,
         ]);
     }
 
@@ -198,5 +211,33 @@ class PublicReparacionIsolationTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('tienda-uno', false);
+    }
+
+    public function test_codigo_con_sufijo_acepta_formatos_flexibles(): void
+    {
+        // Formatos que el cliente puede escribir: completo, sin RPT-, sin guiones
+        foreach (['RPT-000003-A2B4', '000003-A2B4', 'rpt000003a2b4', 'RPT000003A2B4'] as $formato) {
+            $response = $this->get(route('reparaciones.public-status', $formato));
+
+            $response->assertOk();
+            $response->assertSee('RPT-000003-A2B4', false);
+        }
+    }
+
+    public function test_codigo_sin_sufijo_no_encuentra_orden_con_sufijo(): void
+    {
+        // Protección anti-adivinanza: la base sola no expone la orden
+        $response = $this->get(route('reparaciones.public-status', '000003'));
+
+        $response->assertOk();
+        $response->assertSee('no fue encontrada', false);
+    }
+
+    public function test_orden_antigua_sin_sufijo_sigue_consultable(): void
+    {
+        $response = $this->get(route('reparaciones.public-status', '000001'));
+
+        $response->assertOk();
+        $response->assertSee($this->ordenTenant1->numero_orden, false);
     }
 }

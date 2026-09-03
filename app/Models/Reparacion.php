@@ -155,34 +155,47 @@ class Reparacion extends Model
         return $this->firma_entrega ? asset('storage/' . $this->firma_entrega) : null;
     }
 
+    /**
+     * Genera un número de orden con sufijo aleatorio anti-adivinanza:
+     * RPT-NNNNNN-XXXX (XXXX sin caracteres ambiguos 0/O/1/I/L).
+     * La secuencia base sigue siendo global e incremental; las órdenes
+     * antiguas (sin sufijo) siguen consultables por su código completo.
+     */
     public static function generarNumero(): string
     {
-        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
-        $castType = ($driver === 'pgsql' || $driver === 'sqlite') ? 'INTEGER' : 'UNSIGNED';
-
-        // Buscar el número de orden más alto en la base de datos (sin importar tenant_id ni soft deletes)
-        $maxNumero = \Illuminate\Support\Facades\DB::table('reparaciones')
+        // Secuencia más alta de la parte base (ignora sufijos aleatorios)
+        $maxBase = (int) \Illuminate\Support\Facades\DB::table('reparaciones')
             ->whereNotNull('numero_orden')
-            ->orderByRaw("CAST(SUBSTRING(numero_orden, 5) AS {$castType}) DESC")
-            ->value('numero_orden');
+            ->pluck('numero_orden')
+            ->map(fn ($numero) => (int) (preg_match('/^RPT-(\d{1,6})/', $numero, $m) ? $m[1] : 0))
+            ->max();
 
-        $numero = 1;
-        if ($maxNumero) {
-            $numExtraido = (int) preg_replace('/\D/', '', $maxNumero);
-            if ($numExtraido > 0) {
-                $numero = $numExtraido + 1;
+        $numero = $maxBase + 1;
+
+        // Bucle de seguridad: el sufijo es aleatorio, colisión improbable
+        for ($intentos = 0; $intentos < 50; $intentos++) {
+            $nuevo = 'RPT-' . str_pad((string) $numero, 6, '0', STR_PAD_LEFT) . '-' . self::sufijoAleatorio();
+            if (!\Illuminate\Support\Facades\DB::table('reparaciones')->where('numero_orden', $nuevo)->exists()) {
+                return $nuevo;
             }
         }
 
-        // Bucle de seguridad para garantizar unicidad absoluta
-        $nuevo = 'RPT-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
-        $contador = 0;
-        while (\Illuminate\Support\Facades\DB::table('reparaciones')->where('numero_orden', $nuevo)->exists() && $contador < 1000) {
-            $numero++;
-            $nuevo = 'RPT-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
-            $contador++;
+        // Fallback extremo: avanza la base y reintenta
+        return 'RPT-' . str_pad((string) ($numero + 50), 6, '0', STR_PAD_LEFT) . '-' . self::sufijoAleatorio();
+    }
+
+    /**
+     * Sufijo aleatorio de 4 caracteres sin ambiguos (sin 0, O, 1, I, L)
+     * para que el cliente lo lea o copie sin confusiones.
+     */
+    public static function sufijoAleatorio(): string
+    {
+        $alfabeto = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+        $sufijo = '';
+        for ($i = 0; $i < 4; $i++) {
+            $sufijo .= $alfabeto[random_int(0, strlen($alfabeto) - 1)];
         }
 
-        return $nuevo;
+        return $sufijo;
     }
 }

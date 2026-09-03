@@ -89,16 +89,27 @@ class PublicReparacionController extends Controller
     /**
      * Normaliza el código de orden ingresado: "1024" → "RPT-001024".
      */
+    /**
+     * Normaliza el código de orden ingresado, aceptando el formato nuevo
+     * con sufijo anti-adivinanza y el antiguo sin sufijo:
+     * "1024" → "RPT-001024" · "1024-X7K4" → "RPT-001024-X7K4"
+     * "rpt001024x7k4" → "RPT-001024-X7K4"
+     */
     private function normalizarNumeroOrden(string $valor): string
     {
-        $valor = strtoupper(trim($valor));
-        $digitos = preg_replace('/\D/', '', $valor);
+        $limpio = strtoupper(preg_replace('/[^A-Z0-9]/', '', $valor) ?? '');
+        $limpio = preg_replace('/^RPT/', '', $limpio);
 
-        if ($digitos !== '') {
-            return 'RPT-' . str_pad($digitos, 6, '0', STR_PAD_LEFT);
+        if (!preg_match('/^(\d{1,6})([A-Z0-9]*)$/', $limpio, $m)) {
+            return strtoupper(trim($valor));
         }
 
-        return $valor;
+        $base   = str_pad($m[1], 6, '0', STR_PAD_LEFT);
+        $sufijo = $m[2] ?? '';
+
+        return $sufijo !== ''
+            ? "RPT-{$base}-{$sufijo}"
+            : 'RPT-' . $base;
     }
 
     /**
