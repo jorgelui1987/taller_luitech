@@ -4,6 +4,14 @@
 
 @section('content')
 
+@php
+    $marca = auth()->user()->tenant?->colores() ?? [
+        'primario'      => '#0891b2',
+        'secundario'    => '#3b82f6',
+        'primario_rgba' => 'rgba(8,145,178,.18)',
+    ];
+@endphp
+
 {{-- ── Encabezado ──────────────────────────────────────────────────── --}}
 <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
@@ -263,7 +271,7 @@
                 @forelse($topProductos as $i => $prod)
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div style="width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff;
-                            background: {{ ['linear-gradient(135deg,#0891b2,#0e7490)', 'linear-gradient(135deg,#3b82f6,#2563eb)', 'linear-gradient(135deg,#06b6d4,#0284c7)', 'linear-gradient(135deg,#10b981,#059669)', 'linear-gradient(135deg,#f59e0b,#d97706)'][$i] }};">
+                            background: {{ [0 => "linear-gradient(135deg,{$marca['primario']},{$marca['secundario']})", 'linear-gradient(135deg,#3b82f6,#2563eb)', 'linear-gradient(135deg,#06b6d4,#0284c7)', 'linear-gradient(135deg,#10b981,#059669)', 'linear-gradient(135deg,#f59e0b,#d97706)'][$i] }};">
                             {{ $i + 1 }}
                         </div>
                         <div class="flex-1" style="min-width:0; flex:1;">
@@ -322,7 +330,7 @@
                             <tr>
                                 <td>
                                     <a href="{{ route('ventas.show', $venta) }}"
-                                       style="color:#0891b2; font-weight:500; font-size:13px; text-decoration:none;">
+                                       style="color:var(--accent1); font-weight:500; font-size:13px; text-decoration:none;">
                                         {{ $venta->numero_venta }}
                                     </a>
                                     <div style="font-size:11px; color:#9ca3af;">
@@ -463,7 +471,7 @@
                             <tr>
                                 <td>
                                     <a href="{{ route('ventas.show', $venta) }}"
-                                       style="color:#06b6d4; font-weight:500; font-size:13px; text-decoration:none;">
+                                       style="color:var(--accent3); font-weight:500; font-size:13px; text-decoration:none;">
                                         {{ $venta->numero_venta }}
                                     </a>
                                 </td>
@@ -601,9 +609,13 @@ const diasTotales = @json($diasSemana->pluck('total'));
 
 const ctxDias = document.getElementById('chartVentasDias').getContext('2d');
 
+const brandStyles = getComputedStyle(document.documentElement);
+const brandP = (brandStyles.getPropertyValue('--accent1') || '').trim() || '#0891b2';
+const brandS = (brandStyles.getPropertyValue('--accent2') || '').trim() || '#3b82f6';
+
 const gradientFill = ctxDias.createLinearGradient(0, 0, 0, 200);
-gradientFill.addColorStop(0, 'rgba(6, 182, 212, 0.3)');
-gradientFill.addColorStop(1, 'rgba(59, 130, 246, 0.03)');
+gradientFill.addColorStop(0, brandP + '4D');
+gradientFill.addColorStop(1, brandS + '08');
 
 new Chart(ctxDias, {
     type: 'line',
@@ -612,12 +624,12 @@ new Chart(ctxDias, {
         datasets: [{
             label: 'Ventas',
             data: diasTotales,
-            borderColor: '#0891b2',
+            borderColor: brandP,
             backgroundColor: gradientFill,
             borderWidth: 2.5,
             fill: true,
             tension: 0.4,
-            pointBackgroundColor: '#0891b2',
+            pointBackgroundColor: brandP,
             pointBorderColor: '#fff',
             pointBorderWidth: 2,
             pointRadius: 5,
