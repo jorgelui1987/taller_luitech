@@ -4,7 +4,7 @@
         : null;
 @endphp
 <!DOCTYPE html>
-<html lang="es" @if($brandColores) style="--accent1: {{ $brandColores['primario'] }}; --accent2: {{ $brandColores['secundario'] }}; --accent3: {{ $brandColores['primario'] }}; --gradient: linear-gradient(135deg, var(--accent1), var(--accent2)); --nav-hover-bg: {{ $brandColores['primario_rgba'] }};" @endif>
+<html lang="es" @if($brandColores) style="--accent1: {{ $brandColores['primario'] }}; --accent2: {{ $brandColores['secundario'] }}; --accent3: {{ $brandColores['primario'] }}; --accent1-puro: {{ $brandColores['primario_puro'] }}; --accent2-puro: {{ $brandColores['secundario_puro'] }}; --on-accent: {{ $brandColores['texto_sobre_primario'] }}; --gradient: linear-gradient(135deg, var(--accent1-puro), var(--accent2-puro)); --nav-hover-bg: {{ $brandColores['primario_rgba'] }};" @endif>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -938,8 +938,9 @@
     {{-- Recoloreado de componentes del panel con la marca de la empresa --}}
     <style>
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent1), var(--accent2)) !important;
-            border-color: var(--accent2) !important;
+            background: linear-gradient(135deg, var(--accent1-puro), var(--accent2-puro)) !important;
+            border-color: var(--accent2-puro) !important;
+            color: var(--on-accent) !important;
         }
         .btn-primary:hover { filter: brightness(1.08); }
         .btn-outline-primary { color: var(--accent1) !important; border-color: var(--accent1) !important; }

@@ -344,7 +344,8 @@ class ComboPublicidadController extends Controller
             if ($cliente) {
                 $telefono = $cliente->telefono ?? $cliente->celular;
                 if ($telefono) {
-                    $mensaje = \App\Helpers\WhatsAppHelper::mensajeListo($reparacion, $nombreTienda, $urlEstado);
+                    $plantillaListo = $reparacion->tenant?->configuracion_extra['plantilla_listo'] ?? null;
+        $mensaje = \App\Helpers\WhatsAppHelper::mensajeListo($reparacion, $nombreTienda, $urlEstado, $plantillaListo);
                     $whatsappUrl = \App\Helpers\WhatsAppHelper::generarUrl($telefono, $mensaje);
                     if ($whatsappUrl) {
                         return response()->json([

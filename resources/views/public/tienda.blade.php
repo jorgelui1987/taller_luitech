@@ -24,12 +24,15 @@
         /* Colores de marca del taller (configurables en el panel) */
         :root {
             --primary: {{ $coloresMarca['primario'] }};
-            --accent: {{ $coloresMarca['secundario'] }};
+            --primary-puro: {{ $coloresMarca['primario_puro'] }};
+            --accent: {{ $coloresMarca['secundario_puro'] }};
             --brand-soft: {{ $coloresMarca['primario_rgba'] }};
+            --on-brand: {{ $coloresMarca['texto_sobre_primario'] }};
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+            background: linear-gradient(135deg, var(--primary-puro), var(--accent)) !important;
             border-color: var(--accent) !important;
+            color: var(--on-brand) !important;
         }
         .icon-circle {
             background: var(--brand-soft) !important;

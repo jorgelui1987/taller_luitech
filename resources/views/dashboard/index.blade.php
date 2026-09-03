@@ -271,7 +271,7 @@
                 @forelse($topProductos as $i => $prod)
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div style="width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff;
-                            background: {{ [0 => "linear-gradient(135deg,{$marca['primario']},{$marca['secundario']})", 'linear-gradient(135deg,#3b82f6,#2563eb)', 'linear-gradient(135deg,#06b6d4,#0284c7)', 'linear-gradient(135deg,#10b981,#059669)', 'linear-gradient(135deg,#f59e0b,#d97706)'][$i] }};">
+                            background: {{ [0 => "linear-gradient(135deg,{$marca['primario_puro']},{$marca['secundario_puro']})", 'linear-gradient(135deg,#3b82f6,#2563eb)', 'linear-gradient(135deg,#06b6d4,#0284c7)', 'linear-gradient(135deg,#10b981,#059669)', 'linear-gradient(135deg,#f59e0b,#d97706)'][$i] }};">
                             {{ $i + 1 }}
                         </div>
                         <div class="flex-1" style="min-width:0; flex:1;">

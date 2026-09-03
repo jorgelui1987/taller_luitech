@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" @if(isset($coloresMarca) && is_array($coloresMarca)) style="--cyan: {{ $coloresMarca['primario'] }}; --cyan-strong: {{ $coloresMarca['primario'] }}; --grad: linear-gradient(90deg, {{ $coloresMarca['primario'] }}, {{ $coloresMarca['secundario'] }}); --grad-chip: linear-gradient(135deg, {{ $coloresMarca['primario'] }}, {{ $coloresMarca['secundario'] }});" @endif>
+<html lang="es" @if(isset($coloresMarca) && is_array($coloresMarca)) style="--cyan: {{ $coloresMarca['primario'] }}; --cyan-strong: {{ $coloresMarca['primario'] }}; --on-brand: {{ $coloresMarca['texto_sobre_primario'] }}; --grad: linear-gradient(90deg, {{ $coloresMarca['primario_puro'] }}, {{ $coloresMarca['secundario_puro'] }}); --grad-chip: linear-gradient(135deg, {{ $coloresMarca['primario_puro'] }}, {{ $coloresMarca['secundario_puro'] }});" @endif>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

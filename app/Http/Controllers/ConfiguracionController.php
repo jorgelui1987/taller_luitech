@@ -344,7 +344,12 @@ class ConfiguracionController extends Controller
         $extra['color_secundario'] = strtoupper($validated['color_secundario']);
         $tenant->update(['configuracion_extra' => $extra]);
 
-        return back()->with('success', 'Colores de tu empresa actualizados correctamente.');
+        $mensaje = 'Colores de tu empresa actualizados correctamente.';
+        if (self::hexLegible($extra['color_primario']) !== $extra['color_primario']) {
+            $mensaje .= ' Nota: tu color era muy claro para textos, así que se oscurece automáticamente donde se usa como texto.';
+        }
+
+        return back()->with('success', $mensaje);
     }
 
     // ── Plantillas de mensajes de WhatsApp ─────────────────────────────
