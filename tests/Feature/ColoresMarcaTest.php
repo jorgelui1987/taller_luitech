@@ -208,4 +208,20 @@ class ColoresMarcaTest extends TestCase
             // La pestaña Colores existe con su botón y su panel
             ->assertSee('tab-colores', false);
     }
+
+    public function test_guardar_color_muy_claro_no_explota_y_avisa(): void
+    {
+        [$tenant, $admin] = $this->crearEmpresa('tienda-clara-post');
+        $this->actingAs($admin);
+
+        $response = $this->post(route('configuracion.colores'), [
+            'color_primario'   => '#ffff00',
+            'color_secundario' => '#ccffcc',
+        ]);
+
+        $response->assertRedirect();
+        $tenant->refresh();
+        // El color se guarda TAL CUAL (puro); la legibilidad se calcula al leer
+        $this->assertSame('#FFFF00', $tenant->configuracion_extra['color_primario']);
+    }
 }

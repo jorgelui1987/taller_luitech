@@ -345,7 +345,7 @@ class ConfiguracionController extends Controller
         $tenant->update(['configuracion_extra' => $extra]);
 
         $mensaje = 'Colores de tu empresa actualizados correctamente.';
-        if (self::hexLegible($extra['color_primario']) !== $extra['color_primario']) {
+        if (\App\Models\Tenant::hexLegible($extra['color_primario']) !== $extra['color_primario']) {
             $mensaje .= ' Nota: tu color era muy claro para textos, así que se oscurece automáticamente donde se usa como texto.';
         }
 
