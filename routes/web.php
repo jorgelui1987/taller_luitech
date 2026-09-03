@@ -116,52 +116,15 @@ Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook'])
     ->name('webhooks.mercadopago');
 
 // ── RUTAS PÚBLICAS (Landing page de la plataforma) ─────────────────────────
-// El branding de la landing es de la PLATAFORMA (LUITECH), no de un tenant:
-// toma los valores del .env (PLATFORM_*) o los valores por defecto.
-if (!function_exists('brandingPlataforma')) {
-    function brandingPlataforma(): object
-    {
-        return new class {
-            public string $nombre_tienda;
-            public ?string $direccion;
-            public ?string $telefono;
-            public ?string $email;
-            public ?string $logo;
+// El branding es de la PLATAFORMA (LUITECH): ver LandingController::branding().
+// Controlador en vez de closures para que php artisan optimize funcione.
+use App\Http\Controllers\LandingController;
 
-            public function __construct()
-            {
-                $this->nombre_tienda = env('PLATFORM_BRAND_NAME', 'LUITECH');
-                $this->direccion     = env('PLATFORM_DIRECCION', "Bernardo O'Higgins 564, La Serena");
-                $this->telefono      = env('PLATFORM_TELEFONO', '+56 9 8220 9690');
-                $this->email         = env('PLATFORM_EMAIL', 'contacto@luitech.cl');
-                $this->logo          = null;
-            }
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-            // Cualquier otra propiedad que una vista pida devuelve null
-            // (evita "Undefined property" → 500 en producción)
-            public function __get($name)
-            {
-                return null;
-            }
-
-            public function __isset($name)
-            {
-                return false;
-            }
-        };
-    }
-}
-
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
-    return view('landing', ['empresa' => brandingPlataforma()]);
-})->name('landing');
-
-Route::get('/planes', function () {
-    return view('landing', ['empresa' => brandingPlataforma(), 'abrirPlanes' => true]);
-})->name('planes')->withoutMiddleware([\App\Http\Middleware\CheckTenantStatus::class]);
+Route::get('/planes', [LandingController::class, 'planes'])
+    ->name('planes')
+    ->withoutMiddleware([\App\Http\Middleware\CheckTenantStatus::class]);
 
 Route::get('/registro', [SuperAdminController::class, 'showRegistroTenant'])->name('registro.tenant');
 Route::post('/registro', [SuperAdminController::class, 'registrarTenant'])->name('registro.tenant.store');
