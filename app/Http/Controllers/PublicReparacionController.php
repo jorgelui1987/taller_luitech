@@ -83,7 +83,10 @@ class PublicReparacionController extends Controller
             ];
         }
 
-        return view('reparaciones.public-status', compact('reparacion', 'empresa'));
+        // Colores de marca del taller dueño de la orden (para la vista pública)
+        $coloresMarca = \App\Models\Tenant::find($reparacion->tenant_id)?->colores();
+
+        return view('reparaciones.public-status', compact('reparacion', 'empresa', 'coloresMarca'));
     }
 
     /**

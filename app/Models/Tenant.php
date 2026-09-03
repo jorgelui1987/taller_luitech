@@ -169,4 +169,45 @@ class Tenant extends Model
 
         return $unico;
     }
+
+    /**
+     * Colores de marca de la empresa (guardados en configuracion_extra).
+     * Valores por defecto = tema Luitech.
+     */
+    public function colores(): array
+    {
+        $extra = $this->configuracion_extra ?? [];
+
+        $primario   = $extra['color_primario']   ?? '#0891b2';
+        $secundario = $extra['color_secundario'] ?? '#3b82f6';
+
+        return [
+            'primario'      => $primario,
+            'secundario'    => $secundario,
+            'primario_rgba' => self::hexARgba($primario, 0.18),
+        ];
+    }
+
+    /**
+     * Convierte #RRGGBB a rgba(r,g,b,alpha).
+     * Formato inválido → color por defecto del tema Luitech.
+     */
+    public static function hexARgba(string $hex, float $alpha = 1.0): string
+    {
+        $hex = ltrim(trim($hex), '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+            $hex = '0891b2';
+        }
+
+        return sprintf(
+            'rgba(%d,%d,%d,%.2f)',
+            hexdec(substr($hex, 0, 2)),
+            hexdec(substr($hex, 2, 2)),
+            hexdec(substr($hex, 4, 2)),
+            $alpha
+        );
+    }
 }

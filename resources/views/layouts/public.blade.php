@@ -25,6 +25,17 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Tema visual del portal público (modelo portado de la web, CSS propio) -->
     <link href="{{ asset('css/public-portal.css') }}" rel="stylesheet">
+    @if(isset($coloresMarca) && is_array($coloresMarca))
+    {{-- Colores de marca del taller (sobrescriben el tema del portal) --}}
+    <style>
+        :root {
+            --cyan: {{ $coloresMarca['primario'] }};
+            --cyan-strong: {{ $coloresMarca['primario'] }};
+            --grad: linear-gradient(90deg, {{ $coloresMarca['primario'] }}, {{ $coloresMarca['secundario'] }});
+            --grad-chip: linear-gradient(135deg, {{ $coloresMarca['primario'] }}, {{ $coloresMarca['secundario'] }});
+        }
+    </style>
+    @endif
     @stack('styles')
 </head>
 @php

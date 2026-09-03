@@ -20,6 +20,23 @@
             --light: #f8fafc;
             --border: #e2e8f0;
         }
+        @if(isset($coloresMarca) && is_array($coloresMarca))
+        /* Colores de marca del taller (configurables en el panel) */
+        :root {
+            --primary: {{ $coloresMarca['primario'] }};
+            --accent: {{ $coloresMarca['secundario'] }};
+            --brand-soft: {{ $coloresMarca['primario_rgba'] }};
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+            border-color: var(--accent) !important;
+        }
+        .icon-circle {
+            background: var(--brand-soft) !important;
+            color: var(--primary) !important;
+        }
+        .footer .brand { color: var(--primary) !important; }
+        @endif
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -29,7 +46,7 @@
         }
         /* ── Hero ── */
         .hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #2563eb 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, var(--primary) 100%);
             color: #fff;
             padding: 80px 0 100px;
             position: relative;

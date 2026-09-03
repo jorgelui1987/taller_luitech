@@ -29,6 +29,113 @@
     </div>
 </div>
 
+<!-- ══════════ COLORES DE MI EMPRESA ══════════ -->
+@php
+    $colores = auth()->user()->tenant?->colores() ?? [
+        'primario'      => '#0891b2',
+        'secundario'    => '#3b82f6',
+        'primario_rgba' => 'rgba(8,145,178,.18)',
+    ];
+@endphp
+<div class="card mb-4" style="border-radius:16px; border:1px solid #e5e7eb;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-1" style="color:#0f172a;">
+            <i class="fas fa-palette me-2" style="color:{{ $colores['primario'] }};"></i>Colores de mi empresa
+        </h5>
+        <p class="text-muted mb-3" style="font-size:12.5px;">
+            Se aplican al instante en tu panel y en tu página pública.
+        </p>
+
+        <form method="POST" action="{{ route('configuracion.colores') }}">
+            @csrf
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3 col-6">
+                    <label class="form-label" style="font-size:12.5px;font-weight:600;">Color principal</label>
+                    <input type="color" name="color_primario" id="cpPrimario"
+                           class="form-control form-control-color w-100" value="{{ $colores['primario'] }}">
+                </div>
+                <div class="col-md-3 col-6">
+                    <label class="form-label" style="font-size:12.5px;font-weight:600;">Color secundario</label>
+                    <input type="color" name="color_secundario" id="cpSecundario"
+                           class="form-control form-control-color w-100" value="{{ $colores['secundario'] }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" style="font-size:12.5px;font-weight:600;">Temas rápidos</label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        @foreach([
+                            ['Luitech', '#0891b2', '#3b82f6'],
+                            ['Verde', '#10b981', '#059669'],
+                            ['Morado', '#8b5cf6', '#6366f1'],
+                            ['Naranja', '#f97316', '#dc2626'],
+                            ['Rojo', '#ef4444', '#991b1b'],
+                            ['Rosa', '#ec4899', '#8b5cf6'],
+                        ] as $tema)
+                            <button type="button" class="preset-color border-0" data-p="{{ $tema[1] }}" data-s="{{ $tema[2] }}"
+                                    title="{{ $tema[0] }}"
+                                    style="width:34px;height:34px;border-radius:50%;cursor:pointer;
+                                           background:linear-gradient(135deg,{{ $tema[1] }},{{ $tema[2] }});
+                                           border:2px solid #fff;box-shadow:0 0 0 1px #e5e7eb;"></button>
+                        @endforeach
+                    </div>
+                    @error('color_primario')<div class="text-danger small">{{ $message }}</div>@enderror
+                    @error('color_secundario')<div class="text-danger small">{{ $message }}</div>@enderror
+                </div>
+            </div>
+
+            <!-- Vista previa en vivo -->
+            <div class="mt-3 p-3 rounded-3 d-flex align-items-center gap-3 flex-wrap"
+                 style="background:#f9fafb;border:1px dashed #d1d5db;">
+                <div style="width:110px;height:60px;border-radius:12px;background:#0f172a;
+                            display:flex;align-items:center;padding:10px;">
+                    <div id="previewChip" style="width:28px;height:28px;border-radius:8px;
+                            background:linear-gradient(135deg,{{ $colores['primario'] }},{{ $colores['secundario'] }});
+                            display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">
+                        <i class="fas fa-mobile-screen"></i>
+                    </div>
+                </div>
+                <span style="font-size:12px;color:#6b7280;">Vista previa →</span>
+                <button type="button" id="previewBtn1" class="btn btn-sm"
+                        style="background:linear-gradient(135deg,{{ $colores['primario'] }},{{ $colores['secundario'] }});
+                               color:#fff;border-radius:10px;">Botón principal</button>
+                <button type="button" id="previewBtn2" class="btn btn-sm"
+                        style="background:{{ $colores['primario_rgba'] }};color:{{ $colores['primario'] }};
+                               border-radius:10px;">Elemento activo</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3 px-4">
+                <i class="fas fa-save me-2"></i>Guardar colores
+            </button>
+        </form>
+
+        <script>
+            var cpPrimario   = document.getElementById('cpPrimario');
+            var cpSecundario = document.getElementById('cpSecundario');
+            var previewChip  = document.getElementById('previewChip');
+            var previewBtn1  = document.getElementById('previewBtn1');
+            var previewBtn2  = document.getElementById('previewBtn2');
+
+            function actualizarPreviewColores() {
+                var p = cpPrimario.value, s = cpSecundario.value;
+                previewChip.style.background = 'linear-gradient(135deg,' + p + ',' + s + ')';
+                previewBtn1.style.background = 'linear-gradient(135deg,' + p + ',' + s + ')';
+                previewBtn2.style.background = p + '26';
+                previewBtn2.style.color = p;
+            }
+
+            cpPrimario.addEventListener('input', actualizarPreviewColores);
+            cpSecundario.addEventListener('input', actualizarPreviewColores);
+
+            document.querySelectorAll('.preset-color').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    cpPrimario.value = btn.dataset.p;
+                    cpSecundario.value = btn.dataset.s;
+                    actualizarPreviewColores();
+                });
+            });
+        </script>
+    </div>
+</div>
+
 <!-- ══════════ PESTAÑAS DE CONFIGURACIÓN ══════════ -->
 <ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="configTabs" style="border-bottom:2px solid #f3f4f6; padding-bottom:12px;">
     <li class="nav-item">

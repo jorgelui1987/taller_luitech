@@ -75,7 +75,11 @@ class ComboPublicidadController extends Controller
             }
         }
 
-        return view('public.tienda', compact('tenant', 'config', 'resenas', 'promedio', 'cupones', 'logoSrc'));
+        return view('public.tienda', [
+            'tenant' => $tenant, 'config' => $config, 'resenas' => $resenas,
+            'promedio' => $promedio, 'cupones' => $cupones, 'logoSrc' => $logoSrc,
+            'coloresMarca' => $tenant->colores(),
+        ]);
     }
 
     /**
@@ -97,7 +101,10 @@ class ComboPublicidadController extends Controller
                 ->first();
         }
 
-        return view('public.resena-form', compact('tenant', 'config', 'reparacion'));
+        return view('public.resena-form', [
+            'tenant' => $tenant, 'config' => $config, 'reparacion' => $reparacion,
+            'coloresMarca' => $tenant->colores(),
+        ]);
     }
 
     /**

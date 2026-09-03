@@ -320,6 +320,7 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/configuracion/publicidad', [ConfiguracionController::class, 'updatePublicidad'])->name('configuracion.updatePublicidad');
             Route::post('/configuracion/zona-horaria', [ConfiguracionController::class, 'updateZonaHoraria'])->name('configuracion.updateZonaHoraria');
             Route::post('/configuracion/usuarios', [ConfiguracionController::class, 'storeUsuario'])->name('configuracion.storeUsuario');
+Route::post('/configuracion/colores', [ConfiguracionController::class, 'updateColores'])->name('configuracion.colores');
             Route::patch('/configuracion/usuarios/{usuario}/toggle', [ConfiguracionController::class, 'toggleUsuario'])->name('configuracion.toggleUsuario');
             Route::put('/configuracion/usuarios/{usuario}', [ConfiguracionController::class, 'updateUsuario'])->name('configuracion.updateUsuario');
             Route::delete('/configuracion/usuarios/{usuario}', [ConfiguracionController::class, 'destroyUsuario'])->name('configuracion.destroyUsuario');

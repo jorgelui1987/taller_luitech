@@ -924,6 +924,24 @@
         }
     </style>
 
+    @php
+        $tenantColores = (auth()->check() && auth()->user()->tenant)
+            ? auth()->user()->tenant->colores()
+            : null;
+    @endphp
+    @if($tenantColores)
+    {{-- Colores de marca de la empresa del usuario logueado --}}
+    <style>
+        :root {
+            --accent1: {{ $tenantColores['primario'] }};
+            --accent2: {{ $tenantColores['secundario'] }};
+            --accent3: {{ $tenantColores['primario'] }};
+            --gradient: linear-gradient(135deg, var(--accent1), var(--accent2));
+            --nav-hover-bg: {{ $tenantColores['primario_rgba'] }};
+        }
+    </style>
+    @endif
+
     @stack('styles')
 </head>
 <body>

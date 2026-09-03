@@ -322,6 +322,31 @@ class ConfiguracionController extends Controller
         return back()->with('success', 'Zona horaria actualizada correctamente.');
     }
 
+    // ── Colores de marca de la empresa ─────────────────────────────────
+    public function updateColores(Request $request)
+    {
+        if (!auth()->user()?->esAdmin()) {
+            abort(403, 'Acceso denegado. Solo administradores pueden cambiar los colores.');
+        }
+
+        $validated = $request->validate([
+            'color_primario'   => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'color_secundario' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+        ]);
+
+        $tenant = auth()->user()->tenant;
+        if (!$tenant) {
+            return back()->with('error', 'No tienes una empresa asignada.');
+        }
+
+        $extra = $tenant->configuracion_extra ?? [];
+        $extra['color_primario']   = strtoupper($validated['color_primario']);
+        $extra['color_secundario'] = strtoupper($validated['color_secundario']);
+        $tenant->update(['configuracion_extra' => $extra]);
+
+        return back()->with('success', 'Colores de tu empresa actualizados correctamente.');
+    }
+
     // ── Usuarios ───────────────────────────────────────────────────────
     public function storeUsuario(Request $request)
     {
