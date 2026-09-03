@@ -143,4 +143,27 @@ class ColoresMarcaTest extends TestCase
         $this->assertSame('Con vidrio templado incluido', $tenant->configuracion_extra['promos'][0]['texto']);
         $this->assertSame('Baterías promo', $tenant->configuracion_extra['promos'][1]['titulo']);
     }
+
+    public function test_panel_inyecta_colores_de_marca_en_el_html(): void
+    {
+        [$tenant, $admin] = $this->crearEmpresa();
+
+        Configuracion::create([
+            'nombre_tienda' => 'Mi Taller',
+            'tenant_id'     => $tenant->id,
+        ]);
+
+        $this->actingAs($admin);
+
+        $this->post(route('configuracion.colores'), [
+            'color_primario'   => '#ff6600',
+            'color_secundario' => '#00aa88',
+        ]);
+
+        // El panel (layout) debe inyectar los colores como variables en el <html>
+        $this->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('#FF6600', false)
+            ->assertSee('--accent1', false);
+    }
 }

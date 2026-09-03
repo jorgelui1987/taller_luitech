@@ -1,5 +1,10 @@
+@php
+    $brandColores = (auth()->check() && auth()->user()->tenant)
+        ? auth()->user()->tenant->colores()
+        : null;
+@endphp
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" @if($brandColores) style="--accent1: {{ $brandColores['primario'] }}; --accent2: {{ $brandColores['secundario'] }}; --accent3: {{ $brandColores['primario'] }}; --gradient: linear-gradient(135deg, var(--accent1), var(--accent2)); --nav-hover-bg: {{ $brandColores['primario_rgba'] }};" @endif>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -930,17 +935,8 @@
             : null;
     @endphp
     @if($tenantColores)
-    {{-- Colores de marca de la empresa del usuario logueado --}}
+    {{-- Recoloreado de componentes del panel con la marca de la empresa --}}
     <style>
-        :root {
-            --accent1: {{ $tenantColores['primario'] }};
-            --accent2: {{ $tenantColores['secundario'] }};
-            --accent3: {{ $tenantColores['primario'] }};
-            --gradient: linear-gradient(135deg, var(--accent1), var(--accent2));
-            --nav-hover-bg: {{ $tenantColores['primario_rgba'] }};
-        }
-
-        /* ── Recoloreado profesional del panel ────────────────────────── */
         .btn-primary {
             background: linear-gradient(135deg, var(--accent1), var(--accent2)) !important;
             border-color: var(--accent2) !important;

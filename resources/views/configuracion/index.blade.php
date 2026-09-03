@@ -41,6 +41,10 @@
     <div class="card-body p-4">
         <h5 class="fw-bold mb-1" style="color:#0f172a;">
             <i class="fas fa-palette me-2" style="color:{{ $colores['primario'] }};"></i>Colores de mi empresa
+            <span class="ms-2" title="Colores guardados actualmente">
+                <span style="display:inline-block;width:20px;height:20px;border-radius:5px;background:{{ $colores['primario'] }};border:1px solid #d1d5db;vertical-align:middle;"></span>
+                <span style="display:inline-block;width:20px;height:20px;border-radius:5px;background:{{ $colores['secundario'] }};border:1px solid #d1d5db;vertical-align:middle;"></span>
+            </span>
         </h5>
         <p class="text-muted mb-3" style="font-size:12.5px;">
             Se aplican al instante en tu panel y en tu página pública.
