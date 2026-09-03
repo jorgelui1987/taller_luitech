@@ -8,7 +8,13 @@
     // Coordenadas del local (ajustar según la ubicación real del taller)
     $mapCoords = [-29.9024, -71.2482];
     // Cotizador y FAQ desde la base de datos (editables en el panel: /laboratorio)
-    $cotizadorPrecios = \App\Models\CotizadorPrecio::where('activo', true)->orderBy('orden')->orderBy('id')->get();
+    // A prueba de fallos: si una tabla no existe o la BD no responde, la landing
+    // se muestra igual (con la sección vacía) en lugar de caer con error 500.
+    try {
+        $cotizadorPrecios = \App\Models\CotizadorPrecio::where('activo', true)->orderBy('orden')->orderBy('id')->get();
+    } catch (\Throwable $e) {
+        $cotizadorPrecios = collect();
+    }
     $cotizadorJs = [];
     $cotServiciosVisibles = [];
     foreach ($cotizadorPrecios as $cp) {
@@ -18,7 +24,11 @@
         }
         $cotizadorJs[$cp->servicio]['precios'][$cp->dispositivo] = [(int) $cp->precio_min, (int) $cp->precio_max];
     }
-    $faqsPortada = \App\Models\PreguntaFrecuente::where('activo', true)->orderBy('orden')->orderBy('id')->get();
+    try {
+        $faqsPortada = \App\Models\PreguntaFrecuente::where('activo', true)->orderBy('orden')->orderBy('id')->get();
+    } catch (\Throwable $e) {
+        $faqsPortada = collect();
+    }
 @endphp
 
 @section('content')
@@ -116,7 +126,11 @@
     </div>
 </section>
 @php
-    $resenasPortada = \App\Models\Resena::withoutGlobalScopes()->publicadas()->conCalificacionMinima(4)->latest()->take(3)->get();
+    try {
+        $resenasPortada = \App\Models\Resena::withoutGlobalScopes()->publicadas()->conCalificacionMinima(4)->latest()->take(3)->get();
+    } catch (\Throwable $e) {
+        $resenasPortada = collect();
+    }
 @endphp
 @if($resenasPortada->count())
 <section id="testimonios" class="lp-section">
