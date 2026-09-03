@@ -327,9 +327,9 @@
             font-size: 11px;
         }
 
-        .bg-grad-purple { background: linear-gradient(135deg, #0891b2, #0e7490); }
-        .bg-grad-pink   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .bg-grad-cyan   { background: linear-gradient(135deg, #06b6d4, #0284c7); }
+        .bg-grad-purple { background: linear-gradient(135deg, var(--accent1), var(--accent2)); }
+        .bg-grad-pink   { background: linear-gradient(135deg, var(--accent2), var(--accent1)); }
+        .bg-grad-cyan   { background: linear-gradient(135deg, var(--accent1), var(--accent2)); }
         .bg-grad-green  { background: linear-gradient(135deg, #10b981, #059669); }
         .bg-grad-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
@@ -939,6 +939,41 @@
             --gradient: linear-gradient(135deg, var(--accent1), var(--accent2));
             --nav-hover-bg: {{ $tenantColores['primario_rgba'] }};
         }
+
+        /* ── Recoloreado profesional del panel ────────────────────────── */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent1), var(--accent2)) !important;
+            border-color: var(--accent2) !important;
+        }
+        .btn-primary:hover { filter: brightness(1.08); }
+        .btn-outline-primary { color: var(--accent1) !important; border-color: var(--accent1) !important; }
+        .btn-outline-primary:hover { background: var(--accent1) !important; color: #fff !important; }
+        .text-primary { color: var(--accent1) !important; }
+        .bg-primary { background: var(--accent1) !important; }
+        .nav-link.active { color: var(--accent3) !important; }
+        .badge-count { background: var(--accent1) !important; }
+        .form-check-input:checked {
+            background-color: var(--accent1) !important;
+            border-color: var(--accent1) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent1) !important;
+            box-shadow: 0 0 0 3px var(--nav-hover-bg) !important;
+        }
+        .page-link { color: var(--accent1) !important; }
+        .page-item.active .page-link {
+            background: var(--accent1) !important;
+            border-color: var(--accent1) !important;
+        }
+
+        /* KPI cards, cajas de cajero y stock con el gradiente de marca */
+        .bg-grad-purple, .bg-grad-cyan, .bg-grad-green, .bg-grad-orange, .bg-grad-pink {
+            background: linear-gradient(135deg, var(--accent1), var(--accent2)) !important;
+        }
+        .bg-grad-pink, .bg-grad-orange {
+            background: linear-gradient(135deg, var(--accent2), var(--accent1)) !important;
+        }
+        .kpi-icon { background: rgba(255,255,255,.22) !important; }
     </style>
     @endif
 
