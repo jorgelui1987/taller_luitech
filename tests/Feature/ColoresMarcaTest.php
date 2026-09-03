@@ -166,4 +166,18 @@ class ColoresMarcaTest extends TestCase
             ->assertSee('#FF6600', false)
             ->assertSee('--accent1', false);
     }
+
+    public function test_vista_configuracion_renderiza_con_las_tarjetas_nuevas(): void
+    {
+        [$tenant, $admin] = $this->crearEmpresa();
+        $this->actingAs($admin);
+
+        $this->get(route('configuracion.index'))
+            ->assertOk()
+            ->assertSee('Colores de mi empresa')
+            ->assertSee('Mensajes de WhatsApp')
+            ->assertSee('Promociones para la pantalla TV')
+            // Las tarjetas viven dentro de sus pestañas
+            ->assertSee('tab-publicidad', false);
+    }
 }
