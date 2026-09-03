@@ -47,8 +47,11 @@
         </button>
     </li>
     <li class="nav-item">
-                <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-colores" type="button" role="tab">
-                    <i class="fas fa-palette me-1" style="color:var(--accent1);"></i> Colores
+        <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-colores" type="button" role="tab">
+            <i class="fas fa-palette me-1" style="color:var(--accent1);"></i> Colores
+        </button>
+    </li>
+    <li class="nav-item">
         <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-sistema" type="button" role="tab">
             <i class="fas fa-cog me-1" style="color:#10b981;"></i> Sistema
         </button>
@@ -815,8 +818,8 @@
                 </div>
                 <span style="font-size:12px;color:#6b7280;">Vista previa →</span>
                 <button type="button" id="previewBtn1" class="btn btn-sm"
-                        style="background:linear-gradient(135deg,{{ $colores['primario'] }},{{ $colores['secundario'] }});
-                               color:#fff;border-radius:10px;">Botón principal</button>
+                        style="background:linear-gradient(135deg,{{ $colores['primario_puro'] }},{{ $colores['secundario_puro'] }});
+                               color:{{ $colores['texto_sobre_primario'] }};border-radius:10px;">Botón principal</button>
                 <button type="button" id="previewBtn2" class="btn btn-sm"
                         style="background:{{ $colores['primario_rgba'] }};color:{{ $colores['primario'] }};
                                border-radius:10px;">Elemento activo</button>
@@ -834,12 +837,42 @@
             var previewBtn1  = document.getElementById('previewBtn1');
             var previewBtn2  = document.getElementById('previewBtn2');
 
+            // ── Contraste automático (mismas reglas que el servidor) ──────
+            function luminanciaHex(hex) {
+                var h = hex.replace('#', '');
+                if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+                var f = function (c) {
+                    c = parseInt(c, 16) / 255;
+                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                };
+                return 0.2126 * f(h.substr(0,2)) + 0.7152 * f(h.substr(2,2)) + 0.0722 * f(h.substr(4,2));
+            }
+            function textoSobre(hex) { return luminanciaHex(hex) > 0.45 ? '#0f172a' : '#ffffff'; }
+            function oscurecerHex(hex, factor) {
+                var h = hex.replace('#', '');
+                if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+                var f = 1 - factor;
+                var r = Math.round(parseInt(h.substr(0,2),16) * f),
+                    g = Math.round(parseInt(h.substr(2,2),16) * f),
+                    b = Math.round(parseInt(h.substr(4,2),16) * f);
+                return '#' + ('0'+r.toString(16)).slice(-2) + ('0'+g.toString(16)).slice(-2) + ('0'+b.toString(16)).slice(-2);
+            }
+            function hexLegible(hex) {
+                var factor = 0;
+                while (luminanciaHex(hex) > 0.45 && factor < 0.9) { factor += 0.15; hex = oscurecerHex(hex, 0.15); }
+                return hex;
+            }
+
             function actualizarPreviewColores() {
-                var p = cpPrimario.value, s = cpSecundario.value;
-                previewChip.style.background = 'linear-gradient(135deg,' + p + ',' + s + ')';
-                previewBtn1.style.background = 'linear-gradient(135deg,' + p + ',' + s + ')';
-                previewBtn2.style.background = p + '26';
-                previewBtn2.style.color = p;
+                var puroP = cpPrimario.value, puroS = cpSecundario.value;
+                var legibleP = hexLegible(puroP);
+                var texto = textoSobre(puroP);
+
+                previewChip.style.background = 'linear-gradient(135deg,' + puroP + ',' + puroS + ')';
+                previewBtn1.style.background = 'linear-gradient(135deg,' + puroP + ',' + puroS + ')';
+                previewBtn1.style.color = texto;
+                previewBtn2.style.background = legibleP + '26';
+                previewBtn2.style.color = legibleP;
             }
 
             cpPrimario.addEventListener('input', actualizarPreviewColores);
