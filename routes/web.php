@@ -121,13 +121,34 @@ Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook'])
 if (!function_exists('brandingPlataforma')) {
     function brandingPlataforma(): object
     {
-        return (object) [
-            'nombre_tienda' => env('PLATFORM_BRAND_NAME', 'LUITECH'),
-            'direccion'     => env('PLATFORM_DIRECCION', "Bernardo O'Higgins 564, La Serena"),
-            'telefono'      => env('PLATFORM_TELEFONO', '+56 9 8220 9690'),
-            'email'         => env('PLATFORM_EMAIL', 'contacto@luitech.cl'),
-            'logo'          => null,
-        ];
+        return new class {
+            public string $nombre_tienda;
+            public ?string $direccion;
+            public ?string $telefono;
+            public ?string $email;
+            public ?string $logo;
+
+            public function __construct()
+            {
+                $this->nombre_tienda = env('PLATFORM_BRAND_NAME', 'LUITECH');
+                $this->direccion     = env('PLATFORM_DIRECCION', "Bernardo O'Higgins 564, La Serena");
+                $this->telefono      = env('PLATFORM_TELEFONO', '+56 9 8220 9690');
+                $this->email         = env('PLATFORM_EMAIL', 'contacto@luitech.cl');
+                $this->logo          = null;
+            }
+
+            // Cualquier otra propiedad que una vista pida devuelve null
+            // (evita "Undefined property" → 500 en producción)
+            public function __get($name)
+            {
+                return null;
+            }
+
+            public function __isset($name)
+            {
+                return false;
+            }
+        };
     }
 }
 
