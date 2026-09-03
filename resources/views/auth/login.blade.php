@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión — CRM Tienda Celulares</title>
+@php
+    $tenantLogin  = request()->get('tenant') ?? \App\Models\Tenant::current();
+    $loginColores = $tenantLogin?->colores() ?? ['primario' => '#0891b2', 'secundario' => '#3b82f6', 'primario_rgba' => 'rgba(8,145,178,.18)'];
+    $loginLogo    = $tenantLogin?->logo;
+    $loginNombre  = $tenantLogin?->empresa ?? 'CRM Tienda Celulares';
+@endphp
+    <title>Iniciar Sesión — {{ $loginNombre }}</title>
+    <link rel="icon" type="image/png" href="{{ $loginLogo ? route('storage.serve', ['path' => preg_replace('#^storage/#', '', ltrim($loginLogo, '/'))]) : asset('logo-luitech.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -227,15 +234,31 @@
             .login-right { border-radius: 24px; }
         }
     </style>
+    {{-- Colores de marca del taller (si el acceso es por su propio subdominio) --}}
+    <style>
+        .login-left { background: linear-gradient(135deg, {{ $loginColores['primario'] }}, {{ $loginColores['secundario'] }}); }
+        .form-control:focus { border-color: {{ $loginColores['primario'] }}; box-shadow: 0 0 0 3px {{ $loginColores['primario_rgba'] }}; }
+        .input-group:focus-within .input-group-text { border-color: {{ $loginColores['primario'] }}; }
+        .btn-login { background: linear-gradient(135deg, {{ $loginColores['primario'] }}, {{ $loginColores['secundario'] }}); }
+        .form-check-input:checked { background-color: {{ $loginColores['primario'] }}; border-color: {{ $loginColores['primario'] }}; }
+        .text-accent { color: {{ $loginColores['primario'] }}; }
+        .text-accent:hover { color: {{ $loginColores['secundario'] }}; }
+    </style>
 </head>
 <body>
     <div class="login-container">
         <!-- Lado izquierdo -->
         <div class="login-left">
             <div class="brand">
-                <div class="brand-icon"><i class="fas fa-mobile-alt"></i></div>
+                @if($loginLogo)
+                    <img src="{{ route('storage.serve', ['path' => preg_replace('#^storage/#', '', ltrim($loginLogo, '/'))]) }}"
+                         alt="{{ $loginNombre }}"
+                         style="width:52px;height:52px;border-radius:14px;object-fit:cover;background:rgba(255,255,255,.25);">
+                @else
+                    <div class="brand-icon"><i class="fas fa-mobile-alt"></i></div>
+                @endif
                 <div class="brand-text">
-                    <h1>CRM Celulares</h1>
+                    <h1>{{ $loginNombre }}</h1>
                     <p>Sistema de Gestión Integral</p>
                 </div>
             </div>

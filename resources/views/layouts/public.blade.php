@@ -7,8 +7,9 @@
     <title>@yield('title', 'Consulta tu reparación') — {{ $empresa->nombre_tienda ?? 'Luitech' }}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('logo-luitech.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('logo-luitech.png') }}">
+    @php $faviconPublico = ($tenant->logo ?? null); @endphp
+    <link rel="icon" type="image/png" href="{{ $faviconPublico ? route('storage.serve', ['path' => preg_replace('#^storage/#', '', ltrim($faviconPublico, '/'))]) : asset('logo-luitech.png') }}">
+    <link rel="apple-touch-icon" href="{{ $faviconPublico ? route('storage.serve', ['path' => preg_replace('#^storage/#', '', ltrim($faviconPublico, '/'))]) : asset('logo-luitech.png') }}">
     <!-- Vista previa al compartir (Open Graph) -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ $empresa->nombre_tienda ?? 'LUITECH' }}">

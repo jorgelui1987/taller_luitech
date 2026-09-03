@@ -20,6 +20,10 @@
 
     // Una sola firma: priorizar la de entrega
     $firmaMostrar = $reparacion->firma_entrega ?: $reparacion->firma_recepcion;
+
+    // Colores de marca del taller (para el ticket)
+    $tMarca = $reparacion->tenant?->colores() ?? ['primario' => '#0891b2', 'secundario' => '#3b82f6'];
+    $marcaOscuro = \App\Models\Tenant::oscurecerHex($tMarca['primario'], 0.35);
 @endphp
 <!DOCTYPE html>
 <html lang="es">
@@ -42,15 +46,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:16px;dis
 .linea-corte .tijera{position:absolute;left:2mm;top:-9px;background:#525659;color:#ddd;font-size:12px;line-height:1;padding:0 2mm}
 
 /* ═══ ENCABEZADO ═══ */
-.encabezado{display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #1a1a1a;padding-bottom:2.5mm}
+.encabezado{display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid {{ $marcaOscuro }};padding-bottom:2.5mm}
 .logo{width:38mm;max-height:14mm;object-fit:contain}
 .tienda-bloque{text-align:left;margin-left:4mm}
 .tienda-nombre{font-size:15px;font-weight:800;color:#111}
 .fiscal-linea{font-size:8px;color:#444;line-height:1.35}
 .doc-bloque{text-align:right}
-.doc-tipo{display:inline-block;background:#1a1a1a;color:#fff;font-size:8px;font-weight:700;letter-spacing:2px;padding:1mm 4mm;border-radius:3px}
+.doc-tipo{display:inline-block;background:{{ $marcaOscuro }};color:#fff;font-size:8px;font-weight:700;letter-spacing:2px;padding:1mm 4mm;border-radius:3px}
 .doc-numero{font-size:16px;font-weight:800;margin-top:.5mm;letter-spacing:.5px}
-.ejemplar{display:inline-block;font-size:7px;font-weight:700;letter-spacing:1.5px;color:#1e3a5f;border:1px solid #1e3a5f;border-radius:3px;padding:.4mm 2mm;margin-top:1mm;text-transform:uppercase}
+.ejemplar{display:inline-block;font-size:7px;font-weight:700;letter-spacing:1.5px;color:{{ $marcaOscuro }};border:1px solid {{ $marcaOscuro }};border-radius:3px;padding:.4mm 2mm;margin-top:1mm;text-transform:uppercase}
 
 /* ═══ CUERPO EN 2 COLUMNAS ═══ */
 .cuerpo{display:flex;gap:5mm;flex:1;margin-top:2.5mm;min-height:0}
@@ -60,10 +64,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#525659;padding:16px;dis
 .datos-grid{font-size:8.5px;color:#333;margin-bottom:1.5mm;line-height:1.45}
 .datos-grid b{font-size:7px;text-transform:uppercase;color:#888;letter-spacing:.5px}
 
-.seccion{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#1e3a5f;margin-bottom:1mm;border-bottom:1px solid #dde1e6;padding-bottom:.8mm}
+.seccion{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:{{ $marcaOscuro }};margin-bottom:1mm;border-bottom:1px solid #dde1e6;padding-bottom:.8mm}
 
 table{width:100%;border-collapse:collapse;font-size:9px}
-th{background:#1e3a5f;color:#fff;text-align:left;padding:1.2mm 1.5mm;font-size:7px;text-transform:uppercase;letter-spacing:.5px}
+th{background:{{ $marcaOscuro }};color:#fff;text-align:left;padding:1.2mm 1.5mm;font-size:7px;text-transform:uppercase;letter-spacing:.5px}
 td{padding:1.2mm 1.5mm;border-bottom:.5px solid #e8eaed;vertical-align:top}
 td.lbl{font-size:7px;font-weight:700;text-transform:uppercase;color:#888;width:30%}
 td.val{font-weight:600}

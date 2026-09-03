@@ -189,6 +189,28 @@ class Tenant extends Model
     }
 
     /**
+     * Oscurece un color hex (para texto/bordes legibles sobre blanco).
+     * Factor 0.3 = 30% más oscuro. Formato inválido → color por defecto.
+     */
+    public static function oscurecerHex(string $hex, float $factor = 0.3): string
+    {
+        $hex = ltrim(trim($hex), '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+            $hex = '0891b2';
+        }
+
+        return sprintf(
+            '#%02x%02x%02x',
+            (int) max(0, round(hexdec(substr($hex, 0, 2)) * (1 - $factor))),
+            (int) max(0, round(hexdec(substr($hex, 2, 2)) * (1 - $factor))),
+            (int) max(0, round(hexdec(substr($hex, 4, 2)) * (1 - $factor)))
+        );
+    }
+
+    /**
      * Convierte #RRGGBB a rgba(r,g,b,alpha).
      * Formato inválido → color por defecto del tema Luitech.
      */

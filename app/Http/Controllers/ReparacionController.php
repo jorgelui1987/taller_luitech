@@ -392,7 +392,10 @@ class ReparacionController extends Controller
         $tenant = $reparacion->tenant;
         $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
 
-        return view('reparaciones.ticket', compact('reparacion', 'cupon', 'urlMiniWeb'));
+        return view('reparaciones.ticket', [
+            'reparacion' => $reparacion, 'cupon' => $cupon, 'urlMiniWeb' => $urlMiniWeb,
+            'coloresMarca' => $tenant?->colores() ?? [],
+        ]);
     }
 
     /**
@@ -407,7 +410,10 @@ class ReparacionController extends Controller
         $tenant = $reparacion->tenant;
         $urlMiniWeb = $tenant?->slug_publico ? url('/t/' . $tenant->slug_publico) : null;
 
-        return view('reparaciones.ticket-carta', compact('reparacion', 'urlMiniWeb'));
+        return view('reparaciones.ticket-carta', [
+            'reparacion' => $reparacion, 'urlMiniWeb' => $urlMiniWeb,
+            'coloresMarca' => $tenant?->colores() ?? [],
+        ]);
     }
 
     /**
