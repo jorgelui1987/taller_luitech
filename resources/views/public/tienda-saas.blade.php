@@ -38,7 +38,13 @@
 <i class="fa-solid fa-store"></i>
 @endif</div>
 <div><div class="bname" style="text-transform:uppercase">{{ $config->nombre_tienda ?? $tenant->empresa }}</div><div class="bsub">luitech.fun/t/{{ $tenant->slug_publico }}</div></div></div>
-<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<nav class="nav" style="margin-left:auto">
+<a href="#servicios">Servicios</a>
+<a href="#catalogo">Catálogo</a>
+<a href="#seguimiento">Seguimiento</a>
+<a href="#ubicacion">Ubicación</a>
+</nav>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center">
 @if(isset($promedio) && $promedio)
 <span class="chip"><i class="fa-solid fa-star"></i> {{ number_format($promedio,1) }}</span>
 @endif
@@ -89,9 +95,11 @@
 <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)"><i class="fa-solid fa-star" style="color:#fbbf24"></i> {{ number_format($promedio,1) }} en reseñas</div>
 @endif
 </div></div></section>
-<section class="sec"><div class="wrap"><div class="card">
-<h3 style="margin:0 0 4px"><i class="fa-solid fa-screwdriver-wrench" style="color:var(--cyan)"></i> Nuestros servicios</h3>
-<p style="color:var(--muted);font-size:13px;margin:0 0 16px">Reparación profesional con garantía</p>
+<section class="sec" id="servicios"><div class="wrap"><div class="card">
+<div class="sec-head">
+<h3><i class="fa-solid fa-screwdriver-wrench" style="color:var(--cyan)"></i> Nuestros servicios</h3>
+<p>Reparación profesional con garantía</p>
+</div>
 <div class="grid4">
 <div class="srv"><div class="ic" style="color:var(--cyan)"><i class="fa-solid fa-mobile-screen-button"></i></div><b>Cambio de pantalla</b><br><small>Todas las marcas · mismo día</small></div>
 <div class="srv"><div class="ic" style="color:var(--emerald)"><i class="fa-solid fa-battery-full"></i></div><b>Batería</b><br><small>Originales con garantía</small></div>
@@ -103,9 +111,11 @@
 @endif
 </div></div></section>
 @if(!empty($productos) && $productos->count() > 0)
-<section class="sec" style="padding-top:0"><div class="wrap"><div class="card">
-<h3 style="margin:0 0 4px"><i class="fa-solid fa-bag-shopping" style="color:var(--cyan)"></i> Catálogo</h3>
-<p style="color:var(--muted);font-size:13px;margin:0 0 16px">Stock real de la tienda · pide por WhatsApp</p>
+<section class="sec" id="catalogo" style="padding-top:0"><div class="wrap"><div class="card">
+<div class="sec-head">
+<h3><i class="fa-solid fa-bag-shopping" style="color:var(--cyan)"></i> Catálogo</h3>
+<p>Stock real de la tienda · pide por WhatsApp</p>
+</div>
 <div class="grid4">
 @foreach($productos as $prod)
 <div class="prod"><b style="font-size:14px">{{ $prod->nombre }}</b>
@@ -161,9 +171,11 @@ Lo que dicen los clientes</b>
 @endif
 <a class="btn btn-g" style="width:100%;justify-content:center" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Dejar mi reseña</a>
 </div></div></div></section>
-<section class="sec" style="padding-top:0"><div class="wrap"><div class="card">
-<h3 style="margin:0 0 4px"><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
-<p style="color:var(--muted);font-size:13px;margin:0 0 16px">Te esperamos en el local · también por WhatsApp</p>
+<section class="sec" id="ubicacion" style="padding-top:0"><div class="wrap"><div class="card">
+<div class="sec-head">
+<h3><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
+<p>Te esperamos en el local · también por WhatsApp</p>
+</div>
 <div class="grid2" style="align-items:stretch">
 <div style="background:rgba(2,6,23,.6);border:1px solid var(--border);border-radius:14px;padding:18px">
 @if($config->direccion)
