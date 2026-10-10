@@ -19,7 +19,13 @@
 @if(isset($promedio) && $promedio)
 <span class="chip"><i class="fa-solid fa-star"></i> {{ number_format($promedio,1) }}</span>
 @endif
-@if($config->horario_atencion)
+@if(!is_null($abiertoAhora ?? null))
+@if($abiertoAhora)
+<span class="chip"><span style="width:8px;height:8px;border-radius:50%;background:var(--emerald);display:inline-block"></span> Abierto ahora</span>
+@else
+<span class="chip"><span style="width:8px;height:8px;border-radius:50%;background:#f87171;display:inline-block"></span> Cerrado · te respondemos pronto</span>
+@endif
+@elseif($config->horario_atencion)
 <span class="chip"><span style="width:8px;height:8px;border-radius:50%;background:var(--emerald);display:inline-block"></span> {{ $config->horario_atencion }}</span>
 @endif
 </div></div></header>
@@ -61,8 +67,8 @@
 <div class="srv"><div class="ic">💦</div><b>Placa / Agua</b><br><small>Diagnóstico gratis</small></div>
 <div class="srv"><div class="ic">🔓</div><b>Liberación</b><br><small>Todas las operadoras</small></div>
 </div>
-@if(!empty($whatsappUrl))
-<a class="btn btn-p" style="width:100%;justify-content:center;margin-top:16px" href="{{ $whatsappUrl }}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Cotizar mi reparación por WhatsApp</a>
+@if(!empty($whatsappServicio ?? $whatsappUrl))
+<a class="btn btn-p" style="width:100%;justify-content:center;margin-top:16px" href="{{ $whatsappServicio ?? $whatsappUrl }}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Cotizar mi reparación por WhatsApp</a>
 @endif
 </div></div></section>
 @if(!empty($productos) && $productos->count() > 0)
@@ -112,21 +118,35 @@ Lo que dicen los clientes</b>
 <h3 style="margin:0"><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
 <p style="color:var(--muted);font-size:13.5px">
 @if($config->direccion)
-{{ $config->direccion }} ·
+<i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> {{ $config->direccion }} ·
 @endif
 @if($config->horario_atencion)
-{{ $config->horario_atencion }} ·
+<i class="fa-solid fa-clock" style="color:var(--cyan)"></i> {{ $config->horario_atencion }} ·
 @endif
 @if($config->telefono)
-{{ $config->telefono }}
+<i class="fa-solid fa-phone" style="color:var(--cyan)"></i> {{ $config->telefono }}
 @endif
 </p>
-@if($config->mapa_url)
-<div style="position:relative"><iframe src="{{ $config->mapa_url }}" width="100%" height="230" style="border:0;border-radius:12px" loading="lazy"></iframe><a class="btn btn-p btn-sm" style="position:absolute;top:12px;right:12px" target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ urlencode(($config->direccion ?? '') . ' ' . ($config->nombre_tienda ?? '')) }}"><i class="fa-solid fa-route"></i> Cómo llegar</a></div>
+<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
+@if(!empty($mapaLink))
+<a class="btn btn-p btn-sm" target="_blank" href="{{ $mapaLink }}"><i class="fa-solid fa-route"></i> Cómo llegar</a>
+@endif
+@if(!empty($whatsappUrl))
+<a class="btn btn-wa btn-sm" target="_blank" href="{{ $whatsappUrl }}"><i class="fa-brands fa-whatsapp"></i> Escríbenos</a>
+@endif
+@if(!empty($telefonoLlamar))
+<a class="btn btn-g btn-sm" href="tel:+{{ $telefonoLlamar }}"><i class="fa-solid fa-phone"></i> Llamar</a>
+@endif
+</div>
+@if(!empty($mapaEmbed))
+<div style="position:relative"><iframe src="{{ $mapaEmbed }}" width="100%" height="230" style="border:0;border-radius:12px" loading="lazy"></iframe></div>
 @endif
 </div></div></section>
 <footer class="foot"><div class="wrap">© {{ date('Y') }} {{ $config->nombre_tienda ?? $tenant->empresa }} · Potenciado por LUITECH<br><small>luitech.fun/t/{{ $tenant->slug_publico }}</small></div></footer>
 @if(!empty($whatsappUrl))
-<a class="wa-float" href="{{ $whatsappUrl }}" target="_blank">💬</a>
+<a class="wa-float" href="{{ $whatsappUrl }}" target="_blank" title="Cotiza por WhatsApp">💬</a>
+@endif
+@if(!empty($telefonoLlamar))
+<a href="tel:+{{ $telefonoLlamar }}" title="Llamar a la tienda" style="position:fixed;bottom:88px;right:22px;width:56px;height:56px;border-radius:50%;background:#111c33;border:1px solid var(--border);color:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:22px;text-decoration:none;box-shadow:0 8px 24px rgba(2,6,23,.5);z-index:90;">📞</a>
 @endif
 </body></html>

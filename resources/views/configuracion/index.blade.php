@@ -706,10 +706,11 @@
                         <label for="mapa_url" class="form-label"><i class="fas fa-map-marker-alt me-1" style="color:#ef4444;"></i>Ubicación en Google Maps</label>
                         <input type="text" name="mapa_url" id="mapa_url" class="form-control" maxlength="1000"
                                value="{{ old('mapa_url', $empresa->mapa_url ?? '') }}"
-                               placeholder="Pega el link de Google Maps (ej: https://maps.app.goo.gl/...)">
+                               placeholder="Pega el link o el iframe de Google Maps">
                         <div class="form-text">
-                            Cómo obtenerlo: Abre Google Maps → busca tu dirección → clic en "Compartir" → "Copiar enlace".
-                            Se mostrará un mapa interactivo y un botón "Cómo llegar" en tu página pública.
+                            Opción 1 (mapa dentro de tu página): Google Maps → Compartir → <b>Incorporar un mapa</b> → Copiar HTML y pégalo aquí.<br>
+                            Opción 2 (solo botón Cómo llegar): Compartir → <b>Copiar enlace</b> (https://maps.app.goo.gl/...).<br>
+                            Si lo dejas vacío igual sale el botón Cómo llegar con tu dirección. El WhatsApp flotante usa tu número de la pestaña Empresa.
                         </div>
                     </div>
 

@@ -92,9 +92,54 @@ class ComboPublicidadController extends Controller
 
         // ── Link WhatsApp de la tienda (para pedir / contactar) ──
         $wspNumero = preg_replace('/\D/', '', (string) ($config->whatsapp ?? $config->telefono ?? ''));
-        $whatsappUrl = $wspNumero
-            ? 'https://wa.me/' . $wspNumero . '?text=' . urlencode('Hola ' . ($config->nombre_tienda ?? $tenant->empresa) . ', vi su página web y quiero información.')
-            : null;
+        $nombreT = $config->nombre_tienda ?? $tenant->empresa;
+        $waNum = function (string $msg) use ($wspNumero) {
+            return $wspNumero ? 'https://wa.me/' . $wspNumero . '?text=' . urlencode($msg) : null;
+        };
+        $whatsappUrl = $waNum('Hola ' . $nombreT . ', vi su página web y quiero información.');
+        $whatsappServicio = $waNum('Hola ' . $nombreT . ', quiero cotizar una reparación. ¿Me ayuda?');
+        $telefonoLlamar = preg_replace('/\D/', '', (string) ($config->telefono ?? $config->whatsapp ?? ''));
+
+        // ── Chip Abierto/Cerrado según horario "Lun-Sáb 9am-8pm" (best effort) ──
+        $abiertoAhora = null;
+        try {
+            $h = strtolower((string) ($config->horario_atencion ?? ''));
+            if ($h !== '' && preg_match('/(\d{1,2})\s*(am|pm)?\s*[-–a]\s*(\d{1,2})\s*(am|pm)?/i', $h, $m)) {
+                $a24 = function ($hh, $ampm) {
+                    $hh = (int) $hh;
+                    $ampm = strtolower((string) $ampm);
+                    if ($ampm === 'pm' && $hh < 12) $hh += 12;
+                    if ($ampm === 'am' && $hh == 12) $hh = 0;
+                    return $hh;
+                };
+                $hA = $a24($m[1], $m[2] ?: $m[4]);
+                $hC = $a24($m[3], $m[4] ?: $m[2]);
+                $hora = (int) now($config->zona_horaria ?? config('app.timezone'))->format('G');
+                $abiertoAhora = ($hA <= $hC) ? ($hora >= $hA && $hora < $hC) : ($hora >= $hA || $hora < $hC);
+            }
+        } catch (\Exception $e) {
+            $abiertoAhora = null;
+        }
+
+        // ── Mapa: acepta iframe completo o URL de Google Maps ──
+        $mapaEmbed = null;
+        $mapaLink = null;
+        try {
+            $rawMapa = trim((string) ($config->mapa_url ?? ''));
+            if ($rawMapa !== '') {
+                if (stripos($rawMapa, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $rawMapa, $mm)) {
+                    $mapaEmbed = $mm[1];
+                } elseif (preg_match('#^https?://#i', $rawMapa)) {
+                    $mapaEmbed = $rawMapa;
+                }
+                $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode(trim(($config->direccion ?? '') . ' ' . $nombreT));
+            } elseif (!empty($config->direccion)) {
+                $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($config->direccion . ' ' . $nombreT);
+            }
+        } catch (\Exception $e) {
+            $mapaEmbed = null;
+            $mapaLink = null;
+        }
 
         // ── Redes sociales normalizadas ──
         $normRed = function ($v) {
@@ -112,6 +157,8 @@ class ComboPublicidadController extends Controller
             'promedio' => $promedio, 'cupones' => $cupones, 'logoSrc' => $logoSrc,
             'coloresMarca' => $tenant->colores(),
             'productos' => $productos, 'whatsappUrl' => $whatsappUrl,
+            'whatsappServicio' => $whatsappServicio, 'telefonoLlamar' => $telefonoLlamar,
+            'abiertoAhora' => $abiertoAhora, 'mapaEmbed' => $mapaEmbed, 'mapaLink' => $mapaLink,
             'instagramUrl' => $instagramUrl, 'facebookUrl' => $facebookUrl, 'tiktokUrl' => $tiktokUrl,
         ]);
     }
