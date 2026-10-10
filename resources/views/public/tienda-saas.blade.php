@@ -5,34 +5,7 @@
 <title>{{ $config->nombre_tienda ?? $tenant->empresa ?? 'Tienda' }}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
-:root{--bg:#0f172a;--deep:#020617;--card:rgba(2,6,23,.72);--border:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--cyan:#22d3ee;--emerald:#34d399;--grad:linear-gradient(135deg,#06b6d4,#3b82f6);}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
-.wrap{max-width:1150px;margin:0 auto;padding:0 20px}
-.top{position:sticky;top:0;z-index:50;background:rgba(2,6,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
-.top-in{height:66px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;overflow:hidden}.logo img{width:100%;height:100%;object-fit:cover}
-.bname{font-weight:800;letter-spacing:.06em}.bsub{font-size:11px;color:var(--muted)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:12px;font-weight:700;font-size:14px;border:1px solid transparent;text-decoration:none;cursor:pointer}
-.btn-p{background:var(--grad);color:#fff}.btn-g{background:#111c33;border-color:var(--border);color:#e2e8f0}.btn-wa{background:#25d366;color:#fff}
-.hero{padding:52px 0 40px;background:radial-gradient(ellipse 70% 60% at 50% -10%,rgba(6,182,212,.16),transparent 60%),var(--bg);}
-.chip{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--cyan);background:#12203a;border:1px solid #27405f;padding:6px 14px;border-radius:999px}
-.h1{font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.1;margin:16px 0 10px}.h1 span{background:linear-gradient(90deg,#22d3ee,#3b82f6);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{color:var(--muted);font-size:15px;line-height:1.6;max-width:620px}
-.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
-.sec{padding:26px 0}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@@media(max-width:900px){.grid4{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
-.srv{background:rgba(2,6,23,.6);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center}
-.srv .ic{font-size:28px;margin-bottom:8px}.srv b{font-size:14px}.srv small{color:var(--muted);font-size:12px}
-.prod{background:rgba(2,6,23,.6);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
-.price{color:var(--cyan);font-weight:900;font-size:20px}.stock{color:var(--emerald);font-size:12px;font-weight:700}
-.cupon{border:1.5px dashed var(--emerald);background:rgba(6,78,59,.25);border-radius:14px;padding:16px;text-align:center}
-.stars{color:#fbbf24;letter-spacing:2px;font-size:13px}
-input.in{width:100%;max-width:280px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#0a1120;color:#fff}
-.foot{border-top:1px solid var(--border);background:var(--deep);padding:28px 0;margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
-.wa-float{position:fixed;bottom:22px;right:22px;width:56px;height:56px;border-radius:50%;background:#25d366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;text-decoration:none;box-shadow:0 8px 24px rgba(37,211,102,.45);z-index:90}
-</style>
+<link href="{{ asset('css/tienda-saas.css') }}?v=20261010a" rel="stylesheet">
 </head>
 <body>
 <header class="top"><div class="wrap top-in">
