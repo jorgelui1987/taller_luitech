@@ -96,11 +96,23 @@ class ComboPublicidadController extends Controller
             ? 'https://wa.me/' . $wspNumero . '?text=' . urlencode('Hola ' . ($config->nombre_tienda ?? $tenant->empresa) . ', vi su página web y quiero información.')
             : null;
 
-        return view('public.tienda', [
+        // ── Redes sociales normalizadas ──
+        $normRed = function ($v) {
+            $v = trim((string) ($v ?? ''));
+            if ($v === '') return null;
+            if (preg_match('#^https?://#i', $v)) return $v;
+            return 'https://' . ltrim($v, '/');
+        };
+        $instagramUrl = $normRed($config->instagram ?? null);
+        $facebookUrl = $normRed($config->facebook ?? null);
+        $tiktokUrl = $normRed($config->tiktok ?? null);
+
+        return view('public.tienda-saas', [
             'tenant' => $tenant, 'config' => $config, 'resenas' => $resenas,
             'promedio' => $promedio, 'cupones' => $cupones, 'logoSrc' => $logoSrc,
             'coloresMarca' => $tenant->colores(),
             'productos' => $productos, 'whatsappUrl' => $whatsappUrl,
+            'instagramUrl' => $instagramUrl, 'facebookUrl' => $facebookUrl, 'tiktokUrl' => $tiktokUrl,
         ]);
     }
 
