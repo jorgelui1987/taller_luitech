@@ -84,8 +84,8 @@
 <section class="sec" id="seguimiento" style="padding-top:0"><div class="wrap"><div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(59,130,246,.10)),var(--card)">
 <h3 style="margin:0"><i class="fa-solid fa-magnifying-glass" style="color:var(--cyan)"></i> ¿Dejaste tu equipo en reparación?</h3>
 <p style="color:var(--muted);font-size:13.5px">Ingresa tu código de boleta · ej: RPT-000002</p>
-<form method="GET" action="{{ route('buscar.orden') }}" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-<input class="in" type="text" name="codigo" placeholder="RPT-000002" required>
+<form method="GET" action="{{ route('reparaciones.public-status.buscar') }}" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+<input class="in" type="text" name="numero_orden" placeholder="RPT-000002" required>
 <button class="btn btn-p" type="submit">Consultar estado</button>
 </form>
 <p style="color:var(--muted);font-size:12px">O escanea el QR de tu boleta 📷</p>
