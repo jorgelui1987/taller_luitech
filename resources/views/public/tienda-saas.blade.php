@@ -125,12 +125,26 @@ Lo que dicen los clientes</b>
 @if(!empty($config->referencia_ubicacion ?? null))
 <p style="font-size:13px;color:var(--muted);margin:0 0 8px"><i class="fa-solid fa-signs-post"></i> {{ $config->referencia_ubicacion }}</p>
 @endif
+@php
+    // Fallback: si el controlador no pasó mapa (servidor sin pull), generarlo aquí con la dirección
+    if (empty($mapaEmbed ?? null) && !empty($config->direccion)) {
+        $mapaEmbed = 'https://www.google.com/maps?q=' . urlencode(trim(($config->direccion ?? '') . ' ' . ($config->nombre_tienda ?? $tenant->empresa ?? ''))) . '&output=embed';
+    }
+    if (empty($mapaLink ?? null) && !empty($config->direccion)) {
+        $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode(trim(($config->direccion ?? '') . ' ' . ($config->nombre_tienda ?? $tenant->empresa ?? '')));
+    }
+@endphp
 @if($config->horario_atencion)
 <p style="font-size:13.5px;margin:0 0 8px"><i class="fa-solid fa-clock" style="color:var(--cyan)"></i> {{ $config->horario_atencion }}</p>
 @endif
 @if($config->telefono)
 <p style="font-size:13.5px;margin:0 0 14px"><i class="fa-solid fa-phone" style="color:var(--cyan)"></i> {{ $config->telefono }}</p>
 @endif
+@php
+    if (empty($telefonoLlamar ?? null) && !empty($config->telefono ?? null)) {
+        $telefonoLlamar = preg_replace('/\D/', '', (string) $config->telefono);
+    }
+@endphp
 <div style="display:flex;gap:10px;flex-wrap:wrap">
 @if(!empty($mapaLink))
 <a class="btn btn-p btn-sm" target="_blank" href="{{ $mapaLink }}"><i class="fa-solid fa-route"></i> Cómo llegar</a>
