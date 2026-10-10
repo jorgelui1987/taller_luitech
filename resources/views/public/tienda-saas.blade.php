@@ -114,20 +114,24 @@ Lo que dicen los clientes</b>
 @endforeach
 <a class="btn btn-g" style="width:100%;justify-content:center" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Dejar mi reseña</a>
 </div></div></div></section>
-<section class="sec" style="padding-top:0"><div class="wrap"><div class="card" style="text-align:center">
-<h3 style="margin:0"><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
-<p style="color:var(--muted);font-size:13.5px">
+<section class="sec" style="padding-top:0"><div class="wrap"><div class="card">
+<h3 style="margin:0 0 4px"><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
+<p style="color:var(--muted);font-size:13px;margin:0 0 16px">Te esperamos en el local · también por WhatsApp</p>
+<div class="grid2" style="align-items:stretch">
+<div style="background:rgba(2,6,23,.6);border:1px solid var(--border);border-radius:14px;padding:18px">
 @if($config->direccion)
-<i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> {{ $config->direccion }} ·
+<p style="font-size:14px;margin:0 0 8px"><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> <b>{{ $config->direccion }}</b></p>
+@endif
+@if(!empty($config->referencia_ubicacion ?? null))
+<p style="font-size:13px;color:var(--muted);margin:0 0 8px"><i class="fa-solid fa-signs-post"></i> {{ $config->referencia_ubicacion }}</p>
 @endif
 @if($config->horario_atencion)
-<i class="fa-solid fa-clock" style="color:var(--cyan)"></i> {{ $config->horario_atencion }} ·
+<p style="font-size:13.5px;margin:0 0 8px"><i class="fa-solid fa-clock" style="color:var(--cyan)"></i> {{ $config->horario_atencion }}</p>
 @endif
 @if($config->telefono)
-<i class="fa-solid fa-phone" style="color:var(--cyan)"></i> {{ $config->telefono }}
+<p style="font-size:13.5px;margin:0 0 14px"><i class="fa-solid fa-phone" style="color:var(--cyan)"></i> {{ $config->telefono }}</p>
 @endif
-</p>
-<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
+<div style="display:flex;gap:10px;flex-wrap:wrap">
 @if(!empty($mapaLink))
 <a class="btn btn-p btn-sm" target="_blank" href="{{ $mapaLink }}"><i class="fa-solid fa-route"></i> Cómo llegar</a>
 @endif
@@ -138,9 +142,15 @@ Lo que dicen los clientes</b>
 <a class="btn btn-g btn-sm" href="tel:+{{ $telefonoLlamar }}"><i class="fa-solid fa-phone"></i> Llamar</a>
 @endif
 </div>
+</div>
+<div style="background:rgba(2,6,23,.6);border:1px solid var(--border);border-radius:14px;overflow:hidden;min-height:230px">
 @if(!empty($mapaEmbed))
-<div style="position:relative"><iframe src="{{ $mapaEmbed }}" width="100%" height="230" style="border:0;border-radius:12px" loading="lazy"></iframe></div>
+<iframe src="{{ $mapaEmbed }}" width="100%" height="100%" style="border:0;min-height:230px;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+@else
+<div style="padding:40px 20px;text-align:center;color:var(--muted);font-size:13px">Agrega tu dirección en Configuración para ver el mapa aquí.</div>
 @endif
+</div>
+</div>
 </div></div></section>
 <footer class="foot"><div class="wrap">© {{ date('Y') }} {{ $config->nombre_tienda ?? $tenant->empresa }} · Potenciado por LUITECH<br><small>luitech.fun/t/{{ $tenant->slug_publico }}</small></div></footer>
 @if(!empty($whatsappUrl))

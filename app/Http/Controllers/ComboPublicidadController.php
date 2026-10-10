@@ -121,20 +121,31 @@ class ComboPublicidadController extends Controller
             $abiertoAhora = null;
         }
 
-        // ── Mapa: acepta iframe completo o URL de Google Maps ──
+        // ── Mapa: acepta iframe completo, URL embed, link corto o solo dirección ──
+        // Google NO permite incrustar links cortos (maps.app.goo.gl) ni links de
+        // compartir (/maps/place). Para el iframe usamos SIEMPRE el embed por
+        // dirección: https://www.google.com/maps?q=...&output=embed (no pide API key).
+        // El botón "Cómo llegar" sí usa el link pegado si existe, si no la dirección.
         $mapaEmbed = null;
         $mapaLink = null;
         try {
             $rawMapa = trim((string) ($config->mapa_url ?? ''));
+            $queryDir = trim(($config->direccion ?? '') . ' ' . $nombreT);
             if ($rawMapa !== '') {
                 if (stripos($rawMapa, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $rawMapa, $mm)) {
                     $mapaEmbed = $mm[1];
+                    $mapaLink = $mm[1];
                 } elseif (preg_match('#^https?://#i', $rawMapa)) {
-                    $mapaEmbed = $rawMapa;
+                    // Cualquier URL pegada sirve para el botón Cómo llegar
+                    $mapaLink = $rawMapa;
                 }
-                $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode(trim(($config->direccion ?? '') . ' ' . $nombreT));
-            } elseif (!empty($config->direccion)) {
-                $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($config->direccion . ' ' . $nombreT);
+            }
+            // Embed automático por dirección (funciona sin iframe y sin API key)
+            if ($queryDir !== '') {
+                $mapaEmbed = 'https://www.google.com/maps?q=' . urlencode($queryDir) . '&output=embed';
+                if (!$mapaLink) {
+                    $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($queryDir);
+                }
             }
         } catch (\Exception $e) {
             $mapaEmbed = null;

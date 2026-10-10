@@ -42,6 +42,7 @@ class Configuracion extends Model
         'tiktok',
         'horario_atencion',
         'mapa_url',
+        'referencia_ubicacion',
         'descripcion_corta',
         'pagina_publica_activa',
         'cupon_automatico_al_entregar',

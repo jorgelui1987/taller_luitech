@@ -704,14 +704,22 @@
 
                     <div class="mb-3">
                         <label for="mapa_url" class="form-label"><i class="fas fa-map-marker-alt me-1" style="color:#ef4444;"></i>Ubicación en Google Maps</label>
-                        <input type="text" name="mapa_url" id="mapa_url" class="form-control" maxlength="1000"
+                        <input type="text" name="mapa_url" id="mapa_url" class="form-control" maxlength="2000"
                                value="{{ old('mapa_url', $empresa->mapa_url ?? '') }}"
-                               placeholder="Pega el link o el iframe de Google Maps">
+                               placeholder="Pega el link o el iframe de Google Maps (opcional)">
                         <div class="form-text">
-                            Opción 1 (mapa dentro de tu página): Google Maps → Compartir → <b>Incorporar un mapa</b> → Copiar HTML y pégalo aquí.<br>
-                            Opción 2 (solo botón Cómo llegar): Compartir → <b>Copiar enlace</b> (https://maps.app.goo.gl/...).<br>
-                            Si lo dejas vacío igual sale el botón Cómo llegar con tu dirección. El WhatsApp flotante usa tu número de la pestaña Empresa.
+                            El mapa se genera solo con tu <b>Dirección</b> de la pestaña Empresa (ej: cll ohoggins 564, La Serena).<br>
+                            Si pegas un link aquí, el botón <b>Cómo llegar</b> abrirá ese link exacto.<br>
+                            Para mapa exacto puerta a puerta: Google Maps → Compartir → <b>Incorporar un mapa</b> → pega el HTML aquí.
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="referencia_ubicacion" class="form-label"><i class="fas fa-signs-post me-1" style="color:#0891b2;"></i>Referencia de ubicación</label>
+                        <input type="text" name="referencia_ubicacion" id="referencia_ubicacion" class="form-control" maxlength="500"
+                               value="{{ old('referencia_ubicacion', $empresa->referencia_ubicacion ?? '') }}"
+                               placeholder="Ej: Frente al mercado, al lado de la farmacia, 2do piso">
+                        <div class="form-text">Se muestra debajo de tu dirección en tu página pública.</div>
                     </div>
 
                     <div class="row g-2 mb-3">
