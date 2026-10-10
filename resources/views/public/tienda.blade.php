@@ -623,8 +623,16 @@
             @if($config->telefono)
                 <p class="small mb-1">{{ $config->telefono }}</p>
             @endif
+            @if($config->horario_atencion)
+                <p class="small mb-1">{{ $config->horario_atencion }}</p>
+            @endif
             <p class="small mb-0 mt-3">© {{ date('Y') }} {{ $config->nombre_tienda ?? $tenant->empresa ?? 'Mi Tienda' }}. Todos los derechos reservados.</p>
+            <p class="small mb-0 mt-1" style="opacity:.6;">Potenciado por LUITECH · {{ url('/t/' . $tenant->slug_publico) }}</p>
         </div>
     </footer>
+    @if(!empty($whatsappUrl ?? null))
+    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener" title="Escríbenos por WhatsApp"
+       style="position:fixed;bottom:20px;right:20px;background:#25D366;color:#fff;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 6px 20px rgba(0,0,0,.3);z-index:99;text-decoration:none;">💬</a>
+    @endif
 </body>
 </html>

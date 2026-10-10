@@ -22,11 +22,22 @@
 @endif
 
 <!-- ── Header ── -->
-<div class="d-flex align-items-center justify-content-between mb-4">
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
     <div>
         <h4 class="fw-bold mb-1" style="color:#0f172a;">Configuración del Sistema</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Gestión de la empresa, usuarios y parámetros generales</p>
     </div>
+    @php $urlMiPaginaConf = auth()->user()->tenant?->url_publica; @endphp
+    @if($urlMiPaginaConf)
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ $urlMiPaginaConf }}" target="_blank" rel="noopener" class="btn btn-sm" style="font-weight:700;background:linear-gradient(135deg,#0891b2,#3b82f6);color:#fff;border-radius:10px;">
+            <i class="fas fa-globe me-1"></i> Ver mi página web
+        </a>
+        <button type="button" class="btn btn-sm btn-outline-primary" style="font-weight:700;border-radius:10px;" onclick="navigator.clipboard.writeText('{{ $urlMiPaginaConf }}');this.innerHTML='<i class=&quot;fas fa-check me-1&quot;></i> ¡Copiado!';">
+            <i class="fas fa-link me-1"></i> Copiar link
+        </button>
+    </div>
+    @endif
 </div>
 
 <!-- ══════════ PESTAÑAS DE CONFIGURACIÓN ══════════ -->

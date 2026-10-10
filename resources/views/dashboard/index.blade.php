@@ -60,6 +60,19 @@
             </a>
         </div>
         @endif
+        @php $urlMiPaginaDash = auth()->user()->tenant?->url_publica; @endphp
+        @if($urlMiPaginaDash)
+        <div class="col-6 col-md-3">
+            <a href="{{ $urlMiPaginaDash }}" target="_blank" rel="noopener" class="btn w-100 py-2" style="font-weight:700;background:linear-gradient(135deg,#0891b2,#3b82f6);color:#fff;">
+                <i class="fas fa-globe me-1"></i> Ver mi página web
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <button type="button" class="btn btn-outline-primary w-100 py-2" style="font-weight:700;" onclick="navigator.clipboard.writeText('{{ $urlMiPaginaDash }}');this.innerHTML='<i class=&quot;fas fa-check me-1&quot;></i> ¡Copiado!';setTimeout(()=>this.innerHTML='<i class=&quot;fas fa-link me-1&quot;></i> Copiar link',1500);">
+                <i class="fas fa-link me-1"></i> Copiar link
+            </button>
+        </div>
+        @endif
     </div>
 </div>
 
