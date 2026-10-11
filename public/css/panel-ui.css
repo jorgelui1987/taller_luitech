@@ -29,8 +29,8 @@ a.ui-acc:hover{color:#0f172a;box-shadow:0 4px 14px rgba(0,0,0,.1);}
 .ui-met-bar i{display:block;height:100%;border-radius:99px;}
 .ui-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;}
 /* ── Bloques horizontales st (mismo diseño que Reparaciones edit) ── */
-.st-block{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-.st-head{border-bottom:1px solid #f1f5f9;padding-bottom:12px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.st-block{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.st-head{border-bottom:1px solid #f1f5f9;padding-bottom:8px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .st-dot{width:12px;height:12px;border-radius:50%;flex:none;}
 .st-head h2{font-size:16px;font-weight:700;color:#0f172a;margin:0;}
 .st-label{font-size:13px;font-weight:600;color:#334155;margin-bottom:4px;display:block;}

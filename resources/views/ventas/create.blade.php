@@ -6,10 +6,9 @@
 @endsection
 @section('content')
 <div class="container-fluid px-1">
-    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
         <div>
-            <h5 class="fw-bold mb-1">Registrar Venta</h5>
-            <p class="text-muted mb-0" style="font-size:13px;">Agrega productos y completa los datos</p>
+            <h5 class="fw-bold mb-0">Registrar Venta</h5>
         </div>
         <a href="{{ route('ventas.index') }}" class="btn btn-outline-secondary btn-sm">Ver Ventas</a>
     </div>
@@ -25,44 +24,45 @@
     @endif
     <form action="{{ route('ventas.store') }}" method="POST">
         @csrf
-        <div class="row g-3 align-items-start">
-            <div class="col-lg-8">
-                <x-st-block color="#0284c7" titulo="1. Cliente">
+        <div class="row g-2 align-items-start">
+            <div class="col-xl-7 col-lg-8">
+                <x-st-block color="#0284c7" titulo="1. Cliente + Productos">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
                     <x-st-select label="Cliente (opcional)" name="cliente_id">
                         <option value="">— Sin cliente (venta general) —</option>
                         @foreach($clientes as $c)
                             <option value="{{ $c->id }}">{{ $c->nombre_completo }} — {{ $c->telefono }}</option>
                         @endforeach
                     </x-st-select>
-                </x-st-block>
-                <x-st-block color="#6366f1" titulo="2. Productos">
-                    <span class="st-label d-block">Buscar</span>
-                        <div class="row g-2 align-items-end">
-                            <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
                                     <label for="buscador" class="visually-hidden">Buscar producto</label>
-                                    <input type="text" id="buscador" class="form-control" placeholder="Por nombre o código" oninput="filtrar()">
+                                    <input type="text" id="buscador" class="form-control form-control-sm" placeholder="Buscar producto..." oninput="filtrar()">
                                 </div>
-                            </div>
-                            <div class="col-md-4">
+                        </div>
+                        <div class="col-md-3">
                                 <label for="selectProd" class="visually-hidden">Seleccionar producto</label>
-                                <select id="selectProd" class="form-select">
+                                <select id="selectProd" class="form-select form-select-sm">
                                     <option value="">— Seleccionar —</option>
                                         @foreach($productos as $p)
                                             <option value="{{ $p->id }}" data-precio="{{ $p->precio_venta }}" data-stock="{{ $p->stock }}" data-codigo="{{ $p->codigo }}" data-codigo_barras="{{ $p->codigo_barras ?? '' }}">{{ $p->nombre }} ({{ $p->stock }})</option>
                                         @endforeach
                                 </select>
-                            </div>
-                            <div class="col-md-4">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-end mt-1">
+                            <div class="col-md-6">
                                 <label for="codBarras" class="visually-hidden">Código de barras</label>
-                                <input type="text" id="codBarras" class="form-control" placeholder="Escanear código..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
+                                <input type="text" id="codBarras" class="form-control form-control-sm" placeholder="Escanear código + Enter..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
                             </div>
-                            <div class="col-md-1">
-                                <button type="button" class="btn ui-btn-brand w-100" onclick="agregar()" title="Agregar"><i class="fas fa-plus"></i></button>
+                            <div class="col-md-3">
+                                <button type="button" class="btn ui-btn-brand btn-sm w-100" onclick="agregar()"><i class="fas fa-plus me-1"></i>Agregar</button>
                             </div>
-                            <div class="col-md-1">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="iniciarScanner()" title="Escanear"><i class="fas fa-camera"></i></button>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100" onclick="iniciarScanner()"><i class="fas fa-camera me-1"></i>Escanear</button>
                             </div>
                         </div>
                         <input type="file" id="scannerInput" accept="image/*" capture="environment" style="display:none;" onchange="procesarFotoCodigo(this)">
@@ -87,52 +87,50 @@
                             </style>
                             <button type="button" class="btn btn-sm btn-danger mt-2" onclick="detenerScanner()"><i class="fas fa-times me-1"></i>Cerrar</button>
                         </div>
-                    </div>
-                    <div class="table-responsive mb-3">
-                        <table class="table align-middle mb-0">
-                            <thead><tr><th>Producto</th><th style="width:80px;">Cant.</th><th style="width:110px;">Precio</th><th style="width:100px;">Dto.</th><th style="width:110px;">Subtotal</th><th style="width:40px;"></th></tr></thead>
+                    <div class="table-responsive mt-2 mb-0" style="max-height:220px;overflow-y:auto;border:1px solid #eef2f7;border-radius:10px;">
+                        <table class="table table-sm align-middle mb-0" style="font-size:13px;">
+                            <thead class="table-light" style="position:sticky;top:0;"><tr><th>Producto</th><th style="width:60px;">Cant.</th><th style="width:90px;">Precio</th><th style="width:70px;">Dto.</th><th style="width:90px;">Subtotal</th><th style="width:32px;"></th></tr></thead>
                             <tbody id="cuerpo">
-                                <tr id="vacio"><td colspan="6" class="text-center text-muted py-4">Agrega productos a la venta</td></tr>
+                                <tr id="vacio"><td colspan="6" class="text-center text-muted py-3">Agrega productos a la venta</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </x-st-block>
-                <x-st-block color="#f59e0b" titulo="3. Cupón y notas">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="cuponInput" class="st-label">Cupón de Descuento</label>
-                            <div class="input-group">
-                                <input type="text" class="st-input" name="cupon_codigo" id="cuponInput"
-                                       placeholder="CUP-ABC123-456"
+                <x-st-block color="#f59e0b" titulo="2. Cupón y notas">
+                    <div class="row g-2">
+                        <div class="col-md-7">
+                            <label for="cuponInput" class="st-label">Cupón</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" name="cupon_codigo" id="cuponInput"
+                                       placeholder="CUP-XXXXXX"
                                        style="text-transform:uppercase;" autocomplete="off">
                                 <button type="button" class="btn btn-outline-success" id="btnValidarCupon" onclick="validarCupon()">
-                                    <i class="fas fa-check me-1"></i>Validar
+                                    <i class="fas fa-check"></i>
                                 </button>
                             </div>
                             <div id="cuponMsg" class="form-text mt-1" style="font-size:12px;"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label for="notas" class="st-label">Notas</label>
-                            <textarea class="st-input" name="notas" id="notas" rows="2" placeholder="Notas de la venta (opcional)"></textarea>
+                            <textarea class="st-input" name="notas" id="notas" rows="1" placeholder="Opcional"></textarea>
                         </div>
                     </div>
                 </x-st-block>
             </div>
-            <div class="col-lg-4">
+            <div class="col-xl-5 col-lg-4">
                 <div style="position:sticky;top:12px;">
-                <x-st-block color="#10b981" titulo="4. Pago y totales">
-                    <div class="mb-3 p-3 rounded-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
-                        <div class="st-label mb-2">Método de pago</div>
-                        <div class="d-flex flex-wrap gap-2" id="payPills">
+                <x-st-block color="#10b981" titulo="3. Pago y totales">
+                    <div class="mb-2 p-2 rounded-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                        <div class="d-flex flex-wrap gap-1" id="payPills">
                             @if(($empresa->mercadopago_activo ?? false))
-                            <button type="button" class="btn btn-sm btn-outline-primary pay-pill" data-val="mercadopago"><i class="fas fa-wallet me-1"></i>Mercado Pago</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary pay-pill" data-val="mercadopago"><i class="fas fa-wallet me-1"></i>MP</button>
                             @endif
                             <button type="button" class="btn btn-sm btn-outline-success pay-pill active" data-val="efectivo"><i class="fas fa-money-bill-wave me-1"></i>Efectivo</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="tarjeta"><i class="fas fa-credit-card me-1"></i>Tarjeta</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="transferencia"><i class="fas fa-exchange-alt me-1"></i>Transferencia</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="transferencia"><i class="fas fa-exchange-alt me-1"></i>Transf.</button>
                         </div>
                     </div>
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-6 d-none">
                             <x-st-select label="Método de Pago" name="metodo_pago" required="1">
                                 @if(($empresa->mercadopago_activo ?? false))
@@ -143,11 +141,11 @@
                                 <option value="transferencia">Transferencia</option>
                             </x-st-select>
                         </div>
-                        <div class="col-6">
+                        <div class="col-12">
                             <x-st-input label="Descuento" name="descuento_general" id="descGen" type="number" value="0" extra='min="0" step="0.01" oninput="totales()"'></x-st-input>
                         </div>
                     </div>
-                    <div class="mt-3 p-3 rounded-3" style="background:#f0fdf4;border:1px dashed #86efac;">
+                    <div class="mt-2 p-2 rounded-3" style="background:#f0fdf4;border:1px dashed #86efac;">
                         <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     @if(($empresa->pais ?? '') === 'CL')
                     <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">Neto</span><span id="lblNeto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
@@ -159,26 +157,25 @@
                     </div>
                     <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <hr class="my-2">
-                    <div class="d-flex justify-content-between align-items-center mb-2"><strong>Total</strong><span id="lblTotal" style="font-size:24px;font-weight:800;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="d-flex justify-content-between align-items-center mb-1"><strong>Total</strong><span id="lblTotal" style="font-size:22px;font-weight:800;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                         <div id="lblTotalMini" style="display:none;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
                     </div>
-                    <div class="mt-3" id="rowEfectivo" style="display:none;">
-                        <label for="montoRecibido" class="st-label">Efectivo recibido <span class="text-muted" style="font-size:11px;">(opcional)</span></label>
-                        <div class="input-group">
+                    <div class="mt-2" id="rowEfectivo" style="display:none;">
+                        <label for="montoRecibido" class="st-label">Recibido</label>
+                        <div class="input-group input-group-sm">
                             <span class="input-group-text">{{ $empresa->simbolo_moneda ?? '$' }}</span>
-                            <input type="number" class="st-input" name="monto_recibido" id="montoRecibido"
+                            <input type="number" class="form-control" name="monto_recibido" id="montoRecibido"
                                    min="0" step="1" placeholder="¿Con cuánto paga?" oninput="actualizarVuelto()">
                         </div>
                         <div class="d-flex flex-wrap gap-1 mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(1000)">1.000</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(5000)">5.000</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(10000)">10.000</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(20000)">20.000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(10000)">10k</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(20000)">20k</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(50000)">50k</button>
                         </div>
                         <div id="lblVuelto" class="mt-2" style="display:none;font-size:18px;font-weight:700;color:#059669;"></div>
                         <div id="lblFalta" class="mt-1 text-danger" style="display:none;font-size:12px;"></div>
                     </div>
-                    <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-3" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
+                    <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
                 </x-st-block>
                 </div>
             </div>
