@@ -68,42 +68,11 @@
                 <form action="{{ route('reparaciones.update', $reparacion) }}" method="POST">
                     @csrf @method('PUT')
 
-                    {{-- Pestañas del formulario --}}
-                    <div class="ui-card mb-4">
-                        <div class="p-0" style="background:#fff; border-bottom:1px solid #e5e7eb; border-radius:14px 14px 0 0;">
-                            <ul class="nav nav-tabs card-header-tabs" id="editReparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
-                                <li class="nav-item">
-                                    <button class="nav-link active" id="tab-estado-tab" data-bs-toggle="tab" data-bs-target="#tab-estado" type="button" role="tab" aria-controls="tab-estado" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-tasks me-1" style="color:var(--accent1);"></i>Estado
-                                    </button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="tab-equipo-tab" data-bs-toggle="tab" data-bs-target="#tab-equipo" type="button" role="tab" aria-controls="tab-equipo" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-mobile-alt me-1" style="color:var(--accent1);"></i>Equipo
-                                    </button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="tab-diagnostico-tab" data-bs-toggle="tab" data-bs-target="#tab-diagnostico" type="button" role="tab" aria-controls="tab-diagnostico" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-stethoscope me-1" style="color:var(--accent1);"></i>Diagnóstico
-                                    </button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="tab-costos-tab" data-bs-toggle="tab" data-bs-target="#tab-costos" type="button" role="tab" aria-controls="tab-costos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-dollar-sign me-1" style="color:var(--accent1);"></i>Costos
-                                    </button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="tab-entrega-tab" data-bs-toggle="tab" data-bs-target="#tab-entrega" type="button" role="tab" aria-controls="tab-entrega" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-truck me-1" style="color:var(--accent1);"></i>Entrega
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="tab-content" id="editReparacionTabsContent">
-
-                                {{-- Pestaña: Estado --}}
-                                <div class="tab-pane fade show active" id="tab-estado" role="tabpanel" aria-labelledby="tab-estado-tab">
+                    {{-- Formulario en 1 pantalla (igual que Nueva Orden) --}}
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="ui-card p-3 mb-3">
+                                <div class="ui-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
                                     <div class="row g-3">
                                         <div class="col-md-5">
                                             <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
@@ -136,10 +105,8 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-
-                                {{-- Pestaña: Equipo --}}
-                                <div class="tab-pane fade" id="tab-equipo" role="tabpanel" aria-labelledby="tab-equipo-tab">
+                            <div class="ui-card p-3 mb-3">
+                                <div class="ui-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <label for="tipo_dispositivo" class="form-label">Tipo de Dispositivo <span class="text-danger">*</span></label>
@@ -237,10 +204,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                {{-- Pestaña: Diagnóstico --}}
-                                <div class="tab-pane fade" id="tab-diagnostico" role="tabpanel" aria-labelledby="tab-diagnostico-tab">
+                            <div class="ui-card p-3 mb-3">
+                                <div class="ui-sec-title"><i class="fas fa-stethoscope"></i>Diagnóstico y solución</div>
                                     <div class="row g-3">
                                         <div class="col-12">
                                             <label for="falla_reportada" class="form-label">Falla Reportada <span class="text-danger">*</span></label>
@@ -261,10 +226,10 @@
                                             <textarea class="form-control" name="notas" id="notas" rows="2">{{ old('notas',$reparacion->notas) }}</textarea>
                                         </div>
                                     </div>
-                                </div>
-
-                                {{-- Pestaña: Costos --}}
-                                <div class="tab-pane fade" id="tab-costos" role="tabpanel" aria-labelledby="tab-costos-tab">
+                            </div>
+                            <div class="col-lg-5">
+                            <div class="ui-card p-3 mb-3">
+                                <div class="ui-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
                                     <div class="row g-3">
                                         <div class="col-md-3">
                                             <label for="presupuesto" class="form-label">Presupuesto ({{ $empresa->simbolo_moneda ?? '$' }})</label>
@@ -362,10 +327,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                {{-- Pestaña: Entrega --}}
-                                <div class="tab-pane fade" id="tab-entrega" role="tabpanel" aria-labelledby="tab-entrega-tab">
+                            </div>
+                            <div class="ui-card p-3 mb-3">
+                                <div class="ui-sec-title"><i class="fas fa-truck"></i>Entrega y WhatsApp</div>
                                     @php
                                         use App\Helpers\WhatsAppHelper;
                                         $cliente = $reparacion->cliente;
@@ -428,7 +392,6 @@
                                         <input type="hidden" name="firma_entrega_data" id="firmaEntregaData" value="">
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
