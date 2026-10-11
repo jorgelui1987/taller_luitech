@@ -73,6 +73,8 @@
                                 <a href="{{ route('superadmin.tenants.login-as', $tenant) }}" class="btn btn-sm btn-info"
                                    onclick="return confirm('¿Iniciar sesión como admin de {{ $tenant->empresa }}?')"
                                    title="Login como tenant">🔑</a>
+                                <a href="{{ route('superadmin.tenants.backup', $tenant->id) }}" class="btn btn-sm btn-success"
+                                   title="Descargar respaldo SOLO de esta tienda (para restaurar en su usuario)">💾 Backup</a>
 
                                 <form action="{{ route('superadmin.tenants.toggle', $tenant) }}" method="POST" class="d-inline">
                                     @csrf

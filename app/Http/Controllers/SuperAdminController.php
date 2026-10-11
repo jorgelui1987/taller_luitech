@@ -491,4 +491,25 @@ class SuperAdminController extends Controller
 
         return response()->download($ruta);
     }
+
+    /**
+     * Respaldo POR TIENDA: genera y descarga un .sql con solo los datos de ese tenant.
+     * Ese archivo SÍ se puede restaurar en el usuario de esa tienda (su panel /backup),
+     * porque no trae datos de otras tiendas. Respeta el motor actual (MySQL o PgSQL).
+     */
+    public function backupPorTenant(int $id)
+    {
+        $tenant = Tenant::findOrFail($id);
+
+        $servicio = app(\App\Services\BackupService::class);
+        $sql = $servicio->generarSQLPorTenant($tenant->id);
+
+        $slug = \Illuminate\Support\Str::slug($tenant->empresa ?? ('tienda-' . $tenant->id));
+        $nombre = 'backup_tienda-' . $slug . '_' . now()->format('Y-m-d_H-i-s') . '.sql';
+
+        return response($sql, 200, [
+            'Content-Type' => 'application/sql',
+            'Content-Disposition' => 'attachment; filename="' . $nombre . '"',
+        ]);
+    }
 }

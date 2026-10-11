@@ -41,6 +41,8 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         // Backups (solo listar y descargar; restaurar/resetear queda en el panel admin)
         Route::get('/backups', [SuperAdminController::class, 'backups'])->name('backups');
         Route::get('/backups/descargar/{nombre}', [SuperAdminController::class, 'descargarBackup'])->name('backups.descargar');
+        // Respaldo por tienda: solo datos de ese tenant (para restaurar en su usuario)
+        Route::get('/tenants/{id}/backup', [SuperAdminController::class, 'backupPorTenant'])->name('tenants.backup');
 
         // Gestión de precios de planes
         Route::get('/planes-precios', [SuperAdminController::class, 'planPreciosIndex'])->name('planes-precios');
