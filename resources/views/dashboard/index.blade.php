@@ -29,98 +29,113 @@
     </div>
 </div>
 
-{{-- ── Accesos Rápidos (solo PC, ≥992px) ───────────────────────────── --}}
-<div class="d-none d-lg-block">
-    <div class="row g-2 mb-3">
+{{-- ── Accesos Rápidos (todas las pantallas, estilo demo) ─────────────── --}}
+<div class="mb-3">
+    <div class="row g-2">
         <div class="col-6 col-md-3">
-            <a href="{{ route('ventas.create') }}" class="btn btn-success w-100 py-2" style="font-weight:700;">
-                <i class="fas fa-cash-register me-1"></i> Nueva Venta
+            <a href="{{ route('ventas.create') }}" class="acc-dash">
+                <span class="acc-ico" style="background:#10b981;"><i class="fas fa-cash-register"></i></span>
+                Nueva Venta
             </a>
         </div>
         <div class="col-6 col-md-3">
-            <a href="{{ route('reparaciones.create') }}" class="btn btn-warning w-100 py-2" style="font-weight:700;">
-                <i class="fas fa-tools me-1"></i> Nueva Reparación
+            <a href="{{ route('reparaciones.create') }}" class="acc-dash">
+                <span class="acc-ico" style="background:#f59e0b;"><i class="fas fa-tools"></i></span>
+                Nueva Reparación
             </a>
         </div>
         <div class="col-6 col-md-3">
-            <a href="{{ route('caja.abrir') }}" class="btn btn-info w-100 py-2" style="font-weight:700;">
-                <i class="fas fa-cash-register me-1"></i> Abrir Caja
+            <a href="{{ route('caja.abrir') }}" class="acc-dash">
+                <span class="acc-ico" style="background:#06b6d4;"><i class="fas fa-cash-register"></i></span>
+                Abrir Caja
             </a>
         </div>
         <div class="col-6 col-md-3">
-            <a href="{{ route('productos.create') }}" class="btn btn-primary w-100 py-2" style="font-weight:700;">
-                <i class="fas fa-box-open me-1"></i> Nuevo Producto
+            <a href="{{ route('productos.create') }}" class="acc-dash">
+                <span class="acc-ico" style="background:#3b82f6;"><i class="fas fa-box-open"></i></span>
+                Nuevo Producto
             </a>
         </div>
         @php $urlPantallaTvDash = auth()->user()->tenant?->urlPantalla(); @endphp
         @if($urlPantallaTvDash)
         <div class="col-6 col-md-3">
-            <a href="{{ $urlPantallaTvDash }}" target="_blank" rel="noopener" class="btn btn-dark w-100 py-2" style="font-weight:700;">
-                <i class="fas fa-tv me-1"></i> Pantalla en TV
+            <a href="{{ $urlPantallaTvDash }}" target="_blank" rel="noopener" class="acc-dash">
+                <span class="acc-ico" style="background:#0f172a;"><i class="fas fa-tv"></i></span>
+                Pantalla en TV
             </a>
         </div>
         @endif
         @php $urlMiPaginaDash = auth()->user()->tenant?->url_publica; @endphp
         @if($urlMiPaginaDash)
         <div class="col-6 col-md-3">
-            <a href="{{ $urlMiPaginaDash }}" target="_blank" rel="noopener" class="btn w-100 py-2" style="font-weight:700;background:linear-gradient(135deg,#0891b2,#3b82f6);color:#fff;">
-                <i class="fas fa-globe me-1"></i> Ver mi página web
+            <a href="{{ $urlMiPaginaDash }}" target="_blank" rel="noopener" class="acc-dash">
+                <span class="acc-ico" style="background:linear-gradient(135deg,#0891b2,#3b82f6);"><i class="fas fa-globe"></i></span>
+                Ver mi página web
             </a>
         </div>
         <div class="col-6 col-md-3">
-            <button type="button" class="btn btn-outline-primary w-100 py-2" style="font-weight:700;" onclick="navigator.clipboard.writeText('{{ $urlMiPaginaDash }}');this.innerHTML='<i class=&quot;fas fa-check me-1&quot;></i> ¡Copiado!';setTimeout(()=>this.innerHTML='<i class=&quot;fas fa-link me-1&quot;></i> Copiar link',1500);">
-                <i class="fas fa-link me-1"></i> Copiar link
+            <button type="button" class="acc-dash w-100 border-0" onclick="navigator.clipboard.writeText('{{ $urlMiPaginaDash }}');this.querySelector('.acc-txt').textContent='¡Copiado!';setTimeout(()=>this.querySelector('.acc-txt').textContent='Copiar link',1500);">
+                <span class="acc-ico" style="background:#8b5cf6;"><i class="fas fa-link"></i></span>
+                <span class="acc-txt">Copiar link</span>
             </button>
         </div>
         @endif
     </div>
 </div>
+<style>
+.acc-dash{background:#fff;border-radius:12px;padding:12px;text-align:center;font-weight:700;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.05);text-decoration:none;color:#0f172a;display:block;line-height:1.3;}
+a.acc-dash:hover{color:#0f172a;box-shadow:0 4px 14px rgba(0,0,0,.1);}
+.acc-ico{width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;margin-bottom:6px;font-size:15px;}
+.kpi-new{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.06);height:100%;}
+.kpi-new .v{font-size:24px;font-weight:800;color:#0f172a;}
+.kpi-new .l{font-size:11px;color:#6b7280;letter-spacing:.05em;font-weight:700;}
+.met-bar{height:10px;border-radius:99px;background:#eef2f7;overflow:hidden;margin:6px 0 4px;}
+.met-bar i{display:block;height:100%;border-radius:99px;}
+.dot-m{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;}
+</style>
 
 {{-- ═══════════════════════════════════════════════════════════════════ --}}
 {{-- 👑 ADMIN: KPI Cards globales ─────────────────────────────────------ --}}
 {{-- ═══════════════════════════════════════════════════════════════════ --}}
 @if(auth()->user()->esAdmin() || auth()->user()->esSuperAdmin())
-<div class="row g-3 mb-4">
+<div class="row g-2 mb-3">
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-purple">
-            <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">{{ formatoMonedaEntero($ventasHoy) }}</div>
-            <div class="kpi-label">Ganancia de Hoy</div>
+        <div class="kpi-new" style="border-left:5px solid #8b5cf6;">
+            <div class="l">GANANCIA DE HOY</div>
+            <div class="v">{{ formatoMonedaEntero($ventasHoy) }}</div>
             @if(isset($ventasBrutasHoy))
-            <div class="mt-2 text-start" style="font-size:11px;line-height:1.7;background:rgba(255,255,255,.18);border-radius:8px;padding:6px 10px;">
+            <div class="mt-2" style="font-size:11px;line-height:1.8;background:#f5f3ff;border-radius:8px;padding:6px 10px;color:#0f172a;">
                 <div class="d-flex justify-content-between"><span>Ventas brutas</span><b>{{ formatoMonedaEntero($ventasBrutasHoy) }}</b></div>
                 <div class="d-flex justify-content-between"><span>- Devoluciones</span><b>{{ formatoMonedaEntero($devolucionesHoy ?? 0) }}</b></div>
                 <div class="d-flex justify-content-between"><span>- Repuestos</span><b>{{ formatoMonedaEntero($costoRepuestosHoy ?? 0) }}</b></div>
             </div>
             @endif
-            <span class="kpi-badge">
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">
                 <i class="fas fa-calendar-day fa-xs"></i>
                 {{ formatoMonedaEntero($ventasMes) }} este mes
-            </span>
+            </div>
             @if(isset($ventasBrutasMes))
-            <div class="mt-1 text-start" style="font-size:10.5px;line-height:1.6;opacity:.9;">
+            <div style="font-size:10.5px;color:#6b7280;">
                 Brutas {{ formatoMonedaEntero($ventasBrutasMes) }} - Dev {{ formatoMonedaEntero($devolucionesMes ?? 0) }} - Rep {{ formatoMonedaEntero($costoRepuestosMes ?? 0) }}
             </div>
             @endif
         </div>
     </div>
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-pink">
-            <div class="kpi-icon"><i class="fas fa-users"></i></div>
-            <div class="kpi-value">{{ number_format($totalClientes) }}</div>
-            <div class="kpi-label">Clientes Registrados</div>
-            <span class="kpi-badge">
+        <div class="kpi-new" style="border-left:5px solid #ec4899;">
+            <div class="l">CLIENTES REGISTRADOS</div>
+            <div class="v">{{ number_format($totalClientes) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">
                 <i class="fas fa-user-plus fa-xs"></i>
                 +{{ $clientesNuevosMes }} este mes
-            </span>
+            </div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-cyan">
-            <div class="kpi-icon"><i class="fas fa-box"></i></div>
-            <div class="kpi-value">{{ number_format($totalProductos) }}</div>
-            <div class="kpi-label">Productos en Stock</div>
-            <span class="kpi-badge">
+        <div class="kpi-new" style="border-left:5px solid #06b6d4;">
+            <div class="l">PRODUCTOS EN STOCK</div>
+            <div class="v">{{ number_format($totalProductos) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">
                 @if($stockBajo > 0)
                     <i class="fas fa-exclamation-triangle fa-xs"></i>
                     {{ $stockBajo }} con stock bajo
@@ -128,21 +143,44 @@
                     <i class="fas fa-check fa-xs"></i>
                     Stock óptimo
                 @endif
-            </span>
+            </div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-green">
-            <div class="kpi-icon"><i class="fas fa-tools"></i></div>
-            <div class="kpi-value">{{ $reparacionesPendientes }}</div>
-            <div class="kpi-label">Reparaciones Activas</div>
-            <span class="kpi-badge">
+        <div class="kpi-new" style="border-left:5px solid #f59e0b;">
+            <div class="l">REPARACIONES ACTIVAS</div>
+            <div class="v">{{ $reparacionesPendientes }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">
                 <i class="fas fa-check-circle fa-xs"></i>
                 {{ $reparacionesListas }} listas para entregar
-            </span>
+            </div>
         </div>
     </div>
 </div>
+@if(isset($porMetodoHoy))
+@php
+    $coloresMetodo = ['efectivo' => '#10b981', 'mercadopago' => '#3b82f6', 'transferencia' => '#f59e0b', 'tarjeta' => '#8b5cf6', 'debito' => '#06b6d4', 'credito' => '#ec4899', 'cuotas' => '#a855f7', 'yape' => '#7c3aed', 'plin' => '#0ea5e9'];
+@endphp
+<div class="kpi-new mb-3">
+    <div class="l">COBRADO HOY POR MÉTODO (bruto, sin restar) · {{ formatoMonedaEntero($totalBrutoMetodosHoy ?? 0) }} total</div>
+    <div class="row g-2 mt-1">
+        @forelse($porMetodoHoy as $metodo => $dato)
+        @php
+            $color = $coloresMetodo[$metodo] ?? '#6b7280';
+            $pct = ($totalBrutoMetodosHoy ?? 0) > 0 ? max(3, round($dato->total / $totalBrutoMetodosHoy * 100)) : 3;
+        @endphp
+        <div class="col-md-4">
+            <span class="dot-m" style="background:{{ $color }};"></span><b style="font-size:13px;">{{ ucfirst($metodo) }} {{ formatoMonedaEntero($dato->total) }}</b>
+            <span class="text-muted" style="font-size:12px;">({{ $dato->cantidad }} {{ $dato->cantidad == 1 ? 'venta' : 'ventas' }})</span>
+            <div class="met-bar"><i style="width:{{ $pct }}%;background:{{ $color }};"></i></div>
+        </div>
+        @empty
+        <div class="col-12 text-muted" style="font-size:13px;">Sin ventas completadas hoy.</div>
+        @endforelse
+    </div>
+    <p class="mb-0 mt-1" style="font-size:11.5px;color:#6b7280;">El efectivo va a tu Caja del día. Lo de Mercado Pago está en tu cuenta MP, no en el cajón. Por eso se separan.</p>
+</div>
+@endif
 @endif
 
 {{-- ═══════════════════════════════════════════════════════════════════ --}}

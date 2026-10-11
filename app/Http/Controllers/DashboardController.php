@@ -73,6 +73,15 @@ class DashboardController extends Controller
             ->whereBetween('fecha_entrega', [$inicioMesAnterior, $finMesAnterior])
             ->sum('costo_repuesto');
 
+        // ── Cobrado hoy por método de pago (bruto, sin restar) ──
+        $porMetodoHoy = Venta::whereDate('fecha_venta', $hoy)
+            ->where('estado', 'completada')
+            ->selectRaw('metodo_pago, SUM(total) as total, COUNT(*) as cantidad')
+            ->groupBy('metodo_pago')
+            ->get()
+            ->keyBy('metodo_pago');
+        $totalBrutoMetodosHoy = $porMetodoHoy->sum('total');
+
         // Ganancia real = Ventas - Comisiones (ventas negativas) - Costo de repuestos
         // Desglose para mostrar en la vista (bruto - devoluciones - repuestos = ganancia)
         $ventasBrutasHoy = $ventasHoy;
@@ -120,6 +129,7 @@ class DashboardController extends Controller
             'ventasBrutasHoy', 'ventasBrutasMes',
             'devolucionesHoy', 'devolucionesMes',
             'costoRepuestosHoy', 'costoRepuestosMes',
+            'porMetodoHoy', 'totalBrutoMetodosHoy',
             'totalClientes', 'clientesNuevosMes',
             'totalProductos', 'stockBajo',
             'reparacionesPendientes', 'reparacionesListas',
