@@ -196,7 +196,9 @@ function renderFotos() {
         }
         try { dt.items.add(f.file); } catch (e) {}
     });
-<script>
+    if (fi) { try { fi.files = dt.files; } catch (e) {} }
+    if (cnt) cnt.textContent = listaFotosEvidencia.length + ' foto(s)';
+}
 document.addEventListener('DOMContentLoaded', function () {
     initSignaturePadCreate();
     renderFotos();
@@ -272,12 +274,42 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('firmaRecepcionDataInput').value = signaturePadCreate.toDataURL('image/png');
         }
     });
+    const crBtn = document.getElementById('crGuardar');
+    if (crBtn) crBtn.addEventListener('click', async function () {
+        const nombre = document.getElementById('crNombre')?.value.trim() || '';
+        const apellido = document.getElementById('crApellido')?.value.trim() || '';
+        const telefono = document.getElementById('crTelefono')?.value.trim() || '';
+        const msg = document.getElementById('crMsg');
+        if (!nombre || !apellido || !telefono) {
+            if (msg) { msg.style.display = 'block'; msg.innerHTML = 'Nombre, apellido y teléfono obligatorios.'; }
+            return;
+        }
+        crBtn.disabled = true;
+        try {
+            const token = document.querySelector('input[name="_token"]')?.value || '';
+            const resp = await fetch("{{ route('reparaciones.cliente-rapido') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                body: JSON.stringify({ nombre: nombre, apellido: apellido, telefono: telefono, dni: document.getElementById('crDni')?.value || null }),
+            });
+            const data = await resp.json();
+            if (data.success && data.cliente) {
+                if (cs) cs.value = data.cliente.nombre_completo;
+                if (ci) ci.value = data.cliente.id;
+                if (cx) cx.textContent = 'OK ' + data.cliente.nombre_completo;
+                const modal = document.getElementById('modalClienteRapido');
+                if (modal && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modal).hide();
+            } else if (msg) {
+                msg.style.display = 'block';
+                msg.innerHTML = data.message || 'No se pudo guardar.';
+            }
+        } catch (e) {
+            if (msg) { msg.style.display = 'block'; msg.innerHTML = 'Error de conexión.'; }
+        } finally {
+            crBtn.disabled = false;
+        }
+    });
 });
-</script>
-
-    if (fi) { try { fi.files = dt.files; } catch (e) {} }
-    if (cnt) cnt.textContent = listaFotosEvidencia.length + ' foto(s)';
-}
 </script>
 @endpush
 
