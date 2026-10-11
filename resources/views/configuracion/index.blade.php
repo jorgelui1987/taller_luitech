@@ -22,7 +22,7 @@
 @endif
 
 <!-- ── Header ── -->
-<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+<div class="ui-card p-3 mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
     <div>
         <h4 class="fw-bold mb-1" style="color:#0f172a;">Configuración del Sistema</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Gestión de la empresa, usuarios y parámetros generales</p>
@@ -41,29 +41,29 @@
 </div>
 
 <!-- ══════════ PESTAÑAS DE CONFIGURACIÓN ══════════ -->
-<ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="configTabs" style="border-bottom:2px solid #f3f4f6; padding-bottom:12px;">
+<ul class="nav nav-pills mb-3 gap-2 flex-wrap" id="configTabs" style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,.05);">
     <li class="nav-item">
-        <button class="nav-link active px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-empresa" type="button" role="tab">
+        <button class="nav-link active px-3" style="border-radius:10px; font-size:13px; font-weight:700;" data-bs-toggle="tab" data-bs-target="#tab-empresa" type="button" role="tab">
             <i class="fas fa-store me-1" style="color:#0891b2;"></i> Empresa
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-usuarios" type="button" role="tab">
+        <button class="nav-link px-3" style="border-radius:10px; font-size:13px; font-weight:700;" data-bs-toggle="tab" data-bs-target="#tab-usuarios" type="button" role="tab">
             <i class="fas fa-users me-1" style="color:#06b6d4;"></i> Usuarios
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-publicidad" type="button" role="tab">
+        <button class="nav-link px-3" style="border-radius:10px; font-size:13px; font-weight:700;" data-bs-toggle="tab" data-bs-target="#tab-publicidad" type="button" role="tab">
             <i class="fas fa-bullhorn me-1" style="color:#f59e0b;"></i> Publicidad
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-colores" type="button" role="tab">
+        <button class="nav-link px-3" style="border-radius:10px; font-size:13px; font-weight:700;" data-bs-toggle="tab" data-bs-target="#tab-colores" type="button" role="tab">
             <i class="fas fa-palette me-1" style="color:var(--accent1);"></i> Colores
         </button>
     </li>
     <li class="nav-item">
-        <button class="nav-link px-4" style="border-radius:20px; font-size:13px; font-weight:500;" data-bs-toggle="tab" data-bs-target="#tab-sistema" type="button" role="tab">
+        <button class="nav-link px-3" style="border-radius:10px; font-size:13px; font-weight:700;" data-bs-toggle="tab" data-bs-target="#tab-sistema" type="button" role="tab">
             <i class="fas fa-cog me-1" style="color:#10b981;"></i> Sistema
         </button>
     </li>
@@ -78,9 +78,8 @@
             <div class="col-lg-12">
 
         <!-- ── Datos de la Empresa ── -->
-        <div class="card mb-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-store me-2" style="color:#0891b2;"></i>Datos de la Empresa</h6>
+        <div class="ui-card p-3 mb-3">
+                <div class="ui-sec-title"><i class="fas fa-store"></i>Datos de la Empresa</div>
 
                 <form action="{{ route('configuracion.updateEmpresa') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -139,8 +138,7 @@
                     </div>
 
                     <!-- ── Facturación Electrónica ── -->
-                    <div class="card mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
-                        <div class="card-body p-3">
+                    <div class="p-3 mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <h6 class="fw-bold mb-1" style="font-size:14px;">
@@ -229,12 +227,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
 
                     <!-- ── Mercado Pago ── -->
-                    <div class="card mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
-                        <div class="card-body p-3">
+                    <div class="p-3 mb-3" style="border:1px solid #e5e7eb; border-radius:12px; background:#fafafa;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <h6 class="fw-bold mb-1" style="font-size:14px;">
@@ -282,7 +278,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
 
                     <div class="row g-2 mb-3">
@@ -389,9 +384,8 @@
         </div>
 
         <!-- Zona horaria -->
-        <div class="card mb-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-clock me-2" style="color:#0891b2;"></i>Zona Horaria</h6>
+        <div class="ui-card p-3 mb-3">
+                <div class="ui-sec-title"><i class="fas fa-clock"></i>Zona Horaria</div>
                 <p class="text-muted" style="font-size:12px;">Configura la zona horaria de tu empresa para que las fechas y horas se muestren correctamente.</p>
 
                 <form action="{{ route('configuracion.updateZonaHoraria') }}" method="POST">
@@ -410,11 +404,10 @@
                         @enderror
                         <div class="form-text">La hora actual en esta zona: <strong id="horaActual"></strong></div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">
+                    <button type="submit" class="btn ui-btn-brand w-100">
                         <i class="fas fa-save me-2"></i>Guardar Zona Horaria
                     </button>
                 </form>
-            </div>
         </div>
 
             </div>
@@ -425,19 +418,18 @@
     <div class="tab-pane fade" id="tab-usuarios" role="tabpanel">
         <div class="row g-4">
             <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body p-4">
+        <div class="ui-card p-3">
                 <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h6 class="fw-bold mb-0">Gestión de Usuarios</h6>
+                    <div class="ui-sec-title mb-0"><i class="fas fa-users"></i>Gestión de Usuarios</div>
                     <div class="d-flex align-items-center gap-2">
-                        <a href="{{ route('two-factor.setup') }}" class="btn btn-outline-secondary btn-sm" style="border-radius:20px;"
+                        <a href="{{ route('two-factor.setup') }}" class="btn btn-outline-secondary btn-sm" style="border-radius:10px;"
                            title="Configurar verificación en dos pasos para tu cuenta">
                             <i class="fas fa-shield-halved me-1" style="color:#0891b2;"></i> Mi 2FA
                         </a>
-                        <span style="background:#cffafe;color:#0e7490;border-radius:20px;padding:3px 12px;font-size:12px;">
+                        <span class="ui-badge ui-badge-blue">
                             {{ $usuarios->count() }} usuarios
                         </span>
-                        <button type="button" class="btn btn-primary btn-sm" style="border-radius:20px;"
+                        <button type="button" class="btn ui-btn-brand btn-sm" style="border-radius:10px;"
                                 data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
                             <i class="fas fa-user-plus me-1"></i> Nuevo Usuario
                         </button>
@@ -536,13 +528,11 @@
                     </div>
                     @endforeach
                 </div>
-            </div>
         </div>
 
         <!-- Información de seguridad -->
-        <div class="card mt-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt me-2" style="color:#0891b2;"></i>Políticas de Acceso</h6>
+        <div class="ui-card p-3 mt-3">
+                <div class="ui-sec-title"><i class="fas fa-shield-alt"></i>Políticas de Acceso</div>
                 <div class="row g-3" style="font-size:13px;">
                     <div class="col-md-4">
                         <div class="p-3 rounded-3" style="background:#f8f5ff;border-left:3px solid #0891b2;">
@@ -563,7 +553,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
             </div>
         </div>
@@ -576,11 +565,8 @@
 @php
     $extrasMarca = auth()->user()->tenant?->configuracion_extra ?? [];
 @endphp
-<div class="card mb-4" style="border-radius:16px; border:1px solid #e5e7eb;">
-    <div class="card-body p-4">
-        <h5 class="fw-bold mb-1" style="color:#0f172a;">
-            <i class="fab fa-whatsapp me-2" style="color:#25d366;"></i>Mensajes de WhatsApp
-        </h5>
+<div class="ui-card p-3 mb-3">
+        <div class="ui-sec-title"><i class="fab fa-whatsapp" style="color:#25d366;"></i>Mensajes de WhatsApp</div>
         <p class="text-muted mb-3" style="font-size:12.5px;">
             Personaliza los mensajes automáticos a tus clientes. Variables:
             <code>{cliente}</code> <code>{equipo}</code> <code>{codigo}</code> <code>{falla}</code> <code>{costo}</code> <code>{tienda}</code> <code>{url}</code>.
@@ -602,19 +588,15 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3 px-4">
+            <button type="submit" class="btn ui-btn-brand mt-3 px-4">
                 <i class="fas fa-save me-2"></i>Guardar mensajes
             </button>
         </form>
-    </div>
 </div>
 
 <!-- ══════════ PROMOCIONES PARA LA PANTALLA TV ══════════ -->
-<div class="card mb-4" style="border-radius:16px; border:1px solid #e5e7eb;">
-    <div class="card-body p-4">
-        <h5 class="fw-bold mb-1" style="color:#0f172a;">
-            <i class="fas fa-tv me-2" style="color:#8b5cf6;"></i>Promociones para la pantalla TV
-        </h5>
+<div class="ui-card p-3 mb-3">
+        <div class="ui-sec-title"><i class="fas fa-tv" style="color:#8b5cf6;"></i>Promociones para la pantalla TV</div>
         <p class="text-muted mb-3" style="font-size:12.5px;">
             Una promoción por línea con el formato <code>Título | Mensaje</code>. Rotan en la Sala de Espera. Máximo 8.
         </p>
@@ -625,11 +607,10 @@
                       placeholder="Cristales desde $15.000 | Esta semana, cambio de pantalla con vidrio templado incluido">{{ old('promos_texto', collect($extrasMarca['promos'] ?? [])->map(fn ($p) => ($p['titulo'] ?? '') . ' | ' . ($p['texto'] ?? ''))->implode("\n")) }}</textarea>
             @error('promos_texto')<div class="text-danger small">{{ $message }}</div>@enderror
 
-            <button type="submit" class="btn btn-primary mt-3 px-4">
+            <button type="submit" class="btn ui-btn-brand mt-3 px-4">
                 <i class="fas fa-save me-2"></i>Guardar promociones
             </button>
         </form>
-    </div>
 </div>
         <div class="row g-4">
             <div class="col-lg-12">
@@ -641,9 +622,8 @@
             // Botón "Pantalla en TV": abre la sala de espera de ESTA tienda (/pantalla/{slug}).
             $urlPantallaTv = $tenantActual?->urlPantalla();
         @endphp
-        <div class="card mb-4" style="border:2px solid #0891b2;">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-bullhorn me-2" style="color:#0891b2;"></i>Publicidad y Página Pública</h6>
+        <div class="ui-card p-3 mb-3" style="border:2px solid var(--accent1);">
+                <div class="ui-sec-title"><i class="fas fa-bullhorn"></i>Publicidad y Página Pública</div>
 
                 @if($urlPublica)
                 <div class="p-3 mb-3 text-center" style="background:#f0fdf4;border-radius:12px;border:1px dashed #10b981;">
@@ -793,11 +773,10 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
+                    <button type="submit" class="btn ui-btn-brand w-100">
                         <i class="fas fa-save me-2"></i>Guardar Publicidad
                     </button>
                 </form>
-            </div>
         </div>
             </div>
         </div>
@@ -814,15 +793,13 @@
         'primario_rgba' => 'rgba(8,145,178,.18)',
     ];
 @endphp
-<div class="card mb-4" style="border-radius:16px; border:1px solid #e5e7eb;">
-    <div class="card-body p-4">
-        <h5 class="fw-bold mb-1" style="color:#0f172a;">
-            <i class="fas fa-palette me-2" style="color:{{ $colores['primario'] }};"></i>Colores de mi empresa
+<div class="ui-card p-3 mb-3">
+        <div class="ui-sec-title"><i class="fas fa-palette" style="color:{{ $colores['primario'] }};"></i>Colores de mi empresa
             <span class="ms-2" title="Colores guardados actualmente">
                 <span style="display:inline-block;width:20px;height:20px;border-radius:5px;background:{{ $colores['primario'] }};border:1px solid #d1d5db;vertical-align:middle;"></span>
                 <span style="display:inline-block;width:20px;height:20px;border-radius:5px;background:{{ $colores['secundario'] }};border:1px solid #d1d5db;vertical-align:middle;"></span>
             </span>
-        </h5>
+        </div>
         <p class="text-muted mb-3" style="font-size:12.5px;">
             Se aplican al instante en tu panel y en tu página pública.
         </p>
@@ -883,7 +860,7 @@
                                border-radius:10px;">Elemento activo</button>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3 px-4">
+            <button type="submit" class="btn ui-btn-brand mt-3 px-4">
                 <i class="fas fa-save me-2"></i>Guardar colores
             </button>
         </form>
@@ -952,9 +929,8 @@
         <div class="row g-4">
             <div class="col-lg-6">
         <!-- Estadísticas rápidas -->
-        <div class="card mb-4">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3">Estadísticas del Sistema</h6>
+        <div class="ui-card p-3 mb-3">
+                <div class="ui-sec-title"><i class="fas fa-chart-line"></i>Estadísticas del Sistema</div>
                 {{-- Las estadísticas vienen del controlador como $stats --}}
                 @foreach($stats as $s)
                 <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid #f3f4f6; font-size:13px;">
@@ -966,14 +942,12 @@
                     <strong>{{ $s['value'] }}</strong>
                 </div>
                 @endforeach
-            </div>
         </div>
             </div>
             <div class="col-lg-6">
         <!-- Accesos rápidos -->
-        <div class="card">
-            <div class="card-body p-4">
-                <h6 class="fw-bold mb-3">Accesos Rápidos</h6>
+        <div class="ui-card p-3">
+                <div class="ui-sec-title"><i class="fas fa-bolt"></i>Accesos Rápidos</div>
                 <div class="d-grid gap-2">
                     <a href="{{ route('productos.index') }}" class="btn btn-outline-secondary btn-sm text-start" style="border-radius:8px;">
                         <i class="fas fa-box me-2 text-muted"></i>Gestionar Inventario
@@ -988,7 +962,6 @@
                         <i class="fas fa-th-large me-2 text-muted"></i>Ir al Dashboard
                     </a>
                 </div>
-            </div>
         </div>
             </div>
         </div>
