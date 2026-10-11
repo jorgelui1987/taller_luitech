@@ -45,9 +45,9 @@
 @endpush
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-12">
-        <div class="ot-card p-3">
+<div class="container-fluid px-1">
+        <div class="card border-0 shadow-sm" style="border-radius:14px;">
+            <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                     <div>
                         <h5 class="fw-bold mb-1">Actualizar Orden: {{ $reparacion->numero_orden }}</h5>
@@ -71,10 +71,10 @@
                 <form action="{{ route('reparaciones.update', $reparacion) }}" method="POST">
                     @csrf @method('PUT')
 
-                    {{-- Formulario en 1 pantalla compacta --}}
-                    <div class="row g-3">
-                        <div class="col-xl-7 col-lg-7">
-                            <div class="ot-sec">
+                    {{-- Formulario horizontal 3 columnas --}}
+                    <div class="row g-2">
+                        <div class="col-xxl-4 col-lg-4 col-md-6">
+                            <div class="ot-sec h-100">
                                 <div class="ot-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
                                     <div class="row g-2">
                                         <div class="col-md-4">
@@ -109,7 +109,7 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="ot-sec">
+                            <div class="ot-sec h-100">
                                 <div class="ot-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
                                     <div class="row g-2">
                                         <div class="col-md-4">
@@ -208,7 +208,7 @@
                                             </div>
                                         </div>
                                     </div>
-                            <div class="ot-sec">
+                            <div class="ot-sec h-100">
                                 <div class="ot-sec-title"><i class="fas fa-stethoscope"></i>Diagnóstico y solución</div>
                                     <div class="row g-3">
                                         <div class="col-12">
@@ -231,8 +231,9 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="col-xl-5 col-lg-5">
-                            <div class="ot-sec">
+                        </div>
+                        <div class="col-xxl-4 col-lg-4 col-md-6">
+                            <div class="ot-sec h-100">
                                 <div class="ot-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
                                     <div class="row g-3">
                                         <div class="col-md-3">
@@ -332,7 +333,7 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="ot-sec">
+                            <div class="ot-sec h-100">
                                 <div class="ot-sec-title"><i class="fas fa-truck"></i>Entrega y WhatsApp</div>
                                     @php
                                         use App\Helpers\WhatsAppHelper;
@@ -398,19 +399,26 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <hr class="mt-4">
-                    <div class="d-flex gap-2 justify-content-end">
-                        <a href="{{ route('reparaciones.show', $reparacion) }}" class="btn btn-outline-secondary px-4">Cancelar</a>
-                        <button type="submit" class="btn ui-btn-brand px-4">
-                            <i class="fas fa-save me-2"></i>Guardar Cambios
-                        </button>
+                        <div class="col-xxl-4 col-lg-4 col-md-12">
+                            <div class="ot-sec h-100">
+                                <div class="ot-sec-title"><i class="fas fa-clipboard-check"></i>Resumen y guardar</div>
+                                <div class="p-2 rounded-3 mb-3" style="background:#f8fafc;font-size:13px;line-height:2;">
+                                    <div><b>{{ $reparacion->numero_orden }}</b> · {{ $reparacion->dispositivo }}</div>
+                                    <div>{{ $reparacion->cliente->nombre_completo ?? '' }}</div>
+                                    <div>Total: <b>{{ ($empresa->simbolo_moneda ?? '$') . ' ' . number_format($reparacion->total ?? 0, 0) }}</b> · {{ ucfirst($reparacion->estado) }}</div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn ui-btn-brand btn-lg">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                    <a href="{{ route('reparaciones.show', $reparacion) }}" class="btn btn-outline-secondary">Cancelar</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 </div>
 @endsection
 
