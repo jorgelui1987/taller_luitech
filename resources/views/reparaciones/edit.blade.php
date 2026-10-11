@@ -73,11 +73,12 @@
 
                     {{-- Formulario horizontal 3 columnas --}}
                     <div class="row g-2">
+                        {{-- Columna 1: estado + equipo --}}
                         <div class="col-xxl-4 col-lg-4 col-md-6">
-                            <div class="ot-sec h-100">
+                            <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
                                     <div class="row g-2">
-                                        <div class="col-md-4">
+                                        <div class="col-12">
                                             <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
                                             <select name="estado" id="estado" class="form-select" required>
                                                 @php $estados = ['recibido'=>'Recibido','en_diagnostico'=>'En Diagnóstico','esperando_repuesto'=>'Esperando Repuesto','en_reparacion'=>'En Reparación','listo'=>'Listo para Entregar','entregado'=>'Entregado','no_reparable'=>'No Reparable']; @endphp
@@ -88,7 +89,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="prioridad" class="form-label">Prioridad</label>
                                             <select name="prioridad" id="prioridad" class="form-select">
                                                 <option value="baja" {{ old('prioridad',$reparacion->prioridad)=='baja'?'selected':'' }}>Baja</option>
@@ -97,7 +98,7 @@
                                                 <option value="urgente" {{ old('prioridad',$reparacion->prioridad)=='urgente'?'selected':'' }}>Urgente</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="tecnico_id" class="form-label">Técnico Asignado</label>
                                             <select name="tecnico_id" id="tecnico_id" class="form-select">
                                                 @foreach($tecnicos as $t)
@@ -109,10 +110,10 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="ot-sec h-100">
+                            <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
                                     <div class="row g-2">
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="tipo_dispositivo" class="form-label">Tipo de Dispositivo <span class="text-danger">*</span></label>
                                             <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-select" required>
                                                 <option value="">— Seleccionar tipo —</option>
@@ -122,7 +123,7 @@
                                                 <option value="otros" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='otros'?'selected':'' }}>Otros</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="marca_select" class="form-label">Marca</label>
                                             @php
                                                 $marcasPrecargadas = [
@@ -148,27 +149,27 @@
                                                    placeholder="Escribir marca manualmente..."
                                                    style="{{ $esOtra ? 'display:block;' : 'display:none;' }}">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="modelo" class="form-label">Modelo</label>
                                             <input type="text" class="form-control" name="modelo" id="modelo"
                                                    value="{{ old('modelo',$reparacion->modelo) }}">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="imei" class="form-label">IMEI / Serie</label>
                                             <input type="text" class="form-control" name="imei" id="imei"
                                                    value="{{ old('imei',$reparacion->imei) }}">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-6">
                                             <label for="color" class="form-label">Color</label>
                                             <input type="text" class="form-control" name="color" id="color"
                                                    value="{{ old('color',$reparacion->color) }}">
                                         </div>
-                                        <div class="col-md-4">
-                                            <label for="fecha_estimada" class="form-label">Fecha Estimada de Entrega</label>
+                                        <div class="col-6">
+                                            <label for="fecha_estimada" class="form-label">Fecha Estimada</label>
                                             <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada"
                                                    value="{{ old('fecha_estimada', optional($reparacion->fecha_estimada)->format('Y-m-d')) }}">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12">
                                             <label for="tipo_codigo" class="form-label">Patrón / PIN</label>
                                             <div class="d-flex gap-2 align-items-start">
                                                 <div style="flex:0 0 100px;">
@@ -208,21 +209,22 @@
                                             </div>
                                         </div>
                                     </div>
-                            <div class="ot-sec h-100">
+                            </div>
+                            <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-stethoscope"></i>Diagnóstico y solución</div>
-                                    <div class="row g-3">
+                                    <div class="row g-2">
                                         <div class="col-12">
                                             <label for="falla_reportada" class="form-label">Falla Reportada <span class="text-danger">*</span></label>
-                                            <textarea class="form-control" name="falla_reportada" id="falla_reportada" rows="3" required>{{ old('falla_reportada',$reparacion->falla_reportada) }}</textarea>
+                                            <textarea class="form-control" name="falla_reportada" id="falla_reportada" rows="2" required>{{ old('falla_reportada',$reparacion->falla_reportada) }}</textarea>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12">
                                             <label for="diagnostico" class="form-label">Diagnóstico del Técnico</label>
-                                            <textarea class="form-control" name="diagnostico" id="diagnostico" rows="4"
+                                            <textarea class="form-control" name="diagnostico" id="diagnostico" rows="2"
                                                       placeholder="Describe el diagnóstico técnico del equipo...">{{ old('diagnostico',$reparacion->diagnostico) }}</textarea>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12">
                                             <label for="solucion" class="form-label">Solución Aplicada</label>
-                                            <textarea class="form-control" name="solucion" id="solucion" rows="4"
+                                            <textarea class="form-control" name="solucion" id="solucion" rows="2"
                                                       placeholder="Describe qué se hizo para solucionar la falla...">{{ old('solucion',$reparacion->solucion) }}</textarea>
                                         </div>
                                         <div class="col-12">
@@ -232,108 +234,77 @@
                                     </div>
                             </div>
                         </div>
+                        {{-- Columna 2: costos + entrega + guardar --}}
                         <div class="col-xxl-4 col-lg-4 col-md-6">
-                            <div class="ot-sec h-100">
+                            <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
-                                    <div class="row g-3">
-                                        <div class="col-md-3">
+                                    <div class="row g-2">
+                                        <div class="col-6">
                                             <label for="presupuesto" class="form-label">Presupuesto ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="presupuesto" id="presupuesto"
                                                    value="{{ old('presupuesto',$reparacion->presupuesto) }}" min="0" step="0.01">
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="metodo_pago" class="form-label">Método de Pago (al entregar)</label>
+                                        <div class="col-6">
+                                            <label for="metodo_pago" class="form-label">Método de Pago</label>
                                             <select name="metodo_pago" id="metodo_pago" class="form-select">
                                                 <option value="mercadopago" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='mercadopago'?'selected':'' }}>Mercado Pago</option>
                                                 <option value="efectivo" {{ old('metodo_pago', $reparacion->metodo_pago ?? 'efectivo')=='efectivo'?'selected':'' }}>Efectivo</option>
                                                 <option value="transferencia" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='transferencia'?'selected':'' }}>Transferencia</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-6">
                                             <label for="costo_final" class="form-label">Costo Final ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="costo_final" id="costo_final"
                                                    value="{{ old('costo_final',$reparacion->costo_final) }}" min="0" step="0.01">
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="costo_repuesto" class="form-label">Costo de Repuesto(s) ({{ $empresa->simbolo_moneda ?? '$' }})</label>
+                                        <div class="col-6">
+                                            <label for="costo_repuesto" class="form-label">Costo Repuesto(s) ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="costo_repuesto" id="costo_repuesto"
                                                    value="{{ old('costo_repuesto',$reparacion->costo_repuesto) }}" min="0" step="0.01" placeholder="0.00">
-                                            <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Opcional. Se resta para calcular la ganancia</div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="comisionPorcentajeEdit" class="form-label">% Comision del Tecnico</label>
+                                        <div class="col-6">
+                                            <label for="comisionPorcentajeEdit" class="form-label">% Comisión Técnico</label>
                                             <input type="number" class="form-control" name="comision_porcentaje" id="comisionPorcentajeEdit" value="@php echo old('comision_porcentaje', $reparacion->comision_porcentaje ?? $reparacion->tecnico->comision_porcentaje ?? ''); @endphp" min="0" max="100" step="0.01" placeholder="%">
-                                            <div style="font-size:11px; color:#9ca3af; margin-top:2px;">Se pre-rellena con el % del perfil del tecnico</div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-6">
                                             <label for="abono" class="form-label">Abono ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control" name="abono" id="abono"
                                                    value="{{ old('abono',$reparacion->abono) }}" min="0" step="0.01">
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-6">
                                             <label for="total" class="form-label">Total ({{ $empresa->simbolo_moneda ?? '$' }})</label>
                                             <input type="number" class="form-control total-auto" name="total" id="total"
                                                    value="{{ old('total',$reparacion->total) }}" min="0" step="0.01" readonly
                                                    style="background:#f3f4f6; font-weight:700;">
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="garantia" class="form-label">¿Incluye Garantía?</label>
+                                        <div class="col-6">
+                                            <label for="garantia" class="form-label">Garantía</label>
                                             <select name="garantia" id="garantia" class="form-select">
                                                 <option value="0" {{ !$reparacion->garantia?'selected':'' }}>No</option>
                                                 <option value="1" {{ $reparacion->garantia?'selected':'' }}>Sí</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label for="dias_garantia" class="form-label">Días de Garantía</label>
+                                        <div class="col-6">
+                                            <label for="dias_garantia" class="form-label">Días Garantía</label>
                                             <input type="number" class="form-control" name="dias_garantia" id="dias_garantia"
                                                    value="{{ old('dias_garantia',$reparacion->dias_garantia) }}" min="0">
                                         </div>
                                         <div class="col-12">
-                                            <label for="cuponCodigoInput" class="form-label">🎟️ Cupón de Descuento</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="cupon_codigo" id="cuponCodigoInput"
-                                                       value="{{ old('cupon_codigo', session('cupon_codigo')) }}" placeholder="Ingresa el código del cupón (ej: CUP-XXXXXX-XXX)">
-                                                <button type="button" class="btn btn-outline-primary" id="validarCuponBtn" onclick="validarCuponReparacion()">
-                                                    <i class="fas fa-check me-1"></i>Validar
-                                                </button>
-                                            </div>
-                                            <div id="cuponInfo" class="mt-2" style="font-size:13px;"></div>
-                                            <div style="font-size:11px; color:#9ca3af; margin-top:2px;">
-                                                Si el cliente tiene un cupón de una venta anterior, ingrésalo aquí para aplicar el descuento en el repuesto.
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="p-3 rounded-3" style="background:#fff7ed; border:2px solid #f59e0b;" id="comisionPreviewBox">
-                                                <div style="font-weight:700; color:#9a3412; font-size:13px; margin-bottom:8px;">
-                                                    <i class="fas fa-coins me-1"></i>Vista Previa de Comision del Tecnico
+                                            <div class="p-2 rounded-3" style="background:#fff7ed; border:1px solid #f59e0b;" id="comisionPreviewBox">
+                                                <div style="font-weight:700; color:#9a3412; font-size:12px;">
+                                                    <i class="fas fa-coins me-1"></i>Comisión: <span id="comisionPreviewMonto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
+                                                    <span class="text-muted fw-normal">(<span id="comisionPreviewPct">0%</span> de <span id="comisionPreviewBase">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>)</span>
                                                 </div>
-                                                <div class="row g-2">
-                                                    <div class="col-md-2">
-                                                        <div style="font-size:11px; color:#6b7280;">Monto a cobrar</div>
-                                                        <div id="comisionPreviewCobrado" style="font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div style="font-size:11px; color:#6b7280;">Repuesto(s)</div>
-                                                        <div id="comisionPreviewRepuesto" style="color:#dc2626;">- {{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div style="font-size:11px; color:#6b7280;">Base comision</div>
-                                                        <div id="comisionPreviewBase" style="color:#9a3412; font-weight:600;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div style="font-size:11px; color:#6b7280;">% del tecnico</div>
-                                                        <div id="comisionPreviewPct">0%</div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div style="font-size:11px; color:#9a3412; font-weight:700;">Comision del tecnico</div>
-                                                        <div id="comisionPreviewMonto" style="color:#f59e0b; font-size:18px; font-weight:700;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
-                                                    </div>
-                                                </div>
+                                                <span id="comisionPreviewCobrado" class="d-none">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
+                                                <span id="comisionPreviewRepuesto" class="d-none">- {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
                                             </div>
                                         </div>
                                     </div>
                             </div>
-                            <div class="ot-sec h-100">
+                        </div>
+                        {{-- Columna 3: entrega + resumen --}}
+                        <div class="col-xxl-4 col-lg-4 col-md-12">
+                            <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-truck"></i>Entrega y WhatsApp</div>
                                     @php
                                         use App\Helpers\WhatsAppHelper;
@@ -396,7 +367,6 @@
                                         </div>
                                         <input type="hidden" name="firma_entrega_data" id="firmaEntregaData" value="">
                                     </div>
-                                </div>
                             </div>
                         </div>
                         <div class="col-xxl-4 col-lg-4 col-md-12">
