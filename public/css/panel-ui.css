@@ -40,3 +40,11 @@ a.ui-acc:hover{color:#0f172a;box-shadow:0 4px 14px rgba(0,0,0,.1);}
   .ui-kpi .v{font-size:20px;}
   .ui-acc{font-size:12px;}
 }
+/* ── Scrollbars un poco más anchos (global + tablas) ── */
+::-webkit-scrollbar{width:14px;height:14px;}
+::-webkit-scrollbar-track{background:#eef2f7;border-radius:99px;}
+::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:99px;border:3px solid #eef2f7;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent1,#64748b);}
+*{scrollbar-width:auto;scrollbar-color:#94a3b8 #eef2f7;}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.scroll-y{overflow-y:auto;-webkit-overflow-scrolling:touch;}
