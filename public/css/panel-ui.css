@@ -28,6 +28,14 @@ a.ui-acc:hover{color:#0f172a;box-shadow:0 4px 14px rgba(0,0,0,.1);}
 .ui-met-bar{height:10px;border-radius:99px;background:#eef2f7;overflow:hidden;margin:6px 0 4px;}
 .ui-met-bar i{display:block;height:100%;border-radius:99px;}
 .ui-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;}
+/* ── Bloques horizontales st (mismo diseño que Reparaciones edit) ── */
+.st-block{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.st-head{border-bottom:1px solid #f1f5f9;padding-bottom:12px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.st-dot{width:12px;height:12px;border-radius:50%;flex:none;}
+.st-head h2{font-size:16px;font-weight:700;color:#0f172a;margin:0;}
+.st-label{font-size:13px;font-weight:600;color:#334155;margin-bottom:4px;display:block;}
+.st-input{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:9px 12px;background:#f8fafc;font-size:14px;color:#0f172a;}
+.st-input:focus{background:#fff;border-color:var(--accent1);outline:none;box-shadow:0 0 0 3px rgba(6,182,212,.15);}
 @media(max-width:576px){
   .ui-kpi .v{font-size:20px;}
   .ui-acc{font-size:12px;}

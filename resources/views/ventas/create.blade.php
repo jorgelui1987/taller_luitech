@@ -1,39 +1,42 @@
 @extends('layouts.app')
 @section('title', 'Nueva Venta')
 @section('breadcrumb')
-    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}" style="color:#0891b2;">Ventas</a></li></ul>
+    <ul><li class="breadcrumb-item"><a href="{{ route('ventas.index') }}">Ventas</a></li></ul>
     <ul><li class="breadcrumb-item active">Nueva Venta</li></ul>
 @endsection
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-1">Registrar Venta</h5>
-                <p class="text-muted mb-4" style="font-size:13px;">Agrega productos y completa los datos</p>
-                @if($errors->any())
-                    <div class="alert alert-danger">
-                        @foreach($errors->all() as $e)
-                            <div style="font-size:13px;"><i class="fas fa-exclamation-circle me-1"></i>{{ $e }}</div>
+<div class="container-fluid px-1">
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <div>
+            <h5 class="fw-bold mb-1">Registrar Venta</h5>
+            <p class="text-muted mb-0" style="font-size:13px;">Agrega productos y completa los datos</p>
+        </div>
+        <a href="{{ route('ventas.index') }}" class="btn btn-outline-secondary btn-sm">Ver Ventas</a>
+    </div>
+    @if($errors->any())
+        <div class="alert alert-danger">
+            @foreach($errors->all() as $e)
+                <div style="font-size:13px;"><i class="fas fa-exclamation-circle me-1"></i>{{ $e }}</div>
+            @endforeach
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger" style="font-size:13px;">{{ session('error') }}</div>
+    @endif
+    <form action="{{ route('ventas.store') }}" method="POST">
+        @csrf
+        <x-st-block color="#0284c7" titulo="1. Cliente y productos">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <x-st-select label="Cliente (opcional)" name="cliente_id">
+                        <option value="">— Sin cliente (venta general) —</option>
+                        @foreach($clientes as $c)
+                            <option value="{{ $c->id }}">{{ $c->nombre_completo }} — {{ $c->telefono }}</option>
                         @endforeach
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div class="alert alert-danger" style="font-size:13px;">{{ session('error') }}</div>
-                @endif
-                <form action="{{ route('ventas.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="clienteSelect" class="form-label">Cliente <span class="text-muted">(opcional)</span></label>
-                        <select name="cliente_id" id="clienteSelect" class="form-select">
-                            <option value="">— Sin cliente (venta general) —</option>
-                            @foreach($clientes as $c)
-                                <option value="{{ $c->id }}">{{ $c->nombre_completo }} — {{ $c->telefono }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <span class="form-label d-block">Agregar Producto</span>
+                    </x-st-select>
+                </div>
+                <div class="col-md-8">
+                    <span class="st-label d-block">Agregar Producto</span>
                         <div class="row g-2">
                             <div class="col-md-5">
                                 <div class="input-group">
@@ -51,10 +54,10 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="codBarras" class="visually-hidden">Código de barras</label>
-                                <input type="text" id="codBarras" class="form-control" placeholder="📷 Escanea código de barras..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
+                                <input type="text" id="codBarras" class="st-input" placeholder="Escanear código de barras..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
                             </div>
                             <div class="col-md-2">
-                                <button type="button" class="btn btn-primary w-100" onclick="agregar()"><i class="fas fa-plus me-1"></i>Agregar</button>
+                                <button type="button" class="btn ui-btn-brand w-100" onclick="agregar()"><i class="fas fa-plus me-1"></i>Agregar</button>
                             </div>
                             <div class="col-md-2">
                                 <button type="button" class="btn btn-outline-primary w-100" onclick="iniciarScanner()"><i class="fas fa-camera me-1"></i>Escanear</button>
@@ -92,25 +95,20 @@
                         </table>
                     </div>
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
-                            <select name="metodo_pago" id="metodo_pago" class="form-select" required>
-                                @if(($empresa->mercadopago_activo ?? false))
-                                <option value="mercadopago">🟦 Mercado Pago</option>
-                                @endif
-                                <option value="efectivo">💵 Efectivo</option>
-                                <option value="tarjeta">💳 Tarjeta</option>
-                                <option value="transferencia">🏦 Transferencia</option>
+                        <div class="col-md-6" style="display:none;">
+                            <label for="metodo_pago_old" class="form-label">Método viejo</label>
+                            <select id="metodo_pago_old" class="form-select">
+                                <option value="efectivo">Efectivo</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="descGen" class="form-label">Descuento General</label>
-                            <input type="number" class="form-control" name="descuento_general" id="descGen" min="0" step="0.01" value="0" oninput="totales()">
+                            <label for="descGen" class="st-label">Descuento General</label>
+                            <input type="number" class="st-input" name="descuento_general" id="descGen" min="0" step="0.01" value="0" oninput="totales()">
                         </div>
                         <div class="col-md-6">
-                            <label for="cuponInput" class="form-label">Cupón de Descuento</label>
+                            <label for="cuponInput" class="st-label">Cupón de Descuento</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="cupon_codigo" id="cuponInput"
+                                <input type="text" class="st-input" name="cupon_codigo" id="cuponInput"
                                        placeholder="Ingresa el código del cupón (ej: CUP-ABC123-456)"
                                        style="text-transform:uppercase;" autocomplete="off">
                                 <button type="button" class="btn btn-outline-success" id="btnValidarCupon" onclick="validarCupon()">
@@ -120,10 +118,10 @@
                             <div id="cuponMsg" class="form-text mt-1" style="font-size:12px;"></div>
                         </div>
                         <div class="col-12" id="rowEfectivo" style="display:none;">
-                            <label for="montoRecibido" class="form-label">💵 Efectivo recibido <span class="text-muted" style="font-size:11px;">(opcional)</span></label>
+                            <label for="montoRecibido" class="st-label">Efectivo recibido <span class="text-muted" style="font-size:11px;">(opcional)</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">{{ $empresa->simbolo_moneda ?? '$' }}</span>
-                                <input type="number" class="form-control" name="monto_recibido" id="montoRecibido"
+                                <input type="number" class="st-input" name="monto_recibido" id="montoRecibido"
                                        min="0" step="1" placeholder="¿Con cuánto paga el cliente?" oninput="actualizarVuelto()">
                                 <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(1000)">1.000</button>
                                 <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(5000)">5.000</button>
@@ -134,13 +132,32 @@
                             <div id="lblFalta" class="mt-1 text-danger" style="display:none;font-size:12px;"></div>
                         </div>
                         <div class="col-12">
-                            <label for="notas" class="form-label">Notas</label>
-                            <textarea class="form-control" name="notas" id="notas" rows="2"></textarea>
+                            <label for="notas" class="st-label">Notas</label>
+                            <textarea class="st-input" name="notas" id="notas" rows="2"></textarea>
                         </div>
                     </div>
-                    <hr>
-                    @if(($empresa->pais ?? '') === 'CL')
-                    <div class="d-flex justify-content-between mb-2"><span>Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                </x-st-block>
+                <x-st-block color="#10b981" titulo="2. Pago y totales">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <x-st-select label="Método de Pago" name="metodo_pago" required="1">
+                                @if(($empresa->mercadopago_activo ?? false))
+                                <option value="mercadopago">Mercado Pago</option>
+                                @endif
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="transferencia">Transferencia</option>
+                            </x-st-select>
+                        </div>
+                        <div class="col-md-4">
+                            <x-st-input label="Descuento General" name="descuento_general" type="number" value="0" extra='min="0" step="0.01" id="descGen" oninput="totales()"'></x-st-input>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="lblTotalMini" class="st-label">Total</label>
+                            <div id="lblTotalMini" style="font-size:22px;font-weight:800;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 mt-3"><span>Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <div class="d-flex justify-content-between mb-2"><span>Neto</span><span id="lblNeto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     @else
                     <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
@@ -152,12 +169,10 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <hr>
-                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:#0891b2;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
-                    <button type="submit" class="btn btn-primary w-100 py-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
+                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <button type="submit" class="btn ui-btn-brand w-100 py-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
+                </x-st-block>
                 </form>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection
 @push('scripts')
