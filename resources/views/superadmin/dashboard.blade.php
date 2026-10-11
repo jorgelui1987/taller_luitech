@@ -24,6 +24,28 @@
     <div class="container py-4">
         <h2>Panel de Control SuperAdmin</h2>
 
+        @if(!($stats['backup_ok'] ?? true))
+        <div class="alert alert-danger mt-3">
+            <strong>Sin respaldo reciente.</strong>
+            @if($stats['backup_ultimo'])
+                Último backup global: {{ $stats['backup_ultimo']->format('d/m/Y H:i') }}.
+            @else
+                No hay ningún backup global generado.
+            @endif
+            Revisa el cron <code>backup:automatico</code> (2:00 AM) y el volumen persistente de storage.
+            <a href="{{ route('superadmin.backups') }}" class="alert-link">Ver backups</a>.
+            @if(!empty($stats['tenants_sin_backup']))
+                <br>Tiendas sin respaldo por empresa reciente: <strong>{{ implode(', ', array_slice($stats['tenants_sin_backup'], 0, 10)) }}</strong>@if(count($stats['tenants_sin_backup']) > 10) y {{ count($stats['tenants_sin_backup']) - 10 }} más.@endif
+            @endif
+        </div>
+        @elseif(!empty($stats['tenants_sin_backup']))
+        <div class="alert alert-warning mt-3">
+            <strong>Atención:</strong> {{ count($stats['tenants_sin_backup']) }} tienda(s) sin respaldo por empresa de ayer:
+            <strong>{{ implode(', ', array_slice($stats['tenants_sin_backup'], 0, 10)) }}</strong>.
+            <a href="{{ route('superadmin.backups') }}" class="alert-link">Ver backups</a>.
+        </div>
+        @endif
+
         <div class="row mt-4">
             <div class="col-md-3">
                 <div class="card text-bg-primary mb-3">

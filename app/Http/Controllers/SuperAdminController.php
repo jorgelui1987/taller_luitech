@@ -144,6 +144,33 @@ class SuperAdminController extends Controller
             'ultimos_tenants'    => Tenant::latest()->take(5)->get(),
         ];
 
+        // ── Aviso respaldo reciente: sin backup global en 26h, alertar ──
+        $backupDir = storage_path('app/backups');
+        $ultimoGlobal = null;
+        foreach (glob($backupDir . '/backup_auto_*.sql') ?: [] as $f) {
+            $ts = filemtime($f);
+            if ($ultimoGlobal === null || $ts > $ultimoGlobal) {
+                $ultimoGlobal = $ts;
+            }
+        }
+        $horas = $ultimoGlobal ? (time() - $ultimoGlobal) / 3600 : null;
+        $stats['backup_ok'] = $horas !== null && $horas <= 26;
+        $stats['backup_ultimo'] = $ultimoGlobal ? \Carbon\Carbon::createFromTimestamp($ultimoGlobal) : null;
+        $stats['tenants_sin_backup'] = [];
+        foreach (Tenant::where('estado', 'activo')->get() as $t) {
+            $slug = \Illuminate\Support\Str::slug($t->empresa) ?: ('tenant-' . $t->id);
+            $ult = null;
+            foreach (glob($backupDir . '/backup_empresa-' . $slug . '_*.sql') ?: [] as $f) {
+                $ts = filemtime($f);
+                if ($ult === null || $ts > $ult) {
+                    $ult = $ts;
+                }
+            }
+            if ($ult === null || (time() - $ult) / 3600 > 26) {
+                $stats['tenants_sin_backup'][] = $t->empresa;
+            }
+        }
+
         return view('superadmin.dashboard', compact('stats'));
     }
 
