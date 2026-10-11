@@ -36,30 +36,33 @@
                     </x-st-select>
                 </x-st-block>
                 <x-st-block color="#6366f1" titulo="2. Productos">
-                        <div class="row g-2">
-                            <div class="col-md-5">
+                    <span class="st-label d-block">Buscar</span>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
                                     <label for="buscador" class="visually-hidden">Buscar producto</label>
-                                    <input type="text" id="buscador" class="form-control" placeholder="Buscar nombre o código..." oninput="filtrar()">
-                                    <label for="selectProd" class="visually-hidden">Seleccionar producto</label>
-                                    <select id="selectProd" class="form-select">
-                                        <option value="">— Seleccionar —</option>
+                                    <input type="text" id="buscador" class="form-control" placeholder="Por nombre o código" oninput="filtrar()">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="selectProd" class="visually-hidden">Seleccionar producto</label>
+                                <select id="selectProd" class="form-select">
+                                    <option value="">— Seleccionar —</option>
                                         @foreach($productos as $p)
                                             <option value="{{ $p->id }}" data-precio="{{ $p->precio_venta }}" data-stock="{{ $p->stock }}" data-codigo="{{ $p->codigo }}" data-codigo_barras="{{ $p->codigo_barras ?? '' }}">{{ $p->nombre }} ({{ $p->stock }})</option>
                                         @endforeach
-                                    </select>
-                                </div>
+                                </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="codBarras" class="visually-hidden">Código de barras</label>
-                                <input type="text" id="codBarras" class="st-input" placeholder="Escanear código de barras..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
+                                <input type="text" id="codBarras" class="form-control" placeholder="Escanear código..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
                             </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn ui-btn-brand w-100" onclick="agregar()"><i class="fas fa-plus me-1"></i>Agregar</button>
+                            <div class="col-md-1">
+                                <button type="button" class="btn ui-btn-brand w-100" onclick="agregar()" title="Agregar"><i class="fas fa-plus"></i></button>
                             </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="iniciarScanner()"><i class="fas fa-camera me-1"></i>Escanear</button>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="iniciarScanner()" title="Escanear"><i class="fas fa-camera"></i></button>
                             </div>
                         </div>
                         <input type="file" id="scannerInput" accept="image/*" capture="environment" style="display:none;" onchange="procesarFotoCodigo(this)">
@@ -76,7 +79,7 @@
                                 </div>
                             </div>
                             <style>
-                                @keyframes scanline {
+                                @@keyframes scanline {
                                     0% { top: 20%; }
                                     50% { top: 80%; }
                                     100% { top: 20%; }
@@ -118,8 +121,19 @@
             <div class="col-lg-4">
                 <div style="position:sticky;top:12px;">
                 <x-st-block color="#10b981" titulo="4. Pago y totales">
+                    <div class="mb-3 p-3 rounded-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                        <div class="st-label mb-2">Método de pago</div>
+                        <div class="d-flex flex-wrap gap-2" id="payPills">
+                            @if(($empresa->mercadopago_activo ?? false))
+                            <button type="button" class="btn btn-sm btn-outline-primary pay-pill" data-val="mercadopago"><i class="fas fa-wallet me-1"></i>Mercado Pago</button>
+                            @endif
+                            <button type="button" class="btn btn-sm btn-outline-success pay-pill active" data-val="efectivo"><i class="fas fa-money-bill-wave me-1"></i>Efectivo</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="tarjeta"><i class="fas fa-credit-card me-1"></i>Tarjeta</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="transferencia"><i class="fas fa-exchange-alt me-1"></i>Transferencia</button>
+                        </div>
+                    </div>
                     <div class="row g-3">
-                        <div class="col-6">
+                        <div class="col-6 d-none">
                             <x-st-select label="Método de Pago" name="metodo_pago" required="1">
                                 @if(($empresa->mercadopago_activo ?? false))
                                 <option value="mercadopago">Mercado Pago</option>
@@ -343,6 +357,17 @@ function setRecibido(valor) {
 document.getElementById('metodo_pago').addEventListener('change', function () {
     document.getElementById('rowEfectivo').style.display = (this.value === 'efectivo') ? 'block' : 'none';
     actualizarVuelto();
+});
+
+// Píldoras de método de pago (diseño elegante, mismo valor que el select)
+document.querySelectorAll('#payPills .pay-pill').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('#payPills .pay-pill').forEach(function(b){ b.classList.remove('active','btn-success','btn-primary'); });
+        this.classList.add('active');
+        var sel = document.getElementById('metodo_pago');
+        sel.value = this.dataset.val;
+        sel.dispatchEvent(new Event('change'));
+    });
 });
 
 function validarCupon() {
