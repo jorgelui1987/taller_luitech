@@ -13,14 +13,14 @@
             Total del mes: <strong style="color:#0891b2;">{{ formatoMoneda($totalMes) }}</strong>
         </p>
     </div>
-    <a href="{{ route('ventas.create') }}" class="btn btn-primary px-4">
+    <a href="{{ route('ventas.create') }}" class="btn ui-btn-brand px-4">
         <i class="fas fa-plus me-2"></i>Nueva Venta
     </a>
 </div>
 
 {{-- Filtros --}}
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="ui-card mb-3">
+    <div class="p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label for="buscar" class="visually-hidden">Buscar venta o cliente</label>
@@ -57,10 +57,10 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body p-0">
+<div class="ui-card">
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 ui-table">
                 <thead>
                     <tr>
                         <th class="ps-4">N° Venta</th>
@@ -91,9 +91,9 @@
                         <td>
                             <span style="font-size:12px;">
                                 @php
-                                    $iconos = ['efectivo'=>'💵','tarjeta'=>'💳','transferencia'=>'🏦','cuotas'=>'📅','mercadopago'=>'🟦'];
+                                    $iconos = ['efectivo'=>'fa-money-bill-wave','tarjeta'=>'fa-credit-card','transferencia'=>'fa-building-columns','cuotas'=>'fa-calendar-days','mercadopago'=>'fa-wallet','debito'=>'fa-credit-card','credito'=>'fa-credit-card','yape'=>'fa-mobile-screen','plin'=>'fa-mobile-screen'];
                                 @endphp
-                                {{ $iconos[$venta->metodo_pago] ?? '' }} {{ ucfirst($venta->metodo_pago) }}
+                                <i class="fas {{ $iconos[$venta->metodo_pago] ?? 'fa-coins' }}" style="color:var(--accent1);"></i> {{ ucfirst($venta->metodo_pago) }}
                             </span>
                         </td>
                         <td style="font-weight:700; color:#0f172a;">
@@ -101,16 +101,14 @@
                         </td>
                         <td>
                             @php
-                                $cfg = [
-                                    'completada' => ['bg'=>'#d1fae5','color'=>'#065f46'],
-                                    'pendiente'  => ['bg'=>'#fef3c7','color'=>'#92400e'],
-                                    'cancelada'  => ['bg'=>'#fee2e2','color'=>'#991b1b'],
-                                    'devuelta'   => ['bg'=>'#e5e7eb','color'=>'#374151'],
-                                ];
-                                $c = $cfg[$venta->estado] ?? ['bg'=>'#f3f4f6','color'=>'#374151'];
+                                $badge = [
+                                    'completada' => 'ui-badge-green',
+                                    'pendiente'  => 'ui-badge-amber',
+                                    'cancelada'  => 'ui-badge-red',
+                                    'devuelta'   => 'ui-badge-gray',
+                                ][$venta->estado] ?? 'ui-badge-gray';
                             @endphp
-                            <span style="background:{{ $c['bg'] }}; color:{{ $c['color'] }};
-                                border-radius:20px; padding:4px 10px; font-size:11px; font-weight:500;">
+                            <span class="ui-badge {{ $badge }}">
                                 {{ ucfirst($venta->estado) }}
                             </span>
                         </td>

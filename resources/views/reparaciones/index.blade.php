@@ -11,42 +11,40 @@
         <h4 class="mb-1 fw-bold">Servicio Técnico</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Órdenes de reparación y seguimiento</p>
     </div>
-    <a href="{{ route('reparaciones.create') }}" class="btn btn-primary px-4 d-none d-sm-inline-flex">
+    <a href="{{ route('reparaciones.create') }}" class="btn ui-btn-brand px-4 d-none d-sm-inline-flex">
         <i class="fas fa-plus me-2"></i>Nueva Orden
     </a>
 </div>
 
 {{-- Estadísticas rápidas --}}
-<div class="row g-3 mb-4">
+<div class="row g-2 mb-3">
     @php
         $estats = [
-            ['label'=>'Recibidos', 'value'=>$estadisticas['recibidos'], 'icon'=>'fa-inbox', 'color'=>'#0e7490', 'bg'=>'#cffafe'],
-            ['label'=>'En Proceso', 'value'=>$estadisticas['en_proceso'], 'icon'=>'fa-wrench', 'color'=>'#0284c7', 'bg'=>'#e0f2fe'],
-            ['label'=>'Listos', 'value'=>$estadisticas['listos'], 'icon'=>'fa-check-circle', 'color'=>'#059669', 'bg'=>'#d1fae5'],
-            ['label'=>'Entregados', 'value'=>$estadisticas['entregados'], 'icon'=>'fa-box', 'color'=>'#374151', 'bg'=>'#f3f4f6'],
+            ['label'=>'Recibidos', 'value'=>$estadisticas['recibidos'], 'icon'=>'fa-inbox', 'color'=>'#0e7490', 'bg'=>'#cffafe', 'borde'=>'#0e7490'],
+            ['label'=>'En Proceso', 'value'=>$estadisticas['en_proceso'], 'icon'=>'fa-wrench', 'color'=>'#0284c7', 'bg'=>'#e0f2fe', 'borde'=>'#0284c7'],
+            ['label'=>'Listos', 'value'=>$estadisticas['listos'], 'icon'=>'fa-check-circle', 'color'=>'#059669', 'bg'=>'#d1fae5', 'borde'=>'#059669'],
+            ['label'=>'Entregados', 'value'=>$estadisticas['entregados'], 'icon'=>'fa-box', 'color'=>'#374151', 'bg'=>'#f3f4f6', 'borde'=>'#9ca3af'],
         ];
     @endphp
     @foreach($estats as $e)
     <div class="col-6 col-md-3">
-        <div class="card">
-            <div class="card-body p-3 d-flex align-items-center gap-3">
+        <div class="ui-kpi d-flex align-items-center gap-3" style="border-left:5px solid {{ $e['borde'] }};">
                 <div style="width:44px; height:44px; border-radius:12px; background:{{ $e['bg'] }};
                             display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                     <i class="fas {{ $e['icon'] }}" style="color:{{ $e['color'] }}; font-size:18px;"></i>
                 </div>
                 <div>
-                    <div style="font-size:22px; font-weight:700; color:{{ $e['color'] }};">{{ $e['value'] }}</div>
+                    <div style="font-size:22px; font-weight:700; color:#0f172a;">{{ $e['value'] }}</div>
                     <div style="font-size:12px; color:#9ca3af;">{{ $e['label'] }}</div>
                 </div>
-            </div>
         </div>
     </div>
     @endforeach
 </div>
 
 {{-- Filtros colapsables en móvil --}}
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="ui-card mb-3">
+    <div class="p-3">
         {{-- Toggle visible solo en móvil --}}
         <div class="d-flex d-sm-none align-items-center justify-content-between filtros-toggle" data-target="#filtrosContent" style="cursor:pointer; user-select:none;">
             <span style="font-size:13px; font-weight:500;"><i class="fas fa-filter me-1"></i>Filtros</span>

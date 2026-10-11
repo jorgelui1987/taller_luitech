@@ -37,15 +37,15 @@
             </ul>
         </div>
         @endif
-        <a href="{{ route('productos.create') }}" class="btn btn-primary px-4">
+        <a href="{{ route('productos.create') }}" class="btn ui-btn-brand px-4">
             <i class="fas fa-plus me-2"></i>Nuevo Producto
         </a>
     </div>
 </div>
 
 {{-- Filtros --}}
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="ui-card mb-3">
+    <div class="p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-4">
                 <label for="buscar" class="visually-hidden">Buscar producto</label>
@@ -87,7 +87,7 @@
                 </select>
             </div>
             <div class="col-md-2 d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-1">
+                <button type="submit" class="btn ui-btn-brand flex-1">
                     <i class="fas fa-filter me-1"></i>Filtrar
                 </button>
                 <a href="{{ route('productos.index') }}" class="btn btn-outline-secondary">
@@ -108,10 +108,10 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body p-0">
+<div class="ui-card">
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 ui-table">
                 <thead>
                     <tr>
                         <th class="ps-4">Producto</th>

@@ -11,14 +11,14 @@
         <h4 class="mb-1 fw-bold">Clientes</h4>
         <p class="text-muted mb-0" style="font-size:13px;">Gestiona tu cartera de clientes</p>
     </div>
-    <a href="{{ route('clientes.create') }}" class="btn btn-primary px-4">
+    <a href="{{ route('clientes.create') }}" class="btn ui-btn-brand px-4">
         <i class="fas fa-plus me-2"></i>Nuevo Cliente
     </a>
 </div>
 
 {{-- Filtros --}}
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="ui-card mb-3">
+    <div class="p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-6">
                 <label for="buscar" class="visually-hidden">Buscar clientes</label>
@@ -38,7 +38,7 @@
                 </select>
             </div>
             <div class="col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-1">
+                <button type="submit" class="btn ui-btn-brand flex-1">
                     <i class="fas fa-filter me-1"></i>Filtrar
                 </button>
                 <a href="{{ route('clientes.index') }}" class="btn btn-outline-secondary">
@@ -50,10 +50,10 @@
 </div>
 
 {{-- Tabla --}}
-<div class="card">
-    <div class="card-body p-0">
+<div class="ui-card">
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 ui-table">
                 <thead>
                     <tr>
                         <th class="ps-4">#</th>
@@ -91,18 +91,17 @@
                             @endif
                         </td>
                         <td>
-                            <span class="badge {{ $cliente->tipo=='empresa'?'bg-info':'bg-secondary' }}"
-                                  style="border-radius:20px; font-size:11px; padding:4px 10px;">
+                            <span class="ui-badge {{ $cliente->tipo=='empresa'?'ui-badge-blue':'ui-badge-gray' }}">
                                 {{ ucfirst($cliente->tipo) }}
                             </span>
                         </td>
                         <td style="font-size:13px;">
-                            <span class="badge bg-light text-dark" style="border-radius:20px; font-size:12px; padding:4px 10px;">
+                            <span class="ui-badge ui-badge-gray">
                                 {{ $cliente->ventas_count }}
                             </span>
                         </td>
                         <td style="font-size:13px;">
-                            <span class="badge bg-light text-dark" style="border-radius:20px; font-size:12px; padding:4px 10px;">
+                            <span class="ui-badge ui-badge-gray">
                                 {{ $cliente->reparaciones_count }}
                             </span>
                         </td>
@@ -137,7 +136,7 @@
                         <td colspan="8" class="text-center py-5">
                             <i class="fas fa-users fa-3x mb-3 d-block" style="color:#d1d5db;"></i>
                             <p class="text-muted mb-2">No hay clientes registrados</p>
-                            <a href="{{ route('clientes.create') }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('clientes.create') }}" class="btn ui-btn-brand btn-sm">
                                 <i class="fas fa-plus me-1"></i>Agregar primer cliente
                             </a>
                         </td>
