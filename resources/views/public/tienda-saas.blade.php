@@ -137,16 +137,14 @@
 </form>
 <p style="color:var(--muted);font-size:12px">O escanea el QR de tu boleta <i class="fa-solid fa-qrcode"></i></p>
 </div></div></section>
-<section class="sec" style="padding-top:0"><div class="wrap"><div class="grid2">
-<div>
+<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:760px">
 @if($cupones->isNotEmpty())
 @foreach($cupones as $cupon)
 <div class="cupon" style="margin-bottom:12px"><small style="color:var(--muted)">CUPÓN ACTIVO</small><h3 style="margin:4px 0">{{ $cupon->codigo }}</h3><b style="color:var(--emerald)">{{ $cupon->valor }}% de descuento</b><br><small style="color:var(--muted)">{{ $cupon->descripcion }}</small></div>
 @endforeach
 @endif
-</div>
 @if($resenas->isNotEmpty())
-<div class="card"><b><span class="stars">★★★★★</span>
+<div class="card" style="text-align:center"><b><span class="stars">★★★★★</span>
 @if(isset($promedio) && $promedio)
 {{ number_format($promedio,1) }} ·
 @endif
@@ -155,7 +153,7 @@ Lo que dicen los clientes</b>
 @php
     $inicial = mb_strtoupper(mb_substr(trim($r->nombre_cliente ?? '?'), 0, 1));
 @endphp
-<div style="display:flex;gap:10px;margin:12px 0">
+<div style="display:flex;gap:10px;margin:14px auto;max-width:520px;text-align:left">
 <div style="width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex:none">{{ $inicial }}</div>
 <div>
 <span class="stars">{{ str_repeat('★', max(1, min(5, (int) $r->calificacion))) }}</span> <b style="font-size:13.5px">{{ $r->nombre_cliente }}</b><br>
@@ -163,10 +161,10 @@ Lo que dicen los clientes</b>
 </div>
 </div>
 @endforeach
-<a class="btn btn-g" style="width:100%;justify-content:center" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Dejar mi reseña</a>
+<a class="btn btn-g" style="justify-content:center" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Dejar mi reseña</a>
 </div>
 @else
-<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<div class="card" style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center">
 <div style="display:flex;align-items:center;gap:10px">
 <span class="stars">★★★★★</span>
 <span style="font-size:13.5px;color:var(--muted)">Sé el primero en opinar</span>
@@ -174,7 +172,7 @@ Lo que dicen los clientes</b>
 <a class="btn btn-g btn-sm" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Opinar</a>
 </div>
 @endif
-</div></div></section>
+</div></section>
 <section class="sec" id="ubicacion" style="padding-top:0"><div class="wrap"><div class="card">
 <div class="sec-head">
 <h3><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
