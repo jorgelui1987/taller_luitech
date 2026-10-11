@@ -292,6 +292,11 @@ class ConfiguracionController extends Controller
         ]);
 
         $data = $validated;
+        // ── Switches: checkbox desmarcado NO llega en el request → forzar false ──
+        // Si no, al desactivar banner/página/cupón se queda en true (bug reportado).
+        $data['promo_banner_activo'] = $request->boolean('promo_banner_activo');
+        $data['pagina_publica_activa'] = $request->boolean('pagina_publica_activa');
+        $data['cupon_automatico_al_entregar'] = $request->boolean('cupon_automatico_al_entregar');
 
         $empresa = Configuracion::empresa();
 
