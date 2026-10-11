@@ -415,7 +415,7 @@ Route::post('/configuracion/promos', [ConfiguracionController::class, 'updatePro
                       ->orWhere('codigo', 'like', "%$buscar%")
                       ->orWhere('codigo_barras', 'like', "%$buscar%")
                 )
-                ->limit(10)
+                ->limit(25)
                 ->get(['id', 'nombre', 'codigo', 'codigo_barras', 'precio_venta', 'stock', 'marca_id']);
 
             return response()->json($productos);
