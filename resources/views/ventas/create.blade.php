@@ -40,8 +40,9 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
                                     <label for="buscador" class="visually-hidden">Buscar producto</label>
-                                    <input type="text" id="buscador" class="form-control form-control-sm" placeholder="Buscar producto..." oninput="filtrar()">
+                                    <input type="text" id="buscador" class="form-control form-control-sm" placeholder="Buscar producto (nombre, SKU o código)..." autocomplete="off" oninput="filtrarAjax()">
                                 </div>
+                                <div id="resultBuscador" class="list-group mt-1" style="display:none; max-height:220px; overflow-y:auto; position:absolute; z-index:50; width:100%;"></div>
                         </div>
                         <div class="col-md-3">
                                 <label for="selectProd" class="visually-hidden">Seleccionar producto</label>
@@ -198,6 +199,70 @@ function filtrar() {
     for (let i = 1; i < selProd.options.length; i++) {
         selProd.options[i].hidden = !selProd.options[i].text.toLowerCase().includes(q);
     }
+}
+
+// ── Buscador AJAX sin límite: trae de TODA la BD (miles de accesorios) ──
+// Se dispara al escribir 2+ letras; filtra el select precargado y además
+// consulta /api/productos/buscar para productos fuera de los primeros 50.
+let buscadorTimer = null;
+function filtrarAjax() {
+    filtrar(); // filtro instantáneo sobre lo precargado
+    let q = document.getElementById('buscador').value.trim();
+    let box = document.getElementById('resultBuscador');
+    clearTimeout(buscadorTimer);
+    if (q.length < 2) { box.style.display = 'none'; box.innerHTML = ''; return; }
+    buscadorTimer = setTimeout(() => {
+        fetch("{{ route('api.productos.buscar') }}?q=" + encodeURIComponent(q), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(r => r.json()).then(data => {
+            // Quitar los que ya están en el select para no duplicar
+            let existentes = new Set();
+            for (let i = 1; i < selProd.options.length; i++) existentes.add(String(selProd.options[i].value));
+            let nuevos = (data || []).filter(p => !existentes.has(String(p.id)));
+            if (!nuevos.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+            box.innerHTML = nuevos.map(p =>
+                `<button type="button" class="list-group-item list-group-item-action py-1" style="font-size:13px;"
+                    data-id="${p.id}" data-precio="${p.precio_venta}" data-stock="${p.stock}" data-codigo="${p.codigo ?? ''}" data-codigo_barras="${p.codigo_barras ?? ''}" data-nombre="${(p.nombre || '').replace(/"/g, '&quot;')}">
+                    <strong>${p.nombre}</strong> <small class="text-muted">(${(p.codigo || '')}) — Stock: ${p.stock}</small>
+                </button>`).join('');
+            box.style.display = 'block';
+            box.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    agregarDesdeDatos(btn.dataset);
+                    box.style.display = 'none';
+                    document.getElementById('buscador').value = '';
+                });
+            });
+        }).catch(() => { box.style.display = 'none'; });
+    }, 250);
+}
+
+// Cierra sugerencias al hacer clic fuera
+document.addEventListener('click', function(e) {
+    let box = document.getElementById('resultBuscador');
+    if (box && !box.contains(e.target) && e.target.id !== 'buscador') box.style.display = 'none';
+});
+
+function agregarDesdeDatos(d) {
+    let id = d.id, precio = parseFloat(d.precio), stock = parseInt(d.stock), nombre = d.nombre;
+    if (items[id]) {
+        let inp = document.querySelector('#fila-' + id + ' .cant');
+        let c = parseInt(inp.value) + 1;
+        if (c > stock) { alert('Stock insuficiente'); return; }
+        inp.value = c; recalc(id);
+    } else {
+        items[id] = { nombre, precio, stock };
+        vacio.style.display = 'none';
+        let tr = document.createElement('tr'); tr.id = 'fila-' + id;
+        tr.innerHTML = `<td><input type="hidden" name="productos[${idx}][id]" value="${id}"><strong>${nombre}</strong><br><small style="color:#999;">Stock: ${stock}</small></td>
+            <td><input type="number" name="productos[${idx}][cantidad]" value="1" min="1" max="${stock}" class="form-control form-control-sm cant" style="width:65px;" onchange="recalc('${id}')"></td>
+            <td>{{ $empresa->simbolo_moneda ?? '$' }} ${precio.toFixed(2)}</td>
+            <td><input type="number" name="productos[${idx}][descuento]" value="0" min="0" step="0.01" class="form-control form-control-sm" style="width:80px;" onchange="recalc('${id}')"></td>
+            <td id="sub-${id}"><strong>{{ $empresa->simbolo_moneda ?? '$' }} ${precio.toFixed(2)}</strong></td>
+            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="quitar('${id}')"><i class="fas fa-times"></i></button></td>`;
+        cuerpo.appendChild(tr); idx++;
+    }
+    totales();
 }
 
 function buscarCodigo(cod) {
