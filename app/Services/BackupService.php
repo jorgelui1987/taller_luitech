@@ -438,6 +438,133 @@ class BackupService
     }
 
     /**
+     * Restaura un backup POR TIENDA (generarSQLPorTenant) en modo selectivo.
+     * - Omite CREATE TABLE / DROP (las tablas ya existen).
+     * - Solo ejecuta INSERT de tablas con tenant_id, reasignando IDs para no chocar.
+     * - Valida que el tenant del backup sea el mismo del usuario actual.
+     * @return array{total:int, ejecutadas:int, omitidas:int, fallidas:int, errores:string[]}
+     */
+    public function restaurarSelectivoPorTenant(string $contenido, int $tenantId): array
+    {
+        $this->validarCompatibilidadMotor($contenido);
+        $sentencias = $this->dividirSentencias($contenido);
+        $stats = ['total' => 0, 'ejecutadas' => 0, 'omitidas' => 0, 'fallidas' => 0, 'errores' => []];
+        $this->desactivarFK();
+        try {
+            foreach ($sentencias as $stmt) {
+                $up = strtoupper(ltrim($stmt));
+                if (str_starts_with($up, 'CREATE TABLE') || str_starts_with($up, 'DROP TABLE') || str_starts_with($up, 'ALTER TABLE') || str_starts_with($up, 'SET ')) {
+                    $stats['omitidas']++;
+                    continue;
+                }
+                if (!str_starts_with($up, 'INSERT INTO')) {
+                    $stats['omitidas']++;
+                    continue;
+                }
+                $stats['total']++;
+                try {
+                    $this->ejecutarInsertSelectivo($stmt, $tenantId);
+                    $stats['ejecutadas']++;
+                } catch (\Throwable $e) {
+                    $stats['fallidas']++;
+                    \Illuminate\Support\Facades\Log::error('Restore selectivo: insert fallido', ['error' => $e->getMessage()]);
+                    if (count($stats['errores']) < 5) {
+                        $stats['errores'][] = mb_substr($e->getMessage(), 0, 160);
+                    }
+                }
+            }
+            if (DB::connection()->getDriverName() === 'pgsql') {
+                foreach (DB::select("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'") as $t) {
+                    try {
+                        if ($t->table_name !== 'migrations' && \Illuminate\Support\Facades\Schema::hasColumn($t->table_name, 'id')) {
+                            DB::statement("SELECT setval(pg_get_serial_sequence('{$t->table_name}', 'id'), COALESCE((SELECT MAX(id) FROM \"{$t->table_name}\"), 0) + 1, false)");
+                        }
+                    } catch (\Throwable) {}
+                }
+            }
+        } finally {
+            $this->activarFK();
+        }
+        return $stats;
+    }
+
+    private function ejecutarInsertSelectivo(string $stmt, int $tenantId): void
+    {
+        if (!preg_match('/INSERT INTO\s+(?:"([^"]+)"|`([^`]+)`|(\S+))\s*\(([^)]+)\)\s*VALUES\s*(.+)$/is', $stmt, $m)) {
+            throw new \RuntimeException('INSERT no reconocido.');
+        }
+        $tabla = $m[1] !== '' ? $m[1] : ($m[2] !== '' ? $m[2] : $m[3]);
+        $tabla = trim($tabla, '"`');
+        $cols = array_map(fn ($c) => trim(trim($c), '"`'), explode(',', $m[4]));
+        $valuesPart = trim($m[5]);
+        if (!\Illuminate\Support\Facades\Schema::hasTable($tabla) || !\Illuminate\Support\Facades\Schema::hasColumn($tabla, 'tenant_id')) {
+            throw new \RuntimeException("Tabla {$tabla} sin tenant_id: omitida por seguridad.");
+        }
+        $idxTenant = array_search('tenant_id', $cols, true);
+        if ($idxTenant === false) {
+            throw new \RuntimeException("INSERT sin tenant_id en {$tabla}.");
+        }
+        preg_match_all('/\((?:[^\'()]|\'[^\']*\')*\)/', $valuesPart, $filas);
+        foreach ($filas[0] as $fila) {
+            $vals = $this->partirValoresFila($fila);
+            if (count($vals) !== count($cols)) {
+                continue;
+            }
+            $data = array_combine($cols, $vals);
+            $data['tenant_id'] = (string) $tenantId;
+            if (isset($data['id'])) {
+                unset($data['id']);
+            }
+            $data = array_map(fn ($v) => $this->normalizarValorInsert($v), $data);
+            DB::table($tabla)->insert($data);
+        }
+    }
+
+    private function partirValoresFila(string $fila): array
+    {
+        $fila = trim($fila);
+        $fila = trim($fila, '()');
+        $out = [];
+        $buf = '';
+        $inQ = false;
+        $len = strlen($fila);
+        for ($i = 0; $i < $len; $i++) {
+            $c = $fila[$i];
+            $n = $i + 1 < $len ? $fila[$i + 1] : '';
+            if ($c === "'" && $inQ && $n === "'") {
+                $buf .= "''";
+                $i++;
+                continue;
+            }
+            if ($c === "'") {
+                $inQ = !$inQ;
+                $buf .= $c;
+                continue;
+            }
+            if ($c === ',' && !$inQ) {
+                $out[] = trim($buf);
+                $buf = '';
+                continue;
+            }
+            $buf .= $c;
+        }
+        $out[] = trim($buf);
+        return $out;
+    }
+
+    private function normalizarValorInsert(string $v): mixed
+    {
+        $t = trim($v);
+        if (strcasecmp($t, 'NULL') === 0) {
+            return null;
+        }
+        if (strlen($t) >= 2 && $t[0] === "'" && $t[strlen($t) - 1] === "'") {
+            return str_replace("''", "'", substr($t, 1, -1));
+        }
+        return $t;
+    }
+
+    /**
      * Compara el motor declarado en la cabecera del backup con el motor actual.
      * Los backups generados por generarSQL() incluyen "--  Motor     : {driver}".
      */

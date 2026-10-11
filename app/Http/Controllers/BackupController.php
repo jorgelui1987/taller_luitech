@@ -122,6 +122,32 @@ class BackupController extends Controller
 
             $this->backupService->validarContenidoBackup($contenido);
 
+            // ── Backup POR TIENDA: modo selectivo (sin DROP/CREATE, upsert por tenant) ──
+            $tenantBackup = null;
+            if (preg_match('/Alcance\s*:\s*solo\s*tenant_id\s*=\s*(\d+)/i', $contenido, $mAlc)) {
+                $tenantBackup = (int) $mAlc[1];
+            } elseif (preg_match('/Backup POR EMPRESA.*?\(ID\s*(\d+)\)/is', $contenido, $mEmp)) {
+                $tenantBackup = (int) $mEmp[1];
+            }
+            if ($tenantBackup !== null) {
+                $miTenant = (int) auth()->user()->tenant_id;
+                if ($tenantBackup !== $miTenant) {
+                    return back()->with('error', 'Este respaldo es de otra tienda (ID ' . $tenantBackup . '). Solo puedes restaurar respaldos de tu tienda (ID ' . $miTenant . '). Tus datos NO fueron tocados.');
+                }
+                $stats = $this->backupService->restaurarSelectivoPorTenant($contenido, $miTenant);
+                $resumenSel = "Sentencias aplicadas: <strong>{$stats['ejecutadas']}</strong> de {$stats['total']}"
+                    . " · Omitidas (estructura): {$stats['omitidas']}";
+                if ($stats['fallidas'] === 0) {
+                    return back()->with('success', "Respaldo por tienda restaurado correctamente. {$resumenSel}."
+                        . " Se guardó un backup automático previo (<strong>{$autoNombre}</strong>).");
+                }
+                $listaErr = implode('<br>• ', array_map('e', $stats['errores']));
+                return back()->with('warning', "Restauración por tienda <strong>parcial</strong>: {$stats['fallidas']} fallidas."
+                    . "<br>{$resumenSel}."
+                    . '<br><strong>Primeros errores:</strong><br>• ' . $listaErr
+                    . "<br><br>Se conservó un backup automático previo (<strong>{$autoNombre}</strong>) por si necesitas revertir.");
+            }
+
             // El servicio se encarga de dividir sentencias, desactivar FK,
             // ejecutar todo y reportar los errores reales.
             $stats = $this->backupService->restaurarDesdeContenido($contenido);
