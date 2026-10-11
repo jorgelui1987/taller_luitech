@@ -9,6 +9,10 @@
 
 @push('styles')
 <style>
+.ot-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;}
+.ot-sec{background:#f8fafc;border:1px solid #eef2f7;border-radius:12px;padding:14px;margin-bottom:12px;}
+.ot-sec-title{font-size:13px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ot-sec-title i{color:var(--accent1);}
 .info-badge {
     display:inline-flex; align-items:center; gap:4px;
     padding:4px 10px; border-radius:20px; font-size:11px; font-weight:500;
@@ -43,16 +47,15 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-12">
-        <div class="ui-card">
-            <div class="p-3">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="ot-card p-3">
+                <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                     <div>
                         <h5 class="fw-bold mb-1">Actualizar Orden: {{ $reparacion->numero_orden }}</h5>
                         <p class="text-muted mb-0" style="font-size:13px;">
                             {{ $reparacion->dispositivo }} — {{ $reparacion->cliente->nombre_completo ?? '' }}
                         </p>
                     </div>
-                    <a href="{{ route('reparaciones.show', $reparacion) }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('reparaciones.show', $reparacion) }}" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-eye me-1"></i>Ver Detalle
                     </a>
                 </div>
@@ -68,11 +71,11 @@
                 <form action="{{ route('reparaciones.update', $reparacion) }}" method="POST">
                     @csrf @method('PUT')
 
-                    {{-- Formulario en 1 pantalla (igual que Nueva Orden) --}}
+                    {{-- Formulario en 1 pantalla compacta --}}
                     <div class="row g-3">
                         <div class="col-xl-7 col-lg-7">
-                            <div class="ui-card p-3 mb-3">
-                                <div class="ui-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
+                            <div class="ot-sec">
+                                <div class="ot-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
                                     <div class="row g-2">
                                         <div class="col-md-4">
                                             <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
@@ -106,8 +109,8 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="ui-card p-3 mb-3">
-                                <div class="ui-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
+                            <div class="ot-sec">
+                                <div class="ot-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
                                     <div class="row g-2">
                                         <div class="col-md-4">
                                             <label for="tipo_dispositivo" class="form-label">Tipo de Dispositivo <span class="text-danger">*</span></label>
@@ -205,8 +208,8 @@
                                             </div>
                                         </div>
                                     </div>
-                            <div class="ui-card p-3 mb-3">
-                                <div class="ui-sec-title"><i class="fas fa-stethoscope"></i>Diagnóstico y solución</div>
+                            <div class="ot-sec">
+                                <div class="ot-sec-title"><i class="fas fa-stethoscope"></i>Diagnóstico y solución</div>
                                     <div class="row g-3">
                                         <div class="col-12">
                                             <label for="falla_reportada" class="form-label">Falla Reportada <span class="text-danger">*</span></label>
@@ -229,8 +232,8 @@
                                     </div>
                             </div>
                             <div class="col-xl-5 col-lg-5">
-                            <div class="ui-card p-3 mb-3">
-                                <div class="ui-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
+                            <div class="ot-sec">
+                                <div class="ot-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
                                     <div class="row g-3">
                                         <div class="col-md-3">
                                             <label for="presupuesto" class="form-label">Presupuesto ({{ $empresa->simbolo_moneda ?? '$' }})</label>
@@ -329,8 +332,8 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="ui-card p-3 mb-3">
-                                <div class="ui-sec-title"><i class="fas fa-truck"></i>Entrega y WhatsApp</div>
+                            <div class="ot-sec">
+                                <div class="ot-sec-title"><i class="fas fa-truck"></i>Entrega y WhatsApp</div>
                                     @php
                                         use App\Helpers\WhatsAppHelper;
                                         $cliente = $reparacion->cliente;
