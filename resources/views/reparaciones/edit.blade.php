@@ -44,8 +44,8 @@
 <div class="row justify-content-center">
     <div class="col-12">
         <div class="ui-card">
-            <div class="p-4">
-                <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="p-3">
+                <div class="d-flex align-items-center justify-content-between mb-3">
                     <div>
                         <h5 class="fw-bold mb-1">Actualizar Orden: {{ $reparacion->numero_orden }}</h5>
                         <p class="text-muted mb-0" style="font-size:13px;">
@@ -70,11 +70,11 @@
 
                     {{-- Formulario en 1 pantalla (igual que Nueva Orden) --}}
                     <div class="row g-3">
-                        <div class="col-xl-7 col-lg-6">
+                        <div class="col-xl-7 col-lg-7">
                             <div class="ui-card p-3 mb-3">
                                 <div class="ui-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
-                                    <div class="row g-3">
-                                        <div class="col-md-5">
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
                                             <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
                                             <select name="estado" id="estado" class="form-select" required>
                                                 @php $estados = ['recibido'=>'Recibido','en_diagnostico'=>'En Diagnóstico','esperando_repuesto'=>'Esperando Repuesto','en_reparacion'=>'En Reparación','listo'=>'Listo para Entregar','entregado'=>'Entregado','no_reparable'=>'No Reparable']; @endphp
@@ -85,7 +85,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <label for="prioridad" class="form-label">Prioridad</label>
                                             <select name="prioridad" id="prioridad" class="form-select">
                                                 <option value="baja" {{ old('prioridad',$reparacion->prioridad)=='baja'?'selected':'' }}>Baja</option>
@@ -228,7 +228,7 @@
                                         </div>
                                     </div>
                             </div>
-                            <div class="col-xl-5 col-lg-6">
+                            <div class="col-xl-5 col-lg-5">
                             <div class="ui-card p-3 mb-3">
                                 <div class="ui-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
                                     <div class="row g-3">
