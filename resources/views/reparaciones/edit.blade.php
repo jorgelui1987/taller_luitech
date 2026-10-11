@@ -10,9 +10,12 @@
 @push('styles')
 <style>
 .ot-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;}
-.ot-sec{background:#f8fafc;border:1px solid #eef2f7;border-radius:12px;padding:14px;margin-bottom:12px;}
-.ot-sec-title{font-size:13px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ot-sec{background:#f8fafc;border:1px solid #eef2f7;border-radius:12px;padding:12px;margin-bottom:10px;}
+.ot-sec-title{font-size:12.5px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .ot-sec-title i{color:var(--accent1);}
+.ot-sec .form-label{font-size:12px;margin-bottom:2px;}
+.ot-sec .form-control,.ot-sec .form-select{font-size:13px;padding:6px 10px;}
+.ot-sec textarea.form-control{rows:1;}
 .info-badge {
     display:inline-flex; align-items:center; gap:4px;
     padding:4px 10px; border-radius:20px; font-size:11px; font-weight:500;
@@ -71,15 +74,15 @@
                 <form action="{{ route('reparaciones.update', $reparacion) }}" method="POST">
                     @csrf @method('PUT')
 
-                    {{-- Formulario horizontal 3 columnas --}}
+                    {{-- Formulario horizontal 3 columnas parejas --}}
                     <div class="row g-2">
                         {{-- Columna 1: estado + equipo --}}
                         <div class="col-xxl-4 col-lg-4 col-md-6">
                             <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-tasks"></i>Estado y asignación</div>
                                     <div class="row g-2">
-                                        <div class="col-12">
-                                            <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
+                                        <div class="col-4">
+                                            <label for="estado" class="form-label">Estado *</label>
                                             <select name="estado" id="estado" class="form-select" required>
                                                 @php $estados = ['recibido'=>'Recibido','en_diagnostico'=>'En Diagnóstico','esperando_repuesto'=>'Esperando Repuesto','en_reparacion'=>'En Reparación','listo'=>'Listo para Entregar','entregado'=>'Entregado','no_reparable'=>'No Reparable']; @endphp
                                                 @foreach($estados as $val => $lbl)
@@ -89,7 +92,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <label for="prioridad" class="form-label">Prioridad</label>
                                             <select name="prioridad" id="prioridad" class="form-select">
                                                 <option value="baja" {{ old('prioridad',$reparacion->prioridad)=='baja'?'selected':'' }}>Baja</option>
@@ -98,7 +101,7 @@
                                                 <option value="urgente" {{ old('prioridad',$reparacion->prioridad)=='urgente'?'selected':'' }}>Urgente</option>
                                             </select>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <label for="tecnico_id" class="form-label">Técnico Asignado</label>
                                             <select name="tecnico_id" id="tecnico_id" class="form-select">
                                                 @foreach($tecnicos as $t)
@@ -113,8 +116,8 @@
                             <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
                                     <div class="row g-2">
-                                        <div class="col-6">
-                                            <label for="tipo_dispositivo" class="form-label">Tipo de Dispositivo <span class="text-danger">*</span></label>
+                                        <div class="col-4">
+                                            <label for="tipo_dispositivo" class="form-label">Tipo *</label>
                                             <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-select" required>
                                                 <option value="">— Seleccionar tipo —</option>
                                                 <option value="celular" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='celular'?'selected':'' }}>Celular / Smartphone</option>
@@ -123,7 +126,7 @@
                                                 <option value="otros" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='otros'?'selected':'' }}>Otros</option>
                                             </select>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <label for="marca_select" class="form-label">Marca</label>
                                             @php
                                                 $marcasPrecargadas = [
@@ -149,67 +152,42 @@
                                                    placeholder="Escribir marca manualmente..."
                                                    style="{{ $esOtra ? 'display:block;' : 'display:none;' }}">
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <label for="modelo" class="form-label">Modelo</label>
-                                            <input type="text" class="form-control" name="modelo" id="modelo"
+                                            <input type="text" class="form-control form-control-sm" name="modelo" id="modelo"
                                                    value="{{ old('modelo',$reparacion->modelo) }}">
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <label for="imei" class="form-label">IMEI / Serie</label>
-                                            <input type="text" class="form-control" name="imei" id="imei"
+                                            <input type="text" class="form-control form-control-sm" name="imei" id="imei"
                                                    value="{{ old('imei',$reparacion->imei) }}">
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <label for="color" class="form-label">Color</label>
-                                            <input type="text" class="form-control" name="color" id="color"
+                                            <input type="text" class="form-control form-control-sm" name="color" id="color"
                                                    value="{{ old('color',$reparacion->color) }}">
                                         </div>
                                         <div class="col-6">
                                             <label for="fecha_estimada" class="form-label">Fecha Estimada</label>
-                                            <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada"
+                                            <input type="date" class="form-control form-control-sm" name="fecha_estimada" id="fecha_estimada"
                                                    value="{{ old('fecha_estimada', optional($reparacion->fecha_estimada)->format('Y-m-d')) }}">
                                         </div>
-                                        <div class="col-12">
+                                        <div class="col-6">
                                             <label for="tipo_codigo" class="form-label">Patrón / PIN</label>
-                                            <div class="d-flex gap-2 align-items-start">
-                                                <div style="flex:0 0 100px;">
-                                                    <select name="tipo_codigo" id="tipo_codigo" class="form-select" onchange="togglePatronInputEdit(this)">
-                                                        <option value="">—</option>
-                                                        <option value="pin" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='pin'?'selected':'' }}>PIN</option>
-                                                        <option value="patron" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'selected':'' }}>Patrón</option>
-                                                    </select>
-                                                </div>
-                                                <div style="flex:1;">
-                                                    <label for="codigo_equipo" class="form-label">Valor</label>
-                                                    <input type="text" class="form-control patron-valor" name="codigo_equipo" id="codigo_equipo"
-                                                           value="{{ old('codigo_equipo',$reparacion->codigo_equipo) }}"
-                                                           placeholder="PIN numérico"
-                                                           style="display:{{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'none':'block'}};">
-                                                </div>
-                                            </div>
-                                            <div class="patron-dibujo mt-2" style="display:{{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'block':'none'}};">
-                                                <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">Dibuja el patrón (toca los puntos en orden):</div>
-                                                <div style="display:flex; gap:2px; flex-wrap:wrap; max-width:140px; margin:0 auto;">
-                                                    @for($i=1;$i<=9;$i++)
-                                                    <button type="button" class="patron-punto" data-pos="{{ $i }}"
-                                                         style="width:40px; height:40px; border-radius:50%; border:2px solid #0891b2;
-                                                                display:flex; align-items:center; justify-content:center;
-                                                                font-size:13px; color:#0891b2; cursor:pointer; background:#f8f5ff;
-                                                                transition:all .2s; user-select:none; padding:0;"
-                                                         onclick="togglePuntoEdit(this)" aria-label="Punto {{ $i }} del patrón">
-                                                        {{ $i }}
-                                                    </button>
-                                                    @endfor
-                                                </div>
-                                                <input type="hidden" name="patron_secuencia" class="patron-secuencia" value="{{ old('patron_secuencia') }}">
-                                                <div style="display:flex; gap:4px; margin-top:4px;">
-                                                    <span style="font-size:11px; color:#9ca3af;" class="patron-texto">Ningún punto seleccionado</span>
-                                                    <button type="button" onclick="limpiarPatronEdit()" style="font-size:11px; border:none; background:transparent; color:#dc2626; cursor:pointer; padding:0;">Limpiar</button>
-                                                </div>
-                                            </div>
+                                            <select name="tipo_codigo" id="tipo_codigo" class="form-select form-select-sm" onchange="togglePatronInputEdit(this)">
+                                                <option value="">—</option>
+                                                <option value="pin" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='pin'?'selected':'' }}>PIN</option>
+                                                <option value="patron" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'selected':'' }}>Patrón</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12" id="pinWrapperEdit" style="display:{{ old('tipo_codigo',$reparacion->tipo_codigo)=='pin'?'block':'none' }};">
+                                            <input type="text" class="form-control form-control-sm patron-valor" name="codigo_equipo" id="codigo_equipo"
+                                                   value="{{ old('codigo_equipo',$reparacion->codigo_equipo) }}" placeholder="PIN numérico">
                                         </div>
                                     </div>
                             </div>
+                        {{-- Columna 3: diagnóstico + resumen --}}
+                        <div class="col-xxl-3 col-lg-3 col-md-12">
                             <div class="ot-sec mb-2">
                                 <div class="ot-sec-title"><i class="fas fa-stethoscope"></i>Diagnóstico y solución</div>
                                     <div class="row g-2">
@@ -233,11 +211,6 @@
                                         </div>
                                     </div>
                             </div>
-                        </div>
-                        {{-- Columna 2: costos + entrega + guardar --}}
-                        <div class="col-xxl-4 col-lg-4 col-md-6">
-                            <div class="ot-sec mb-2">
-                                <div class="ot-sec-title"><i class="fas fa-dollar-sign"></i>Costos</div>
                                     <div class="row g-2">
                                         <div class="col-6">
                                             <label for="presupuesto" class="form-label">Presupuesto ({{ $empresa->simbolo_moneda ?? '$' }})</label>
