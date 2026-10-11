@@ -22,7 +22,7 @@ class Reparacion extends Model
         'cupon_codigo',
         'estado', 'prioridad', 'metodo_pago',
         'fecha_recepcion', 'fecha_estimada', 'fecha_entrega',
-        'garantia', 'dias_garantia', 'notas',
+        'garantia', 'dias_garantia', 'notas', 'accesorios_entregados',
         'firma_recepcion', 'firma_entrega',
         'comision_porcentaje', 'comision_monto', 'comision_pagada', 'comision_fecha_pago',
         'tenant_id',

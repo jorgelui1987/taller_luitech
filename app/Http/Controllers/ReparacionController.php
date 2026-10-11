@@ -72,7 +72,7 @@ class ReparacionController extends Controller
             ->get()
             ->filter(fn ($u) => !$u->esSuperAdmin() && $u->puedeReparar())
             ->values();
-        return view('reparaciones.create', compact('clientes', 'tecnicos'));
+        return view('reparaciones.create-compacto', compact('clientes', 'tecnicos'));
     }
 
     /**
@@ -136,6 +136,8 @@ class ReparacionController extends Controller
             'prioridad'           => 'required|in:baja,media,alta,urgente',
             'fecha_estimada'      => 'nullable|date',
             'notas'               => 'nullable|string',
+            'accesorios_entregados' => 'nullable|string|max:255',
+            'registrar_egreso_repuesto' => 'nullable|boolean',
             'firma_recepcion_data'=> 'nullable|string',
             'fotos.*'             => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'fotos_tipos.*'       => 'nullable|string',
@@ -203,7 +205,19 @@ class ReparacionController extends Controller
 
         unset($validated['firma_recepcion_data'], $validated['fotos'], $validated['fotos_tipos']);
 
+        $registrarEgreso = $request->boolean('registrar_egreso_repuesto');
+        unset($validated['registrar_egreso_repuesto']);
+
         $reparacion = Reparacion::create($validated);
+
+        // ── Egreso en caja por repuesto ya pagado al proveedor ──
+        // Se guarda como nota en la orden (el módulo de caja tiene su propio flujo).
+        if ($registrarEgreso && (float) ($reparacion->costo_repuesto ?? 0) > 0) {
+            $notaEgreso = 'Egreso repuesto $' . number_format((float) $reparacion->costo_repuesto, 0) . ' pagado al proveedor.';
+            $reparacion->update([
+                'notas' => trim(($reparacion->notas ? $reparacion->notas . "\n" : '') . $notaEgreso),
+            ]);
+        }
 
         // ── MARCAR CUPÓN COMO USADO EN LA REPARACIÓN ──
         if ($cuponAplicado) {
