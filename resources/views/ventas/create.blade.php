@@ -158,9 +158,8 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-between mb-2 mt-3"><span>Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    @if(($empresa->pais ?? '') === 'CL')
                     <div class="d-flex justify-content-between mb-2"><span>Neto</span><span id="lblNeto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
-                    @else
-                    <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     @endif
                     <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     <div class="d-flex justify-content-between mb-2" id="cuponRow" style="display:none;">
