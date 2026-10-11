@@ -105,9 +105,10 @@
                                             </select>
                                         </div>
                                     </div>
+                            </div>
                             <div class="ui-card p-3 mb-3">
                                 <div class="ui-sec-title"><i class="fas fa-mobile-alt"></i>Equipo</div>
-                                    <div class="row g-3">
+                                    <div class="row g-2">
                                         <div class="col-md-4">
                                             <label for="tipo_dispositivo" class="form-label">Tipo de Dispositivo <span class="text-danger">*</span></label>
                                             <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-select" required>
@@ -136,7 +137,7 @@
                                                 @foreach($marcasPrecargadas as $m)
                                                     <option value="{{ $m }}" {{ $marcaActual==$m?'selected':'' }}>{{ $m }}</option>
                                                 @endforeach
-                                                <option value="__otra__" {{ $esOtra?'selected':'' }}>✏️ Otra (escribir manualmente)</option>
+                                                <option value="__otra__" {{ $esOtra?'selected':'' }}>Otra (escribir manualmente)</option>
                                             </select>
                                             <label for="marca" class="form-label mt-1">Otra marca</label>
                                             <input type="text" class="form-control marca-input" name="marca" id="marca"
@@ -145,33 +146,33 @@
                                                    style="{{ $esOtra ? 'display:block;' : 'display:none;' }}">
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="modelo" class="form-label">📦 Modelo</label>
+                                            <label for="modelo" class="form-label">Modelo</label>
                                             <input type="text" class="form-control" name="modelo" id="modelo"
                                                    value="{{ old('modelo',$reparacion->modelo) }}">
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="imei" class="form-label">🔢 IMEI / Serie</label>
+                                            <label for="imei" class="form-label">IMEI / Serie</label>
                                             <input type="text" class="form-control" name="imei" id="imei"
                                                    value="{{ old('imei',$reparacion->imei) }}">
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="color" class="form-label">🎨 Color</label>
+                                            <label for="color" class="form-label">Color</label>
                                             <input type="text" class="form-control" name="color" id="color"
                                                    value="{{ old('color',$reparacion->color) }}">
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="fecha_estimada" class="form-label">📅 Fecha Estimada de Entrega</label>
+                                            <label for="fecha_estimada" class="form-label">Fecha Estimada de Entrega</label>
                                             <input type="date" class="form-control" name="fecha_estimada" id="fecha_estimada"
                                                    value="{{ old('fecha_estimada', optional($reparacion->fecha_estimada)->format('Y-m-d')) }}">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="tipo_codigo" class="form-label">🔐 Patrón / PIN</label>
+                                            <label for="tipo_codigo" class="form-label">Patrón / PIN</label>
                                             <div class="d-flex gap-2 align-items-start">
                                                 <div style="flex:0 0 100px;">
                                                     <select name="tipo_codigo" id="tipo_codigo" class="form-select" onchange="togglePatronInputEdit(this)">
                                                         <option value="">—</option>
-                                                        <option value="pin" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='pin'?'selected':'' }}>🔢 PIN</option>
-                                                        <option value="patron" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'selected':'' }}>🔓 Patrón</option>
+                                                        <option value="pin" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='pin'?'selected':'' }}>PIN</option>
+                                                        <option value="patron" {{ old('tipo_codigo',$reparacion->tipo_codigo)=='patron'?'selected':'' }}>Patrón</option>
                                                     </select>
                                                 </div>
                                                 <div style="flex:1;">
@@ -199,7 +200,7 @@
                                                 <input type="hidden" name="patron_secuencia" class="patron-secuencia" value="{{ old('patron_secuencia') }}">
                                                 <div style="display:flex; gap:4px; margin-top:4px;">
                                                     <span style="font-size:11px; color:#9ca3af;" class="patron-texto">Ningún punto seleccionado</span>
-                                                    <button type="button" onclick="limpiarPatronEdit()" style="font-size:11px; border:none; background:transparent; color:#dc2626; cursor:pointer; padding:0;">✕ Limpiar</button>
+                                                    <button type="button" onclick="limpiarPatronEdit()" style="font-size:11px; border:none; background:transparent; color:#dc2626; cursor:pointer; padding:0;">Limpiar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -374,7 +375,7 @@
                                             <div class="text-center mb-2" id="firmaEntregaExistente">
                                                 <img src="{{ asset('storage/'.$reparacion->firma_entrega) }}" alt="Firma de entrega"
                                                      style="max-width:100%; max-height:100px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;">
-                                                <p class="text-muted mt-1" style="font-size:11px;">✓ Firma de entrega ya registrada</p>
+                                                <p class="text-muted mt-1" style="font-size:11px;">Firma de entrega ya registrada</p>
                                             </div>
                                         @endif
                                         <div class="signature-pad-wrapper" id="sigPadEntregaWrapperEdit" style="border:2px dashed #d1d5db; border-radius:12px; background:#fff; position:relative; cursor:crosshair;">
