@@ -590,7 +590,10 @@ class BackupService
     }
 
     /**
-     * Valida que el contenido parezca un backup generado por el sistema.
+     * Valida que el contenido parezca un backup generado por el sistema,
+     * y que el motor del backup coincida con el motor actual.
+     * Un backup MySQL NO se puede restaurar en PostgreSQL y viceversa
+     * (backticks, utf8mb4, FOREIGN_KEY_CHECKS, tipos AUTO_INCREMENT, etc).
      */
     public function validarContenidoBackup(string $contenido): void
     {
@@ -600,13 +603,47 @@ class BackupService
             'UPDATE ', 'DELETE FROM',
         ];
 
+        $pareceBackup = false;
         foreach ($sentenciasPermitidas as $permitida) {
             if (stripos($contenido, $permitida) !== false) {
-                return;
+                $pareceBackup = true;
+                break;
             }
         }
 
-        throw new RuntimeException('El archivo no contiene sentencias SQL válidas de backup.');
+        if (!$pareceBackup) {
+            throw new RuntimeException('El archivo no contiene sentencias SQL válidas de backup.');
+        }
+
+        // ── Detectar motor del backup vs motor actual ──
+        $driverActual = DB::connection()->getDriverName();
+        $esBackupMysql = stripos($contenido, 'utf8mb4') !== false
+            || stripos($contenido, 'FOREIGN_KEY_CHECKS') !== false
+            || stripos($contenido, 'Motor     : mysql') !== false
+            || stripos($contenido, 'Motor     : mariadb') !== false;
+        $esBackupPgsql = stripos($contenido, 'session_replication_role') !== false
+            || stripos($contenido, 'Motor     : pgsql') !== false
+            || stripos($contenido, 'Motor     : postgresql') !== false;
+
+        $esPgsqlActual = in_array($driverActual, ['pgsql', 'postgresql'], true);
+        $esMysqlActual = in_array($driverActual, ['mysql', 'mariadb'], true);
+
+        if ($esPgsqlActual && $esBackupMysql && !$esBackupPgsql) {
+            throw new RuntimeException(
+                'Este backup fue generado en MySQL y tu base actual es PostgreSQL. ' .
+                'No son compatibles (utf8mb4, FOREIGN_KEY_CHECKS, backticks). ' .
+                'Restaura este archivo en un servidor MySQL, o genera un backup nuevo en este servidor. ' .
+                'Tus datos actuales NO fueron tocados.'
+            );
+        }
+
+        if ($esMysqlActual && $esBackupPgsql && !$esBackupMysql) {
+            throw new RuntimeException(
+                'Este backup fue generado en PostgreSQL y tu base actual es MySQL. ' .
+                'No son compatibles. Restaura este archivo en un servidor PostgreSQL, ' .
+                'o genera un backup nuevo en este servidor. Tus datos actuales NO fueron tocados.'
+            );
+        }
     }
 
     private function desactivarFK(): void
