@@ -74,6 +74,9 @@ class DashboardController extends Controller
             ->sum('costo_repuesto');
 
         // Ganancia real = Ventas - Comisiones (ventas negativas) - Costo de repuestos
+        // Desglose para mostrar en la vista (bruto - devoluciones - repuestos = ganancia)
+        $ventasBrutasHoy = $ventasHoy;
+        $ventasBrutasMes = $ventasMes;
         $ventasHoy   = max(0, $ventasHoy - $costoRepuestosHoy);
         $ventasMes   = max(0, $ventasMes - $costoRepuestosMes);
         $ventasMesAnterior = max(0, $ventasMesAnterior - $costoRepuestosMesAnterior);
@@ -114,6 +117,9 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'ventasHoy', 'ventasMes', 'crecimientoVentas',
+            'ventasBrutasHoy', 'ventasBrutasMes',
+            'devolucionesHoy', 'devolucionesMes',
+            'costoRepuestosHoy', 'costoRepuestosMes',
             'totalClientes', 'clientesNuevosMes',
             'totalProductos', 'stockBajo',
             'reparacionesPendientes', 'reparacionesListas',

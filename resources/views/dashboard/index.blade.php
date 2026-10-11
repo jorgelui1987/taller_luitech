@@ -86,10 +86,22 @@
             <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
             <div class="kpi-value">{{ formatoMonedaEntero($ventasHoy) }}</div>
             <div class="kpi-label">Ganancia de Hoy</div>
+            @if(isset($ventasBrutasHoy))
+            <div class="mt-2 text-start" style="font-size:11px;line-height:1.7;background:rgba(255,255,255,.18);border-radius:8px;padding:6px 10px;">
+                <div class="d-flex justify-content-between"><span>Ventas brutas</span><b>{{ formatoMonedaEntero($ventasBrutasHoy) }}</b></div>
+                <div class="d-flex justify-content-between"><span>- Devoluciones</span><b>{{ formatoMonedaEntero($devolucionesHoy ?? 0) }}</b></div>
+                <div class="d-flex justify-content-between"><span>- Repuestos</span><b>{{ formatoMonedaEntero($costoRepuestosHoy ?? 0) }}</b></div>
+            </div>
+            @endif
             <span class="kpi-badge">
                 <i class="fas fa-calendar-day fa-xs"></i>
                 {{ formatoMonedaEntero($ventasMes) }} este mes
             </span>
+            @if(isset($ventasBrutasMes))
+            <div class="mt-1 text-start" style="font-size:10.5px;line-height:1.6;opacity:.9;">
+                Brutas {{ formatoMonedaEntero($ventasBrutasMes) }} - Dev {{ formatoMonedaEntero($devolucionesMes ?? 0) }} - Rep {{ formatoMonedaEntero($costoRepuestosMes ?? 0) }}
+            </div>
+            @endif
         </div>
     </div>
     <div class="col-6 col-xl-3">
