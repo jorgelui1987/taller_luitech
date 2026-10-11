@@ -66,11 +66,12 @@ class VentaController extends Controller
                 ->with('error', 'La caja abierta es de un día anterior. Debe cerrarla primero antes de registrar ventas.');
         }
 
-        $clientes  = Cliente::where('activo', true)->orderBy('nombre')->get();
+        $clientes  = Cliente::where('activo', true)->orderBy('nombre')->limit(200)->get();
         $productos = Producto::with(['categoria', 'marca'])
             ->where('activo', true)
             ->where('stock', '>', 0)
             ->orderBy('nombre')
+            ->limit(500)
             ->get();
 
         return view('ventas.create', compact('clientes', 'productos'));

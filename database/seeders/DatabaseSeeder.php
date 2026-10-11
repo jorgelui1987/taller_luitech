@@ -33,7 +33,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // ── Usuarios demo (para el tenant por defecto) ────────────────────
+        // ── Usuarios demo SOLO en desarrollo (prohibido en producción) ──────
+        // Si APP_ENV=production y se ejecuta por error, se aborta para no
+        // crear cuentas demo con contraseña débil en el servidor real.
+        if (app()->environment('production')) {
+            $this->command->warn('⚠ Entorno production: NO se crean usuarios demo (admin/vendedor/tecnico).');
+        } else {
         User::firstOrCreate(
             ['email' => 'admin@tienda.com'],
             [
@@ -60,6 +65,7 @@ class DatabaseSeeder extends Seeder
                 'rol'      => 'tecnico',
             ]
         );
+        }
 
         // ── Categorías ───────────────────────────────────────────────────
         $tenantId = \App\Models\Tenant::value('id');

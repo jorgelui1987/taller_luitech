@@ -64,11 +64,11 @@ class ReporteController extends Controller
             ->where('estado', 'completada')
             ->sum('impuesto');
 
-        // ── Valor del inventario ──────────────────────────────────────────
-        $valorInventarioCompra = Producto::where('activo', true)
-            ->get()->sum(fn($p) => $p->stock * $p->precio_compra);
-        $valorInventarioVenta  = Producto::where('activo', true)
-            ->get()->sum(fn($p) => $p->stock * $p->precio_venta);
+        // ── Valor del inventario (suma en SQL para alto volumen) ─────────────
+        $valorInventarioCompra = (float) Producto::where('activo', true)
+            ->selectRaw('COALESCE(SUM(stock * precio_compra), 0) as total')->value('total');
+        $valorInventarioVenta  = (float) Producto::where('activo', true)
+            ->selectRaw('COALESCE(SUM(stock * precio_venta), 0) as total')->value('total');
         $gananciaPotencial     = $valorInventarioVenta - $valorInventarioCompra;
 
         // ── Ventas por día ────────────────────────────────────────────────

@@ -1065,7 +1065,7 @@
            class="nav-link {{ request()->routeIs('stock.bajo') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-exclamation-triangle"></i></span>
             Alertas de Stock
-            @php $stockBajoCount = \App\Models\Producto::whereColumn('stock','<=','stock_minimo')->count(); @endphp
+            @php $stockBajoCount = \Illuminate\Support\Facades\Cache::remember('sidebar.stock_bajo.'.(Auth::user()->tenant_id ?? 'global'), 120, fn() => \App\Models\Producto::whereColumn('stock','<=','stock_minimo')->count()); @endphp
             @if($stockBajoCount > 0)
                 <span class="badge-count">{{ $stockBajoCount }}</span>
             @endif
@@ -1103,7 +1103,7 @@
            class="nav-link {{ request()->routeIs('reparaciones.*') && !request()->routeIs('reparaciones.kanban') ? 'active' : '' }}" onclick="closeSidebarMobile()">
             <span class="nav-icon"><i class="fas fa-tools"></i></span>
             Reparaciones
-            @php $pendRep = \App\Models\Reparacion::where('estado','listo')->count(); @endphp
+            @php $pendRep = \Illuminate\Support\Facades\Cache::remember('sidebar.rep_listo.'.(Auth::user()->tenant_id ?? 'global'), 120, fn() => \App\Models\Reparacion::where('estado','listo')->count()); @endphp
             @if($pendRep > 0)
                 <span class="badge-count">{{ $pendRep }}</span>
             @endif

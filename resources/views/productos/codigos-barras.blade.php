@@ -127,7 +127,10 @@
                 </div>
 
                 @if($productos->count())
-                <div class="mt-4 d-flex gap-2">
+                <div class="mt-3 d-flex justify-content-center">
+                    {{ $productos->links() }}
+                </div>
+                <div class="mt-3 d-flex gap-2">
                     <button type="button" class="btn btn-primary" onclick="imprimirTodas()">
                         <i class="fas fa-print me-1"></i>Imprimir Todas las Etiquetas
                     </button>

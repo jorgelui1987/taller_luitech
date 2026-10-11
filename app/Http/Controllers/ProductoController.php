@@ -238,7 +238,8 @@ class ProductoController extends Controller
             $query->where('categoria_id', $request->categoria_id);
         }
 
-        $productos  = $query->orderBy('nombre')->get();
+        // Paginado: con miles de productos el ->get() colgaba la página e imprimía todo.
+        $productos  = $query->orderBy('nombre')->paginate(50)->withQueryString();
         $categorias = Categoria::where('activo', true)->orderBy('nombre')->get();
 
         return view('productos.codigos-barras', compact('productos', 'categorias'));

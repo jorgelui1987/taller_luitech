@@ -114,11 +114,11 @@ class FinancieroController extends Controller
         $cuentasPorPagar = OrdenCompra::whereIn('estado', ['pendiente', 'aprobada', 'enviada'])
             ->sum('total');
 
-        // ── INVENTARIO ──────────────────────────────────────────────────
-        $valorInventarioCompra = Producto::where('activo', true)
-            ->get()->sum(fn($p) => $p->stock * $p->precio_compra);
-        $valorInventarioVenta  = Producto::where('activo', true)
-            ->get()->sum(fn($p) => $p->stock * $p->precio_venta);
+        // ── INVENTARIO (suma en SQL: con miles de productos el ->get() agotaba memoria) ──
+        $valorInventarioCompra = (float) Producto::where('activo', true)
+            ->selectRaw('COALESCE(SUM(stock * precio_compra), 0) as total')->value('total');
+        $valorInventarioVenta  = (float) Producto::where('activo', true)
+            ->selectRaw('COALESCE(SUM(stock * precio_venta), 0) as total')->value('total');
         $gananciaPotencial     = $valorInventarioVenta - $valorInventarioCompra;
 
         // Rotación de inventario (costo ventas último año / inventario promedio)
@@ -351,9 +351,9 @@ class FinancieroController extends Controller
             ->where('fecha_venta', '<=', $fechaCorte)
             ->sum('total');
 
-        // Inventario
-        $inventario = Producto::where('activo', true)
-            ->get()->sum(fn($p) => $p->stock * $p->precio_compra);
+        // Inventario (suma en SQL para no cargar miles de filas en memoria)
+        $inventario = (float) Producto::where('activo', true)
+            ->selectRaw('COALESCE(SUM(stock * precio_compra), 0) as total')->value('total');
 
         $totalActivoCorriente = $efectivo + $cuentasPorCobrar + $inventario;
 
@@ -499,8 +499,8 @@ class FinancieroController extends Controller
             ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
             ->sum('total');
 
-        $inventario = Producto::where('activo', true)
-            ->get()->sum(fn($p) => $p->stock * $p->precio_compra);
+        $inventario = (float) Producto::where('activo', true)
+            ->selectRaw('COALESCE(SUM(stock * precio_compra), 0) as total')->value('total');
 
         $cuentasPorPagar = OrdenCompra::whereIn('estado', ['pendiente', 'aprobada', 'enviada'])
             ->sum('total');

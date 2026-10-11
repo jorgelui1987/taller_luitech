@@ -62,7 +62,7 @@ Route::post('/recuperar-superadmin/{token}', [\App\Http\Controllers\SuperAdminRe
 Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
 Route::get('/pwa/icon/{size}', [PwaController::class, 'icon'])->where('size', '192|512')->name('pwa.icon');
 
-// ── RUTA PÚBLICA PARA QR DE REPARACIONES (sin autenticación) ──────────────
+// ── RUTA PÚBLICA PARA QR DE REPARACIONES (sin autenticación, con throttle anti-enumeración) ──
 // Regla SaaS: toda ruta pública sin login lleva la empresa en la URL (slug).
 // - /r/{slug}/{numero_orden}: QR de la boleta y links de WhatsApp (aislado).
 // - /r/{numero_orden} y /estado: compatibilidad con boletas/QR antiguos.
@@ -70,13 +70,17 @@ Route::get('/pwa/icon/{size}', [PwaController::class, 'icon'])->where('size', '1
 //   la orden pero rotulada con su tienda para que el cliente detecte cruces.
 Route::get('/r/{slug}/{numero_orden}', [\App\Http\Controllers\PublicReparacionController::class, 'statusPorTienda'])
     ->name('reparaciones.public-status.tienda')
-    ->where('slug', '[A-Za-z0-9][A-Za-z0-9\-_]{1,60}');
+    ->where('slug', '[A-Za-z0-9][A-Za-z0-9\-_]{1,60}')
+    ->middleware('throttle:60,1');
 Route::get('/r/{numero_orden}', [\App\Http\Controllers\PublicReparacionController::class, 'status'])
-    ->name('reparaciones.public-status');
+    ->name('reparaciones.public-status')
+    ->middleware('throttle:60,1');
 Route::get('/buscar-orden', [\App\Http\Controllers\PublicReparacionController::class, 'status'])
-    ->name('reparaciones.public-status.buscar');
+    ->name('reparaciones.public-status.buscar')
+    ->middleware('throttle:60,1');
 Route::get('/estado/{slug?}', [\App\Http\Controllers\PublicReparacionController::class, 'portal'])
-    ->name('reparaciones.public-status.search');
+    ->name('reparaciones.public-status.search')
+    ->middleware('throttle:60,1');
 
 // ── MODO SALA DE ESPERA (pantalla TV, sin autenticación) ───────────────────
 // Regla SaaS: la pantalla SIEMPRE exige slug (/pantalla/mitienda). La URL sin
@@ -99,8 +103,8 @@ Route::get('/t/{slug}/resena', [ComboPublicidadController::class, 'formularioRes
 Route::get('/t/{slug}/resena/{numeroOrden}', [ComboPublicidadController::class, 'formularioResena'])->name('public.resena.form.orden');
 Route::post('/t/{slug}/resena', [ComboPublicidadController::class, 'guardarResena'])->name('public.resena.store');
 
-// ── API PÚBLICA PARA VALIDAR CUPONES ──────────────────────────────────────
-Route::post('/api/cupon/validar', [ComboPublicidadController::class, 'validarCupon'])->name('api.cupon.validar');
+// ── API PÚBLICA PARA VALIDAR CUPONES (con throttle anti-fuerza bruta) ──────
+Route::post('/api/cupon/validar', [ComboPublicidadController::class, 'validarCupon'])->name('api.cupon.validar')->middleware('throttle:30,1');
 
 // ── RUTA PARA SERVIR ARCHIVOS DE STORAGE (sin symlink) ──────────────
 // Solo archivos públicos permitidos (imágenes, PDFs, etc.)
@@ -132,9 +136,10 @@ Route::get('/health', function () {
     ]);
 });
 
-// ── WEBHOOK MERCADO PAGO (público, sin autenticación) ─────────────────
+// ── WEBHOOK MERCADO PAGO (público, sin autenticación, con throttle anti-spam) ─
 Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook'])
-    ->name('webhooks.mercadopago');
+    ->name('webhooks.mercadopago')
+    ->middleware('throttle:60,1');
 
 // ── RUTAS PÚBLICAS (Landing page de la plataforma) ─────────────────────────
 // El branding es de la PLATAFORMA (LUITECH): ver LandingController::branding().
@@ -147,8 +152,8 @@ Route::get('/planes', [LandingController::class, 'planes'])
     ->name('planes')
     ->withoutMiddleware([\App\Http\Middleware\CheckTenantStatus::class]);
 
-Route::get('/registro', [SuperAdminController::class, 'showRegistroTenant'])->name('registro.tenant');
-Route::post('/registro', [SuperAdminController::class, 'registrarTenant'])->name('registro.tenant.store');
+Route::get('/registro', [SuperAdminController::class, 'showRegistroTenant'])->name('registro.tenant')->middleware('throttle:30,1');
+Route::post('/registro', [SuperAdminController::class, 'registrarTenant'])->name('registro.tenant.store')->middleware('throttle:10,1');
 
 // ── AUTENTICACIÓN DE TENANT ────────────────────────────────────────────────
 Route::middleware(['tenant'])->group(function () {
