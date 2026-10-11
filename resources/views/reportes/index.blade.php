@@ -15,14 +15,14 @@
             Período: <strong>{{ $desde->format('d/m/Y') }}</strong> al <strong>{{ $hasta->format('d/m/Y') }}</strong>
         </p>
     </div>
-    <button class="btn btn-outline-primary" onclick="window.print()">
+    <button class="btn ui-btn-brand" onclick="window.print()">
         <i class="fas fa-file-pdf me-2"></i>Exportar PDF
     </button>
 </div>
 
 {{-- Filtro --}}
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="ui-card mb-3">
+    <div class="p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-auto">
                 <span class="form-label mb-1 d-block" style="font-size:12px;">Período rápido</span>
@@ -38,7 +38,7 @@
                     @endphp
                     @foreach($periodos as $key => [$label, $d, $h])
                         <a href="{{ route('reportes.index', ['desde'=>$d, 'hasta'=>$h]) }}"
-                           class="btn btn-sm {{ request('desde')==$d && request('hasta')==$h ? 'btn-primary' : 'btn-outline-secondary' }}"
+                           class="btn btn-sm {{ request('desde')==$d && request('hasta')==$h ? 'ui-btn-brand' : 'btn-outline-secondary' }}"
                            style="font-size:12px; border-radius:20px;">
                             {{ $label }}
                         </a>
@@ -56,7 +56,7 @@
                        value="{{ request('hasta', $hasta->format('Y-m-d')) }}">
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary btn-sm px-4">
+                <button type="submit" class="btn ui-btn-brand btn-sm px-4">
                     <i class="fas fa-filter me-1"></i>Aplicar
                 </button>
             </div>
@@ -64,48 +64,44 @@
     </div>
 </div>
 
-{{-- KPI Cards --}}
-<div class="row g-3 mb-4">
+{{-- KPI Cards estilo dashboard --}}
+<div class="row g-2 mb-3">
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-purple">
-            <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalVentas, 0) }}</div>
-            <div class="kpi-label">Total Ventas</div>
-            <span class="kpi-badge"><i class="fas fa-receipt fa-xs"></i> {{ $cantidadVentas }} transacciones</span>
+        <div class="ui-kpi" style="border-left:5px solid #8b5cf6;">
+            <div class="l">TOTAL VENTAS</div>
+            <div class="v" style="font-size:20px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalVentas, 0) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;"><i class="fas fa-receipt fa-xs"></i> {{ $cantidadVentas }} transacciones</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-pink">
-            <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ticketPromedio, 0) }}</div>
-            <div class="kpi-label">Ticket Promedio</div>
-            <span class="kpi-badge"><i class="fas fa-shopping-bag fa-xs"></i> Por venta</span>
+        <div class="ui-kpi" style="border-left:5px solid #ec4899;">
+            <div class="l">TICKET PROMEDIO</div>
+            <div class="v" style="font-size:20px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($ticketPromedio, 0) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;"><i class="fas fa-shopping-bag fa-xs"></i> Por venta</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-cyan">
-            <div class="kpi-icon"><i class="fas fa-tools"></i></div>
-            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalReparaciones, 0) }}</div>
-            <div class="kpi-label">Ingresos Reparaciones</div>
-            <span class="kpi-badge"><i class="fas fa-wrench fa-xs"></i> Servicio técnico</span>
+        <div class="ui-kpi" style="border-left:5px solid #06b6d4;">
+            <div class="l">INGRESOS REPARACIONES</div>
+            <div class="v" style="font-size:20px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalReparaciones, 0) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;"><i class="fas fa-wrench fa-xs"></i> Servicio técnico</div>
         </div>
     </div>
     <div class="col-6 col-xl-3">
-        <div class="kpi-card bg-grad-green">
-            <div class="kpi-icon"><i class="fas fa-user-plus"></i></div>
-            <div class="kpi-value">{{ $clientesNuevos }}</div>
-            <div class="kpi-label">Clientes Nuevos</div>
-            <span class="kpi-badge"><i class="fas fa-users fa-xs"></i> En el período</span>
+        <div class="ui-kpi" style="border-left:5px solid #10b981;">
+            <div class="l">CLIENTES NUEVOS</div>
+            <div class="v">{{ $clientesNuevos }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;"><i class="fas fa-users fa-xs"></i> En el período</div>
         </div>
     </div>
 </div>
 
 {{-- Gráficas --}}
-<div class="row g-4 mb-4">
+<div class="row g-2 mb-3">
     {{-- Ventas por día --}}
     <div class="col-lg-8">
-        <div class="card h-100">
-            <div class="card-body p-4">
+        <div class="ui-card h-100">
+            <div class="p-3">
                 <h6 class="fw-bold mb-1">Ventas por Día</h6>
                 <p class="text-muted mb-3" style="font-size:12px;">Ingresos diarios en el período seleccionado</p>
                 <canvas id="chartDias" height="100"></canvas>
@@ -115,8 +111,8 @@
 
     {{-- Método de pago --}}
     <div class="col-lg-4">
-        <div class="card h-100">
-            <div class="card-body p-4">
+        <div class="ui-card h-100">
+            <div class="p-3">
                 <h6 class="fw-bold mb-1">Métodos de Pago</h6>
                 <p class="text-muted mb-3" style="font-size:12px;">Distribución por forma de cobro</p>
                 <canvas id="chartPago" height="180"></canvas>
@@ -134,15 +130,15 @@
 </div>
 
 {{-- Tablas de ranking --}}
-<div class="row g-4 mb-4">
+<div class="row g-2 mb-3">
     {{-- Top Productos --}}
     <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-body p-4">
+        <div class="ui-card h-100">
+            <div class="p-3">
                 <h6 class="fw-bold mb-3">Top 10 Productos Más Vendidos</h6>
                 @if($topProductos->count())
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0" style="font-size:13px;">
+                    <table class="table align-middle mb-0 ui-table" style="font-size:13px;">
                         <thead>
                             <tr>
                                 <th style="width:30px;">#</th>
@@ -180,12 +176,12 @@
 
     {{-- Top Clientes --}}
     <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-body p-4">
+        <div class="ui-card h-100">
+            <div class="p-3">
                 <h6 class="fw-bold mb-3">Top 10 Clientes</h6>
                 @if($topClientes->count())
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0" style="font-size:13px;">
+                    <table class="table align-middle mb-0 ui-table" style="font-size:13px;">
                         <thead>
                             <tr>
                                 <th style="width:30px;">#</th>
@@ -220,19 +216,19 @@
 </div>
 
 {{-- Stock bajo + Reparaciones por estado --}}
-<div class="row g-4">
+<div class="row g-2">
     <div class="col-lg-7">
-        <div class="card">
-            <div class="card-body p-4">
+        <div class="ui-card">
+            <div class="p-3">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h6 class="fw-bold mb-0">⚠️ Productos con Stock Bajo</h6>
-                    <span style="background:#fee2e2; color:#dc2626; border-radius:20px; padding:3px 12px; font-size:12px;">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-triangle-exclamation me-2" style="color:#f59e0b;"></i>Productos con Stock Bajo</h6>
+                    <span class="ui-badge ui-badge-red">
                         {{ $stockBajo->count() }} productos
                     </span>
                 </div>
                 @if($stockBajo->count())
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0" style="font-size:13px;">
+                    <table class="table align-middle mb-0 ui-table" style="font-size:13px;">
                         <thead>
                             <tr>
                                 <th>Producto</th>
@@ -251,7 +247,7 @@
                                 </td>
                                 <td style="color:#6b7280;">{{ $p->categoria->nombre ?? '—' }}</td>
                                 <td class="text-center">
-                                    <span style="background:{{ $p->stock<=0?'#fee2e2':'#fef3c7' }}; color:{{ $p->stock<=0?'#dc2626':'#d97706' }}; border-radius:20px; padding:3px 10px; font-size:12px; font-weight:700;">
+                                    <span class="ui-badge {{ $p->stock<=0?'ui-badge-red':'ui-badge-amber' }}">
                                         {{ $p->stock }}
                                     </span>
                                 </td>
@@ -279,22 +275,22 @@
 
     {{-- Reparaciones por estado --}}
     <div class="col-lg-5">
-        <div class="card h-100">
-            <div class="card-body p-4">
+        <div class="ui-card h-100">
+            <div class="p-3">
                 <h6 class="fw-bold mb-3">Reparaciones por Estado</h6>
                 @php
-                    $estCfg = ['recibido'=>['📥','#cffafe','#0e7490'],'en_diagnostico'=>['🔍','#e0f2fe','#0369a1'],'esperando_repuesto'=>['⏳','#fef9c3','#92400e'],'en_reparacion'=>['🔧','#dbeafe','#1d4ed8'],'listo'=>['✅','#d1fae5','#065f46'],'entregado'=>['📦','#f3f4f6','#374151'],'no_reparable'=>['❌','#fee2e2','#991b1b']];
+                    $estCfg = ['recibido'=>'#0e7490','en_diagnostico'=>'#0369a1','esperando_repuesto'=>'#92400e','en_reparacion'=>'#1d4ed8','listo'=>'#065f46','entregado'=>'#374151','no_reparable'=>'#991b1b'];
                     $totalRep = $repPorEstado->sum('total');
                 @endphp
                 @forelse($repPorEstado->sortByDesc('total') as $rep)
-                @php $cfg = $estCfg[$rep->estado] ?? ['🔘','#f3f4f6','#374151']; $pct = $totalRep > 0 ? ($rep->total/$totalRep)*100 : 0; @endphp
+                @php $color = $estCfg[$rep->estado] ?? '#374151'; $pct = $totalRep > 0 ? ($rep->total/$totalRep)*100 : 0; @endphp
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span style="font-size:13px;">{{ $cfg[0] }} {{ str_replace('_',' ',ucfirst($rep->estado)) }}</span>
-                        <span style="font-size:13px; font-weight:600; color:{{ $cfg[2] }};">{{ $rep->total }}</span>
+                        <span style="font-size:13px;">{{ str_replace('_',' ',ucfirst($rep->estado)) }}</span>
+                        <span style="font-size:13px; font-weight:600; color:{{ $color }};">{{ $rep->total }}</span>
                     </div>
                     <div class="progress" style="height:6px; border-radius:4px; background:#f3f4f6;">
-                        <div class="progress-bar" style="width:{{ $pct }}%; background:{{ $cfg[2] }};"></div>
+                        <div class="progress-bar" style="width:{{ $pct }}%; background:{{ $color }};"></div>
                     </div>
                 </div>
                 @empty
