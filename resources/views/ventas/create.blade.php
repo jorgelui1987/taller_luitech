@@ -25,18 +25,17 @@
     @endif
     <form action="{{ route('ventas.store') }}" method="POST">
         @csrf
-        <x-st-block color="#0284c7" titulo="1. Cliente y productos">
-            <div class="row g-3">
-                <div class="col-md-4">
+        <div class="row g-3 align-items-start">
+            <div class="col-lg-8">
+                <x-st-block color="#0284c7" titulo="1. Cliente">
                     <x-st-select label="Cliente (opcional)" name="cliente_id">
                         <option value="">— Sin cliente (venta general) —</option>
                         @foreach($clientes as $c)
                             <option value="{{ $c->id }}">{{ $c->nombre_completo }} — {{ $c->telefono }}</option>
                         @endforeach
                     </x-st-select>
-                </div>
-                <div class="col-md-8">
-                    <span class="st-label d-block">Agregar Producto</span>
+                </x-st-block>
+                <x-st-block color="#6366f1" titulo="2. Productos">
                         <div class="row g-2">
                             <div class="col-md-5">
                                 <div class="input-group">
@@ -94,22 +93,14 @@
                             </tbody>
                         </table>
                     </div>
+                </x-st-block>
+                <x-st-block color="#f59e0b" titulo="3. Cupón y notas">
                     <div class="row g-3">
-                        <div class="col-md-6" style="display:none;">
-                            <label for="metodo_pago_old" class="form-label">Método viejo</label>
-                            <select id="metodo_pago_old" class="form-select">
-                                <option value="efectivo">Efectivo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="descGen" class="st-label">Descuento General</label>
-                            <input type="number" class="st-input" name="descuento_general" id="descGen" min="0" step="0.01" value="0" oninput="totales()">
-                        </div>
                         <div class="col-md-6">
                             <label for="cuponInput" class="st-label">Cupón de Descuento</label>
                             <div class="input-group">
                                 <input type="text" class="st-input" name="cupon_codigo" id="cuponInput"
-                                       placeholder="Ingresa el código del cupón (ej: CUP-ABC123-456)"
+                                       placeholder="CUP-ABC123-456"
                                        style="text-transform:uppercase;" autocomplete="off">
                                 <button type="button" class="btn btn-outline-success" id="btnValidarCupon" onclick="validarCupon()">
                                     <i class="fas fa-check me-1"></i>Validar
@@ -117,29 +108,18 @@
                             </div>
                             <div id="cuponMsg" class="form-text mt-1" style="font-size:12px;"></div>
                         </div>
-                        <div class="col-12" id="rowEfectivo" style="display:none;">
-                            <label for="montoRecibido" class="st-label">Efectivo recibido <span class="text-muted" style="font-size:11px;">(opcional)</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text">{{ $empresa->simbolo_moneda ?? '$' }}</span>
-                                <input type="number" class="st-input" name="monto_recibido" id="montoRecibido"
-                                       min="0" step="1" placeholder="¿Con cuánto paga el cliente?" oninput="actualizarVuelto()">
-                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(1000)">1.000</button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(5000)">5.000</button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(10000)">10.000</button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="setRecibido(20000)">20.000</button>
-                            </div>
-                            <div id="lblVuelto" class="mt-2" style="display:none;font-size:18px;font-weight:700;color:#059669;"></div>
-                            <div id="lblFalta" class="mt-1 text-danger" style="display:none;font-size:12px;"></div>
-                        </div>
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label for="notas" class="st-label">Notas</label>
-                            <textarea class="st-input" name="notas" id="notas" rows="2"></textarea>
+                            <textarea class="st-input" name="notas" id="notas" rows="2" placeholder="Notas de la venta (opcional)"></textarea>
                         </div>
                     </div>
                 </x-st-block>
-                <x-st-block color="#10b981" titulo="2. Pago y totales">
+            </div>
+            <div class="col-lg-4">
+                <div style="position:sticky;top:12px;">
+                <x-st-block color="#10b981" titulo="4. Pago y totales">
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <x-st-select label="Método de Pago" name="metodo_pago" required="1">
                                 @if(($empresa->mercadopago_activo ?? false))
                                 <option value="mercadopago">Mercado Pago</option>
@@ -149,28 +129,46 @@
                                 <option value="transferencia">Transferencia</option>
                             </x-st-select>
                         </div>
-                        <div class="col-md-4">
-                            <x-st-input label="Descuento General" name="descuento_general" type="number" value="0" extra='min="0" step="0.01" id="descGen" oninput="totales()"'></x-st-input>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="lblTotalMini" class="st-label">Total</label>
-                            <div id="lblTotalMini" style="font-size:22px;font-weight:800;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
+                        <div class="col-6">
+                            <x-st-input label="Descuento" name="descuento_general" id="descGen" type="number" value="0" extra='min="0" step="0.01" oninput="totales()"'></x-st-input>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between mb-2 mt-3"><span>Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="mt-3 p-3 rounded-3" style="background:#f0fdf4;border:1px dashed #86efac;">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">Valor</span><span id="lblSubtotal">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     @if(($empresa->pais ?? '') === 'CL')
-                    <div class="d-flex justify-content-between mb-2"><span>Neto</span><span id="lblNeto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">Neto</span><span id="lblNeto">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
                     @endif
-                    <div class="d-flex justify-content-between mb-2"><span>Descuento</span><span id="lblDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
-                    <div class="d-flex justify-content-between mb-2" id="cuponRow" style="display:none;">
+                    <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">Descuento</span><span id="lblDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <div class="d-flex justify-content-between mb-1" id="cuponRow" style="display:none;font-size:13px;">
                         <span>Cupón <span id="lblCuponCodigo" class="text-success"></span></span>
                         <span id="lblCuponDescuento" class="text-danger">— {{ $empresa->simbolo_moneda ?? '$' }} 0.00</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2"><span>{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-3"><strong>Total</strong><span id="lblTotal" style="font-size:20px;font-weight:700;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
-                    <button type="submit" class="btn ui-btn-brand w-100 py-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
+                    <div class="d-flex justify-content-between mb-1" style="font-size:13px;"><span class="text-muted">{{ $empresa->pais == 'CL' ? 'IVA' : 'IGV' }} ({{ $empresa->igv ?? 18 }}%)</span><span id="lblIgv">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2"><strong>Total</strong><span id="lblTotal" style="font-size:24px;font-weight:800;color:var(--accent1);">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</span></div>
+                        <div id="lblTotalMini" style="display:none;">{{ $empresa->simbolo_moneda ?? '$' }} 0.00</div>
+                    </div>
+                    <div class="mt-3" id="rowEfectivo" style="display:none;">
+                        <label for="montoRecibido" class="st-label">Efectivo recibido <span class="text-muted" style="font-size:11px;">(opcional)</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">{{ $empresa->simbolo_moneda ?? '$' }}</span>
+                            <input type="number" class="st-input" name="monto_recibido" id="montoRecibido"
+                                   min="0" step="1" placeholder="¿Con cuánto paga?" oninput="actualizarVuelto()">
+                        </div>
+                        <div class="d-flex flex-wrap gap-1 mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(1000)">1.000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(5000)">5.000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(10000)">10.000</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setRecibido(20000)">20.000</button>
+                        </div>
+                        <div id="lblVuelto" class="mt-2" style="display:none;font-size:18px;font-weight:700;color:#059669;"></div>
+                        <div id="lblFalta" class="mt-1 text-danger" style="display:none;font-size:12px;"></div>
+                    </div>
+                    <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-3" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
                 </x-st-block>
+                </div>
+            </div>
+        </div>
                 </form>
 </div>
 @endsection
@@ -295,11 +293,13 @@ function totales() {
     document.getElementById('lblNeto').textContent = simbolo + ' ' + netoCL.toFixed(2);
     document.getElementById('lblIgv').textContent = simbolo + ' ' + ivaCL.toFixed(2);
     document.getElementById('lblTotal').textContent = simbolo + ' ' + valorCL.toFixed(2);
+    document.getElementById('lblTotalMini').textContent = simbolo + ' ' + valorCL.toFixed(2);
     window.totalActual = valorCL;
     @else
     // Otros países: el impuesto se SUMA al precio
     document.getElementById('lblIgv').textContent = simbolo + ' ' + (base * (igvPct / 100)).toFixed(2);
     document.getElementById('lblTotal').textContent = simbolo + ' ' + (base * (1 + igvPct / 100)).toFixed(2);
+    document.getElementById('lblTotalMini').textContent = simbolo + ' ' + (base * (1 + igvPct / 100)).toFixed(2);
     window.totalActual = base * (1 + igvPct / 100);
     @endif
     btnReg.disabled = Object.keys(items).length === 0;
