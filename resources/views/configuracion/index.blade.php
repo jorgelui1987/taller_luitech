@@ -74,9 +74,6 @@
     <!-- ══════════ TAB: EMPRESA ══════════ -->
     <div class="tab-pane fade show active" id="tab-empresa" role="tabpanel">
 
-<div class="row g-4">
-            <div class="col-lg-12">
-
         <!-- ── Datos de la Empresa ── -->
         <div class="ui-card p-3 mb-3">
                 <div class="ui-sec-title"><i class="fas fa-store"></i>Datos de la Empresa</div>
@@ -409,15 +406,10 @@
                     </button>
                 </form>
         </div>
-
-            </div>
-        </div>
     </div>
 
     <!-- ══════════ TAB: USUARIOS ══════════ -->
     <div class="tab-pane fade" id="tab-usuarios" role="tabpanel">
-        <div class="row g-4">
-            <div class="col-lg-12">
         <div class="ui-card p-3">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <div class="ui-sec-title mb-0"><i class="fas fa-users"></i>Gestión de Usuarios</div>
@@ -612,8 +604,6 @@
             </button>
         </form>
 </div>
-        <div class="row g-4">
-            <div class="col-lg-12">
         <!-- ═══════ Publicidad / Página Pública ═══════ -->
         @php
             $tenantActual = auth()->user()->tenant;
@@ -777,8 +767,6 @@
                         <i class="fas fa-save me-2"></i>Guardar Publicidad
                     </button>
                 </form>
-        </div>
-            </div>
         </div>
     </div>
 
