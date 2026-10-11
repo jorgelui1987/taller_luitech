@@ -29,7 +29,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Diseño unificado panel (tarjetas blancas + marca) -->
-    <link href="{{ asset('css/panel-ui.css') }}?v=20261012a" rel="stylesheet">
+    <link href="{{ asset('css/panel-ui.css') }}?v={{ file_exists(public_path('css/panel-ui.css')) ? filemtime(public_path('css/panel-ui.css')) : '20261012a' }}" rel="stylesheet">
 
     <style>
         :root {
