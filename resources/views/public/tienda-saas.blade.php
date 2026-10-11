@@ -145,17 +145,12 @@
 @endforeach
 @endif
 </div>
+@if($resenas->isNotEmpty())
 <div class="card"><b><span class="stars">★★★★★</span>
 @if(isset($promedio) && $promedio)
 {{ number_format($promedio,1) }} ·
 @endif
 Lo que dicen los clientes</b>
-@if($resenas->isEmpty())
-<div style="background:rgba(2,6,23,.6);border:1px dashed var(--border);border-radius:12px;padding:18px;margin-top:12px;text-align:center">
-<p style="font-size:14px;margin:0 0 4px">Sé el primero en dejar una reseña</p>
-<p style="font-size:12.5px;color:var(--muted);margin:0 0 12px">Tu opinión ayuda a otros clientes a confiar en nosotros.</p>
-</div>
-@else
 @foreach($resenas->take(4) as $r)
 @php
     $inicial = mb_strtoupper(mb_substr(trim($r->nombre_cliente ?? '?'), 0, 1));
@@ -168,9 +163,18 @@ Lo que dicen los clientes</b>
 </div>
 </div>
 @endforeach
-@endif
 <a class="btn btn-g" style="width:100%;justify-content:center" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Dejar mi reseña</a>
-</div></div></div></section>
+</div>
+@else
+<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:10px">
+<span class="stars">★★★★★</span>
+<span style="font-size:13.5px;color:var(--muted)">Sé el primero en opinar</span>
+</div>
+<a class="btn btn-g btn-sm" href="{{ route('public.resena.form', $tenant->slug_publico) }}"><i class="fa-solid fa-star"></i> Opinar</a>
+</div>
+@endif
+</div></div></section>
 <section class="sec" id="ubicacion" style="padding-top:0"><div class="wrap"><div class="card">
 <div class="sec-head">
 <h3><i class="fa-solid fa-location-dot" style="color:var(--cyan)"></i> Visítanos</h3>
