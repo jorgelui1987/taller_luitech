@@ -58,6 +58,11 @@
 <span class="chip"><span style="width:8px;height:8px;border-radius:50%;background:var(--emerald);display:inline-block"></span> {{ $config->horario_atencion }}</span>
 @endif
 </div></div></header>
+@if(!empty($config->promo_banner_texto ?? null) && !empty($config->promo_banner_activo))
+<div style="background:linear-gradient(135deg,{{ $marca['primario_puro'] }},{{ $marca['secundario_puro'] }});color:{{ $marca['texto_sobre_primario'] }};text-align:center;padding:10px 16px;font-size:13.5px;font-weight:700;">
+<i class="fa-solid fa-fire"></i> {{ $config->promo_banner_texto }}
+</div>
+@endif
 <section class="hero"><div class="wrap">
 <span class="chip"><i class="fa-solid fa-microchip"></i> Servicio técnico · Ventas · Accesorios</span>
 <h1 class="h1">Tu celular como nuevo, <span>el mismo día</span>.</h1>

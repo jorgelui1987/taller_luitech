@@ -743,6 +743,29 @@
                     <hr style="border-top:1px dashed #e5e7eb;">
 
                     <h6 class="fw-bold mb-3" style="font-size:13px;">
+                        <i class="fas fa-fire me-2" style="color:#ef4444;"></i>Banner de Promoción en mi página web
+                    </h6>
+
+                    <div class="mb-2 d-flex align-items-center justify-content-between">
+                        <span class="form-label mb-0">Mostrar banner</span>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="promo_banner_activo" value="1"
+                                   id="promoBannerActivo" {{ old('promo_banner_activo', $empresa->promo_banner_activo ?? false) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="promoBannerActivo" style="font-size:12px;">Sí / No</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="promo_banner_texto" class="form-label">Texto de la promo</label>
+                        <input type="text" name="promo_banner_texto" id="promo_banner_texto" class="form-control" maxlength="255"
+                               value="{{ old('promo_banner_texto', $empresa->promo_banner_texto ?? '') }}"
+                               placeholder="Ej: Esta semana: mica gratis con cambio de pantalla">
+                        <div class="form-text">Sale arriba de tu página con fondo de tus colores. Desactívalo cuando termine la promo.</div>
+                    </div>
+
+                    <hr style="border-top:1px dashed #e5e7eb;">
+
+                    <h6 class="fw-bold mb-3" style="font-size:13px;">
                         <i class="fas fa-ticket-alt me-2" style="color:#10b981;"></i>Cupón de Descuento Automático
                     </h6>
 

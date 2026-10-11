@@ -43,6 +43,8 @@ class Configuracion extends Model
         'horario_atencion',
         'mapa_url',
         'referencia_ubicacion',
+        'promo_banner_activo',
+        'promo_banner_texto',
         'descripcion_corta',
         'pagina_publica_activa',
         'cupon_automatico_al_entregar',
@@ -53,6 +55,7 @@ class Configuracion extends Model
 
     protected $casts = [
         'pagina_publica_activa' => 'boolean',
+        'promo_banner_activo' => 'boolean',
         'cupon_automatico_al_entregar' => 'boolean',
         'cupon_descuento_porcentaje' => 'decimal:2',
         'cupon_dias_validez' => 'integer',

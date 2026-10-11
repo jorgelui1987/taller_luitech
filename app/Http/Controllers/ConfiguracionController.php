@@ -282,6 +282,8 @@ class ConfiguracionController extends Controller
             'horario_atencion' => 'nullable|string|max:255',
             'mapa_url'      => 'nullable|string|max:2000',
             'referencia_ubicacion' => 'nullable|string|max:500',
+            'promo_banner_texto' => 'nullable|string|max:255',
+            'promo_banner_activo' => 'boolean',
             'descripcion_corta' => 'nullable|string|max:500',
             'pagina_publica_activa' => 'boolean',
             'cupon_automatico_al_entregar' => 'boolean',
