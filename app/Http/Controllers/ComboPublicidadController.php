@@ -50,21 +50,10 @@ class ComboPublicidadController extends Controller
             \Illuminate\Support\Facades\Log::warning('No se pudieron cargar reseñas: ' . $e->getMessage());
         }
 
-        // Cupones activos (para mostrar en la página)
+        // Cupones: NO se muestran en la web pública (son privados por cliente,
+        // van en su boleta y por WhatsApp). Solo se usa el flag de config para
+        // el gancho genérico. Se deja colección vacía por compatibilidad.
         $cupones = collect();
-        try {
-            $cupones = Cupon::withoutGlobalScopes()
-                ->where('tenant_id', $tenant->id)
-                ->where('estado', 'activo')
-                ->where(function ($q) {
-                    $q->whereNull('fecha_expiracion')->orWhere('fecha_expiracion', '>', now());
-                })
-                ->orderByDesc('created_at')
-                ->limit(5)
-                ->get();
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::warning('No se pudieron cargar cupones: ' . $e->getMessage());
-        }
 
         // Logo URL
         $logoSrc = null;

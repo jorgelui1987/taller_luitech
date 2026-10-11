@@ -143,28 +143,10 @@
 <p style="color:var(--muted);font-size:12px">O escanea el QR de tu boleta <i class="fa-solid fa-qrcode"></i></p>
 </div></div></section>
 <section class="sec" style="padding-top:0"><div class="wrap" style="max-width:760px">
-@if($cupones->isNotEmpty())
-@php $cuponTop = $cupones->first(); @endphp
-<div class="cupon" style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;text-align:center;margin-bottom:12px">
-<div style="display:flex;align-items:center;gap:10px">
-<i class="fa-solid fa-ticket" style="color:var(--emerald);font-size:20px"></i>
-<div style="text-align:left">
-<div style="font-size:15px;font-weight:800">{{ $cuponTop->codigo }} · {{ $cuponTop->valor }}% descuento</div>
-@if($cuponTop->descripcion)
-<div style="font-size:12px;color:var(--muted)">{{ $cuponTop->descripcion }}</div>
-@endif
-</div>
-</div>
-@if($cupones->count() > 1)
-<details style="font-size:12.5px;color:var(--muted)">
-<summary style="cursor:pointer;color:var(--cyan);font-weight:700">Ver {{ $cupones->count() - 1 }} más</summary>
-<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
-@foreach($cupones->skip(1) as $cupon)
-<div><b>{{ $cupon->codigo }}</b> · {{ $cupon->valor }}% @if($cupon->descripcion)<span style="color:var(--muted)">· {{ $cupon->descripcion }}</span>@endif</div>
-@endforeach
-</div>
-</details>
-@endif
+@if(!empty($config->cupon_automatico_al_entregar) && !empty($config->cupon_descuento_porcentaje))
+<div class="cupon" style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;text-align:center;margin-bottom:12px">
+<i class="fa-solid fa-gift" style="color:var(--emerald);font-size:20px"></i>
+<span style="font-size:13.5px">Repara con nosotros y recibe <b>{{ rtrim(rtrim(number_format((float) $config->cupon_descuento_porcentaje, 2), '0'), '.') }}% de descuento</b> en tu próxima visita · te llega en tu boleta y por WhatsApp</span>
 </div>
 @endif
 @if($resenas->isNotEmpty())
