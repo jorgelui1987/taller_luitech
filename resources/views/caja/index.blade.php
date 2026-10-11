@@ -7,27 +7,7 @@
 
 @push('styles')
 <style>
-    .caja-card {
-        border-radius: 16px;
-        padding: 20px;
-        position: relative;
-        overflow: hidden;
-    }
-    .caja-card .caja-icon {
-        width: 44px; height: 44px;
-        background: rgba(255,255,255,.2);
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 20px;
-        margin-bottom: 12px;
-    }
-    .caja-card .caja-value { font-size: 24px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-    .caja-card .caja-label { font-size: 12px; opacity: .85; margin-bottom: 6px; }
-    .bg-grad-purple { background: linear-gradient(135deg, var(--accent1), var(--accent2)); }
-    .bg-grad-green  { background: linear-gradient(135deg, var(--accent2), var(--accent1)); }
-    .bg-grad-cyan   { background: linear-gradient(135deg, var(--accent1), var(--accent2)); }
-    .bg-grad-orange { background: linear-gradient(135deg, var(--accent2), var(--accent1)); }
-    .bg-grad-pink   { background: linear-gradient(135deg, var(--accent1), var(--accent2)); }
+    .ui-kpi .caja-value { font-size: 20px; font-weight: 800; color:#0f172a; }
 </style>
 @endpush
 
@@ -43,7 +23,7 @@
                 <i class="fas fa-lock me-1"></i>Cerrar Caja
             </a>
         @else
-            <a href="{{ route('caja.abrir') }}" class="btn btn-primary px-3">
+            <a href="{{ route('caja.abrir') }}" class="btn ui-btn-brand px-3">
                 <i class="fas fa-unlock me-1"></i>Abrir Caja
             </a>
         @endif
@@ -51,47 +31,46 @@
 </div>
 
 {{-- ── Estado de caja actual ── --}}
-<div class="row g-3 mb-4">
+<div class="row g-2 mb-3">
     @if($cajaAbierta)
-    <div class="col-md-3">
-        <div class="caja-card bg-grad-green text-white">
-            <div class="caja-icon"><i class="fas fa-unlock"></i></div>
-            <div class="caja-label">Caja Actual</div>
-            <div class="caja-value" style="font-size:16px;">Abierta</div>
-            <div style="font-size:11px; opacity:.8;">{{ $cajaAbierta->fecha_apertura?->format('d/m/Y H:i') }}</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #10b981;">
+            <div class="l">CAJA ACTUAL</div>
+            <div class="v" style="font-size:18px;">Abierta</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">{{ $cajaAbierta->fecha_apertura?->format('d/m/Y H:i') }}</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="caja-card bg-grad-cyan text-white">
-            <div class="caja-icon"><i class="fas fa-coins"></i></div>
-            <div class="caja-label">Monto Inicial</div>
-            <div class="caja-value" style="font-size:18px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cajaAbierta->monto_inicial, 2) }}</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #06b6d4;">
+            <div class="l">MONTO INICIAL</div>
+            <div class="v" style="font-size:18px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($cajaAbierta->monto_inicial, 2) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Apertura del día</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="caja-card bg-grad-purple text-white">
-            <div class="caja-icon"><i class="fas fa-shopping-cart"></i></div>
-            <div class="caja-label">Ventas del Día</div>
-            <div class="caja-value" style="font-size:18px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalVentasHoy + $totalReparacionesHoy, 2) }}</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #8b5cf6;">
+            <div class="l">VENTAS DEL DÍA</div>
+            <div class="v" style="font-size:18px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($totalVentasHoy + $totalReparacionesHoy, 2) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Ventas + reparaciones</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="caja-card bg-grad-orange text-white">
-            <div class="caja-icon"><i class="fas fa-user"></i></div>
-            <div class="caja-label">Cajero</div>
-            <div class="caja-value" style="font-size:16px;">{{ $cajaAbierta->usuario->name ?? '—' }}</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #f59e0b;">
+            <div class="l">CAJERO</div>
+            <div class="v" style="font-size:18px;">{{ $cajaAbierta->usuario->name ?? '—' }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Responsable actual</div>
         </div>
     </div>
     @else
     <div class="col-12">
-        <div class="card">
-            <div class="card-body text-center py-5">
+        <div class="ui-card">
+            <div class="text-center py-5">
                 <i class="fas fa-cash-register" style="font-size:48px; color:var(--text-muted); opacity:.4; display:block; margin-bottom:12px;"></i>
                 <h5 class="mb-2" style="font-weight:600;">No hay caja abierta</h5>
                 <p class="mb-3" style="color:var(--text-muted); font-size:13px;">
                     Abre la caja para comenzar a registrar tus ventas del día.
                 </p>
-                <a href="{{ route('caja.abrir') }}" class="btn btn-primary px-4">
+                <a href="{{ route('caja.abrir') }}" class="btn ui-btn-brand px-4">
                     <i class="fas fa-unlock me-1"></i>Abrir Caja
                 </a>
             </div>
@@ -101,8 +80,8 @@
 </div>
 
 {{-- ── Filtros ── --}}
-<div class="card mb-4">
-    <div class="card-body">
+<div class="ui-card mb-3">
+    <div class="p-3">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label class="form-label mb-1">Estado</label>
@@ -142,14 +121,14 @@
 </div>
 
 {{-- ── Historial de cierres ── --}}
-<div class="card">
-    <div class="card-body">
+<div class="ui-card">
+    <div class="p-3">
         <h6 class="mb-3" style="font-size:15px; font-weight:600; color:var(--text-dark);">
             <i class="fas fa-history me-2" style="color:var(--accent1);"></i>
             Historial de Cierres
         </h6>
         <div class="table-responsive">
-            <table class="table table-sm">
+            <table class="table table-sm ui-table">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -179,9 +158,9 @@
                             </td>
                             <td class="text-center">
                                 @if($cierre->estado == 'abierta')
-                                    <span class="badge bg-success">Abierta</span>
+                                    <span class="ui-badge ui-badge-green">Abierta</span>
                                 @else
-                                    <span class="badge bg-secondary">Cerrada</span>
+                                    <span class="ui-badge ui-badge-gray">Cerrada</span>
                                 @endif
                             </td>
                             <td class="text-center">

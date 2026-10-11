@@ -7,41 +7,41 @@
 @endsection
 
 @section('content')
-{{-- KPIs --}}
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="kpi-card bg-grad-purple">
-            <div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="kpi-value">{{ $totalStockBajo }}</div>
-            <div class="kpi-label">Productos con stock bajo</div>
+{{-- KPIs estilo dashboard principal --}}
+<div class="row g-2 mb-3">
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #8b5cf6;">
+            <div class="l">STOCK BAJO</div>
+            <div class="v">{{ $totalStockBajo }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Productos con stock bajo</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="kpi-card bg-grad-pink">
-            <div class="kpi-icon"><i class="fas fa-times-circle"></i></div>
-            <div class="kpi-value">{{ $totalSinStock }}</div>
-            <div class="kpi-label">Productos sin stock</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #ef4444;">
+            <div class="l">SIN STOCK</div>
+            <div class="v">{{ $totalSinStock }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Productos sin stock</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="kpi-card bg-grad-cyan">
-            <div class="kpi-icon"><i class="fas fa-boxes"></i></div>
-            <div class="kpi-value">{{ $productosCriticos }}</div>
-            <div class="kpi-label">Críticos (bajo pero con stock)</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #f59e0b;">
+            <div class="l">CRÍTICOS</div>
+            <div class="v">{{ $productosCriticos }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Bajo pero con stock</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="kpi-card bg-grad-green">
-            <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="kpi-value">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($valorStockBajo, 0) }}</div>
-            <div class="kpi-label">Valor en compra del stock bajo</div>
+    <div class="col-6 col-xl-3">
+        <div class="ui-kpi" style="border-left:5px solid #10b981;">
+            <div class="l">VALOR EN COMPRA</div>
+            <div class="v" style="font-size:20px;">{{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($valorStockBajo, 0) }}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:6px;">Del stock bajo</div>
         </div>
     </div>
 </div>
 
 {{-- Filtros --}}
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="ui-card mb-3">
+    <div class="p-3">
         <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-4">
                 <label for="buscar" class="visually-hidden">Buscar producto</label>
@@ -74,7 +74,7 @@
                 </select>
             </div>
             <div class="col-md-2 d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-1">
+                <button type="submit" class="btn ui-btn-brand flex-1">
                     <i class="fas fa-filter me-1"></i>Filtrar
                 </button>
                 <a href="{{ route('stock.bajo') }}" class="btn btn-outline-secondary">
@@ -95,10 +95,10 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body p-0">
+<div class="ui-card">
+    <div class="p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 ui-table">
                 <thead>
                     <tr>
                         <th class="ps-4">Producto</th>
@@ -194,7 +194,7 @@
                             <i class="fas fa-check-circle fa-3x mb-3 d-block" style="color:#10b981;"></i>
                             <p class="text-muted mb-0" style="font-size:15px; font-weight:500;">¡Todo en orden!</p>
                             <p class="text-muted" style="font-size:13px;">No hay productos con stock bajo en este momento.</p>
-                            <a href="{{ route('productos.index') }}" class="btn btn-primary btn-sm mt-2">
+                            <a href="{{ route('productos.index') }}" class="btn ui-btn-brand btn-sm mt-2">
                                 <i class="fas fa-box me-1"></i>Ver inventario completo
                             </a>
                         </td>
