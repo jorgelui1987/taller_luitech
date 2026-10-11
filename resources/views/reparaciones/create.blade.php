@@ -88,7 +88,29 @@
                 <form action="{{ route('reparaciones.store') }}" method="POST" enctype="multipart/form-data" id="orderCreateForm">
                     @csrf
 
-                    {{-- Pestañas del formulario --}}
+                    {{-- Asistente por pasos: misma data, mejor orden --}}
+                    <div class="wizard-prog mb-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="d-flex gap-1 flex-wrap" id="wizardSteps">
+                                <span class="wz-step on" data-wz="0"><span class="wz-n">1</span> Cliente</span>
+                                <span class="wz-step" data-wz="1"><span class="wz-n">2</span> Equipo+Falla</span>
+                                <span class="wz-step" data-wz="2"><span class="wz-n">3</span> Costos+Fotos</span>
+                                <span class="wz-step" data-wz="3"><span class="wz-n">4</span> Firma</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="wzAtras">← Atrás</button>
+                                <button type="button" class="btn btn-primary btn-sm" id="wzSiguiente">Siguiente →</button>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                    .wz-step{font-size:11.5px;font-weight:700;color:#9ca3af;display:inline-flex;align-items:center;gap:6px;padding:4px 8px;}
+                    .wz-n{width:26px;height:26px;border-radius:50%;background:#e5e7eb;color:#6b7280;display:inline-flex;align-items:center;justify-content:center;font-size:12px;}
+                    .wz-step.on{color:#0f172a;}.wz-step.on .wz-n{background:#8b5cf6;color:#fff;}
+                    .wz-step.ok .wz-n{background:#10b981;color:#fff;}
+                    .wizard-prog{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 14px;}
+                    </style>
+                    {{-- Pestañas del formulario (se controlan con el asistente) --}}
                     <div class="card mb-4">
                         <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
                             <ul class="nav nav-tabs card-header-tabs" id="createReparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
@@ -717,6 +739,64 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ── Asistente por pasos: agrupa tus 6 pestañas en 4 pasos ──
+// 0 Cliente(asignacion) · 1 Equipo+Falla · 2 Costos+Fotos · 3 Firma
+(function () {
+    var grupos = [
+        ['tab-asignacion'],
+        ['tab-equipo', 'tab-falla'],
+        ['tab-costos', 'tab-fotos'],
+        ['tab-firma'],
+    ];
+    var paso = 0;
+
+    function tabBtn(id) { return document.querySelector('[data-bs-target="#' + id + '"]'); }
+    function pane(id) { return document.getElementById(id); }
+
+    function pintar() {
+        document.querySelectorAll('#wizardSteps .wz-step').forEach(function (s) {
+            var i = parseInt(s.dataset.wz, 10);
+            s.classList.toggle('on', i === paso);
+            s.classList.toggle('ok', i < paso);
+            s.querySelector('.wz-n').textContent = (i < paso) ? '✓' : (i + 1);
+        });
+        var btnA = document.getElementById('wzAtras');
+        var btnS = document.getElementById('wzSiguiente');
+        if (btnA) btnA.disabled = (paso === 0);
+        if (btnS) btnS.textContent = (paso === grupos.length - 1) ? 'Ir a guardar ✓' : 'Siguiente →';
+    }
+
+    function ir(n) {
+        if (n < 0 || n > grupos.length - 1) return;
+        paso = n;
+        // Mostrar la primera pestaña del grupo con Bootstrap Tab
+        var primero = grupos[paso][0];
+        var btn = tabBtn(primero);
+        if (btn && window.bootstrap && bootstrap.Tab) {
+            bootstrap.Tab.getOrCreateInstance(btn).show();
+        } else if (btn) {
+            btn.click();
+        }
+        // Si es el paso de firma, reiniciar el pad (canvas oculto mide 0)
+        if (paso === 3) { setTimeout(function () { try { initSignaturePadCreate(); } catch (e) {} }, 150); }
+        pintar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var btnA = document.getElementById('wzAtras');
+        var btnS = document.getElementById('wzSiguiente');
+        if (btnA) btnA.addEventListener('click', function () { ir(paso - 1); });
+        if (btnS) btnS.addEventListener('click', function () { ir(paso + 1); });
+        // Clic en el número también navega
+        document.querySelectorAll('#wizardSteps .wz-step').forEach(function (s) {
+            s.style.cursor = 'pointer';
+            s.addEventListener('click', function () { ir(parseInt(s.dataset.wz, 10)); });
+        });
+        pintar();
+    });
+})();
 
 // ── Toggle Marca ──
 function toggleMarcaInput(select) {
