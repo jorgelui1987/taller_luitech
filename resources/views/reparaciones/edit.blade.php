@@ -43,8 +43,8 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-11">
-        <div class="card">
-            <div class="card-body p-4">
+        <div class="ui-card">
+            <div class="p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <div>
                         <h5 class="fw-bold mb-1">Actualizar Orden: {{ $reparacion->numero_orden }}</h5>
@@ -69,32 +69,32 @@
                     @csrf @method('PUT')
 
                     {{-- Pestañas del formulario --}}
-                    <div class="card mb-4">
-                        <div class="card-header p-0" style="background:#fff; border-bottom:1px solid #e5e7eb;">
+                    <div class="ui-card mb-4">
+                        <div class="p-0" style="background:#fff; border-bottom:1px solid #e5e7eb; border-radius:14px 14px 0 0;">
                             <ul class="nav nav-tabs card-header-tabs" id="editReparacionTabs" role="tablist" style="border-bottom:none; padding:0 8px;">
                                 <li class="nav-item">
                                     <button class="nav-link active" id="tab-estado-tab" data-bs-toggle="tab" data-bs-target="#tab-estado" type="button" role="tab" aria-controls="tab-estado" aria-selected="true" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-tasks me-1" style="color:#0891b2;"></i>📋 Estado
+                                        <i class="fas fa-tasks me-1" style="color:var(--accent1);"></i>Estado
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-equipo-tab" data-bs-toggle="tab" data-bs-target="#tab-equipo" type="button" role="tab" aria-controls="tab-equipo" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-mobile-alt me-1" style="color:#0891b2;"></i>📱 Equipo
+                                        <i class="fas fa-mobile-alt me-1" style="color:var(--accent1);"></i>Equipo
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-diagnostico-tab" data-bs-toggle="tab" data-bs-target="#tab-diagnostico" type="button" role="tab" aria-controls="tab-diagnostico" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-stethoscope me-1" style="color:#0891b2;"></i>🔍 Diagnóstico
+                                        <i class="fas fa-stethoscope me-1" style="color:var(--accent1);"></i>Diagnóstico
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-costos-tab" data-bs-toggle="tab" data-bs-target="#tab-costos" type="button" role="tab" aria-controls="tab-costos" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-dollar-sign me-1" style="color:#0891b2;"></i>💰 Costos
+                                        <i class="fas fa-dollar-sign me-1" style="color:var(--accent1);"></i>Costos
                                     </button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link" id="tab-entrega-tab" data-bs-toggle="tab" data-bs-target="#tab-entrega" type="button" role="tab" aria-controls="tab-entrega" aria-selected="false" style="font-size:13px; font-weight:600; color:#6b7280; padding:10px 16px; border:none; border-bottom:2px solid transparent;">
-                                        <i class="fas fa-truck me-1" style="color:#0891b2;"></i>📦 Entrega
+                                        <i class="fas fa-truck me-1" style="color:var(--accent1);"></i>Entrega
                                     </button>
                                 </li>
                             </ul>
@@ -108,7 +108,7 @@
                                         <div class="col-md-5">
                                             <label for="estado" class="form-label">Estado Actual <span class="text-danger">*</span></label>
                                             <select name="estado" id="estado" class="form-select" required>
-                                                @php $estados = ['recibido'=>'📥 Recibido','en_diagnostico'=>'🔍 En Diagnóstico','esperando_repuesto'=>'⏳ Esperando Repuesto','en_reparacion'=>'🔧 En Reparación','listo'=>'✅ Listo para Entregar','entregado'=>'📦 Entregado','no_reparable'=>'❌ No Reparable']; @endphp
+                                                @php $estados = ['recibido'=>'Recibido','en_diagnostico'=>'En Diagnóstico','esperando_repuesto'=>'Esperando Repuesto','en_reparacion'=>'En Reparación','listo'=>'Listo para Entregar','entregado'=>'Entregado','no_reparable'=>'No Reparable']; @endphp
                                                 @foreach($estados as $val => $lbl)
                                                     <option value="{{ $val }}" {{ old('estado',$reparacion->estado)==$val?'selected':'' }}>
                                                         {{ $lbl }}
@@ -119,10 +119,10 @@
                                         <div class="col-md-3">
                                             <label for="prioridad" class="form-label">Prioridad</label>
                                             <select name="prioridad" id="prioridad" class="form-select">
-                                                <option value="baja" {{ old('prioridad',$reparacion->prioridad)=='baja'?'selected':'' }}>🟢 Baja</option>
-                                                <option value="media" {{ old('prioridad',$reparacion->prioridad)=='media'?'selected':'' }}>🟡 Media</option>
-                                                <option value="alta" {{ old('prioridad',$reparacion->prioridad)=='alta'?'selected':'' }}>🟠 Alta</option>
-                                                <option value="urgente" {{ old('prioridad',$reparacion->prioridad)=='urgente'?'selected':'' }}>🔴 Urgente</option>
+                                                <option value="baja" {{ old('prioridad',$reparacion->prioridad)=='baja'?'selected':'' }}>Baja</option>
+                                                <option value="media" {{ old('prioridad',$reparacion->prioridad)=='media'?'selected':'' }}>Media</option>
+                                                <option value="alta" {{ old('prioridad',$reparacion->prioridad)=='alta'?'selected':'' }}>Alta</option>
+                                                <option value="urgente" {{ old('prioridad',$reparacion->prioridad)=='urgente'?'selected':'' }}>Urgente</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
@@ -142,17 +142,17 @@
                                 <div class="tab-pane fade" id="tab-equipo" role="tabpanel" aria-labelledby="tab-equipo-tab">
                                     <div class="row g-3">
                                         <div class="col-md-4">
-                                            <label for="tipo_dispositivo" class="form-label">📱 Tipo de Dispositivo <span class="text-danger">*</span></label>
+                                            <label for="tipo_dispositivo" class="form-label">Tipo de Dispositivo <span class="text-danger">*</span></label>
                                             <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-select" required>
                                                 <option value="">— Seleccionar tipo —</option>
-                                                <option value="celular" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='celular'?'selected':'' }}>📱 Celular / Smartphone</option>
-                                                <option value="tablet" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='tablet'?'selected':'' }}>📟 Tablet / iPad</option>
-                                                <option value="portatil" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='portatil'?'selected':'' }}>💻 Portátil / Laptop</option>
-                                                <option value="otros" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='otros'?'selected':'' }}>🔧 Otros</option>
+                                                <option value="celular" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='celular'?'selected':'' }}>Celular / Smartphone</option>
+                                                <option value="tablet" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='tablet'?'selected':'' }}>Tablet / iPad</option>
+                                                <option value="portatil" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='portatil'?'selected':'' }}>Portátil / Laptop</option>
+                                                <option value="otros" {{ old('tipo_dispositivo',$reparacion->tipo_dispositivo)=='otros'?'selected':'' }}>Otros</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label for="marca_select" class="form-label">🏷️ Marca</label>
+                                            <label for="marca_select" class="form-label">Marca</label>
                                             @php
                                                 $marcasPrecargadas = [
                                                     'Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Motorola',
@@ -274,9 +274,9 @@
                                         <div class="col-md-3">
                                             <label for="metodo_pago" class="form-label">Método de Pago (al entregar)</label>
                                             <select name="metodo_pago" id="metodo_pago" class="form-select">
-                                                <option value="mercadopago" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='mercadopago'?'selected':'' }}>🟦 Mercado Pago</option>
-                                                <option value="efectivo" {{ old('metodo_pago', $reparacion->metodo_pago ?? 'efectivo')=='efectivo'?'selected':'' }}>💵 Efectivo</option>
-                                                <option value="transferencia" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='transferencia'?'selected':'' }}>🏦 Transferencia</option>
+                                                <option value="mercadopago" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='mercadopago'?'selected':'' }}>Mercado Pago</option>
+                                                <option value="efectivo" {{ old('metodo_pago', $reparacion->metodo_pago ?? 'efectivo')=='efectivo'?'selected':'' }}>Efectivo</option>
+                                                <option value="transferencia" {{ old('metodo_pago', $reparacion->metodo_pago ?? '')=='transferencia'?'selected':'' }}>Transferencia</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
@@ -387,15 +387,15 @@
                                         <div class="d-flex gap-2">
                                             <a href="{{ $urlRecibido }}" target="_blank"
                                                class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
-                                                <i class="fab fa-whatsapp me-1"></i>📩 Notificar Recibido
+                                                <i class="fab fa-whatsapp me-1"></i>Notificar Recibido
                                             </a>
                                             <a href="{{ $urlListo }}" target="_blank"
                                                class="btn btn-sm" style="background:#25D366; color:#fff; border-radius:8px;">
-                                                <i class="fab fa-whatsapp me-1"></i>📩 Notificar Listo/Entregado
+                                                <i class="fab fa-whatsapp me-1"></i>Notificar Listo/Entregado
                                             </a>
                                         </div>
                                         <div style="font-size:11px; color:#9ca3af; margin-top:4px;">
-                                            📞 {{ $reparacion->cliente->telefono ?? '—' }}
+                                            <i class="fas fa-phone me-1"></i>{{ $reparacion->cliente->telefono ?? '—' }}
                                         </div>
                                     </div>
                                     @endif
@@ -436,7 +436,7 @@
                     <hr class="mt-4">
                     <div class="d-flex gap-2 justify-content-end">
                         <a href="{{ route('reparaciones.show', $reparacion) }}" class="btn btn-outline-secondary px-4">Cancelar</a>
-                        <button type="submit" class="btn btn-primary px-4">
+                        <button type="submit" class="btn ui-btn-brand px-4">
                             <i class="fas fa-save me-2"></i>Guardar Cambios
                         </button>
                     </div>
