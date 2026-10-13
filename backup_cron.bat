@@ -1,8 +1,8 @@
 @echo off
 REM ============================================================
 REM  CRM Tienda Celulares - Backup Automatico (Windows)
-REM  Ejecutar cada minuto con el Programador de Tareas de Windows
+REM  Programado a diario 2:00 AM via Programador de Tareas
 REM ============================================================
 
-cd /d C:\laragon\www\servicio-tecnico-main\servicio-tecnico-main
-php artisan schedule:run >> storage\logs\scheduler.log 2>&1
+cd /d C:\laragon\www\taller_luitech-main
+php artisan backup:automatico --retencion=7 >> storage\logs\backup-cron.log 2>&1
