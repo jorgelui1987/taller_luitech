@@ -94,6 +94,9 @@
                                     $iconos = ['efectivo'=>'fa-money-bill-wave','tarjeta'=>'fa-credit-card','transferencia'=>'fa-building-columns','cuotas'=>'fa-calendar-days','mercadopago'=>'fa-wallet','debito'=>'fa-credit-card','credito'=>'fa-credit-card','yape'=>'fa-mobile-screen','plin'=>'fa-mobile-screen'];
                                 @endphp
                                 <i class="fas {{ $iconos[$venta->metodo_pago] ?? 'fa-coins' }}" style="color:var(--accent1);"></i> {{ ucfirst($venta->metodo_pago) }}
+                                @if($venta->referencia_pago)
+                                <div style="font-size:11px; color:#6b7280; font-family:monospace;">Ref: {{ $venta->referencia_pago }}</div>
+                                @endif
                             </span>
                         </td>
                         <td style="font-weight:700; color:#0f172a;">

@@ -77,6 +77,9 @@
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Pago</div>
                 <div style="font-weight:600; font-size:14px;">{{ $iconos[$venta->metodo_pago] ?? '' }} {{ ucfirst($venta->metodo_pago) }}</div>
+                @if($venta->referencia_pago)
+                <div style="font-size:11px; color:#6b7280; font-family:monospace;">Ref: {{ $venta->referencia_pago }}</div>
+                @endif
             </div>
             <div class="col-md-2 col-6">
                 <div style="font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;">Total</div>

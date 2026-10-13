@@ -124,7 +124,7 @@ tr:nth-child(even) td{background:#fafbfc}
             <div class="datos-grid">
                 <b>CLIENTE:</b> {{ $venta->cliente?->nombre_completo ?? 'VENTA GENERAL' }} &nbsp;&nbsp;
                 <b>FECHA:</b> {{ $venta->fecha_venta?->format('d/m/Y H:i') }} &nbsp;&nbsp;
-                <b>PAGO:</b> {{ ucfirst($venta->metodo_pago) }} &nbsp;&nbsp;
+                <b>PAGO:</b> {{ ucfirst($venta->metodo_pago) }}@if($venta->referencia_pago) (Ref: {{ $venta->referencia_pago }})@endif &nbsp;&nbsp;
                 <b>VENDEDOR:</b> {{ $venta->vendedor->name ?? '—' }}
             </div>
 

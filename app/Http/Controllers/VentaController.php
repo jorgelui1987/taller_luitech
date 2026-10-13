@@ -105,6 +105,7 @@ class VentaController extends Controller
             'descuento_general'   => 'nullable|numeric|min:0|max:99999999.99',
             'cupon_codigo'        => 'nullable|string|max:30',
             'notas'               => 'nullable|string|max:2000',
+            'referencia_pago'     => 'nullable|string|max:100',
             'monto_recibido'      => 'nullable|numeric|min:0|max:9999999999.99',
         ]);
 
@@ -234,6 +235,7 @@ class VentaController extends Controller
                 'monto_recibido' => $montoRecibido,
                 'vuelto'         => $vuelto,
                 'metodo_pago'  => $request->metodo_pago,
+                'referencia_pago' => in_array($request->metodo_pago, ['tarjeta','transferencia','debito','credito']) ? ($request->referencia_pago ? trim($request->referencia_pago) : null) : null,
                 'estado'       => $esMercadoPago ? 'pendiente' : 'completada',
                 'estado_pago'  => $esMercadoPago ? 'pendiente' : 'pagado',
                 'notas'        => $request->notas,
@@ -374,6 +376,7 @@ class VentaController extends Controller
         $texto .= 'CLIENTE: ' . ($venta->cliente?->nombre_completo ?? 'VENTA GENERAL') . "\n";
         if ($venta->cliente?->telefono) $texto .= 'TEL: ' . $venta->cliente->telefono . "\n";
         $texto .= 'PAGO: ' . ucfirst($venta->metodo_pago) . "\n";
+        if ($venta->referencia_pago) $texto .= 'REF: ' . $venta->referencia_pago . "\n";
         $texto .= 'VENDEDOR: ' . ($venta->vendedor->name ?? '—') . "\n";
         $texto .= $linea . "\n";
 

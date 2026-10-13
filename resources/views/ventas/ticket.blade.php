@@ -81,6 +81,7 @@ hr.dotted{border-top:1px dashed #000}
 </div>
 @endif
 <div class="det"><span class="etq">PAGO </span>{{ ucfirst($venta->metodo_pago) }} | {{ $venta->vendedor->name ?? '—' }}</div>
+@if($venta->referencia_pago)<div class="det"><span class="etq">REF </span>{{ $venta->referencia_pago }}</div>@endif
 <hr>
 <table class="prod">
 <thead><tr><th>Producto</th><th class="c">Cant</th><th class="p">P.U.</th><th class="p">Subt.</th></tr></thead>

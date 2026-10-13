@@ -177,6 +177,13 @@
                         <div id="lblVuelto" class="mt-2" style="display:none;font-size:18px;font-weight:700;color:#059669;"></div>
                         <div id="lblFalta" class="mt-1 text-danger" style="display:none;font-size:12px;"></div>
                     </div>
+                    <div class="mt-2" id="rowReferencia" style="display:none;">
+                        <label for="referenciaPago" class="st-label">N° operación / comprobante <span class="text-muted">(opcional)</span></label>
+                        <input type="text" class="form-control form-control-sm" name="referencia_pago" id="referenciaPago"
+                               maxlength="100" placeholder="Ej: voucher, N° transferencia..." autocomplete="off"
+                               style="font-family:monospace;text-transform:uppercase;">
+                        <small class="text-muted" style="font-size:11px;" id="referenciaHint">Código de la tarjeta o transferencia.</small>
+                    </div>
                     <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
                 </x-st-block>
                 </div>
@@ -482,9 +489,31 @@ function setRecibido(valor) {
 }
 
 document.getElementById('metodo_pago').addEventListener('change', function () {
-    document.getElementById('rowEfectivo').style.display = (this.value === 'efectivo') ? 'block' : 'none';
+    toggleCamposPago(this.value);
     actualizarVuelto();
 });
+
+function toggleCamposPago(metodo) {
+    document.getElementById('rowEfectivo').style.display = (metodo === 'efectivo') ? 'block' : 'none';
+    let conRef = ['tarjeta', 'transferencia', 'debito', 'credito'].includes(metodo);
+    let rowRef = document.getElementById('rowReferencia');
+    if (rowRef) {
+        rowRef.style.display = conRef ? 'block' : 'none';
+        let hint = document.getElementById('referenciaHint');
+        if (hint) {
+            hint.textContent = metodo === 'transferencia'
+                ? 'N° de transferencia o comprobante.'
+                : 'N° de voucher, autorización o últimos 4 dígitos.';
+        }
+        if (!conRef) {
+            let inp = document.getElementById('referenciaPago');
+            if (inp) inp.value = '';
+        } else {
+            let inp = document.getElementById('referenciaPago');
+            if (inp) inp.focus();
+        }
+    }
+}
 
 // Píldoras de método de pago (diseño elegante, mismo valor que el select)
 document.querySelectorAll('#payPills .pay-pill').forEach(function(btn){

@@ -15,7 +15,7 @@ class Venta extends Model
         'subtotal', 'descuento', 'impuesto', 'total',
         'monto_recibido', 'vuelto',
         'comision_monto', 'comision_pagada',
-        'metodo_pago', 'estado', 'estado_pago', 'notas', 'motivo_cancelacion', 'tenant_id',
+        'metodo_pago', 'referencia_pago', 'estado', 'estado_pago', 'notas', 'motivo_cancelacion', 'tenant_id',
         'dte_tipo', 'dte_folio', 'dte_token', 'dte_pdf_url', 'dte_estado',
     ];
 
