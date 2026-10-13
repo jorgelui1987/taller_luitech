@@ -40,9 +40,10 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf &&
 # Configurar AllowOverride en el Directory de apache2.conf
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-# Healthcheck
+# Healthcheck interno (Dokploy lo ignora; Traefik hace su propio chequeo).
+# Se consulta por red docker interna para no depender de "localhost".
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:80/health || exit 1
+    CMD curl -f http://127.0.0.1:80/health || exit 1
 
 # ---- Stage de Composer ----
 FROM composer:2.7.7 AS composer-stage

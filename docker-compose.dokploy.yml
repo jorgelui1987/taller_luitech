@@ -17,8 +17,11 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: taller-luitech-app
-    ports:
-      - "8000:80"
+    # ⚠️ NO exponer puertos aquí: Dokploy/Traefik rutea internamente al puerto 80.
+    # Declarar "ports" rompe el challenge HTTP-01 de Let's Encrypt y Traefik
+    # termina sirviendo TRAEFIK DEFAULT CERT ("no seguro").
+    expose:
+      - "80"
     volumes:
       # ⚠️ VOLUMEN PERSISTENTE: Los backups, logos y fotos viven aqui.
       # Sin este volumen, TODO se borra en cada actualizacion de Dokploy.
@@ -50,8 +53,9 @@ services:
       # Vacío = herramienta de recuperación DESACTIVADA (recomendado en operación normal).
       - SUPERADMIN_RECOVERY_TOKEN=${SUPERADMIN_RECOVERY_TOKEN:-}
     restart: unless-stopped
-    networks:
-      - taller-luitech-network
+    # ⚠️ Sin "networks" personalizada: Dokploy conecta la app a su red interna
+    # (dokploy-network) donde Traefik resuelve el servicio y emite el SSL.
+    # Una red bridge propia aísla el contenedor y Traefik sirve DEFAULT CERT.
 
 # ⚠️ NO hay servicio mysql aqui.
 # Usa la base de datos PostgreSQL que Dokploy te ofrece como servicio externo.
@@ -63,6 +67,4 @@ volumes:
   # Volumen persistente para storage (backups, logos, fotos)
   taller_storage:
 
-networks:
-  taller-luitech-network:
-    driver: bridge
+# ⚠️ Sin bloque "networks": ver nota en el servicio app.
