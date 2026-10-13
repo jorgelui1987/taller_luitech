@@ -153,15 +153,23 @@ if [[ "$DB_CHECK" == "OK" ]]; then
         runuser -u appuser -- php artisan migrate --force 2>&1 || true
     fi
 
-    # ── Asegurar que el SuperAdmin existe con las credenciales configuradas ──
-    # Esto corrige errores de "credenciales inválidas" cuando la BD fue
-    # restaurada de un backup o la migración de credenciales corrió con
-    # otras variables de entorno.
-    echo "Asegurando existencia del SuperAdmin..."
-    if runuser -u appuser -- php artisan superadmin:reset --force 2>&1; then
-        echo "✓ SuperAdmin verificado/creado"
+    # ── Asegurar que el SuperAdmin existe (SOLO si no existe) ──
+    # ⚠️ NO pisar la clave en cada arranque: si el admin la cambió desde el
+    # panel o vía /recuperar-superadmin, un reset --force la revertiría a la
+    # variable y parecería "credencial inválida" tras cada redeploy.
+    echo "Verificando existencia del SuperAdmin..."
+    SA_EXISTE=$(runuser -u appuser -- php artisan tinker --execute="echo App\\Models\\User::where('rol','superadmin')->exists() ? 'SI' : 'NO';" 2>/dev/null || echo "ERROR")
+    if [ "$SA_EXISTE" == "NO" ]; then
+        echo "SuperAdmin no existe. Creándolo con las credenciales configuradas..."
+        if runuser -u appuser -- php artisan superadmin:reset --force 2>&1; then
+            echo "✓ SuperAdmin creado"
+        else
+            echo "⚠ No se pudo crear el SuperAdmin (revisar credenciales manualmente)"
+        fi
+    elif [ "$SA_EXISTE" == "SI" ]; then
+        echo "✓ SuperAdmin ya existe. Se conserva su contraseña actual."
     else
-        echo "⚠ No se pudo asegurar el SuperAdmin (revisar credenciales manualmente)"
+        echo "⚠ No se pudo verificar el SuperAdmin. Se omite por seguridad."
     fi
 
     # ── Verificar si hay datos existentes ──────────────────────────────

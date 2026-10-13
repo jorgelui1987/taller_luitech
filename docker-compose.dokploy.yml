@@ -52,6 +52,20 @@ services:
       # Token de emergencia para /recuperar-superadmin/{token}
       # Vacío = herramienta de recuperación DESACTIVADA (recomendado en operación normal).
       - SUPERADMIN_RECOVERY_TOKEN=${SUPERADMIN_RECOVERY_TOKEN:-}
+      # Marca de la plataforma (landing principal www.serviciotecnico.fun)
+      - PLATFORM_BRAND_NAME=${PLATFORM_BRAND_NAME:-Servicio Técnico}
+      - PLATFORM_EMAIL=${PLATFORM_EMAIL:-contacto@serviciotecnico.fun}
+      - PLATFORM_TELEFONO=${PLATFORM_TELEFONO:-}
+      - PLATFORM_DIRECCION=${PLATFORM_DIRECCION:-}
+      # Correo SMTP (recuperación de contraseña y avisos)
+      - MAIL_MAILER=${MAIL_MAILER:-log}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-contacto@serviciotecnico.fun}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-Servicio Técnico}
     restart: unless-stopped
     # ⚠️ Sin "networks" personalizada: Dokploy conecta la app a su red interna
     # (dokploy-network) donde Traefik resuelve el servicio y emite el SSL.

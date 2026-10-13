@@ -3,7 +3,7 @@
 return [
     'paths'                    => ['api/*', 'sanctum/csrf-cookie'],
     'allowed_methods'          => ['*'],
-    'allowed_origins'          => ['https://luitech.fun'],
+    'allowed_origins'          => ['https://www.serviciotecnico.fun', 'https://serviciotecnico.fun'],
     'allowed_origins_patterns' => [],
     'allowed_headers'          => ['*'],
     'exposed_headers'          => [],
