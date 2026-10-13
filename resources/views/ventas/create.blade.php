@@ -57,7 +57,8 @@
                     <div class="row g-2 align-items-end mt-1">
                             <div class="col-md-6">
                                 <label for="codBarras" class="visually-hidden">Código de barras</label>
-                                <input type="text" id="codBarras" class="form-control form-control-sm" placeholder="Escanear código + Enter..." style="font-family:monospace;" onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}">
+                                <input type="text" id="codBarras" class="form-control form-control-sm" placeholder="📷 Escanea y se agrega solo..." style="font-family:monospace;" autocomplete="off" autofocus onkeydown="if(event.key==='Enter'){event.preventDefault();buscarCodigo(this.value);}" oninput="inputPistola(this.value)">
+                                <small class="text-muted" style="font-size:11px;">Escanea y se agrega solo, sin Enter ni clic.</small>
                             </div>
                             <div class="col-md-3">
                                 <button type="button" class="btn ui-btn-brand btn-sm w-100" onclick="agregar()"><i class="fas fa-plus me-1"></i>Agregar</button>
@@ -194,6 +195,30 @@ let vacio = document.getElementById('vacio');
 let btnReg = document.getElementById('btnReg');
 let scannerActivo = false;
 
+// La pistola escribe rapidisimo y termina con Enter.
+// Si el foco estaba fuera de un input, igual capturamos y agregamos directo.
+let bufferPistola = '';
+let timerBufferPistola = null;
+document.addEventListener('keydown', function(e) {
+    let tag = (document.activeElement && document.activeElement.tagName) || '';
+    let enCampo = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !enCampo) {
+        bufferPistola += e.key;
+        clearTimeout(timerBufferPistola);
+        timerBufferPistola = setTimeout(function() { bufferPistola = ''; }, 400);
+    } else if (e.key === 'Enter' && bufferPistola.length >= 3 && !enCampo) {
+        e.preventDefault();
+        let cod = bufferPistola;
+        bufferPistola = '';
+        clearTimeout(timerBufferPistola);
+        buscarCodigo(cod);
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    let input = document.getElementById('codBarras');
+    if (input) input.focus();
+});
+
 function filtrar() {
     let q = document.getElementById('buscador').value.toLowerCase();
     for (let i = 1; i < selProd.options.length; i++) {
@@ -265,24 +290,64 @@ function agregarDesdeDatos(d) {
     totales();
 }
 
+function normalizarCodigo(s) {
+    return (s || '').toString().trim();
+}
+
+let timerPistola = null;
+function inputPistola(v) {
+    clearTimeout(timerPistola);
+    v = normalizarCodigo(v);
+    if (!v) return;
+    // La pistola escribe muy rapido: si en 300ms no llegan mas caracteres, agregar solo
+    timerPistola = setTimeout(function() {
+        let input = document.getElementById('codBarras');
+        if (normalizarCodigo(input.value) !== '') buscarCodigo(input.value);
+    }, 300);
+}
+
 function buscarCodigo(cod) {
-    cod = cod.trim();
-    if (!cod) return;
-    // Buscar primero por código de barras exacto, luego por código SKU, luego por nombre
+    cod = normalizarCodigo(cod);
+    if (!cod) return false;
+    let q = cod.toLowerCase();
+    // 1) Coincidencia exacta en el select precargado (codigo de barras o SKU)
     for (let i = 1; i < selProd.options.length; i++) {
         let opt = selProd.options[i];
-        let cb = (opt.dataset.codigo_barras || '').toLowerCase();
-        let sku = (opt.dataset.codigo || '').toLowerCase();
-        let nom = opt.text.toLowerCase();
-        let q = cod.toLowerCase();
-        if (cb === q || sku === q || nom.includes(q)) {
-            selProd.selectedIndex = i;
-            agregar();
+        let cb = normalizarCodigo(opt.dataset.codigo_barras || '').toLowerCase();
+        let sku = normalizarCodigo(opt.dataset.codigo || '').toLowerCase();
+        if ((cb !== '' && cb === q) || (sku !== '' && sku === q)) {
+            agregarDesdeDatos({ id: opt.value, precio: opt.dataset.precio, stock: opt.dataset.stock, nombre: opt.text.split(' (')[0] });
             document.getElementById('codBarras').value = '';
-            return;
+            document.getElementById('codBarras').focus();
+            return true;
         }
     }
-    alert('Producto no encontrado con código: ' + cod);
+    // 2) No esta precargado (ej: fuera de los primeros 50): buscar en servidor y agregar directo
+    fetch("{{ route('api.productos.buscar') }}?q=" + encodeURIComponent(cod), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(r => r.json()).then(data => {
+        let lista = Array.isArray(data) ? data : (data.data || []);
+        let exacto = lista.find(p => normalizarCodigo(p.codigo_barras || '').toLowerCase() === q || normalizarCodigo(p.codigo || '').toLowerCase() === q);
+        let elegido = exacto || (lista.length === 1 ? lista[0] : null);
+        if (elegido) {
+            agregarDesdeDatos({ id: elegido.id, precio: elegido.precio_venta, stock: elegido.stock, nombre: elegido.nombre });
+            document.getElementById('codBarras').value = '';
+            document.getElementById('codBarras').focus();
+        } else if (lista.length > 1) {
+            document.getElementById('buscador').value = cod;
+            filtrarAjax();
+            document.getElementById('buscador').focus();
+        } else {
+            alert('Producto no encontrado con código: ' + cod);
+            let input = document.getElementById('codBarras');
+            input.focus(); input.select();
+        }
+    }).catch(() => {
+        alert('Producto no encontrado con código: ' + cod);
+        let input = document.getElementById('codBarras');
+        input.focus(); input.select();
+    });
+    return false;
 }
 
 function agregar() {
