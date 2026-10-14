@@ -273,6 +273,24 @@ class VentaController extends Controller
             }
 
             if ($esMercadoPago) {
+                // Botón amarillo: manda solo el precio al Point de una vez.
+                // En la máquina sale el menú normal (Tarjetas/Efectivo con boleta).
+                if ($request->input('cobrar_con_point') == '1') {
+                    try {
+                        $pago = app(\App\Services\MercadoPagoService::class)->crearPagoPoint($venta);
+                        if (($pago['estado'] ?? null) === 'desactivado') {
+                            return redirect()->route('ventas.show', $venta)
+                                ->with('error', 'Mercado Pago no está activado para esta empresa.');
+                        }
+                        return redirect()->route('ventas.show', $venta)
+                            ->with('point', $pago)
+                            ->with('success', "Venta {$venta->numero_venta} enviada al Point. Elige en la máquina Tarjeta o Efectivo con boleta.");
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::error('Error cobrando con Point desde crear venta: ' . $e->getMessage());
+                        return redirect()->route('ventas.show', $venta)
+                            ->with('error', 'Error Point: ' . $e->getMessage());
+                    }
+                }
                 return redirect()->route('ventas.show', $venta)
                     ->with('success', "Venta {$venta->numero_venta} registrada. Genera el pago con Mercado Pago.");
             }

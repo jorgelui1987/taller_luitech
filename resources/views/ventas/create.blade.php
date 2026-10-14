@@ -190,6 +190,16 @@
                         onclick="document.getElementById('cobrarConPoint').value='0';">
                         <i class="fas fa-cash-register me-2"></i>COBRAR
                     </button>
+                    @if(($empresa->mercadopago_activo ?? false))
+                    <button type="submit" class="btn w-100 py-3 mt-2" id="btnPoint" disabled
+                        style="background:#ffe600;border:none;border-radius:12px;color:#0f172a;font-weight:800;font-size:15px;"
+                        onclick="document.getElementById('cobrarConPoint').value='1';">
+                        <i class="fas fa-credit-card me-2"></i>Cobrar con Mercado Pago
+                    </button>
+                    <small class="text-muted d-block mt-1" style="font-size:11px;">
+                        Manda solo el precio al Point: en la máquina eliges Tarjeta o Efectivo con boleta.
+                    </small>
+                    @endif
                 </x-st-block>
                 </div>
             </div>
