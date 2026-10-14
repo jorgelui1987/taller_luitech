@@ -186,15 +186,13 @@
                     </div>
                     <input type="hidden" name="cobrar_con_point" id="cobrarConPoint" value="0">
                     <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
-                    {{-- BUILD-MARKER-POINT-BTN v2 --}}
-                    @if(($empresa->mercadopago_activo ?? false))
+                    {{-- BUILD-MARKER-POINT-BTN v3 sin @if para debug deploy --}}
                     <button type="submit" class="btn w-100 py-2 mt-2" id="btnPoint" disabled
                         style="background:#00b1ea;border-color:#00b1ea;color:#fff;font-weight:700;"
                         onclick="document.getElementById('cobrarConPoint').value='1';">
                         <i class="fas fa-mobile-alt me-2"></i>Cobrar con Point
                     </button>
                     <small class="text-muted d-block mt-1" style="font-size:11px;">Crea la venta y manda el cobro al Point (tarjeta). Si pagan en efectivo, se marca manual en el detalle.</small>
-                    @endif
                 </x-st-block>
                 </div>
             </div>
