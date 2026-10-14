@@ -292,9 +292,15 @@ fi
 echo "Limpiando cachés antiguas (views/config/routes)..."
 runuser -u appuser -- php artisan optimize:clear 2>/dev/null || true
 
-# ── Optimizar Laravel ───────────────────────────────────────────────
-echo "Optimizando Laravel..."
-runuser -u appuser -- php artisan optimize 2>/dev/null || true
+# ── Optimizar Laravel (SIN cache de vistas) ─────────────────────────
+# NOTA: no usar `php artisan optimize` porque cachea las vistas Blade
+# compiladas en storage/framework/views (volumen persistente) y los
+# cambios nuevos "no salen" hasta limpiar a mano. Solo cacheamos
+# config + routes, las vistas siempre se compilan en caliente.
+echo "Optimizando Laravel (config+routes, sin views)..."
+runuser -u appuser -- php artisan config:cache 2>/dev/null || true
+runuser -u appuser -- php artisan route:cache 2>/dev/null || true
+runuser -u appuser -- php artisan view:clear 2>/dev/null || true
 
 # ── Iniciar cron en segundo plano (para que los backups automáticos funcionen) ──
 echo "Iniciando cron en segundo plano..."
