@@ -362,12 +362,23 @@
 @endif
 
 {{-- Impresión automática al confirmarse el pago con Mercado Pago --}}
-@if($venta->estado === 'pendiente' && $venta->metodo_pago === 'mercadopago')
+@if(session('imprimir_ticket') || ($venta->estado === 'pendiente' && $venta->metodo_pago === 'mercadopago'))
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const urlEstado = "{{ route('ventas.estado', $venta) }}";
     const urlTicket = "{{ route('ventas.ticket', $venta) }}";
+    @if(session('imprimir_ticket'))
+    // Pago manual recién confirmado (tarjeta o efectivo): imprimir de una vez.
+    const win = window.open(urlTicket, '_blank');
+    if (win) {
+        win.onload = function () {
+            win.focus();
+            win.print();
+        };
+    }
+    @else
+    // Pago por Point vía webhook: esperar a que la venta pase a completada.
+    const urlEstado = "{{ route('ventas.estado', $venta) }}";
     let impreso = false;
 
     const intervalo = setInterval(async () => {
@@ -380,16 +391,17 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.estado === 'completada' && !impreso) {
                 impreso = true;
                 clearInterval(intervalo);
-                const win = window.open(urlTicket, '_blank');
-                if (win) {
-                    win.onload = function () {
-                        win.focus();
-                        win.print();
+                const win2 = window.open(urlTicket, '_blank');
+                if (win2) {
+                    win2.onload = function () {
+                        win2.focus();
+                        win2.print();
                     };
                 }
             }
         } catch (e) {}
     }, 5000);
+    @endif
 });
 </script>
 @endpush

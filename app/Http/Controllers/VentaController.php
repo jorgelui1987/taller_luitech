@@ -329,7 +329,9 @@ class VentaController extends Controller
             'referencia_pago' => $venta->referencia_pago ?: 'POINT-TARJETA',
         ]);
 
-        return back()->with('success', "Venta {$venta->numero_venta} cobrada con tarjeta.");
+        return redirect()->route('ventas.show', $venta)
+            ->with('success', "Venta {$venta->numero_venta} cobrada con tarjeta.")
+            ->with('imprimir_ticket', true);
     }
 
     /**
@@ -367,7 +369,9 @@ class VentaController extends Controller
             $msg .= ' Vuelto: ' . number_format($venta->vuelto, 0, ',', '.');
         }
 
-        return back()->with('success', $msg);
+        return redirect()->route('ventas.show', $venta)
+            ->with('success', $msg)
+            ->with('imprimir_ticket', true);
     }
 
     /**
