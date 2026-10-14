@@ -98,28 +98,37 @@
 </div>
 
 {{-- Panel Mercado Pago (si aplica) --}}
-@if(($empresa->mercadopago_activo ?? false) && in_array($venta->estado, ['completada', 'pendiente']))
+@if($venta->estado === 'pendiente')
 <div class="card mb-4" style="border:1px solid #00b1ea;">
     <div class="card-body p-3">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div>
                 <h6 class="fw-bold mb-1" style="color:#00b1ea; font-size:14px;">
-                    <i class="fab fa-mercadopago me-1"></i>Mercado Pago
+                    <i class="fab fa-mercadopago me-1"></i>Mercado Pago — cobro manual en Point
                 </h6>
                 <p class="text-muted mb-0" style="font-size:12px;">
-                    Cobra esta venta con tu terminal Point o genera un QR de pago.
+                    Total a cobrar en el equipo:
+                    <strong>{{ ($empresa->simbolo_moneda ?? '$') . ' ' . number_format($venta->total, 0, ',', '.') }}</strong>
+                    · Cobra con el menú normal (Tarjetas / Efectivo con boleta) y márcalo aquí.
                 </p>
             </div>
             <div class="d-flex gap-2 flex-wrap align-items-center">
+                <form action="{{ route('ventas.point', $venta) }}" method="POST"
+                      onsubmit="return confirm('¿Enviar el total al Point? En el equipo eliges Tarjeta o Efectivo con boleta.');">
+                    @csrf
+                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;"
+                            title="Manda solo el precio al Point: en la máquina sale el menú normal (Tarjetas / Efectivo con boleta)">
+                        <i class="fas fa-credit-card me-1"></i>Cobrar con Mercado Pago
+                    </button>
+                </form>
                 <form action="{{ route('ventas.point-tarjeta', $venta) }}" method="POST"
                       onsubmit="return confirm('¿Cobraste con tarjeta manual en el Point? Se marcará pagada con tarjeta.');">
                     @csrf
-                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;"
-                            title="Cobra manual en el equipo con su menú normal (Tarjetas/Efectivo) y márcalo aquí">
-                        <i class="fas fa-credit-card me-1"></i>Pagó con tarjeta
+                    <button type="submit" class="btn btn-sm btn-outline-primary" style="border-radius:8px;"
+                            title="Si ya cobraste manual en el equipo con tarjeta, márcalo aquí">
+                        <i class="fas fa-check me-1"></i>Pagó con tarjeta
                     </button>
                 </form>
-                @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
                 <form action="{{ route('ventas.mercadopago', $venta) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;">
@@ -136,7 +145,6 @@
                         <i class="fas fa-money-bill-wave me-1"></i>Pagó en efectivo
                     </button>
                 </form>
-                @endif
             </div>
             <small class="text-muted d-block mt-2" style="font-size:11px;">
                 Cobra manual en el equipo con su menú normal (Tarjetas / Efectivo con boleta) por el total
