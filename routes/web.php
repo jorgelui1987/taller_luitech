@@ -53,6 +53,18 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
 // ── RECUPERACIÓN DE EMERGENCIA SUPERADMIN (sin autenticación) ─────────
 // Desactivada por defecto: solo funciona si la variable de entorno
 // SUPERADMIN_RECOVERY_TOKEN está definida y coincide con el token en la URL.
+// TEMP DEBUG DEPLOY - quitar despues: dice que commit corre en produccion
+Route::get('/__build', function () {
+    $blade = @file_get_contents(resource_path('views/ventas/create.blade.php')) ?: '';
+    return response()->json([
+        'build'   => '2026-10-14-v-tarjeta-fuera',
+        'commit'  => '6143744',
+        'fecha'   => now()->toDateTimeString(),
+        'v5'      => str_contains($blade, 'BTN-POINT-V5'),
+        'tarjeta' => str_contains($blade, 'value="tarjeta"'),
+    ]);
+});
+
 Route::get('/recuperar-superadmin/{token}', [\App\Http\Controllers\SuperAdminRecoveryController::class, 'show'])
     ->name('superadmin.recuperar')->middleware('throttle:10,1');
 Route::post('/recuperar-superadmin/{token}', [\App\Http\Controllers\SuperAdminRecoveryController::class, 'reset'])
