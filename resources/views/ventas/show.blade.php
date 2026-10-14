@@ -110,10 +110,11 @@
                     Cobra esta venta con tu terminal Point o genera un QR de pago.
                 </p>
             </div>
-            <div class="d-flex gap-2 flex-wrap">
+            <div class="d-flex gap-2 flex-wrap align-items-center">
                 <form action="{{ route('ventas.point', $venta) }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;">
+                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;"
+                            title="Manda la orden al Point (el Point cobra tarjeta; el efectivo se cobra manual en el equipo o se registra abajo)">
                         <i class="fas fa-credit-card me-1"></i>Cobrar con Point
                     </button>
                 </form>
@@ -124,8 +125,21 @@
                         <i class="fas fa-qrcode me-1"></i>Generar QR de Pago
                     </button>
                 </form>
+                <form action="{{ route('ventas.point-efectivo', $venta) }}" method="POST" class="d-flex gap-1 align-items-center"
+                      onsubmit="return confirm('¿Pagaron en efectivo manual en el Point? Se registrará en caja con vuelto.');">
+                    @csrf
+                    <input type="number" name="monto_recibido" class="form-control form-control-sm" style="width:130px;"
+                           placeholder="Monto recibido" min="{{ $venta->total }}" step="1" value="{{ number_format($venta->total, 0, '.', '') }}">
+                    <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px;"
+                            title="Si el cliente pagó en efectivo en el equipo, regístralo aquí con vuelto">
+                        <i class="fas fa-money-bill-wave me-1"></i>Pagó en efectivo
+                    </button>
+                </form>
                 @endif
             </div>
+            <small class="text-muted d-block mt-2" style="font-size:11px;">
+                El Point por API solo cobra tarjeta. Si el cliente paga en <strong>efectivo en el equipo</strong> (menú Tarjetas/Efectivo de la máquina), cancela la orden en el Point y regístralo con el botón verde.
+            </small>
         </div>
     </div>
 </div>

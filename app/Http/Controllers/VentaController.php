@@ -292,6 +292,44 @@ class VentaController extends Controller
     }
 
     /**
+     * El cliente pagó en efectivo manual en el equipo Point (menú
+     * Tarjetas/Efectivo de la máquina, con boleta). Se cancela la orden
+     * en el terminal y se registra el efectivo en caja con vuelto.
+     */
+    public function marcarPointEfectivo(Request $request, Venta $venta)
+    {
+        if ($venta->estado !== 'pendiente' || $venta->metodo_pago !== 'mercadopago') {
+            return back()->with('error', 'Solo una venta pendiente de Mercado Pago se puede marcar en efectivo.');
+        }
+
+        $validated = $request->validate([
+            'monto_recibido' => 'nullable|numeric|min:0',
+        ]);
+
+        $total = (float) $venta->total;
+        $recibido = isset($validated['monto_recibido']) ? (float) $validated['monto_recibido'] : $total;
+
+        if ($recibido < $total) {
+            return back()->with('error', 'El monto recibido no puede ser menor al total.')->withInput();
+        }
+
+        $venta->update([
+            'metodo_pago' => 'efectivo',
+            'monto_recibido' => $recibido,
+            'vuelto' => round($recibido - $total, 2),
+            'estado' => 'completada', 'estado_pago' => 'pagado',
+            'referencia_pago' => $venta->referencia_pago ?: 'POINT-EFECTIVO',
+        ]);
+
+        $msg = "Venta {$venta->numero_venta} cobrada en efectivo.";
+        if ($venta->vuelto > 0) {
+            $msg .= ' Vuelto: ' . number_format($venta->vuelto, 0, ',', '.');
+        }
+
+        return back()->with('success', $msg);
+    }
+
+    /**
      * Devuelve el estado actual de la venta (para polling de impresión automática).
      */
     public function estado(Venta $venta)
