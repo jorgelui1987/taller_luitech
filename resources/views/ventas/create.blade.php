@@ -186,6 +186,7 @@
                     </div>
                     <input type="hidden" name="cobrar_con_point" id="cobrarConPoint" value="0">
                     <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
+                    {{-- BUILD-MARKER-POINT-BTN v2 --}}
                     @if(($empresa->mercadopago_activo ?? false))
                     <button type="submit" class="btn w-100 py-2 mt-2" id="btnPoint" disabled
                         style="background:#00b1ea;border-color:#00b1ea;color:#fff;font-weight:700;"
