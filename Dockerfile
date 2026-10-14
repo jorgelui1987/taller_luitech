@@ -52,11 +52,6 @@ FROM composer:2.7.7 AS composer-stage
 # NOSONAR - Apache necesita root para el puerto 80, luego baja a www-data
 FROM base AS final
 
-# Fuerza invalidar caché de Docker en cada push (ver /__build BUILD_ID).
-ARG BUILD_ID=local
-ENV BUILD_ID=${BUILD_ID}
-RUN echo "BUILD ${BUILD_ID}" > /var/www/html/public/BUILD_ID.txt
-
 # Instalar Composer
 COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 
@@ -91,6 +86,11 @@ RUN useradd -m -u 1001 -s /bin/bash appuser \
 # Copiar entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Fuerza invalidar caché de Docker en cada push (ver /__build BUILD_ID).
+ARG BUILD_ID=local
+ENV BUILD_ID=${BUILD_ID}
+RUN echo "BUILD ${BUILD_ID}" > /var/www/html/public/BUILD_ID.txt
 
 WORKDIR /var/www/html
 
