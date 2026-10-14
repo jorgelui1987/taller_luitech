@@ -113,16 +113,19 @@
             <div class="d-flex gap-2 flex-wrap">
                 <form action="{{ route('ventas.point', $venta) }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;">
-                        <i class="fas fa-credit-card me-1"></i>Cobrar con Point
+                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;"
+                            title="El Point solo procesa tarjeta/QR">
+                        <i class="fas fa-credit-card me-1"></i>Cobrar tarjeta en Point
                     </button>
                 </form>
                 @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
-                <form action="{{ route('ventas.point-efectivo', $venta) }}" method="POST"
-                      onsubmit="return confirm('¿Confirmas que pagaron en efectivo en el Point manual?');">
+                <form action="{{ route('ventas.point-efectivo', $venta) }}" method="POST" class="d-flex gap-1 align-items-center"
+                      onsubmit="return confirm('¿Confirmas que pagaron en efectivo? Cancela la orden en el Point primero.');">
                     @csrf
-                    <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px;">
-                        <i class="fas fa-money-bill-wave me-1"></i>Efectivo en Point
+                    <input type="number" name="monto_recibido" class="form-control form-control-sm" style="width:130px;"
+                           placeholder="Monto recibido" min="{{ $venta->total }}" step="1" value="{{ number_format($venta->total, 0, '.', '') }}">
+                    <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px;" title="Cancelar en el Point y registrar el efectivo en caja con vuelto">
+                        <i class="fas fa-money-bill-wave me-1"></i>Pagó en efectivo
                     </button>
                 </form>
                 <form action="{{ route('ventas.mercadopago', $venta) }}" method="POST">

@@ -38,7 +38,7 @@ class PaisHelper
                 'codigo_whatsapp'=> '56',
                 'zona_horaria'   => 'America/Santiago',
                 'documento'      => 'RUT',
-                'metodos_pago'   => ['efectivo', 'transferencia', 'debito', 'credito', 'mercadopago'],
+                'metodos_pago'   => ['efectivo', 'transferencia', 'debito', 'credito', 'tarjeta', 'mercadopago'],
             ],
             'AR' => [
                 'pais'           => 'AR',

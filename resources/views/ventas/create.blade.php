@@ -128,6 +128,7 @@
                             <button type="button" class="btn btn-sm btn-outline-primary pay-pill" data-val="mercadopago"><i class="fas fa-wallet me-1"></i>MP</button>
                             @endif
                             <button type="button" class="btn btn-sm btn-outline-success pay-pill active" data-val="efectivo"><i class="fas fa-money-bill-wave me-1"></i>Efectivo</button>
+                            <button type="button" class="btn btn-sm btn-outline-warning pay-pill" data-val="tarjeta"><i class="fas fa-credit-card me-1"></i>Tarjeta</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="transferencia"><i class="fas fa-exchange-alt me-1"></i>Transf.</button>
                         </div>
                     </div>
@@ -138,6 +139,7 @@
                                 <option value="mercadopago">Mercado Pago</option>
                                 @endif
                                 <option value="efectivo" selected>Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
                                 <option value="transferencia">Transferencia</option>
                             </x-st-select>
                         </div>
@@ -188,12 +190,16 @@
                         onclick="document.getElementById('cobrarConPoint').value='0';">
                         <i class="fas fa-cash-register me-2"></i>COBRAR
                     </button>
-                    <!-- BTN-POINT-V5: crea la venta y manda la orden al Point. El Point cobra tarjeta; si pagan efectivo en el Point manual se marca en el detalle. -->
+                    <!-- Punto de venta: el Point SOLO procesa tarjeta/QR. El efectivo se cobra directo en caja (con vuelto) sin pasar por el Point. -->
                     <button type="submit" class="btn w-100 py-3 mt-2" id="btnPoint" disabled
                         style="background:#ffe600;border:none;border-radius:12px;color:#0f172a;font-weight:800;font-size:15px;"
-                        onclick="document.getElementById('cobrarConPoint').value='1';">
-                        <i class="fas fa-credit-card me-2"></i>Cobrar con Mercado Pago
+                        onclick="if(document.getElementById('metodo_pago').value==='tarjeta'||document.getElementById('metodo_pago').value==='mercadopago'){document.getElementById('cobrarConPoint').value='1';}else{document.getElementById('cobrarConPoint').value='0';}">
+                        <i class="fas fa-credit-card me-2"></i><span id="btnPointTxt">Cobrar con Mercado Pago</span>
                     </button>
+                    <small class="text-muted d-block mt-1" style="font-size:11px;" id="pointHint">
+                        <strong>Efectivo</strong> → se cobra directo en caja con vuelto (sin Point).<br>
+                        <strong>Tarjeta</strong> → se manda al Point para cobrar con tarjeta en el terminal.
+                    </small>
                 </x-st-block>
                 </div>
             </div>
@@ -521,6 +527,28 @@ function toggleCamposPago(metodo) {
             let inp = document.getElementById('referenciaPago');
             if (inp) inp.focus();
         }
+    }
+    // El botón amarillo cambia según lo elegido:
+    // - Efectivo → cobra directo en caja con vuelto (sin Point).
+    // - Tarjeta → manda la orden al Point (el Point solo cobra tarjeta/QR).
+    let btnPointTxt = document.getElementById('btnPointTxt');
+    let flagPoint = document.getElementById('cobrarConPoint');
+    if (btnPointTxt && flagPoint) {
+        if (metodo === 'efectivo') {
+            btnPointTxt.textContent = 'Cobrar en efectivo (con vuelto)';
+            // Se envía como venta normal en efectivo, no como Point.
+            flagPoint.value = '0';
+        } else if (metodo === 'tarjeta') {
+            btnPointTxt.textContent = 'Cobrar con tarjeta en Point';
+            flagPoint.value = '1';
+        } else {
+            btnPointTxt.textContent = 'Cobrar con Mercado Pago';
+        }
+    }
+    let bp = document.getElementById('btnPoint');
+    if (bp) {
+        // El botón amarillo solo tiene sentido para efectivo (caja) o tarjeta (Point).
+        bp.style.display = (metodo === 'efectivo' || metodo === 'tarjeta' || metodo === 'mercadopago') ? '' : 'none';
     }
 }
 
