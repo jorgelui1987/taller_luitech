@@ -107,7 +107,12 @@ class VentaController extends Controller
             'notas'               => 'nullable|string|max:2000',
             'referencia_pago'     => 'nullable|string|max:100',
             'monto_recibido'      => 'nullable|numeric|min:0|max:9999999999.99',
+            'cobrar_con_point'    => 'nullable|in:0,1',
         ]);
+
+        // Botón amarillo "Cobrar con Mercado Pago": crea la venta como
+        // mercadopago/pendiente y manda la orden al Point automáticamente.
+        $quierePoint = $request->input('cobrar_con_point') == '1';
 
         // Obtener tenant_id con fallback
         $tenantId = auth()->user()->tenant_id;
@@ -209,7 +214,10 @@ class VentaController extends Controller
                 $total     = $base + $impuesto;
             }
 
-            $esMercadoPago = $request->metodo_pago === 'mercadopago';
+            $esMercadoPago = $request->metodo_pago === 'mercadopago' || $quierePoint;
+            if ($quierePoint) {
+                $request->merge(['metodo_pago' => 'mercadopago']);
+            }
 
             // ── Efectivo recibido y vuelto (solo pagos en efectivo) ──
             // Si el cliente paga con menos que el total, no se registra
@@ -264,6 +272,23 @@ class VentaController extends Controller
             }
 
             if ($esMercadoPago) {
+                // Botón amarillo: mandar la orden al Point de una vez.
+                if ($quierePoint) {
+                    try {
+                        $pago = app(\App\Services\MercadoPagoService::class)->crearPagoPoint($venta);
+                        if (($pago['estado'] ?? null) === 'desactivado') {
+                            return redirect()->route('ventas.show', $venta)
+                                ->with('error', 'Mercado Pago no está activado para esta empresa.');
+                        }
+                        return redirect()->route('ventas.show', $venta)
+                            ->with('point', $pago)
+                            ->with('success', "Venta {$venta->numero_venta} enviada al Point. Cobra con tarjeta en el terminal; si pagan en efectivo en el Point manual, márcalo en el detalle.");
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::error('Error cobrando con Point desde crear venta: ' . $e->getMessage());
+                        return redirect()->route('ventas.show', $venta)
+                            ->with('error', 'Error Point: ' . $e->getMessage());
+                    }
+                }
                 return redirect()->route('ventas.show', $venta)
                     ->with('success', "Venta {$venta->numero_venta} registrada. Genera el pago con Mercado Pago.");
             }
@@ -281,6 +306,22 @@ class VentaController extends Controller
     {
         $venta->load(['cliente', 'vendedor', 'detalles.producto.marca']);
         return view('ventas.show', compact('venta'));
+    }
+
+    /**
+     * Se cobró en efectivo en el Point manual: la pendiente pasa a completada/efectivo.
+     */
+    public function marcarPointEfectivo(Venta $venta)
+    {
+        if ($venta->estado !== 'pendiente' || $venta->metodo_pago !== 'mercadopago') {
+            return back()->with('error', 'Solo una venta pendiente de Mercado Pago se puede marcar en efectivo.');
+        }
+        $venta->update([
+            'metodo_pago' => 'efectivo', 'monto_recibido' => $venta->total, 'vuelto' => 0,
+            'estado' => 'completada', 'estado_pago' => 'pagado',
+            'referencia_pago' => $venta->referencia_pago ?: 'POINT-EFECTIVO',
+        ]);
+        return back()->with('success', "Venta {$venta->numero_venta} marcada en efectivo.");
     }
 
     /**

@@ -184,7 +184,18 @@
                                style="font-family:monospace;text-transform:uppercase;">
                         <small class="text-muted" style="font-size:11px;" id="referenciaHint">Código de la tarjeta o transferencia.</small>
                     </div>
-                    <button type="submit" class="btn ui-btn-brand w-100 py-2 mt-2" id="btnReg" disabled><i class="fas fa-cash-register me-2"></i>Registrar Venta</button>
+                    <input type="hidden" name="cobrar_con_point" id="cobrarConPoint" value="0">
+                    <button type="submit" class="btn w-100 py-3 mt-2" id="btnReg" disabled
+                        style="background:#22d3ee;border:none;border-radius:12px;color:#0f172a;font-weight:800;font-size:16px;letter-spacing:1px;"
+                        onclick="document.getElementById('cobrarConPoint').value='0';">
+                        <i class="fas fa-cash-register me-2"></i>COBRAR
+                    </button>
+                    {{-- BTN-POINT-V4: crea la venta y manda la orden al Point. El Point cobra tarjeta; si pagan efectivo en el Point manual se marca en el detalle. --}}
+                    <button type="submit" class="btn w-100 py-3 mt-2" id="btnPoint" disabled
+                        style="background:#ffe600;border:none;border-radius:12px;color:#0f172a;font-weight:800;font-size:15px;"
+                        onclick="document.getElementById('cobrarConPoint').value='1';">
+                        <i class="fas fa-credit-card me-2"></i>Cobrar con Mercado Pago
+                    </button>
                 </x-st-block>
                 </div>
             </div>
@@ -451,6 +462,8 @@ function totales() {
     window.totalActual = base * (1 + igvPct / 100);
     @endif
     btnReg.disabled = Object.keys(items).length === 0;
+    var bp = document.getElementById('btnPoint');
+    if (bp) bp.disabled = Object.keys(items).length === 0;
     if (typeof actualizarVuelto === 'function') actualizarVuelto();
 }
 
