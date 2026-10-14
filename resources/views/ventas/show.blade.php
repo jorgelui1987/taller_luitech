@@ -118,6 +118,13 @@
                     </button>
                 </form>
                 @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
+                <form action="{{ route('ventas.point-efectivo', $venta) }}" method="POST"
+                      onsubmit="return confirm('¿Confirmas que el cliente pagó en efectivo en el Point? Se marcará la venta como pagada en efectivo.');">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px;">
+                        <i class="fas fa-money-bill-wave me-1"></i>Marcar pagado en efectivo
+                    </button>
+                </form>
                 <form action="{{ route('ventas.mercadopago', $venta) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;">
