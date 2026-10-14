@@ -190,7 +190,7 @@
                         onclick="document.getElementById('cobrarConPoint').value='0';">
                         <i class="fas fa-cash-register me-2"></i>COBRAR
                     </button>
-                    {{-- BTN-POINT-V4: crea la venta y manda la orden al Point. El Point cobra tarjeta; si pagan efectivo en el Point manual se marca en el detalle. --}}
+                    <!-- BTN-POINT-V5: crea la venta y manda la orden al Point. El Point cobra tarjeta; si pagan efectivo en el Point manual se marca en el detalle. -->
                     <button type="submit" class="btn w-100 py-3 mt-2" id="btnPoint" disabled
                         style="background:#ffe600;border:none;border-radius:12px;color:#0f172a;font-weight:800;font-size:15px;"
                         onclick="document.getElementById('cobrarConPoint').value='1';">
