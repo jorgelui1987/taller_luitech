@@ -280,6 +280,7 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/ventas/{venta}/mercadopago', [MercadoPagoController::class, 'generarPago'])->name('ventas.mercadopago');
             Route::post('/ventas/{venta}/point', [MercadoPagoController::class, 'cobrarPoint'])->name('ventas.point');
             Route::post('/ventas/{venta}/point-efectivo', [VentaController::class, 'marcarPointEfectivo'])->name('ventas.point-efectivo');
+            Route::post('/ventas/{venta}/point-tarjeta', [VentaController::class, 'marcarPointTarjeta'])->name('ventas.point-tarjeta');
             Route::post('/reparaciones/{reparacion}/mercadopago', [MercadoPagoController::class, 'generarPagoReparacion'])->name('reparaciones.mercadopago');
             Route::post('/reparaciones/{reparacion}/point', [MercadoPagoController::class, 'cobrarPointReparacion'])->name('reparaciones.point');
         });

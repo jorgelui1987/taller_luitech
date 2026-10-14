@@ -292,6 +292,28 @@ class VentaController extends Controller
     }
 
     /**
+     * El cliente pagó con tarjeta manual en el equipo Point (menú normal
+     * Tarjetas/Efectivo de la máquina, con boleta). El sistema solo guardó
+     * el precio; aquí se marca la venta como pagada con tarjeta.
+     */
+    public function marcarPointTarjeta(Venta $venta)
+    {
+        if ($venta->estado !== 'pendiente' || $venta->metodo_pago !== 'mercadopago') {
+            return back()->with('error', 'Solo una venta pendiente de Mercado Pago se puede marcar con tarjeta.');
+        }
+
+        $venta->update([
+            'metodo_pago' => 'tarjeta',
+            'monto_recibido' => $venta->total,
+            'vuelto' => 0,
+            'estado' => 'completada', 'estado_pago' => 'pagado',
+            'referencia_pago' => $venta->referencia_pago ?: 'POINT-TARJETA',
+        ]);
+
+        return back()->with('success', "Venta {$venta->numero_venta} cobrada con tarjeta.");
+    }
+
+    /**
      * El cliente pagó en efectivo manual en el equipo Point (menú
      * Tarjetas/Efectivo de la máquina, con boleta). Se cancela la orden
      * en el terminal y se registra el efectivo en caja con vuelto.

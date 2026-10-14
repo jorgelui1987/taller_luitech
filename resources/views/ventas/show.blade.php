@@ -111,11 +111,12 @@
                 </p>
             </div>
             <div class="d-flex gap-2 flex-wrap align-items-center">
-                <form action="{{ route('ventas.point', $venta) }}" method="POST">
+                <form action="{{ route('ventas.point-tarjeta', $venta) }}" method="POST"
+                      onsubmit="return confirm('¿Cobraste con tarjeta manual en el Point? Se marcará pagada con tarjeta.');">
                     @csrf
                     <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;"
-                            title="Manda la orden al Point (el Point cobra tarjeta; el efectivo se cobra manual en el equipo o se registra abajo)">
-                        <i class="fas fa-credit-card me-1"></i>Cobrar con Point
+                            title="Cobra manual en el equipo con su menú normal (Tarjetas/Efectivo) y márcalo aquí">
+                        <i class="fas fa-credit-card me-1"></i>Pagó con tarjeta
                     </button>
                 </form>
                 @if($venta->metodo_pago === 'mercadopago' && $venta->estado === 'pendiente')
@@ -138,7 +139,9 @@
                 @endif
             </div>
             <small class="text-muted d-block mt-2" style="font-size:11px;">
-                El Point por API solo cobra tarjeta. Si el cliente paga en <strong>efectivo en el equipo</strong> (menú Tarjetas/Efectivo de la máquina), cancela la orden en el Point y regístralo con el botón verde.
+                Cobra manual en el equipo con su menú normal (Tarjetas / Efectivo con boleta) por el total
+                <strong>{{ ($empresa->simbolo_moneda ?? '$') . ' ' . number_format($venta->total, 0, ',', '.') }}</strong>
+                y luego márcalo aquí. El sistema solo guarda el precio, no manda orden al Point.
             </small>
         </div>
     </div>
