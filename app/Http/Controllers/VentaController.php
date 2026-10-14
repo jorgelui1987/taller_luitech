@@ -76,8 +76,9 @@ class VentaController extends Controller
             ->orderBy('nombre')
             ->limit(50)
             ->get();
+        $empresa = Configuracion::empresa();
 
-        return view('ventas.create', compact('clientes', 'productos'));
+        return view('ventas.create', compact('clientes', 'productos', 'empresa'));
     }
 
     public function store(Request $request)
