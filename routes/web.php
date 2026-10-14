@@ -57,11 +57,11 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
 Route::get('/__build', function () {
     $blade = @file_get_contents(resource_path('views/ventas/create.blade.php')) ?: '';
     return response()->json([
-        'build'   => '2026-10-14-v-tarjeta-fuera',
-        'commit'  => '6143744',
-        'fecha'   => now()->toDateTimeString(),
-        'v5'      => str_contains($blade, 'BTN-POINT-V5'),
-        'tarjeta' => str_contains($blade, 'value="tarjeta"'),
+        'build'    => trim(@file_get_contents(public_path('BUILD_ID.txt')) ?: 'sin-build-id'),
+        'commit'   => 'quitar-tarjeta+docker-nocache',
+        'fecha'    => now()->toDateTimeString(),
+        'v5'       => str_contains($blade, 'BTN-POINT-V5'),
+        'tarjeta'  => str_contains($blade, 'value="tarjeta"'),
     ]);
 });
 
