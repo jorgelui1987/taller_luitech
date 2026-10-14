@@ -6,9 +6,13 @@
 
 @php
     $marca = auth()->user()->tenant?->colores() ?? [
-        'primario'      => '#0891b2',
-        'secundario'    => '#3b82f6',
-        'primario_rgba' => 'rgba(8,145,178,.18)',
+        'primario'               => '#0891b2',
+        'secundario'             => '#3b82f6',
+        'primario_puro'          => '#0891b2',
+        'secundario_puro'        => '#3b82f6',
+        'texto_sobre_primario'   => '#ffffff',
+        'texto_sobre_secundario' => '#ffffff',
+        'primario_rgba'          => 'rgba(8,145,178,.18)',
     ];
 @endphp
 
