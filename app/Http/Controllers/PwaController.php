@@ -13,27 +13,32 @@ class PwaController extends Controller
 
     /**
      * Genera el manifest.json dinámico con el nombre y logo de la empresa.
+     * Orden: 1) usuario logueado (su tienda), 2) ?t=slug (PWA instalada
+     * desde una sesión de otra tienda), 3) primera empresa (fallback).
      */
-    public function manifest()
+    public function manifest(Request $request)
     {
-        $empresa = Configuracion::empresa();
+        $empresa = $this->empresaParaPwa($request);
         $nombre = $empresa?->nombre_tienda ?? 'CRM Celulares';
+        $slug = $empresa?->tenant?->slug_publico
+            ?? $request->query('t')
+            ?? optional(auth()->user()?->tenant)->slug_publico;
 
         $manifest = [
             'name' => $nombre,
             'short_name' => mb_substr($nombre, 0, 12),
             'description' => 'Sistema de gestión para tienda de celulares - Reparaciones, Ventas e Inventario',
-            'id' => '/',
-            'start_url' => '/',
+            'id' => $slug ? ('/?t=' . $slug) : '/',
+            'start_url' => $slug ? ('/?t=' . $slug) : '/',
+            'scope' => '/',
             'display' => 'standalone',
             'display_override' => ['standalone', 'minimal-ui'],
             'background_color' => '#f4f0fb',
             'theme_color' => '#1a0a3e',
             'orientation' => 'portrait',
-            'scope' => '/',
             'lang' => 'es',
             'categories' => ['business', 'productivity'],
-            'icons' => $this->getIcons(),
+            'icons' => $this->getIcons($slug),
             'shortcuts' => [
                 [
                     'name' => 'Nueva Reparación',
@@ -57,12 +62,12 @@ class PwaController extends Controller
     }
 
     /**
-     * Genera el icono PWA con el logo de la empresa.
+     * Genera el icono PWA con el logo de la empresa (misma resolución de tienda).
      */
     public function icon(Request $request, int $size)
     {
         $size = in_array($size, self::ICON_SIZES) ? $size : 192;
-        $tenant = Configuracion::empresa();
+        $tenant = $this->empresaParaPwa($request);
         $logoPath = $this->getLogoPath($tenant);
 
         // Si hay logo de la empresa, generar icono con él
@@ -105,21 +110,22 @@ class PwaController extends Controller
     }
 
     /**
-     * Genera los iconos del manifest.
+     * Genera los iconos del manifest (con ?t=slug para el logo de la tienda).
      */
-    private function getIcons(): array
+    private function getIcons(?string $slug = null): array
     {
         $icons = [];
+        $q = $slug ? ('?t=' . urlencode($slug)) : '';
 
         foreach (self::ICON_SIZES as $size) {
             $icons[] = [
-                'src' => '/pwa/icon/' . $size,
+                'src' => '/pwa/icon/' . $size . $q,
                 'sizes' => $size . 'x' . $size,
                 'type' => self::CONTENT_TYPE_PNG,
                 'purpose' => 'any',
             ];
             $icons[] = [
-                'src' => '/pwa/icon/' . $size,
+                'src' => '/pwa/icon/' . $size . $q,
                 'sizes' => $size . 'x' . $size,
                 'type' => self::CONTENT_TYPE_PNG,
                 'purpose' => 'maskable',
@@ -127,6 +133,33 @@ class PwaController extends Controller
         }
 
         return $icons;
+    }
+
+    /**
+     * Resuelve la configuración de la tienda para la PWA:
+     * 1) usuario logueado → su tenant; 2) ?t=slug → esa tienda;
+     * 3) fallback global (primera empresa).
+     */
+    private function empresaParaPwa(Request $request): ?Configuracion
+    {
+        if (auth()->check() && auth()->user()?->tenant_id) {
+            $propia = Configuracion::where('tenant_id', auth()->user()->tenant_id)->first();
+            if ($propia) return $propia;
+        }
+
+        $slug = trim((string) $request->query('t', ''));
+        if ($slug !== '') {
+            $tenant = \App\Models\Tenant::where('slug_publico', $slug)
+                ->orWhere('subdominio', $slug)
+                ->first();
+            if ($tenant) {
+                $deTienda = Configuracion::withoutGlobalScopes()
+                    ->where('tenant_id', $tenant->id)->first();
+                if ($deTienda) return $deTienda;
+            }
+        }
+
+        return Configuracion::empresa();
     }
 
     /**

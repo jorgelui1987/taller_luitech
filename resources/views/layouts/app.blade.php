@@ -11,16 +11,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CRM') — Tienda Celulares</title>
 
-    <!-- ── PWA ─────────────────────────────────────────────────── -->
-    <link rel="manifest" href="{{ route('pwa.manifest') }}">
-    <link rel="apple-touch-icon" href="{{ route('pwa.icon', ['size' => 192]) }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ route('pwa.icon', ['size' => 192]) }}">
-    <link rel="icon" type="image/png" sizes="512x512" href="{{ route('pwa.icon', ['size' => 512]) }}">
+    <!-- ── PWA (manifiesto por tienda: ?t=slug evita nombre/logo de otra tienda) ── -->
+    @php $pwaSlug = auth()->check() ? (auth()->user()->tenant?->slug_publico ?? auth()->user()->tenant?->subdominio) : null; @endphp
+    <link rel="manifest" href="{{ $pwaSlug ? route('pwa.manifest', ['t' => $pwaSlug]) : route('pwa.manifest') }}">
+    <link rel="apple-touch-icon" href="{{ $pwaSlug ? route('pwa.icon', ['size' => 192, 't' => $pwaSlug]) : route('pwa.icon', ['size' => 192]) }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ $pwaSlug ? route('pwa.icon', ['size' => 192, 't' => $pwaSlug]) : route('pwa.icon', ['size' => 192]) }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ $pwaSlug ? route('pwa.icon', ['size' => 512, 't' => $pwaSlug]) : route('pwa.icon', ['size' => 512]) }}">
     <meta name="theme-color" content="#0f172a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Taller CRM">
+    <meta name="apple-mobile-web-app-title" content="{{ auth()->check() && auth()->user()->tenant ? mb_substr(auth()->user()->tenant->empresa, 0, 12) : 'Taller CRM' }}">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
