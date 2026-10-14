@@ -111,7 +111,6 @@
                         <select name="tipo_reembolso" id="tipo_reembolso" class="form-select">
                             <option value="">Sin reembolso</option>
                             <option value="efectivo" {{ old('tipo_reembolso')=='efectivo'?'selected':'' }}>💵 Efectivo</option>
-                            <option value="tarjeta" {{ old('tipo_reembolso')=='tarjeta'?'selected':'' }}>💳 Tarjeta</option>
                             <option value="transferencia" {{ old('tipo_reembolso')=='transferencia'?'selected':'' }}>🏦 Transferencia</option>
                             <option value="nota_credito" {{ old('tipo_reembolso')=='nota_credito'?'selected':'' }}>📄 Nota de crédito</option>
                         </select>

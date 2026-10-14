@@ -96,8 +96,8 @@ class DevolucionController extends Controller
             'tipo'      => 'required|in:devolucion,garantia',
             'motivo'    => 'required|string|max:100',
             'tipo_reembolso' => $request->tipo === 'devolucion'
-                ? 'required|in:efectivo,tarjeta,transferencia,nota_credito'
-                : 'nullable|in:efectivo,tarjeta,transferencia,nota_credito',
+                ? 'required|in:efectivo,transferencia,nota_credito,tarjeta'
+                : 'nullable|in:efectivo,transferencia,nota_credito,tarjeta',
             'observacion'    => 'nullable|string|max:1000',
             'productos'      => 'required|array|min:1|max:100',
             'productos.*.detalle_venta_id' => 'required|exists:detalle_ventas,id',

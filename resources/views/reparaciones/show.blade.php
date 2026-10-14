@@ -619,7 +619,6 @@
                         <label for="tipo_reembolso" class="form-label" style="font-size:13px;">Tipo de reembolso</label>
                         <select name="tipo_reembolso" id="tipo_reembolso" class="form-select" required>
                             <option value="efectivo">Efectivo</option>
-                            <option value="tarjeta">Tarjeta</option>
                             <option value="transferencia">Transferencia</option>
                             <option value="nota_credito">Nota de Crédito</option>
                         </select>

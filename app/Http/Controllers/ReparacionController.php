@@ -331,7 +331,7 @@ class ReparacionController extends Controller
 
         $request->validate([
             'motivo'         => 'required|string|max:500',
-            'tipo_reembolso' => 'required|in:efectivo,tarjeta,transferencia,nota_credito',
+            'tipo_reembolso' => 'required|in:efectivo,transferencia,nota_credito,tarjeta',
         ]);
 
         // Buscar la venta asociada a la reparación

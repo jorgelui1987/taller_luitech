@@ -128,18 +128,16 @@
                             <button type="button" class="btn btn-sm btn-outline-primary pay-pill" data-val="mercadopago"><i class="fas fa-wallet me-1"></i>MP</button>
                             @endif
                             <button type="button" class="btn btn-sm btn-outline-success pay-pill active" data-val="efectivo"><i class="fas fa-money-bill-wave me-1"></i>Efectivo</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="tarjeta"><i class="fas fa-credit-card me-1"></i>Tarjeta</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary pay-pill" data-val="transferencia"><i class="fas fa-exchange-alt me-1"></i>Transf.</button>
                         </div>
                     </div>
                     <div class="row g-2">
                         <div class="col-6 d-none">
-                            <x-st-select label="Método de Pago" name="metodo_pago" required="1">
+                            <x-st-select label="Método de Pago" name="metodo_pago" value="efectivo" required="1">
                                 @if(($empresa->mercadopago_activo ?? false))
                                 <option value="mercadopago">Mercado Pago</option>
                                 @endif
-                                <option value="efectivo">Efectivo</option>
-                                <option value="tarjeta">Tarjeta</option>
+                                <option value="efectivo" selected>Efectivo</option>
                                 <option value="transferencia">Transferencia</option>
                             </x-st-select>
                         </div>
@@ -182,7 +180,7 @@
                         <input type="text" class="form-control form-control-sm" name="referencia_pago" id="referenciaPago"
                                maxlength="100" placeholder="Ej: voucher, N° transferencia..." autocomplete="off"
                                style="font-family:monospace;text-transform:uppercase;">
-                        <small class="text-muted" style="font-size:11px;" id="referenciaHint">Código de la tarjeta o transferencia.</small>
+                        <small class="text-muted" style="font-size:11px;" id="referenciaHint">N° de transferencia o comprobante.</small>
                     </div>
                     <input type="hidden" name="cobrar_con_point" id="cobrarConPoint" value="0">
                     <button type="submit" class="btn w-100 py-3 mt-2" id="btnReg" disabled
@@ -508,15 +506,13 @@ document.getElementById('metodo_pago').addEventListener('change', function () {
 
 function toggleCamposPago(metodo) {
     document.getElementById('rowEfectivo').style.display = (metodo === 'efectivo') ? 'block' : 'none';
-    let conRef = ['tarjeta', 'transferencia', 'debito', 'credito'].includes(metodo);
+    let conRef = (metodo === 'transferencia');
     let rowRef = document.getElementById('rowReferencia');
     if (rowRef) {
         rowRef.style.display = conRef ? 'block' : 'none';
         let hint = document.getElementById('referenciaHint');
         if (hint) {
-            hint.textContent = metodo === 'transferencia'
-                ? 'N° de transferencia o comprobante.'
-                : 'N° de voucher, autorización o últimos 4 dígitos.';
+            hint.textContent = 'N° de transferencia o comprobante.';
         }
         if (!conRef) {
             let inp = document.getElementById('referenciaPago');

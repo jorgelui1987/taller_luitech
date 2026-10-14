@@ -243,7 +243,7 @@ class VentaController extends Controller
                 'monto_recibido' => $montoRecibido,
                 'vuelto'         => $vuelto,
                 'metodo_pago'  => $request->metodo_pago,
-                'referencia_pago' => in_array($request->metodo_pago, ['tarjeta','transferencia','debito','credito']) ? ($request->referencia_pago ? trim($request->referencia_pago) : null) : null,
+                'referencia_pago' => in_array($request->metodo_pago, ['transferencia','debito','credito']) ? ($request->referencia_pago ? trim($request->referencia_pago) : null) : null,
                 'estado'       => $esMercadoPago ? 'pendiente' : 'completada',
                 'estado_pago'  => $esMercadoPago ? 'pendiente' : 'pagado',
                 'notas'        => $request->notas,
