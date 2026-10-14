@@ -273,13 +273,10 @@
                     Cobra la reparación con Mercado Pago. La venta se creará al confirmarse el pago.
                 </p>
             </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <form action="{{ route('reparaciones.point', $reparacion) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-sm" style="background:#00b1ea; color:#fff; border-radius:8px;">
-                        <i class="fas fa-credit-card me-1"></i>Cobrar con Point
-                    </button>
-                </form>
+            <div class="d-flex gap-2 flex-wrap align-items-center">
+                <span class="text-muted" style="font-size:12px;">
+                    Cobra manual en el equipo con su menú normal (Tarjetas / Efectivo con boleta) y la venta se creará al confirmar el pago.
+                </span>
                 <form action="{{ route('reparaciones.mercadopago', $reparacion) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;">
@@ -287,6 +284,9 @@
                     </button>
                 </form>
             </div>
+            <small class="text-muted d-block mt-2" style="font-size:11px;">
+                El sistema solo guarda el precio, no manda orden al Point (así no sale la pantalla "Acerca la tarjeta").
+            </small>
         </div>
     </div>
 </div>
