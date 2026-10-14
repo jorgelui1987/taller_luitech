@@ -111,10 +111,17 @@ class MercadoPagoService
         // Monto entero sin decimales (como string)
         $monto = (string) round((float) $venta->total, 0);
 
+        // Clave estable por venta: si reintentas el mismo cobro no se encola
+        // una orden nueva en el terminal (evita already_queued_order_on_terminal).
+        $idempotencyKey = 'venta-' . $venta->id . '-' . $venta->numero_venta;
+
         // Crear order de pago para el dispositivo Point (Orders API)
+        // NOTA: no se envía payment_method.default_type para que el Point
+        // muestre su menú de métodos (tarjeta, débito, QR, etc.) en vez de
+        // saltar directo a "cobrar con tarjeta".
         $response = Http::withToken($config->mercadopago_access_token)
             ->withHeaders([
-                'X-Idempotency-Key' => 'venta-' . $venta->id . '-' . now()->timestamp,
+                'X-Idempotency-Key' => $idempotencyKey,
             ])
             ->post('https://api.mercadopago.com/v1/orders', [
                 'type'              => 'point',
@@ -134,16 +141,16 @@ class MercadoPagoService
                         // el CRM imprime su propio ticket por separado.
                         'print_on_terminal' => 'seller_ticket',
                     ],
-                    'payment_method' => [
-                        'default_type' => 'credit_card',
-                    ],
+                    // Sin payment_method.default_type: el Point muestra su
+                    // menú de métodos (tarjeta/débito/QR) en vez de ir
+                    // directo a "cobrar con tarjeta".
                 ],
                 'description'       => "Venta {$venta->numero_venta}",
             ]);
 
         if (!$response->successful()) {
             $errorBody = $response->json();
-            $mensajeError = $errorBody['message'] ?? $errorBody['error'] ?? $response->body();
+            $mensajeError = $this->mensajeErrorPoint($response, $errorBody);
             Log::error('Error Mercado Pago Point al crear order: ' . $response->body());
             throw new FacturacionException('Error Point: ' . $mensajeError);
         }
@@ -246,10 +253,14 @@ class MercadoPagoService
         // Monto entero sin decimales (como string)
         $monto = (string) round((float) $reparacion->total, 0);
 
+        // Clave estable por reparación: reintentar no encola otra orden.
+        $idempotencyKey = 'rep-' . $reparacion->id . '-' . $reparacion->numero_orden;
+
         // Crear order de pago para el dispositivo Point (Orders API)
+        // Sin payment_method.default_type para que el Point muestre su menú.
         $response = Http::withToken($config->mercadopago_access_token)
             ->withHeaders([
-                'X-Idempotency-Key' => 'rep-' . $reparacion->id . '-' . now()->timestamp,
+                'X-Idempotency-Key' => $idempotencyKey,
             ])
             ->post('https://api.mercadopago.com/v1/orders', [
                 'type'              => 'point',
@@ -269,16 +280,16 @@ class MercadoPagoService
                         // el CRM imprime su propio ticket por separado.
                         'print_on_terminal' => 'seller_ticket',
                     ],
-                    'payment_method' => [
-                        'default_type' => 'credit_card',
-                    ],
+                    // Sin payment_method.default_type: el Point muestra su
+                    // menú de métodos (tarjeta/débito/QR) en vez de ir
+                    // directo a "cobrar con tarjeta".
                 ],
                 'description'       => "Reparación {$reparacion->numero_orden}",
             ]);
 
         if (!$response->successful()) {
             $errorBody = $response->json();
-            $mensajeError = $errorBody['message'] ?? $errorBody['error'] ?? $response->body();
+            $mensajeError = $this->mensajeErrorPoint($response, $errorBody);
             Log::error('Error Mercado Pago Point al crear order reparación: ' . $response->body());
             throw new FacturacionException('Error Point: ' . $mensajeError);
         }
@@ -292,6 +303,42 @@ class MercadoPagoService
             'device_id'    => $config->mercadopago_device_id,
             'mensaje'      => 'Order enviada al Point. Espera la confirmación del dispositivo.',
         ];
+    }
+
+    /**
+     * Interpreta el error de la Orders API del Point y lo devuelve legible.
+     * El caso típico es already_queued_order_on_terminal: el dispositivo ya
+     * tiene una orden en espera (se canceló en pantalla, se quedó colgada o
+     * se reintentó el cobro) y rechaza una nueva hasta liberarla.
+     */
+    private function mensajeErrorPoint($response, $errorBody): string
+    {
+        $codigos = [];
+        if (is_array($errorBody)) {
+            foreach ($errorBody['errors'] ?? [] as $error) {
+                if (isset($error['code'])) {
+                    $codigos[] = $error['code'];
+                }
+            }
+        }
+        $cuerpo = implode(' ', $codigos) . ' ' . $response->body();
+
+        if (stripos($cuerpo, 'already_queued_order_on_terminal') !== false) {
+            return 'El Point ya tiene un cobro en espera. Cancélalo en el dispositivo (o usa "Liberar terminal") y vuelve a intentar.';
+        }
+
+        if (is_array($errorBody)) {
+            $msg = $errorBody['message'] ?? $errorBody['error'] ?? null;
+            if (is_string($msg) && $msg !== '') {
+                return $msg;
+            }
+            $first = $errorBody['errors'][0]['message'] ?? null;
+            if (is_string($first) && $first !== '') {
+                return $first;
+            }
+        }
+
+        return $response->body() ?: 'Error desconocido del Point.';
     }
 
     /**
