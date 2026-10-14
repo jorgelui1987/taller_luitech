@@ -110,10 +110,10 @@ class VentaController extends Controller
             'cobrar_con_point'    => 'nullable|in:0,1',
         ]);
 
-        // El Point SOLO procesa tarjeta/QR: "tarjeta" también se manda al
-        // Point; "efectivo" se cobra directo en caja con vuelto.
-        $quierePoint = $request->input('cobrar_con_point') == '1'
-            || $request->metodo_pago === 'tarjeta';
+        // Flujo pagina-web: se elige el método ANTES (efectivo/tarjeta/MP).
+        // Solo 'mercadopago' queda pendiente para cobrar en el detalle
+        // (botón "Cobrar con Point" o QR). Tarjeta y efectivo se completan
+        // directo en caja.
 
         // Obtener tenant_id con fallback
         $tenantId = auth()->user()->tenant_id;
@@ -215,14 +215,9 @@ class VentaController extends Controller
                 $total     = $base + $impuesto;
             }
 
-            // ¿Se pidió cobro con Point? El Point SOLO procesa tarjeta/QR.
-            // - El botón amarillo + "Tarjeta" → manda orden al Point.
-            // - "Efectivo" → se cobra directo en caja con vuelto (NO va al Point).
-            $esTarjetaPoint = $request->metodo_pago === 'tarjeta';
-            $esMercadoPago = $request->metodo_pago === 'mercadopago' || $quierePoint || $esTarjetaPoint;
-            if ($quierePoint || $esTarjetaPoint) {
-                $request->merge(['metodo_pago' => 'mercadopago']);
-            }
+            // Flujo pagina-web: solo 'mercadopago' queda pendiente para
+            // cobrar en el detalle (botón "Cobrar con Point" o QR).
+            $esMercadoPago = $request->metodo_pago === 'mercadopago';
 
             // ── Efectivo recibido y vuelto (solo pagos en efectivo) ──
             // Si el cliente paga con menos que el total, no se registra
@@ -277,24 +272,6 @@ class VentaController extends Controller
             }
 
             if ($esMercadoPago) {
-                // Botón amarillo: mandar la orden al Point de una vez.
-                // Vale para "Tarjeta" (Point) y para MP directo.
-                if ($quierePoint || $esTarjetaPoint) {
-                    try {
-                        $pago = app(\App\Services\MercadoPagoService::class)->crearPagoPoint($venta);
-                        if (($pago['estado'] ?? null) === 'desactivado') {
-                            return redirect()->route('ventas.show', $venta)
-                                ->with('error', 'Mercado Pago no está activado para esta empresa.');
-                        }
-                        return redirect()->route('ventas.show', $venta)
-                            ->with('point', $pago)
-                            ->with('success', "Venta {$venta->numero_venta} enviada al Point. Cobra con tarjeta en el terminal; si pagan en efectivo, cancela en el Point y márcalo en el detalle.");
-                    } catch (\Throwable $e) {
-                        \Illuminate\Support\Facades\Log::error('Error cobrando con Point desde crear venta: ' . $e->getMessage());
-                        return redirect()->route('ventas.show', $venta)
-                            ->with('error', 'Error Point: ' . $e->getMessage());
-                    }
-                }
                 return redirect()->route('ventas.show', $venta)
                     ->with('success', "Venta {$venta->numero_venta} registrada. Genera el pago con Mercado Pago.");
             }
@@ -312,44 +289,6 @@ class VentaController extends Controller
     {
         $venta->load(['cliente', 'vendedor', 'detalles.producto.marca']);
         return view('ventas.show', compact('venta'));
-    }
-
-    /**
-     * El cliente pagó en efectivo aunque la venta estaba pendiente en el Point
-     * (se cancela la orden en el terminal y se registra el efectivo en caja,
-     * con monto recibido y vuelto).
-     */
-    public function marcarPointEfectivo(Request $request, Venta $venta)
-    {
-        if ($venta->estado !== 'pendiente' || $venta->metodo_pago !== 'mercadopago') {
-            return back()->with('error', 'Solo una venta pendiente de Mercado Pago se puede marcar en efectivo.');
-        }
-
-        $validated = $request->validate([
-            'monto_recibido' => 'nullable|numeric|min:0',
-        ]);
-
-        $total = (float) $venta->total;
-        $recibido = isset($validated['monto_recibido']) ? (float) $validated['monto_recibido'] : $total;
-
-        if ($recibido < $total) {
-            return back()->with('error', 'El monto recibido no puede ser menor al total.')->withInput();
-        }
-
-        $venta->update([
-            'metodo_pago' => 'efectivo',
-            'monto_recibido' => $recibido,
-            'vuelto' => round($recibido - $total, 2),
-            'estado' => 'completada', 'estado_pago' => 'pagado',
-            'referencia_pago' => $venta->referencia_pago ?: 'POINT-EFECTIVO',
-        ]);
-
-        $msg = "Venta {$venta->numero_venta} cobrada en efectivo.";
-        if ($venta->vuelto > 0) {
-            $msg .= ' Vuelto: ' . number_format($venta->vuelto, 0, ',', '.');
-        }
-
-        return back()->with('success', $msg);
     }
 
     /**

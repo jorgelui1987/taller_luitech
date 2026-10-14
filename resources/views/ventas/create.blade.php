@@ -190,16 +190,6 @@
                         onclick="document.getElementById('cobrarConPoint').value='0';">
                         <i class="fas fa-cash-register me-2"></i>COBRAR
                     </button>
-                    <!-- Punto de venta: el Point SOLO procesa tarjeta/QR. El efectivo se cobra directo en caja (con vuelto) sin pasar por el Point. -->
-                    <button type="submit" class="btn w-100 py-3 mt-2" id="btnPoint" disabled
-                        style="background:#ffe600;border:none;border-radius:12px;color:#0f172a;font-weight:800;font-size:15px;"
-                        onclick="if(document.getElementById('metodo_pago').value==='tarjeta'||document.getElementById('metodo_pago').value==='mercadopago'){document.getElementById('cobrarConPoint').value='1';}else{document.getElementById('cobrarConPoint').value='0';}">
-                        <i class="fas fa-credit-card me-2"></i><span id="btnPointTxt">Cobrar con Mercado Pago</span>
-                    </button>
-                    <small class="text-muted d-block mt-1" style="font-size:11px;" id="pointHint">
-                        <strong>Efectivo</strong> → se cobra directo en caja con vuelto (sin Point).<br>
-                        <strong>Tarjeta</strong> → se manda al Point para cobrar con tarjeta en el terminal.
-                    </small>
                 </x-st-block>
                 </div>
             </div>
@@ -528,28 +518,9 @@ function toggleCamposPago(metodo) {
             if (inp) inp.focus();
         }
     }
-    // El botón amarillo cambia según lo elegido:
-    // - Efectivo → cobra directo en caja con vuelto (sin Point).
-    // - Tarjeta → manda la orden al Point (el Point solo cobra tarjeta/QR).
-    let btnPointTxt = document.getElementById('btnPointTxt');
-    let flagPoint = document.getElementById('cobrarConPoint');
-    if (btnPointTxt && flagPoint) {
-        if (metodo === 'efectivo') {
-            btnPointTxt.textContent = 'Cobrar en efectivo (con vuelto)';
-            // Se envía como venta normal en efectivo, no como Point.
-            flagPoint.value = '0';
-        } else if (metodo === 'tarjeta') {
-            btnPointTxt.textContent = 'Cobrar con tarjeta en Point';
-            flagPoint.value = '1';
-        } else {
-            btnPointTxt.textContent = 'Cobrar con Mercado Pago';
-        }
-    }
-    let bp = document.getElementById('btnPoint');
-    if (bp) {
-        // El botón amarillo solo tiene sentido para efectivo (caja) o tarjeta (Point).
-        bp.style.display = (metodo === 'efectivo' || metodo === 'tarjeta' || metodo === 'mercadopago') ? '' : 'none';
-    }
+    // Flujo pagina-web: el método se elige ANTES con las píldoras.
+    // Efectivo → caja con vuelto; Tarjeta → completada directo;
+    // Mercado Pago → pendiente para cobrar en el detalle (Point o QR).
 }
 
 // Píldoras de método de pago (diseño elegante, mismo valor que el select)
