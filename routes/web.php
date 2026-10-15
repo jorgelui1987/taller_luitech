@@ -284,10 +284,6 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/ventas/{venta}/point-verificar', [MercadoPagoController::class, 'verificarPoint'])->name('ventas.point-verificar');
             Route::post('/ventas/{venta}/point-efectivo', [VentaController::class, 'marcarPointEfectivo'])->name('ventas.point-efectivo');
             Route::post('/ventas/{venta}/point-tarjeta', [VentaController::class, 'marcarPointTarjeta'])->name('ventas.point-tarjeta');
-            Route::post('/reparaciones/{reparacion}/mercadopago', [MercadoPagoController::class, 'generarPagoReparacion'])->name('reparaciones.mercadopago');
-            Route::post('/reparaciones/{reparacion}/point', [MercadoPagoController::class, 'cobrarPointReparacion'])->name('reparaciones.point');
-            Route::get('/reparaciones/{reparacion}/point-estado', [MercadoPagoController::class, 'estadoPointReparacion'])->name('reparaciones.point-estado');
-            Route::post('/reparaciones/{reparacion}/point-verificar', [MercadoPagoController::class, 'verificarPointReparacion'])->name('reparaciones.point-verificar');
         });
 
         // Devoluciones (solo admin y vendedor)
@@ -326,6 +322,16 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/reparaciones/{reparacion}/whatsapp', [ReparacionController::class, 'enviarWhatsApp'])->name('reparaciones.whatsapp');
             Route::get('/reparaciones/{reparacion}/estado-pago', [ReparacionController::class, 'estadoPago'])->name('reparaciones.estado-pago');
             Route::post('/reparaciones/{reparacion}/reembolsar', [ReparacionController::class, 'reembolsar'])->name('reparaciones.reembolsar');
+
+            // ── Cobro MP reparación: permiso check.cobro (admin/vendedor/técnico)
+            // para no dar 403 a técnicos ni vendedores. Antes estaban en
+            // check.ventas (solo admin/vendedor) y el técnico veía "Acceso denegado".
+            Route::middleware('check.cobro')->group(function () {
+                Route::post('/reparaciones/{reparacion}/mercadopago', [MercadoPagoController::class, 'generarPagoReparacion'])->name('reparaciones.mercadopago');
+                Route::post('/reparaciones/{reparacion}/point', [MercadoPagoController::class, 'cobrarPointReparacion'])->name('reparaciones.point');
+                Route::get('/reparaciones/{reparacion}/point-estado', [MercadoPagoController::class, 'estadoPointReparacion'])->name('reparaciones.point-estado');
+                Route::post('/reparaciones/{reparacion}/point-verificar', [MercadoPagoController::class, 'verificarPointReparacion'])->name('reparaciones.point-verificar');
+            });
 
             // Firmas y fotos (AJAX)
             Route::post('/reparaciones/{reparacion}/firma', [ReparacionController::class, 'subirFirma'])->name('reparaciones.firma');
