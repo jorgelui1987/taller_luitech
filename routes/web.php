@@ -58,10 +58,11 @@ Route::get('/__build', function () {
     $blade = @file_get_contents(resource_path('views/ventas/create.blade.php')) ?: '';
     return response()->json([
         'build'    => trim(@file_get_contents(public_path('BUILD_ID.txt')) ?: 'sin-build-id'),
-        'commit'   => 'quitar-tarjeta+docker-nocache',
+        'commit'   => 'mp-reparacion-directo-c2aae3c',
         'fecha'    => now()->toDateTimeString(),
         'v5'       => str_contains($blade, 'BTN-POINT-V5'),
         'tarjeta'  => str_contains($blade, 'value="tarjeta"'),
+        'rep_mp'   => str_contains(@file_get_contents(resource_path('views/reparaciones/show.blade.php')) ?: '', 'reparaciones.point'),
     ]);
 });
 

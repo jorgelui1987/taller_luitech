@@ -303,10 +303,12 @@ runuser -u appuser -- php artisan route:cache 2>/dev/null || true
 runuser -u appuser -- php artisan view:clear 2>/dev/null || true
 
 # ── Iniciar cron en segundo plano (para que los backups automáticos funcionen) ──
+# NOTA: "cron -f" corre en FOREGROUND y bloquea el entrypoint → el contenedor
+# nunca llega al "exec apache2-foreground", Traefik no recibe respuesta y hay
+# que resetear el VPS a mano. Se usa "cron" (daemon) + exec al final.
 echo "Iniciando cron en segundo plano..."
-cron -f &
-CRON_PID=$!
-echo "✓ Cron iniciado (PID: $CRON_PID)"
+service cron start 2>/dev/null || cron 2>/dev/null || true
+echo "✓ Cron iniciado (daemon)"
 
 echo "=========================================="
 echo "✅ Aplicación lista!"

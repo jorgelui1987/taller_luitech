@@ -16,9 +16,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # ── Invalida la caché de Docker en cada deploy ──
+      # Sin este arg, Docker reutiliza las capas COPY/COMPOSER y los cambios
+      # "no salen" hasta resetear el VPS (que limpia la caché a la fuerza).
+      # Dokploy debe tener BUILD_ID con valor único por deploy (ej. el SHA
+      # del commit o fecha). Ver Dokploy → Environment: BUILD_ID.
+      args:
+        BUILD_ID: ${BUILD_ID:-local}
       # NOTA: no usar "no_cache" aquí (sintaxis inválida en compose → el build
       # falla y Traefik devuelve 502 Bad Gateway). El rebuild forzado se logra
-      # con el ARG BUILD_ID del Dockerfile + "Rebuild" en Dokploy.
+      # con este ARG BUILD_ID + "Rebuild" activado en Dokploy.
     # ⚠️ Sin container_name fijo: Dokploy crea un contenedor nuevo por deploy.
     # Con nombre fijo, el deploy falla con "container already exists" y obliga
     # a reiniciar el VPS a mano para liberarlo.
