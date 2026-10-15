@@ -790,11 +790,16 @@ class ReparacionController extends Controller
                 ]);
             }
 
-            // Crear venta la primera vez que pasa a entregado
-            // Opción B: Si el pago es con Mercado Pago, crear la venta como PENDIENTE
-            // (igual que las ventas normales). El webhook la completará al confirmar el pago.
+            // Crear venta la primera vez que pasa a entregado.
+            // REGLA DE CONTROL: toda reparación entregada con total > 0 genera
+            // su venta (efectivo/transferencia = completada de una vez;
+            // mercadopago = pendiente hasta confirmar el pago en el Point/QR).
+            // Sin esto, lo cobrado en reparaciones nunca llegaba a Ventas/Dashboard.
             if (!$yaEntregada && ($totalReparacion > 0 || $request->filled('cobrar_sin_costo'))) {
-                $metodoPago = $request->metodo_pago ?? 'efectivo';
+                $metodoPago = $request->metodo_pago ?? $reparacion->metodo_pago ?? 'efectivo';
+                if (!in_array($metodoPago, ['efectivo', 'transferencia', 'mercadopago'])) {
+                    $metodoPago = 'efectivo';
+                }
 
                 // Si es Mercado Pago, la venta queda PENDIENTE hasta confirmar pago
                 $esMercadoPago = $metodoPago === 'mercadopago';
@@ -834,6 +839,38 @@ class ReparacionController extends Controller
 
                 // Guardar el método de pago en la reparación para referencia
                 $reparacion->update(['metodo_pago' => $metodoPago]);
+            }
+
+            // ── CONTROL: reparación ya entregada antes pero sin venta ──
+            // (ej. se entregó cuando el total era 0 o falló la creación).
+            // Si ahora tiene total > 0 y sigue sin venta, crearla para no
+            // perder el control en Ventas/Dashboard.
+            if ($yaEntregada && $totalReparacion > 0) {
+                $existeVenta = Venta::where('notas', 'like', "%{$reparacion->numero_orden}%")->exists();
+                if (!$existeVenta) {
+                    $metodoPagoExistente = $reparacion->metodo_pago ?? 'efectivo';
+                    if (!in_array($metodoPagoExistente, ['efectivo', 'transferencia', 'mercadopago'])) {
+                        $metodoPagoExistente = 'efectivo';
+                    }
+                    $esMpExistente = $metodoPagoExistente === 'mercadopago';
+                    Venta::create([
+                        'numero_venta'   => Venta::generarNumero(),
+                        'cliente_id'     => $reparacion->cliente_id,
+                        'user_id'        => Auth::id(),
+                        'fecha_venta'    => now(),
+                        'subtotal'       => $totalReparacion,
+                        'descuento'      => 0,
+                        'impuesto'       => $reparacion->impuesto ?? 0,
+                        'total'          => $totalReparacion,
+                        'comision_monto' => $reparacion->comision_monto ?? 0,
+                        'comision_pagada'=> false,
+                        'metodo_pago'    => $metodoPagoExistente,
+                        'estado'         => $esMpExistente ? 'pendiente' : 'completada',
+                        'estado_pago'    => $esMpExistente ? 'pendiente' : 'pagado',
+                        'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+                        'tenant_id'      => Auth::user()->tenant_id ?? $reparacion->tenant_id,
+                    ]);
+                }
             }
         }
 
