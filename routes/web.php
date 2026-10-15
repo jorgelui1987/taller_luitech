@@ -285,6 +285,8 @@ Route::middleware(['tenant'])->group(function () {
             Route::post('/ventas/{venta}/point-tarjeta', [VentaController::class, 'marcarPointTarjeta'])->name('ventas.point-tarjeta');
             Route::post('/reparaciones/{reparacion}/mercadopago', [MercadoPagoController::class, 'generarPagoReparacion'])->name('reparaciones.mercadopago');
             Route::post('/reparaciones/{reparacion}/point', [MercadoPagoController::class, 'cobrarPointReparacion'])->name('reparaciones.point');
+            Route::get('/reparaciones/{reparacion}/point-estado', [MercadoPagoController::class, 'estadoPointReparacion'])->name('reparaciones.point-estado');
+            Route::post('/reparaciones/{reparacion}/point-verificar', [MercadoPagoController::class, 'verificarPointReparacion'])->name('reparaciones.point-verificar');
         });
 
         // Devoluciones (solo admin y vendedor)

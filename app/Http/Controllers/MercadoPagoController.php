@@ -165,7 +165,9 @@ class MercadoPagoController extends Controller
     }
 
     /**
-     * Envía el cobro al terminal Point para una reparación.
+     * Envía el cobro al terminal Point para una reparación (cobro directo:
+     * manda el total al equipo y guarda el order_id para confirmar por
+     * polling + crear la venta + imprimir, igual que en ventas).
      */
     public function cobrarPointReparacion(Reparacion $reparacion)
     {
@@ -176,10 +178,90 @@ class MercadoPagoController extends Controller
                 return back()->with('error', 'Mercado Pago no está activado para esta empresa.');
             }
 
+            if (!empty($pago['order_id'])) {
+                $reparacion->update(['mercadopago_order_id' => $pago['order_id']]);
+            }
+
             return back()->with('point_reparacion', $pago);
         } catch (\Throwable $e) {
             Log::error('Error cobrando reparación con Point: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return back()->with('error', 'Error Point (reparación): ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Polling de reparación: si la orden Point ya aprobó, crea la venta
+     * automática (sin duplicar) para que el navegador la imprima sola.
+     * Funciona aunque el webhook no llegue (local sin URL pública).
+     *
+     * GET /reparaciones/{reparacion}/point-estado → {pagado, venta_id}
+     */
+    public function estadoPointReparacion(Reparacion $reparacion)
+    {
+        // ¿Ya hay venta pagada? No hay nada que consultar.
+        $venta = \App\Models\Venta::where('notas', 'like', "%{$reparacion->numero_orden}%")
+            ->orderByDesc('id')
+            ->first();
+
+        if ($venta && $venta->estado === 'completada') {
+            return response()->json(['pagado' => true, 'venta_id' => $venta->id]);
+        }
+
+        if (!$reparacion->mercadopago_order_id) {
+            return response()->json(['pagado' => false, 'estado' => 'pendiente', 'mensaje' => 'Sin orden Point asociada.']);
+        }
+
+        try {
+            $servicio = app(MercadoPagoService::class);
+            $orden = $servicio->consultarOrdenPoint($reparacion->mercadopago_order_id, $reparacion->numero_orden);
+
+            if (!empty($orden['pagado'])) {
+                $ventaCreada = $servicio->crearVentaPorReparacion($reparacion->fresh(), $orden['payment_id'] ?? null);
+                return response()->json(['pagado' => true, 'venta_id' => $ventaCreada->id]);
+            }
+
+            return response()->json(['pagado' => false, 'estado' => $orden['estado'] ?? 'pendiente']);
+        } catch (\Throwable $e) {
+            Log::error('Error consultando estado Point reparación: ' . $e->getMessage());
+            return response()->json(['pagado' => false, 'estado' => 'error', 'mensaje' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Verificación manual reparación ("Ya cobré, verificar"): consulta orden
+     * + respaldo por referencia; si aprobó, crea la venta e imprime.
+     *
+     * POST /reparaciones/{reparacion}/point-verificar
+     */
+    public function verificarPointReparacion(Reparacion $reparacion)
+    {
+        try {
+            $servicio = app(MercadoPagoService::class);
+            $pagado = false;
+            $paymentId = null;
+
+            if ($reparacion->mercadopago_order_id) {
+                $orden = $servicio->consultarOrdenPoint($reparacion->mercadopago_order_id, $reparacion->numero_orden);
+                $pagado = !empty($orden['pagado']);
+                $paymentId = $orden['payment_id'] ?? null;
+            }
+
+            if (!$pagado) {
+                $respaldo = $servicio->buscarPagoPorReferencia($reparacion->numero_orden);
+                $pagado = !empty($respaldo['pagado']);
+                $paymentId = $respaldo['payment_id'] ?? $paymentId;
+            }
+
+            if ($pagado) {
+                $servicio->crearVentaPorReparacion($reparacion->fresh(), $paymentId);
+                return redirect()->route('reparaciones.show', $reparacion->fresh())
+                    ->with('success', "Pago Point confirmado. Venta registrada para {$reparacion->numero_orden}. Imprimiendo comprobante.");
+            }
+
+            return back()->with('error', 'Aún no se detecta el pago en Mercado Pago. Cobra en el Point y vuelve a verificar en unos segundos.');
+        } catch (\Throwable $e) {
+            Log::error('Error verificando pago Point reparación manual: ' . $e->getMessage());
+            return back()->with('error', 'Error verificando pago: ' . $e->getMessage());
         }
     }
 

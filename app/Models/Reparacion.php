@@ -20,7 +20,7 @@ class Reparacion extends Model
         'falla_reportada', 'diagnostico', 'solucion',
         'presupuesto', 'abono', 'costo_final', 'costo_repuesto', 'impuesto', 'total',
         'cupon_codigo',
-        'estado', 'prioridad', 'metodo_pago',
+        'estado', 'prioridad', 'metodo_pago', 'mercadopago_order_id',
         'fecha_recepcion', 'fecha_estimada', 'fecha_entrega',
         'garantia', 'dias_garantia', 'notas', 'accesorios_entregados',
         'firma_recepcion', 'firma_entrega',

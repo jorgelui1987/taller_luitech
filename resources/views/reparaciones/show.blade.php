@@ -260,7 +260,8 @@
     </div>
 </div>
 
-{{-- Cobro con Mercado Pago (Opción B: venta pendiente, completar al confirmar pago) --}}
+{{-- Cobro con Mercado Pago directo (igual que ventas: botón amarillo manda el
+     total al Point; al aprobarse se crea la venta sola y se imprime) --}}
 @if($reparacion->estado === 'entregado' && $reparacion->total > 0 && (!$ventaReparacion || $ventaReparacion->estado === 'pendiente'))
 <div class="card mb-4" style="border:1px solid #00b1ea;">
     <div class="card-body p-3">
@@ -270,13 +271,25 @@
                     <i class="fab fa-mercadopago me-1"></i>Mercado Pago
                 </h6>
                 <p class="text-muted mb-0" style="font-size:12px;">
-                    Cobra la reparación con Mercado Pago. La venta se creará al confirmarse el pago.
+                    Cobra la reparación con Mercado Pago. La venta se crea sola al aprobarse el pago.
                 </p>
             </div>
             <div class="d-flex gap-2 flex-wrap align-items-center">
-                <span class="text-muted" style="font-size:12px;">
-                    Cobra manual en el equipo con su menú normal (Tarjetas / Efectivo con boleta) y la venta se creará al confirmar el pago.
-                </span>
+                <form action="{{ route('reparaciones.point', $reparacion) }}" method="POST"
+                      onsubmit="return confirm('¿Enviar el total al Point? En el equipo eliges Tarjeta o Efectivo con boleta.');">
+                    @csrf
+                    <button type="submit" class="btn btn-sm" style="background:#ffe600;border:none;border-radius:8px;color:#0f172a;font-weight:800;"
+                            title="Manda el total al Point sin pasos previos. Al aprobarse crea la venta e imprime.">
+                        <i class="fas fa-credit-card me-1"></i>Cobrar con Mercado Pago
+                    </button>
+                </form>
+                <form action="{{ route('reparaciones.point-verificar', $reparacion) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px; font-weight:700;"
+                            title="Si ya cobraste en el Point, verifica el pago, crea la venta e imprime.">
+                        <i class="fas fa-check-double me-1"></i>Ya cobré, verificar e imprimir
+                    </button>
+                </form>
                 <form action="{{ route('reparaciones.mercadopago', $reparacion) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;">
@@ -285,7 +298,7 @@
                 </form>
             </div>
             <small class="text-muted d-block mt-2" style="font-size:11px;">
-                El sistema solo guarda el precio, no manda orden al Point (así no sale la pantalla "Acerca la tarjeta").
+                Directo: manda el total ({{ $empresa->simbolo_moneda ?? '$' }} {{ number_format($reparacion->total, 2) }}) al Point. En la máquina eliges Tarjeta o Efectivo con boleta; al aprobarse se crea la venta y se imprime solo.
             </small>
         </div>
     </div>
@@ -824,39 +837,70 @@ function cerrarLightbox() {
     document.getElementById('lightbox').classList.remove('show');
 }
 
-// ── IMPRESIÓN AUTOMÁTICA DEL TICKET DE REPARACIÓN AL CONFIRMAR PAGO ──
+// ── COBRO MP DIRECTO REPARACIÓN: polling al Point, crea venta e imprime ──
+// Igual que ventas: consulta estado-pago (webhook) + point-estado (directo a
+// MP, funciona sin URL pública). Al aprobarse, crea la venta y dispara la
+// impresión directa con iframe + respaldo window.open (CSP/X-Frame ya lo permiten).
 @if($reparacion->estado === 'entregado' && $reparacion->total > 0 && (!$ventaReparacion || $ventaReparacion->estado === 'pendiente'))
 document.addEventListener('DOMContentLoaded', function() {
     const urlEstadoPago = "{{ route('reparaciones.estado-pago', $reparacion) }}";
+    const urlEstadoPoint = "{{ route('reparaciones.point-estado', $reparacion) }}";
     const urlTicket = "{{ route('reparaciones.ticket', $reparacion) }}";
     let impreso = false;
+    let intentos = 0;
+    const maxIntentos = 150; // ~5 min a 2s
 
-    // Polling cada 5 segundos para detectar el pago confirmado
-    const intervalo = setInterval(async () => {
+    function imprimirTicketRep() {
+        try {
+            const win = window.open(urlTicket + (urlTicket.includes('?') ? '&' : '?') + 'auto=' + Date.now(), '_blank');
+            if (win) { setTimeout(imprimirIframeRep, 2500); return; }
+        } catch (e) {}
+        imprimirIframeRep();
+    }
+    function imprimirIframeRep() {
+        let frame = document.getElementById('frameTicketRepAuto');
+        if (!frame) {
+            frame = document.createElement('iframe');
+            frame.id = 'frameTicketRepAuto';
+            frame.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0;visibility:hidden;';
+            document.body.appendChild(frame);
+        }
+        frame.src = urlTicket + (urlTicket.includes('?') ? '&' : '?') + 'auto=' + Date.now();
+    }
+
+    async function verificarPagoRep() {
+        if (impreso) return;
+        intentos++;
+        if (intentos > maxIntentos) { clearInterval(intervalo); return; }
         try {
             const res = await fetch(urlEstadoPago, {
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
             });
             const data = await res.json();
+            let pagado = !!data.pagado;
 
-            // Cuando el pago se confirma (se crea la venta automática), imprimir el ticket de REPARACIÓN
-            if (data.pagado && !impreso) {
+            if (!pagado) {
+                const resPoint = await fetch(urlEstadoPoint, {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const dataPoint = await resPoint.json();
+                pagado = !!dataPoint.pagado;
+            }
+
+            // Cuando el pago se confirma (venta creada), imprimir el ticket de REPARACIÓN
+            if (pagado && !impreso) {
                 impreso = true;
                 clearInterval(intervalo);
-
-                // Abrir el ticket de reparación en una ventana nueva y disparar la impresión
-                const win = window.open(urlTicket, '_blank');
-                if (win) {
-                    win.onload = function () {
-                        win.focus();
-                        win.print();
-                    };
-                }
+                imprimirTicketRep();
+                setTimeout(imprimirIframeRep, 3000);
             }
         } catch (e) {
             // Ignorar errores de red temporales
         }
-    }, 5000);
+    }
+
+    verificarPagoRep();
+    const intervalo = setInterval(verificarPagoRep, 2000);
 });
 @endif
 

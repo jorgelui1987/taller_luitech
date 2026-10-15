@@ -508,6 +508,55 @@ class MercadoPagoService
     }
 
     /**
+     * Crea la venta automática de una reparación cuyo pago Point fue aprobado.
+     * Es la misma venta que antes solo creaba el webhook: si ya existe (por
+     * webhook o reintento), la devuelve sin duplicar.
+     *
+     * @param Reparacion $reparacion
+     * @param string|null $paymentId
+     * @return \App\Models\Venta
+     */
+    public function crearVentaPorReparacion(Reparacion $reparacion, ?string $paymentId = null): \App\Models\Venta
+    {
+        $existente = \App\Models\Venta::where('notas', 'like', "%{$reparacion->numero_orden}%")
+            ->orderByDesc('id')
+            ->first();
+
+        if ($existente) {
+            // Si estaba pendiente, dejarla pagada; si ya está completada, no tocar.
+            if ($existente->estado !== 'completada' || $existente->estado_pago !== 'pagado') {
+                $datos = ['estado' => 'completada', 'estado_pago' => 'pagado', 'metodo_pago' => 'mercadopago'];
+                if ($paymentId) {
+                    $datos['referencia_pago'] = $existente->referencia_pago ?: ('MP-' . $paymentId);
+                }
+                $existente->update($datos);
+            }
+            return $existente->fresh();
+        }
+
+        $totalReparacion = (float) $reparacion->total;
+
+        return \App\Models\Venta::create([
+            'numero_venta'   => \App\Models\Venta::generarNumero(),
+            'cliente_id'     => $reparacion->cliente_id,
+            'user_id'        => $reparacion->tecnico_id ?? \Illuminate\Support\Facades\Auth::id(),
+            'fecha_venta'    => now(),
+            'subtotal'       => $totalReparacion,
+            'descuento'      => 0,
+            'impuesto'       => 0,
+            'total'          => $totalReparacion,
+            'comision_monto' => (float) ($reparacion->comision_monto ?? 0),
+            'comision_pagada'=> false,
+            'metodo_pago'    => 'mercadopago',
+            'referencia_pago'=> $paymentId ? ('MP-' . $paymentId) : null,
+            'estado'         => 'completada',
+            'estado_pago'    => 'pagado',
+            'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
+            'tenant_id'      => $reparacion->tenant_id,
+        ]);
+    }
+
+    /**
      * Marca la venta como pagada cuando la orden Point ya fue aprobada.
      * Se usa desde el polling del navegador (funciona aunque el webhook
      * no llegue, ej. entorno local sin URL pública).
