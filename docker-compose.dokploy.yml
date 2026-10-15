@@ -16,9 +16,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # ── Sin caché de Docker en Dokploy: cada push reconstruye con el código
-      # nuevo (antes había que reiniciar el VPS porque quedaba imagen vieja) ──
-      no_cache: true
+      # NOTA: no usar "no_cache" aquí (sintaxis inválida en compose → el build
+      # falla y Traefik devuelve 502 Bad Gateway). El rebuild forzado se logra
+      # con el ARG BUILD_ID del Dockerfile + "Rebuild" en Dokploy.
     # ⚠️ Sin container_name fijo: Dokploy crea un contenedor nuevo por deploy.
     # Con nombre fijo, el deploy falla con "container already exists" y obliga
     # a reiniciar el VPS a mano para liberarlo.
