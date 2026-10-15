@@ -18,8 +18,11 @@ class SecurityHeaders
         // HSTS (HTTP Strict Transport Security) - forzar HTTPS en el navegador
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
-        // Prevenir clickjacking
-        $response->headers->set('X-Frame-Options', 'DENY');
+        // Prevenir clickjacking: SAMEORIGIN (no DENY) para permitir el iframe
+        // oculto de impresión automática del ticket (misma origen).
+        // DENY bloqueaba el iframe y por eso salía "¡Pago aprobado!" pero
+        // nunca abría el diálogo de impresión.
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         // Prevenir sniffing de MIME types
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -29,8 +32,9 @@ class SecurityHeaders
 
         // Content Security Policy (CSP) básico
         // frame-src permite Google Maps embebido en la página pública /t/{slug}.
+        // frame-src 'self' permite el iframe oculto de impresión automática del ticket.
         // El resto sigue bloqueado (object-src 'none', sin frames externos).
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' https://api.qrserver.com https://*.googleapis.com https://*.gstatic.com https://*.google.com data:; connect-src 'self'; frame-src https://www.google.com https://maps.google.com; object-src 'none'");
+        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' https://api.qrserver.com https://*.googleapis.com https://*.gstatic.com https://*.google.com data:; connect-src 'self'; frame-src 'self' https://www.google.com https://maps.google.com; object-src 'none'");
 
         // Permissions Policy (limitar APIs del navegador)
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');

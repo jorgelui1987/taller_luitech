@@ -378,9 +378,26 @@
 document.addEventListener('DOMContentLoaded', function () {
     const urlTicket = "{{ route('ventas.ticket', $venta) }}";
 
-    // ── Impresión directa con iframe oculto (no la bloquea el navegador
-    // como sí hace window.open cuando no hay gesto del usuario) ──
+    // ── Impresión directa: se intenta con ventana nueva (window.print del
+    // ticket) y como respaldo con iframe oculto. El aviso dice "aprobado"
+    // solo cuando la venta ya quedó completada, así no miente. ──
     function imprimirDirecto() {
+        // 1) Ventana nueva: el ticket trae window.print() al cargar.
+        // Funciona porque el polling ya confirmó el pago (no es popup spam).
+        try {
+            const win = window.open(urlTicket + (urlTicket.includes('?') ? '&' : '?') + 'auto=' + Date.now(), '_blank');
+            if (win) {
+                // Si la ventana abrió, el ticket se imprime solo; el iframe
+                // queda como respaldo por si el navegador la bloqueó.
+                setTimeout(function () { imprimirIframe(); }, 2500);
+                return;
+            }
+        } catch (e) {}
+        // 2) Respaldo: iframe oculto (el CSP ya permite frame-src 'self').
+        imprimirIframe();
+    }
+
+    function imprimirIframe() {
         let frame = document.getElementById('frameTicketAuto');
         if (!frame) {
             frame = document.createElement('iframe');
@@ -451,10 +468,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (pagado && !impreso) {
                 impreso = true;
                 clearInterval(intervalo);
-                mostrarAviso('✅ ¡Pago aprobado! Imprimiendo boleta...', true);
+                mostrarAviso('✅ ¡Pago aprobado! Imprimiendo boleta...<br><small style="font-weight:400;">Si no sale el diálogo, <a href="' + urlTicket + '" target="_blank" style="color:#065f46;font-weight:700;text-decoration:underline;">clic aquí para abrir la boleta</a></small>', true);
                 imprimirDirecto();
                 // Por si el iframe tarda, reintentar una vez a los 3s
-                setTimeout(function () { imprimirDirecto(); }, 3000);
+                setTimeout(function () { imprimirIframe(); }, 3000);
             }
         } catch (e) {}
     }
