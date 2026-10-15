@@ -378,10 +378,18 @@ class MercadoPagoService
      * Devuelve siempre un arreglo con al menos 'estado'. Cuando el pago fue
      * aprobado, 'pagado' es true y 'payment_id' trae el id del pago.
      *
+     * NOTA diagnóstico (VTA-000041 se quedaba en Pendiente):
+     * la respuesta real de Orders API varía según versión: a veces el pago
+     * viene en transactions.payments, otras en payments, otras solo como
+     * status de la orden o en payments[].transaction_details. Por eso se
+     * revisan TODAS las formas conocidas + búsqueda por external_reference
+     * como respaldo. Todo queda en el log (canal MP Point) para diagnosticar.
+     *
      * @param string $orderId
+     * @param string|null $externalReference
      * @return array
      */
-    public function consultarOrdenPoint(string $orderId): array
+    public function consultarOrdenPoint(string $orderId, ?string $externalReference = null): array
     {
         $config = Configuracion::empresa();
 
@@ -400,11 +408,8 @@ class MercadoPagoService
         $data = $response->json();
 
         // ── Interpretar la respuesta de Orders API ─────────────────────
-        // La API devuelve la orden con sus transacciones/pagos asociados.
-        // El pago aprobado aparece como status=processed / approved en las
-        // transacciones o en los pagos vinculados.
-        $estado = strtolower((string) ($data['status'] ?? $data['order_status'] ?? 'unknown'));
-        $pagado = in_array($estado, ['processed', 'approved', 'accredited', 'closed'], true);
+        $estado = strtolower((string) ($data['status'] ?? $data['order_status'] ?? $data['state'] ?? 'unknown'));
+        $pagado = in_array($estado, ['processed', 'approved', 'accredited', 'closed', 'paid'], true);
 
         $paymentId = null;
         $candidatos = [];
@@ -413,17 +418,25 @@ class MercadoPagoService
             $candidatos[] = $pago;
         }
         foreach ((array) ($data['payments'] ?? []) as $pago) {
-            $candidatos[] = $pago;
+            $candidatos[] = is_array($pago) ? $pago : ['id' => $pago, 'status' => $estado];
+        }
+        foreach ((array) ($data['transactions'] ?? []) as $item) {
+            if (is_array($item) && (isset($item['status']) || isset($item['id']))) {
+                $candidatos[] = $item;
+            }
         }
         if (isset($data['payment_id'])) {
             $candidatos[] = ['id' => $data['payment_id'], 'status' => $estado];
         }
 
         foreach ($candidatos as $pago) {
-            $estadoPago = strtolower((string) ($pago['status'] ?? ''));
-            if (in_array($estadoPago, ['approved', 'accredited', 'processed', 'closed'], true)) {
+            if (!is_array($pago)) {
+                continue;
+            }
+            $estadoPago = strtolower((string) ($pago['status'] ?? $pago['payment_status'] ?? ''));
+            if (in_array($estadoPago, ['approved', 'accredited', 'processed', 'closed', 'paid'], true)) {
                 $pagado = true;
-                $paymentId = $pago['id'] ?? $paymentId;
+                $paymentId = $pago['id'] ?? $pago['payment_id'] ?? $paymentId;
                 break;
             }
             if ($paymentId === null && isset($pago['id'])) {
@@ -431,13 +444,67 @@ class MercadoPagoService
             }
         }
 
+        // Respaldo: si la orden no trae el pago pero sí referencia externa,
+        // buscar el pago aprobado por external_reference en la API de pagos.
+        if (!$pagado && ($externalReference || isset($data['external_reference']))) {
+            $ref = $externalReference ?? $data['external_reference'];
+            $respaldo = $this->buscarPagoPorReferencia((string) $ref);
+            if (!empty($respaldo['pagado'])) {
+                $pagado = true;
+                $paymentId = $respaldo['payment_id'] ?? $paymentId;
+                Log::info("MP Point orden {$orderId}: pago detectado por respaldo external_reference {$ref}.");
+            }
+        }
+
+        Log::info("MP Point orden {$orderId}: estado={$estado} pagado=" . ($pagado ? 'SI' : 'NO'));
+
         return [
             'estado'     => $estado,
             'pagado'     => $pagado,
             'payment_id' => $paymentId,
             'monto'      => $data['total_amount'] ?? $data['amount'] ?? null,
-            'referencia' => $data['external_reference'] ?? null,
+            'referencia' => $data['external_reference'] ?? $externalReference,
         ];
+    }
+
+    /**
+     * Respaldo: busca un pago aprobado por external_reference.
+     * Se usa cuando la orden Point no expone el pago en su JSON
+     * (la venta se quedaba en Pendiente aunque el Point sí cobró).
+     *
+     * @param string $referencia Ej: VENTA-VTA-000041
+     * @return array
+     */
+    public function buscarPagoPorReferencia(string $referencia): array
+    {
+        $config = Configuracion::empresa();
+
+        if (!$config || !$config->mercadopago_access_token) {
+            return ['pagado' => false];
+        }
+
+        $response = Http::withToken($config->mercadopago_access_token)
+            ->get('https://api.mercadopago.com/v1/payments/search', [
+                'external_reference' => $referencia,
+                'sort' => 'date_created',
+                'criteria' => 'desc',
+                'range' => 'date_created',
+                'begin_date' => now()->subDays(2)->toIso8601String(),
+                'end_date' => now()->addDay()->toIso8601String(),
+            ]);
+
+        if (!$response->successful()) {
+            Log::warning('MP Point respaldo: error buscando pago por referencia ' . $referencia . ': ' . $response->body());
+            return ['pagado' => false];
+        }
+
+        foreach ((array) ($response->json()['results'] ?? []) as $pago) {
+            if (strtolower((string) ($pago['status'] ?? '')) === 'approved') {
+                return ['pagado' => true, 'payment_id' => $pago['id'] ?? null];
+            }
+        }
+
+        return ['pagado' => false];
     }
 
     /**

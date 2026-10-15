@@ -78,7 +78,10 @@ class MercadoPagoController extends Controller
 
         try {
             $servicio = app(MercadoPagoService::class);
-            $orden = $servicio->consultarOrdenPoint($venta->mercadopago_order_id);
+            // Se pasa la referencia externa (VENTA-xxx) como respaldo por si
+            // la orden no expone el pago en su JSON.
+            $referencia = 'VENTA-' . $venta->numero_venta;
+            $orden = $servicio->consultarOrdenPoint($venta->mercadopago_order_id, $referencia);
 
             if (!empty($orden['pagado'])) {
                 $servicio->confirmarVentaPoint($venta->fresh(), $orden['payment_id'] ?? null);
@@ -92,6 +95,53 @@ class MercadoPagoController extends Controller
         } catch (\Throwable $e) {
             Log::error('Error consultando estado Point: ' . $e->getMessage());
             return response()->json(['pagado' => false, 'estado' => 'error', 'mensaje' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Verificación manual del pago Point (botón "Ya cobré, verificar").
+     * Consulta la orden + respaldo por referencia y si aprobó, marca
+     * la venta pagada e imprime el ticket de una vez.
+     *
+     * POST /ventas/{venta}/point-verificar
+     */
+    public function verificarPoint(Venta $venta)
+    {
+        if ($venta->estado === 'completada' && $venta->estado_pago === 'pagado') {
+            return redirect()->route('ventas.show', $venta)
+                ->with('imprimir_ticket', true)
+                ->with('success', "La venta {$venta->numero_venta} ya estaba pagada. Imprimiendo boleta.");
+        }
+
+        try {
+            $servicio = app(MercadoPagoService::class);
+            $pagado = false;
+            $paymentId = null;
+
+            if ($venta->mercadopago_order_id) {
+                $orden = $servicio->consultarOrdenPoint($venta->mercadopago_order_id, 'VENTA-' . $venta->numero_venta);
+                $pagado = !empty($orden['pagado']);
+                $paymentId = $orden['payment_id'] ?? null;
+            }
+
+            // Respaldo directo por referencia aunque no haya order_id.
+            if (!$pagado) {
+                $respaldo = $servicio->buscarPagoPorReferencia('VENTA-' . $venta->numero_venta);
+                $pagado = !empty($respaldo['pagado']);
+                $paymentId = $respaldo['payment_id'] ?? $paymentId;
+            }
+
+            if ($pagado) {
+                $servicio->confirmarVentaPoint($venta->fresh(), $paymentId);
+                return redirect()->route('ventas.show', $venta->fresh())
+                    ->with('imprimir_ticket', true)
+                    ->with('success', "Pago Point confirmado para {$venta->numero_venta}. Imprimiendo boleta.");
+            }
+
+            return back()->with('error', 'Aún no se detecta el pago en Mercado Pago. Cobra en el Point y vuelve a verificar en unos segundos.');
+        } catch (\Throwable $e) {
+            Log::error('Error verificando pago Point manual: ' . $e->getMessage());
+            return back()->with('error', 'Error verificando pago: ' . $e->getMessage());
         }
     }
 

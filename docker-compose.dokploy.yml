@@ -16,7 +16,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: taller-luitech-app
+      # ── Sin caché de Docker en Dokploy: cada push reconstruye con el código
+      # nuevo (antes había que reiniciar el VPS porque quedaba imagen vieja) ──
+      no_cache: true
+    # ⚠️ Sin container_name fijo: Dokploy crea un contenedor nuevo por deploy.
+    # Con nombre fijo, el deploy falla con "container already exists" y obliga
+    # a reiniciar el VPS a mano para liberarlo.
     # ⚠️ NO exponer puertos aquí: Dokploy/Traefik rutea internamente al puerto 80.
     # Declarar "ports" rompe el challenge HTTP-01 de Let's Encrypt y Traefik
     # termina sirviendo TRAEFIK DEFAULT CERT ("no seguro").
@@ -66,6 +71,9 @@ services:
       - MAIL_PASSWORD=${MAIL_PASSWORD:-}
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-contacto@serviciotecnico.fun}
       - MAIL_FROM_NAME=${MAIL_FROM_NAME:-Servicio Técnico}
+      # ── Fuerza rebuild en cada push: Dokploy invalida caché al cambiar
+      # el compose (antes reutilizaba capas y no salían los cambios) ──
+      - BUILD_ID=${BUILD_ID:-local}
     restart: unless-stopped
     # ⚠️ Sin "networks" personalizada: Dokploy conecta la app a su red interna
     # (dokploy-network) donde Traefik resuelve el servicio y emite el SSL.

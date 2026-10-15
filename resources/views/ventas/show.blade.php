@@ -113,6 +113,14 @@
                 </p>
             </div>
             <div class="d-flex gap-2 flex-wrap align-items-center">
+                {{-- Verificación MP: si el Point ya cobró pero la venta quedó en Pendiente, consulta orden + respaldo y al aprobar imprime solo. --}}
+                <form action="{{ route('ventas.point-verificar', $venta) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-success" style="border-radius:8px; font-weight:700;"
+                            title="Consulta a Mercado Pago si el Point ya cobró y, si aprobó, marca pagada e imprime la boleta.">
+                        <i class="fas fa-check-double me-1"></i>Ya cobré, verificar e imprimir
+                    </button>
+                </form>
                 <form action="{{ route('ventas.point', $venta) }}" method="POST"
                       onsubmit="return confirm('¿Enviar el total al Point? En el equipo eliges Tarjeta o Efectivo con boleta.');">
                     @csrf
