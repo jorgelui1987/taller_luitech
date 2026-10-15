@@ -279,6 +279,7 @@ Route::middleware(['tenant'])->group(function () {
             Route::get('/ventas/{venta}/whatsapp', [VentaController::class, 'enviarWhatsApp'])->name('ventas.whatsapp');
             Route::post('/ventas/{venta}/mercadopago', [MercadoPagoController::class, 'generarPago'])->name('ventas.mercadopago');
             Route::post('/ventas/{venta}/point', [MercadoPagoController::class, 'cobrarPoint'])->name('ventas.point');
+            Route::get('/ventas/{venta}/point-estado', [MercadoPagoController::class, 'estadoPoint'])->name('ventas.point-estado');
             Route::post('/ventas/{venta}/point-efectivo', [VentaController::class, 'marcarPointEfectivo'])->name('ventas.point-efectivo');
             Route::post('/ventas/{venta}/point-tarjeta', [VentaController::class, 'marcarPointTarjeta'])->name('ventas.point-tarjeta');
             Route::post('/reparaciones/{reparacion}/mercadopago', [MercadoPagoController::class, 'generarPagoReparacion'])->name('reparaciones.mercadopago');

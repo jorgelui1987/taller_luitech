@@ -373,6 +373,92 @@ class MercadoPagoService
     }
 
     /**
+     * Consulta el estado de una orden Point (Orders API v1/orders).
+     *
+     * Devuelve siempre un arreglo con al menos 'estado'. Cuando el pago fue
+     * aprobado, 'pagado' es true y 'payment_id' trae el id del pago.
+     *
+     * @param string $orderId
+     * @return array
+     */
+    public function consultarOrdenPoint(string $orderId): array
+    {
+        $config = Configuracion::empresa();
+
+        if (!$config || !$config->mercadopago_access_token) {
+            return ['estado' => 'error', 'pagado' => false, 'mensaje' => 'Mercado Pago no configurado.'];
+        }
+
+        $response = Http::withToken($config->mercadopago_access_token)
+            ->get("https://api.mercadopago.com/v1/orders/{$orderId}");
+
+        if (!$response->successful()) {
+            Log::error('Error Mercado Pago Point al consultar orden: ' . $response->body());
+            return ['estado' => 'error', 'pagado' => false, 'mensaje' => 'Error al consultar la orden Point.'];
+        }
+
+        $data = $response->json();
+
+        // ── Interpretar la respuesta de Orders API ─────────────────────
+        // La API devuelve la orden con sus transacciones/pagos asociados.
+        // El pago aprobado aparece como status=processed / approved en las
+        // transacciones o en los pagos vinculados.
+        $estado = strtolower((string) ($data['status'] ?? $data['order_status'] ?? 'unknown'));
+        $pagado = in_array($estado, ['processed', 'approved', 'accredited', 'closed'], true);
+
+        $paymentId = null;
+        $candidatos = [];
+
+        foreach ((array) ($data['transactions']['payments'] ?? []) as $pago) {
+            $candidatos[] = $pago;
+        }
+        foreach ((array) ($data['payments'] ?? []) as $pago) {
+            $candidatos[] = $pago;
+        }
+        if (isset($data['payment_id'])) {
+            $candidatos[] = ['id' => $data['payment_id'], 'status' => $estado];
+        }
+
+        foreach ($candidatos as $pago) {
+            $estadoPago = strtolower((string) ($pago['status'] ?? ''));
+            if (in_array($estadoPago, ['approved', 'accredited', 'processed', 'closed'], true)) {
+                $pagado = true;
+                $paymentId = $pago['id'] ?? $paymentId;
+                break;
+            }
+            if ($paymentId === null && isset($pago['id'])) {
+                $paymentId = $pago['id'];
+            }
+        }
+
+        return [
+            'estado'     => $estado,
+            'pagado'     => $pagado,
+            'payment_id' => $paymentId,
+            'monto'      => $data['total_amount'] ?? $data['amount'] ?? null,
+            'referencia' => $data['external_reference'] ?? null,
+        ];
+    }
+
+    /**
+     * Marca la venta como pagada cuando la orden Point ya fue aprobada.
+     * Se usa desde el polling del navegador (funciona aunque el webhook
+     * no llegue, ej. entorno local sin URL pública).
+     *
+     * @param Venta $venta
+     * @param string|null $paymentId
+     * @return void
+     */
+    public function confirmarVentaPoint(Venta $venta, ?string $paymentId = null): void
+    {
+        $datos = ['estado' => 'completada', 'estado_pago' => 'pagado', 'metodo_pago' => 'mercadopago'];
+        if ($paymentId) {
+            $datos['referencia_pago'] = $venta->referencia_pago ?: ('MP-' . $paymentId);
+        }
+        $venta->update($datos);
+    }
+
+    /**
      * Consulta el estado de un pago en Mercado Pago.
      *
      * @param string $paymentId

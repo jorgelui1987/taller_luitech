@@ -195,8 +195,10 @@
                         onclick="document.getElementById('cobrarConPoint').value='1';">
                         <i class="fas fa-credit-card me-2"></i>Cobrar con Mercado Pago
                     </button>
+                    {{-- BTN-POINT-V5: botón directo MP Point, sin preseleccionar MP.
+                        El backend fuerza metodo_pago=mercadopago cuando cobrar_con_point=1. --}}
                     <small class="text-muted d-block mt-1" style="font-size:11px;">
-                        Manda solo el precio al Point: en la máquina eliges Tarjeta o Efectivo con boleta.
+                        Directo: manda el total al Point sin elegir método antes. Al aprobarse en la máquina, imprime la boleta sola.
                     </small>
                 </x-st-block>
                 </div>

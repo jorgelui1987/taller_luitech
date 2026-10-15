@@ -218,14 +218,19 @@ class VentaController extends Controller
 
             // Flujo pagina-web: solo 'mercadopago' queda pendiente para
             // cobrar en el detalle (botón "Cobrar con Point" o QR).
-            $esMercadoPago = $request->metodo_pago === 'mercadopago';
+            $usarPoint = $request->input('cobrar_con_point') == '1';
+            // ── Botón MP directo: si se pidió cobrar con Point, forzar
+            // método mercadopago aunque no se haya preseleccionado MP ──
+            $metodoPago = $usarPoint ? 'mercadopago' : $request->metodo_pago;
+            $esMercadoPago = $metodoPago === 'mercadopago';
 
             // ── Efectivo recibido y vuelto (solo pagos en efectivo) ──
             // Si el cliente paga con menos que el total, no se registra
             // vuelto (queda como pago parcial / venta pendiente de saldar).
+            // En cobro MP directo se ignoran (aunque el form traiga efectivo).
             $montoRecibido = null;
             $vuelto = null;
-            if ($request->metodo_pago === 'efectivo' && $request->filled('monto_recibido')) {
+            if ($metodoPago === 'efectivo' && $request->filled('monto_recibido')) {
                 $montoRecibido = round((float) $request->monto_recibido, 2);
                 if ($montoRecibido > $total) {
                     $vuelto = round($montoRecibido - $total, 2);
@@ -243,8 +248,8 @@ class VentaController extends Controller
                 'total'        => $total,
                 'monto_recibido' => $montoRecibido,
                 'vuelto'         => $vuelto,
-                'metodo_pago'  => $request->metodo_pago,
-                'referencia_pago' => in_array($request->metodo_pago, ['transferencia','debito','credito','tarjeta']) ? ($request->referencia_pago ? trim($request->referencia_pago) : null) : null,
+                'metodo_pago'  => $metodoPago,
+                'referencia_pago' => in_array($metodoPago, ['transferencia','debito','credito','tarjeta']) ? ($request->referencia_pago ? trim($request->referencia_pago) : null) : null,
                 'estado'       => $esMercadoPago ? 'pendiente' : 'completada',
                 'estado_pago'  => $esMercadoPago ? 'pendiente' : 'pagado',
                 'notas'        => $request->notas,
@@ -275,12 +280,15 @@ class VentaController extends Controller
             if ($esMercadoPago) {
                 // Botón amarillo: manda solo el precio al Point de una vez.
                 // En la máquina sale el menú normal (Tarjetas/Efectivo con boleta).
-                if ($request->input('cobrar_con_point') == '1') {
+                if ($usarPoint) {
                     try {
                         $pago = app(\App\Services\MercadoPagoService::class)->crearPagoPoint($venta);
                         if (($pago['estado'] ?? null) === 'desactivado') {
                             return redirect()->route('ventas.show', $venta)
                                 ->with('error', 'Mercado Pago no está activado para esta empresa.');
+                        }
+                        if (!empty($pago['order_id'])) {
+                            $venta->update(['mercadopago_order_id' => $pago['order_id']]);
                         }
                         return redirect()->route('ventas.show', $venta)
                             ->with('point', $pago)

@@ -377,18 +377,33 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
     @else
-    // Pago por Point vía webhook: esperar a que la venta pase a completada.
-    const urlEstado = "{{ route('ventas.estado', $venta) }}";
+    // Pago por Point: consultar el estado de la orden MP cada 4s.
+    // Funciona por webhook (el servidor ya la marcó pagada) o por polling
+    // directo a la orden (local sin URL pública). Al aprobarse, imprime sola.
+    const urlEstadoVenta = "{{ route('ventas.estado', $venta) }}";
+    const urlEstadoPoint = "{{ route('ventas.point-estado', $venta) }}";
     let impreso = false;
 
     const intervalo = setInterval(async () => {
         try {
-            const res = await fetch(urlEstado, {
+            // 1) ¿La venta ya quedó completada? (webhook o polling previo)
+            const resVenta = await fetch(urlEstadoVenta, {
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
             });
-            const data = await res.json();
+            const dataVenta = await resVenta.json();
 
-            if (data.estado === 'completada' && !impreso) {
+            let pagado = dataVenta.estado === 'completada';
+
+            // 2) Si aún no, preguntar directo por la orden Point (marca pagada si aprobó)
+            if (!pagado) {
+                const resPoint = await fetch(urlEstadoPoint, {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const dataPoint = await resPoint.json();
+                pagado = !!dataPoint.pagado;
+            }
+
+            if (pagado && !impreso) {
                 impreso = true;
                 clearInterval(intervalo);
                 const win2 = window.open(urlTicket, '_blank');
@@ -397,10 +412,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         win2.focus();
                         win2.print();
                     };
+                } else {
+                    location.reload();
                 }
             }
         } catch (e) {}
-    }, 5000);
+    }, 4000);
     @endif
 });
 </script>

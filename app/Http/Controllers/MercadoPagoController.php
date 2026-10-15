@@ -41,10 +41,57 @@ class MercadoPagoController extends Controller
                 return back()->with('error', 'Mercado Pago no está activado para esta empresa.');
             }
 
+            // Guardar el ID de la orden para poder consultar su estado
+            // por polling aunque el webhook no llegue (local sin URL pública).
+            if (!empty($pago['order_id'])) {
+                $venta->update(['mercadopago_order_id' => $pago['order_id']]);
+            }
+
             return back()->with('point', $pago);
         } catch (\Throwable $e) {
             Log::error('Error cobrando con Point: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return back()->with('error', 'Error Point: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Endpoint de polling: consulta el estado de la orden Point y, si ya
+     * fue pagada, marca la venta como completada para que el navegador
+     * imprima la boleta automáticamente.
+     *
+     * GET /ventas/{venta}/point-estado → JSON {pagado, estado, mensaje}
+     */
+    public function estadoPoint(Venta $venta)
+    {
+        // Si ya está pagada, no hay nada que consultar.
+        if ($venta->estado === 'completada' && $venta->estado_pago === 'pagado') {
+            return response()->json(['pagado' => true, 'estado' => 'completada']);
+        }
+
+        if (!$venta->mercadopago_order_id) {
+            return response()->json([
+                'pagado' => false,
+                'estado' => $venta->estado,
+                'mensaje' => 'Sin orden Point asociada.',
+            ]);
+        }
+
+        try {
+            $servicio = app(MercadoPagoService::class);
+            $orden = $servicio->consultarOrdenPoint($venta->mercadopago_order_id);
+
+            if (!empty($orden['pagado'])) {
+                $servicio->confirmarVentaPoint($venta->fresh(), $orden['payment_id'] ?? null);
+                return response()->json(['pagado' => true, 'estado' => 'completada']);
+            }
+
+            return response()->json([
+                'pagado' => false,
+                'estado' => $orden['estado'] ?? 'pendiente',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error consultando estado Point: ' . $e->getMessage());
+            return response()->json(['pagado' => false, 'estado' => 'error', 'mensaje' => $e->getMessage()], 500);
         }
     }
 
