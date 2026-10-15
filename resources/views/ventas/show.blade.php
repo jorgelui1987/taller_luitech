@@ -362,29 +362,66 @@
 @endif
 
 {{-- Impresión automática al confirmarse el pago con Mercado Pago --}}
-@if(session('imprimir_ticket') || ($venta->estado === 'pendiente' && $venta->metodo_pago === 'mercadopago'))
+{{-- Se activa cuando: pago manual recién confirmado, venta MP pendiente (esperando
+     Point) O venta MP recién pagada vía Point (session point) aunque ya esté completada. --}}
+@if(session('imprimir_ticket') || session('point') || ($venta->estado === 'pendiente' && $venta->metodo_pago === 'mercadopago') || ($venta->estado === 'completada' && $venta->metodo_pago === 'mercadopago' && session('success')))
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const urlTicket = "{{ route('ventas.ticket', $venta) }}";
+
+    // ── Impresión directa con iframe oculto (no la bloquea el navegador
+    // como sí hace window.open cuando no hay gesto del usuario) ──
+    function imprimirDirecto() {
+        let frame = document.getElementById('frameTicketAuto');
+        if (!frame) {
+            frame = document.createElement('iframe');
+            frame.id = 'frameTicketAuto';
+            frame.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0;visibility:hidden;';
+            document.body.appendChild(frame);
+        }
+        // El ticket ya trae window.print() al cargar, con esto basta.
+        // Se agrega timestamp para evitar caché y forzar recarga.
+        frame.src = urlTicket + (urlTicket.includes('?') ? '&' : '?') + 'auto=' + Date.now();
+    }
+
+    function mostrarAviso(texto, ok) {
+        let aviso = document.getElementById('avisoMpAuto');
+        if (!aviso) {
+            aviso = document.createElement('div');
+            aviso.id = 'avisoMpAuto';
+            aviso.style.cssText = 'position:fixed;bottom:18px;right:18px;z-index:9999;max-width:320px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+            document.body.appendChild(aviso);
+        }
+        aviso.style.background = ok ? '#d1fae5' : '#fef9c3';
+        aviso.style.color = ok ? '#065f46' : '#92400e';
+        aviso.style.border = ok ? '1px solid #6ee7b7' : '1px solid #fde68a';
+        aviso.innerHTML = texto;
+    }
+
     @if(session('imprimir_ticket'))
     // Pago manual recién confirmado (tarjeta o efectivo): imprimir de una vez.
-    const win = window.open(urlTicket, '_blank');
-    if (win) {
-        win.onload = function () {
-            win.focus();
-            win.print();
-        };
-    }
+    imprimirDirecto();
     @else
-    // Pago por Point: consultar el estado de la orden MP cada 4s.
+    // Pago por Point: consultar el estado de la orden MP.
     // Funciona por webhook (el servidor ya la marcó pagada) o por polling
     // directo a la orden (local sin URL pública). Al aprobarse, imprime sola.
     const urlEstadoVenta = "{{ route('ventas.estado', $venta) }}";
     const urlEstadoPoint = "{{ route('ventas.point-estado', $venta) }}";
     let impreso = false;
+    let intentos = 0;
+    const maxIntentos = 150; // ~5 min a 2s
 
-    const intervalo = setInterval(async () => {
+    mostrarAviso('⏳ Esperando pago en el Point...<br><small style="font-weight:400;">Al aprobarse se imprime la boleta sola.</small>', false);
+
+    async function verificarPago() {
+        if (impreso) return;
+        intentos++;
+        if (intentos > maxIntentos) {
+            clearInterval(intervalo);
+            mostrarAviso('⚠️ No se detectó el pago. <a href="' + urlTicket + '" target="_blank" style="color:#92400e;text-decoration:underline;">Imprimir manual aquí</a>', false);
+            return;
+        }
         try {
             // 1) ¿La venta ya quedó completada? (webhook o polling previo)
             const resVenta = await fetch(urlEstadoVenta, {
@@ -406,18 +443,18 @@ document.addEventListener('DOMContentLoaded', function () {
             if (pagado && !impreso) {
                 impreso = true;
                 clearInterval(intervalo);
-                const win2 = window.open(urlTicket, '_blank');
-                if (win2) {
-                    win2.onload = function () {
-                        win2.focus();
-                        win2.print();
-                    };
-                } else {
-                    location.reload();
-                }
+                mostrarAviso('✅ ¡Pago aprobado! Imprimiendo boleta...', true);
+                imprimirDirecto();
+                // Por si el iframe tarda, reintentar una vez a los 3s
+                setTimeout(function () { imprimirDirecto(); }, 3000);
             }
         } catch (e) {}
-    }, 4000);
+    }
+
+    // Primera verificación inmediata (por si el webhook ya la marcó
+    // pagada antes de cargar la página) y luego cada 2s.
+    verificarPago();
+    const intervalo = setInterval(verificarPago, 2000);
     @endif
 });
 </script>
