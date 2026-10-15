@@ -536,6 +536,16 @@ class MercadoPagoService
 
         $totalReparacion = (float) $reparacion->total;
 
+        // Tenant: el de la reparación; si viene vacío (ej. webhook sin sesión),
+        // resolver por el tenant del técnico/cliente antes de crear, porque el
+        // global scope TenantScope ocultaría la venta en Ventas/Dashboard.
+        $tenantId = $reparacion->tenant_id;
+        if (!$tenantId) {
+            $tecnico = $reparacion->tecnico;
+            $cliente = $reparacion->cliente;
+            $tenantId = $tecnico?->tenant_id ?? $cliente?->tenant_id;
+        }
+
         return \App\Models\Venta::create([
             'numero_venta'   => \App\Models\Venta::generarNumero(),
             'cliente_id'     => $reparacion->cliente_id,
@@ -543,7 +553,7 @@ class MercadoPagoService
             'fecha_venta'    => now(),
             'subtotal'       => $totalReparacion,
             'descuento'      => 0,
-            'impuesto'       => 0,
+            'impuesto'       => (float) ($reparacion->impuesto ?? 0),
             'total'          => $totalReparacion,
             'comision_monto' => (float) ($reparacion->comision_monto ?? 0),
             'comision_pagada'=> false,
@@ -552,7 +562,7 @@ class MercadoPagoService
             'estado'         => 'completada',
             'estado_pago'    => 'pagado',
             'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
-            'tenant_id'      => $reparacion->tenant_id,
+            'tenant_id'      => $tenantId,
         ]);
     }
 

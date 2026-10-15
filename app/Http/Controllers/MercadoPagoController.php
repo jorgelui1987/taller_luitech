@@ -339,28 +339,13 @@ class MercadoPagoController extends Controller
 
                 // Si la referencia es de una REPARACIÓN (REP-...), crear la venta automática
                 if (str_starts_with($referencia, 'REP-')) {
-                    $reparacion = Reparacion::where('numero_orden', $referencia)->first();
+                    $reparacion = Reparacion::withoutGlobalScope(\App\Models\Scopes\TenantScope::class)
+                        ->where('numero_orden', $referencia)->first();
+                    // El webhook llega sin sesión: quitar el scope tenant para
+                    // encontrar la reparación aunque sea de otro tenant, y crear
+                    // la venta con su tenant para que SÍ salga en Ventas/Dashboard.
                     if ($reparacion && $status === 'processed') {
-                        $totalReparacion = (float) $reparacion->total;
-                        $comisionMonto = (float) $reparacion->comision_monto ?? 0;
-
-                        Venta::create([
-                            'numero_venta'   => Venta::generarNumero(),
-                            'cliente_id'     => $reparacion->cliente_id,
-                            'user_id'        => $reparacion->tecnico_id,
-                            'fecha_venta'    => now(),
-                            'subtotal'       => $totalReparacion,
-                            'descuento'      => 0,
-                            'impuesto'       => 0,
-                            'total'          => $totalReparacion,
-                            'comision_monto' => $comisionMonto,
-                            'comision_pagada'=> false,
-                            'metodo_pago'    => 'mercadopago',
-                            'estado'         => 'completada',
-                            'estado_pago'    => 'pagado',
-                            'notas'          => "Pago por reparación {$reparacion->numero_orden} - {$reparacion->dispositivo}",
-                            'tenant_id'      => $reparacion->tenant_id,
-                        ]);
+                        app(MercadoPagoService::class)->crearVentaPorReparacion($reparacion);
                         Log::info("Venta creada por reparación {$reparacion->numero_orden} vía Point.");
                     }
                 } else {
