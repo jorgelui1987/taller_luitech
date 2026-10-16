@@ -25,6 +25,25 @@ mkdir -p /var/www/html/storage/app/public
 mkdir -p /var/www/html/storage/app/backups
 mkdir -p /var/www/html/bootstrap/cache
 
+# ── Migración de volumen persistente (una sola vez) ───────────────────
+# Antes se montaba TODO storage/ en el volumen; ahora solo storage/app.
+# Si el volumen viejo quedó montado en storage/app (se ve como
+# storage/app/app, storage/app/framework, storage/app/logs), se reubica
+# el contenido real y se tira la caché compilada del deploy anterior.
+# Sin esto, las vistas Blade viejas sobreviven y los cambios "no salen"
+# hasta resetear el VPS.
+if [ -d /var/www/html/storage/app/app ] || [ -d /var/www/html/storage/app/framework ]; then
+    echo "Migrando volumen persistente antiguo a storage/app..."
+    if [ -d /var/www/html/storage/app/app ]; then
+        cp -rn /var/www/html/storage/app/app/. /var/www/html/storage/app/ 2>/dev/null || true
+        rm -rf /var/www/html/storage/app/app 2>/dev/null || true
+    fi
+    rm -rf /var/www/html/storage/app/framework /var/www/html/storage/app/logs 2>/dev/null || true
+    echo "✓ Volumen migrado"
+fi
+mkdir -p /var/www/html/storage/app/public
+mkdir -p /var/www/html/storage/app/backups
+
 # ── Generar .env desde variables de entorno ──────────────────────────
 echo "Creando .env desde variables de entorno..."
 
@@ -290,20 +309,23 @@ else
 fi
 
 # ── Limpiar cachés anteriores ───────────────────────────────────────
-# El volumen de storage persiste entre deploys: sin este paso, vistas
-# compiladas / rutas / config cacheadas del deploy anterior pueden
-# sobrevivir y hacer que los cambios nuevos "no salgan".
+# El volumen de storage persistía vistas compiladas entre deploys.
+# Borrado físico (no solo artisan) para que NADA viejo sobreviva.
 echo "Limpiando cachés antiguas (views/config/routes)..."
+rm -rf /var/www/html/storage/framework/views/* 2>/dev/null || true
+rm -rf /var/www/html/storage/framework/cache/data/* 2>/dev/null || true
+rm -f /var/www/html/bootstrap/cache/config.php /var/www/html/bootstrap/cache/routes-v7.php 2>/dev/null || true
 runuser -u appuser -- php artisan optimize:clear 2>/dev/null || true
 
 # ── Optimizar Laravel (SIN cache de vistas) ─────────────────────────
 # NOTA: no usar `php artisan optimize` porque cachea las vistas Blade
-# compiladas en storage/framework/views (volumen persistente) y los
-# cambios nuevos "no salen" hasta limpiar a mano. Solo cacheamos
-# config + routes, las vistas siempre se compilan en caliente.
+# compiladas en storage/framework/views y los cambios nuevos "no salen".
+# Solo cacheamos config + routes, las vistas siempre se compilan en caliente.
+# `route:cache` falla si hay closures en web.php (ruta /__build debug):
+# se intenta, y si falla se sigue sin caché de rutas (la app funciona igual).
 echo "Optimizando Laravel (config+routes, sin views)..."
 runuser -u appuser -- php artisan config:cache 2>/dev/null || true
-runuser -u appuser -- php artisan route:cache 2>/dev/null || true
+runuser -u appuser -- php artisan route:cache 2>/dev/null || echo "⚠ route:cache omitido (hay closures); la app corre sin caché de rutas"
 runuser -u appuser -- php artisan view:clear 2>/dev/null || true
 
 # ── Iniciar cron en segundo plano (para que los backups automáticos funcionen) ──

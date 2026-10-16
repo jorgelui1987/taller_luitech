@@ -39,7 +39,12 @@ services:
     volumes:
       # ⚠️ VOLUMEN PERSISTENTE: Los backups, logos y fotos viven aqui.
       # Sin este volumen, TODO se borra en cada actualizacion de Dokploy.
-      - taller_storage:/var/www/html/storage
+      # NOTA: solo se persiste storage/app (uploads/backups). El resto de
+      # storage (framework/views, framework/cache, logs) queda DENTRO de la
+      # imagen para que cada deploy arranque con vistas/config frescas.
+      # Si se monta TODO storage, las vistas Blade compiladas del deploy
+      # anterior sobreviven y los cambios "no salen" hasta resetear el VPS.
+      - taller_storage:/var/www/html/storage/app
     environment:
       - APP_ENV=production
       - APP_DEBUG=false

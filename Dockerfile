@@ -40,6 +40,15 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf &&
 # Configurar AllowOverride en el Directory de apache2.conf
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
+# OPcache: revalidar archivos en cada deploy.
+# Sin esto, Apache sirve bytecode viejo en memoria aunque la imagen traiga
+# código nuevo, y los cambios "no salen" hasta reiniciar el VPS.
+RUN { echo 'opcache.enable=1'; \
+      echo 'opcache.validate_timestamps=1'; \
+      echo 'opcache.revalidate_freq=2'; \
+      echo 'opcache.max_accelerated_files=20000'; \
+    } > /usr/local/etc/php/conf.d/opcache-deploy.ini
+
 # Healthcheck interno: usa archivo estático (no depende de Laravel/DB).
 # Antes apuntaba a /health (ruta PHP): si la app tardaba en migrar o la DB
 # estaba caída, el chequeo fallaba, Dokploy marcaba unhealthy y Traefik
