@@ -560,13 +560,5 @@ function imprimirTodas() {
     abrirVentanaImpresion('Etiquetas de Código de Barras', etiquetasHtml);
 }
 
-// Compatibilidad guardarTodos con paginación (@json del paginador no es array)
-try {
-    const _probe = listaProductosPagina();
-    if (!Array.isArray(_probe)) {
-        console.warn('codigos-barras: paginador detectado, se usa listaProductosPagina()');
-    }
-} catch(e) {}
-
 </script>
 @endpush
