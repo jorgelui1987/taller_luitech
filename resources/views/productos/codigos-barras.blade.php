@@ -150,8 +150,69 @@
 @endsection
 
 @push('scripts')
-<!-- JsBarcode: genera las barras reales que lee la pistola escáner -->
+<!-- JsBarcode + QRCode en la página principal: se pre-renderiza ANTES de imprimir
+     (así la ventana de impresión ya lleva el SVG/imagen listo y no sale en blanco) -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+@media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+}
+</style>
 <script>
+// ── Helpers impresión (pre-render en ventana principal) ─────────────────────
+function escHtml(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function svgBarcodeListo(codigo) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    JsBarcode(svg, String(codigo), { format: 'CODE128', width: 2, height: 55, displayValue: false, margin: 2 });
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '60');
+    svg.style.width = '100%';
+    svg.style.height = '60px';
+    return svg.outerHTML;
+}
+function qrImgListo(codigo) {
+    try {
+        const tmp = document.createElement('div');
+        tmp.style.position = 'absolute';
+        tmp.style.left = '-9999px';
+        document.body.appendChild(tmp);
+        new QRCode(tmp, { text: String(codigo), width: 65, height: 65, correctLevel: QRCode.CorrectLevel.L });
+        const canvas = tmp.querySelector('canvas');
+        const img = tmp.querySelector('img');
+        let src = '';
+        if (canvas) src = canvas.toDataURL('image/png');
+        else if (img && img.src) src = img.src;
+        tmp.remove();
+        if (src) return '<img src="' + src + '" style="width:65px;height:65px;" alt="QR">';
+    } catch(e) {}
+    return '<div style="font-size:10px;">' + escHtml(codigo) + '</div>';
+}
+function abrirVentanaImpresion(titulo, etiquetasHtml) {
+    const html = '<html><head><title>' + escHtml(titulo) + '</title>'
+        + '<style>'
+        + 'body { font-family: Arial, sans-serif; margin: 0; padding: 10px; }'
+        + '.label { border: 2px solid #000; width: 80mm; min-height: 45mm; text-align: center; padding: 4px; page-break-inside: avoid; page-break-after: always; display: block; margin: 0 auto 4px; }'
+        + '.name { font-size: 11px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }'
+        + '.content-row { display: table; width: 100%; margin: 2px 0; }'
+        + '.content-cell-bar { display: table-cell; width: 72%; vertical-align: middle; }'
+        + '.content-cell-qr { display: table-cell; width: 28%; vertical-align: middle; text-align: center; }'
+        + '.code { font-family: monospace; font-size: 12px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }'
+        + '.sku { font-size: 9px; margin-top: 1px; }'
+        + '@media print { body { margin: 0; padding: 0; } .label { border: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }'
+        + '</style></head><body onload="setTimeout(function(){ window.focus(); window.print(); }, 300);" onafterprint="window.close()">'
+        + etiquetasHtml
+        + '</body></html>';
+    const win = window.open('', '_blank');
+    if (!win) { alert('El navegador bloqueó la ventana de impresión. Permite ventanas emergentes para este sitio.'); return; }
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+}
 // ── Guardar código de barras manual ──────────────────────────────────────
 function guardarCodigo(productoId) {
     const input = document.getElementById('codigo-' + productoId);
@@ -442,5 +503,70 @@ function imprimirTodas() {
     win.focus();
     setTimeout(() => { win.print(); }, 800);
 }
+// ── FIX impresión en blanco: override con pre-render (SVG+IMG listos) ─────
+// El problema: se abría la ventana e imprimía a los 800ms, pero los CDN
+// (JsBarcode/QRCode) a veces no cargaban a tiempo -> SVG/canvas vacíos.
+// Solución: generar el SVG e IMG aquí (donde las librerías YA cargaron)
+// y mandar a la ventana el HTML ya dibujado, sin JS ni dependencias.
+function listaProductosPagina() {
+    try { return @json($productos->items()); } catch(e) { return []; }
+}
+function etiquetaHtmlLista(nombre, sku, codigo) {
+    let barras = '';
+    let qr = '';
+    try { barras = svgBarcodeListo(codigo); }
+    catch(e) { barras = '<div style="color:red;font-size:10px;">Código inválido</div>'; }
+    try { qr = qrImgListo(codigo); }
+    catch(e) { qr = '<div style="font-size:10px;">' + escHtml(codigo) + '</div>'; }
+    return '<div class="label">'
+        + '<div class="name">' + escHtml(nombre) + '</div>'
+        + '<div class="content-row"><div class="content-cell-bar">' + barras + '</div>'
+        + '<div class="content-cell-qr">' + qr + '</div></div>'
+        + '<div class="code">' + escHtml(codigo) + '</div>'
+        + '<div class="sku">SKU: ' + escHtml(sku) + '</div>'
+        + '</div>';
+}
+function imprimirEtiqueta(productoId) {
+    const productos = listaProductosPagina();
+    const p = productos.find(function(prod) { return prod.id === productoId; });
+    if (!p) return;
+    const input = document.getElementById('codigo-' + productoId);
+    const codigo = input ? input.value.trim() : p.codigo_barras;
+    if (!codigo) { alert('Este producto no tiene código de barras. Escribe uno y haz clic en Guardar.'); return; }
+    if (typeof JsBarcode === 'undefined') { alert('La librería de códigos aún está cargando. Espera 2 segundos e intenta de nuevo.'); return; }
+    const cantidadInput = document.getElementById('cantidad-' + productoId);
+    const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
+    let etiquetasHtml = '';
+    for (let i = 0; i < cantidad; i++) { etiquetasHtml += etiquetaHtmlLista(p.nombre, p.codigo, codigo); }
+    abrirVentanaImpresion('Etiqueta - ' + p.nombre, etiquetasHtml);
+}
+function imprimirTodas() {
+    const productos = listaProductosPagina();
+    const conCodigo = productos.filter(function(p) {
+        const input = document.getElementById('codigo-' + p.id);
+        const codigo = input ? input.value.trim() : p.codigo_barras;
+        return !!codigo;
+    });
+    if (conCodigo.length === 0) { alert('No hay productos con código de barras para imprimir.'); return; }
+    if (typeof JsBarcode === 'undefined') { alert('La librería de códigos aún está cargando. Espera 2 segundos e intenta de nuevo.'); return; }
+    let etiquetasHtml = '';
+    conCodigo.forEach(function(p) {
+        const input = document.getElementById('codigo-' + p.id);
+        const codigo = input ? input.value.trim() : p.codigo_barras;
+        const cantidadInput = document.getElementById('cantidad-' + p.id);
+        const cantidad = cantidadInput ? parseInt(cantidadInput.value) || 1 : 1;
+        for (let i = 0; i < cantidad; i++) { etiquetasHtml += etiquetaHtmlLista(p.nombre, p.codigo, codigo); }
+    });
+    abrirVentanaImpresion('Etiquetas de Código de Barras', etiquetasHtml);
+}
+
+// Compatibilidad guardarTodos con paginación (@json del paginador no es array)
+try {
+    const _probe = listaProductosPagina();
+    if (!Array.isArray(_probe)) {
+        console.warn('codigos-barras: paginador detectado, se usa listaProductosPagina()');
+    }
+} catch(e) {}
+
 </script>
 @endpush
