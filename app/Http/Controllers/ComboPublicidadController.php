@@ -110,28 +110,52 @@ class ComboPublicidadController extends Controller
             $abiertoAhora = null;
         }
 
-        // ── Mapa: acepta iframe completo, URL embed, link corto o solo dirección ──
-        // Google NO permite incrustar links cortos (maps.app.goo.gl) ni links de
-        // compartir (/maps/place). Para el iframe usamos SIEMPRE el embed por
-        // dirección: https://www.google.com/maps?q=...&output=embed (no pide API key).
-        // El botón "Cómo llegar" sí usa el link pegado si existe, si no la dirección.
+        // ── Mapa exacto: coordenadas > link pegado > dirección ──
+        // 1) Si mapa_url trae coordenadas ("-29.123,-71.456") o link con @lat,lng
+        //    o ?q=lat,lng, el botón abre MODO NAVEGACIÓN (dir/?api=1&destination=)
+        //    y el iframe centra el pin con zoom 17. Exacto puerta a puerta.
+        // 2) Si no hay coordenadas, fallback a búsqueda por dirección (como antes).
         $mapaEmbed = null;
         $mapaLink = null;
         try {
             $rawMapa = trim((string) ($config->mapa_url ?? ''));
             $queryDir = trim(($config->direccion ?? '') . ' ' . $nombreT);
+            $coords = null;
             if ($rawMapa !== '') {
-                if (stripos($rawMapa, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $rawMapa, $mm)) {
+                // a) Coordenadas directas "-29.123, -71.456"
+                if (preg_match('/(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/', $rawMapa, $cm)) {
+                    $coords = $cm[1] . ',' . $cm[2];
+                }
+                // b) Link con @lat,lng (compartir de Google Maps)
+                elseif (preg_match('/@(-?\d{1,3}\.\d+),\s*(-?\d{1,3}\.\d+)/', $rawMapa, $cm)) {
+                    $coords = $cm[1] . ',' . $cm[2];
+                }
+                // c) Link con ?q=lat,lng o ?query=lat,lng
+                elseif (preg_match('/[?&](?:q|query)=(-?\d{1,3}\.\d+),\s*(-?\d{1,3}\.\d+)/', $rawMapa, $cm)) {
+                    $coords = $cm[1] . ',' . $cm[2];
+                }
+                // d) iframe completo: extraer src
+                elseif (stripos($rawMapa, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $rawMapa, $mm)) {
                     $mapaEmbed = $mm[1];
                     $mapaLink = $mm[1];
+                    // Intentar sacar coords del src también
+                    if (preg_match('/(-?\d{1,3}\.\d+),\s*(-?\d{1,3}\.\d+)/', $mm[1], $cm)) {
+                        $coords = $cm[1] . ',' . $cm[2];
+                    }
                 } elseif (preg_match('#^https?://#i', $rawMapa)) {
-                    // Cualquier URL pegada sirve para el botón Cómo llegar
+                    // Cualquier otra URL pegada sirve para el botón Cómo llegar
                     $mapaLink = $rawMapa;
                 }
             }
-            // Embed automático por dirección (funciona sin iframe y sin API key)
-            if ($queryDir !== '') {
-                $mapaEmbed = 'https://www.google.com/maps?q=' . urlencode($queryDir) . '&output=embed';
+            if ($coords) {
+                // Navegación directa: abre Maps con la ruta trazada hasta tu puerta
+                $mapaLink = 'https://www.google.com/maps/dir/?api=1&destination=' . urlencode($coords);
+                $mapaEmbed = 'https://www.google.com/maps?q=' . urlencode($coords) . '&z=17&output=embed';
+            } elseif ($queryDir !== '') {
+                // Fallback por dirección (sin coordenadas: búsqueda aproximada)
+                if (!$mapaEmbed) {
+                    $mapaEmbed = 'https://www.google.com/maps?q=' . urlencode($queryDir) . '&output=embed';
+                }
                 if (!$mapaLink) {
                     $mapaLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($queryDir);
                 }

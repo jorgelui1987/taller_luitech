@@ -708,9 +708,9 @@
                                value="{{ old('mapa_url', $empresa->mapa_url ?? '') }}"
                                placeholder="Pega el link o el iframe de Google Maps (opcional)">
                         <div class="form-text">
-                            El mapa se genera solo con tu <b>Dirección</b> de la pestaña Empresa (ej: cll ohoggins 564, La Serena).<br>
-                            Si pegas un link aquí, el botón <b>Cómo llegar</b> abrirá ese link exacto.<br>
-                            Para mapa exacto puerta a puerta: Google Maps → Compartir → <b>Incorporar un mapa</b> → pega el HTML aquí.
+                            <b>Para ubicación EXACTA puerta a puerta:</b> en Google Maps mantén presionado tu local → copia las coordenadas (ej: <code>-29.9023, -71.3435</code>) y pégalas aquí. El botón <b>Cómo llegar</b> abrirá navegación directa con la ruta trazada.<br>
+                            También acepta el link de Compartir o el HTML de <b>Incorporar un mapa</b>.<br>
+                            Si lo dejas vacío, el mapa se genera solo con tu <b>Dirección</b> (aproximado).
                         </div>
                     </div>
 
