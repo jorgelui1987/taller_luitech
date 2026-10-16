@@ -126,7 +126,11 @@ if [ ! -L /var/www/html/public/storage ]; then
     runuser -u appuser -- php artisan storage:link --force 2>/dev/null || true
 fi
 
-# ── Migraciones ─────────────────────────────────────────────────────
+# ── Migraciones y bootstrap de BD (NUNCA deben tumbar el contenedor) ──
+# Si la BD está caída o una migración falla, se registra el aviso y Apache
+# arranca igual (antes: `set -e` abortaba el entrypoint → Traefik 502
+# Bad Gateway y había que resetear el VPS a mano).
+set +e
 echo "Verificando conexión a base de datos..."
 DB_CHECK=$(php -r "
     try {
@@ -313,5 +317,8 @@ echo "✓ Cron iniciado (daemon)"
 echo "=========================================="
 echo "✅ Aplicación lista!"
 echo "=========================================="
+
+# Volver a modo estricto solo para el arranque final de Apache.
+set -e
 
 exec "$@"
