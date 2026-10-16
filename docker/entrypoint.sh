@@ -18,11 +18,12 @@ fi
 unset DATABASE_URL
 
 # Crear directorios necesarios para Laravel
+# NOTA: storage/framework/* y storage/logs van DENTRO de la imagen (no en el
+# volumen) para que cada deploy arranque con vistas/config frescas.
 mkdir -p /var/www/html/storage/framework/sessions
 mkdir -p /var/www/html/storage/framework/views
 mkdir -p /var/www/html/storage/framework/cache/data
-mkdir -p /var/www/html/storage/app/public
-mkdir -p /var/www/html/storage/app/backups
+mkdir -p /var/www/html/storage/logs
 mkdir -p /var/www/html/bootstrap/cache
 
 # ── Migración de volumen persistente (una sola vez) ───────────────────
@@ -41,8 +42,11 @@ if [ -d /var/www/html/storage/app/app ] || [ -d /var/www/html/storage/app/framew
     rm -rf /var/www/html/storage/app/framework /var/www/html/storage/app/logs 2>/dev/null || true
     echo "✓ Volumen migrado"
 fi
+# El volumen montado en storage/app OCULTA lo que la imagen trae ahí
+# (.gitignore, public/, app/, backups/). Recrearlo aquí evita 500/502.
 mkdir -p /var/www/html/storage/app/public
 mkdir -p /var/www/html/storage/app/backups
+touch /var/www/html/storage/app/.gitignore 2>/dev/null || true
 
 # ── Generar .env desde variables de entorno ──────────────────────────
 echo "Creando .env desde variables de entorno..."

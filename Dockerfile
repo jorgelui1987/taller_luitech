@@ -75,6 +75,10 @@ ENV BUILD_ID=${BUILD_ID}
 RUN echo "BUILD ${BUILD_ID} $(date -u +%Y%m%d%H%M%S)" > /tmp/BUILD_STAMP
 
 # Copiar archivos del proyecto (excluye archivos sensibles via .dockerignore)
+# NOTA: NO copiar storage/ completo: el compose monta el volumen persistente
+# en storage/app y ese mount oculta lo copiado. Solo se copian las carpetas
+# que deben ir frescas en cada deploy (framework/views/cache, logs).
+# storage/app (uploads/backups/logos) vive en el volumen y lo recrea el entrypoint.
 COPY app /var/www/html/app
 COPY bootstrap /var/www/html/bootstrap
 COPY config /var/www/html/config
@@ -83,7 +87,8 @@ COPY lang /var/www/html/lang
 COPY public /var/www/html/public
 COPY resources /var/www/html/resources
 COPY routes /var/www/html/routes
-COPY storage /var/www/html/storage
+COPY storage/framework /var/www/html/storage/framework
+COPY storage/logs /var/www/html/storage/logs
 COPY artisan /var/www/html/artisan
 COPY composer.json /var/www/html/composer.json
 COPY composer.lock /var/www/html/composer.lock
@@ -93,6 +98,10 @@ COPY docker /var/www/html/docker
 # Sello de build visible en /BUILD_ID.txt (lo sirve Apache directo,
 # también lo usa el HEALTHCHECK para no depender de Laravel/DB).
 RUN echo "BUILD ${BUILD_ID}" > /var/www/html/public/BUILD_ID.txt
+
+# Esqueleto de storage/app en la imagen (el volumen lo oculta al montar,
+# el entrypoint lo recrea, pero así el build nunca queda con storage roto).
+RUN mkdir -p /var/www/html/storage/app/public /var/www/html/storage/app/backups
 
 # Crear usuario no-root, configurar permisos, instalar dependencias y limpiar caché
 RUN useradd -m -u 1001 -s /bin/bash appuser \
