@@ -56,10 +56,13 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
 // TEMP DEBUG DEPLOY - quitar despues: dice que commit corre en produccion
 Route::get('/__build', function () {
     $blade = @file_get_contents(resource_path('views/ventas/create.blade.php')) ?: '';
+    $tienda = @file_get_contents(resource_path('views/public/tienda-saas.blade.php')) ?: '';
     return response()->json([
         'build'    => trim(@file_get_contents(public_path('BUILD_ID.txt')) ?: 'sin-build-id'),
-        'commit'   => 'mp-reparacion-directo-c2aae3c',
+        'commit'   => 'tienda-sin-catalogo-88d76e7',
         'fecha'    => now()->toDateTimeString(),
+        'tienda_sin_productos' => !str_contains($tienda, '@foreach($productos as $prod)'),
+        'tienda_accesorios'    => str_contains($tienda, 'Accesorios en tienda'),
         'v5'       => str_contains($blade, 'BTN-POINT-V5'),
         'tarjeta'  => str_contains($blade, 'value="tarjeta"'),
         'rep_mp'   => str_contains(@file_get_contents(resource_path('views/reparaciones/show.blade.php')) ?: '', 'reparaciones.point'),
