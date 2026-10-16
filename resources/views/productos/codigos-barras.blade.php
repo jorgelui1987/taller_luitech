@@ -29,7 +29,8 @@
                         2. Si el producto <strong>no trae código</strong>, inventa uno tú mismo (ej: 200000000001).<br>
                         3. Escribe <strong>cuántas etiquetas</strong> quieres imprimir de ese producto.<br>
                         4. Haz clic en <strong>💾 Guardar</strong> y luego en <strong>🖨️ Imprimir</strong>.<br>
-                        <span class="text-muted">Cada producto tiene su código ÚNICO e individual. La pistola escáner leerá las barras impresas.</span>
+                        <span class="text-muted">Cada producto tiene su código ÚNICO e individual. La pistola escáner leerá las barras impresas.</span><br>
+                        <span class="text-muted">🖨️ La impresión sale en <strong>hoja carta</strong> (varias etiquetas por página). En el diálogo de impresión elige tamaño <strong>Carta / Letter</strong> y márgenes <strong>Predeterminados</strong>.</span>
                     </div>
                 </div>
 
@@ -195,17 +196,19 @@ function qrImgListo(codigo) {
 function abrirVentanaImpresion(titulo, etiquetasHtml) {
     const html = '<html><head><title>' + escHtml(titulo) + '</title>'
         + '<style>'
-        + 'body { font-family: Arial, sans-serif; margin: 0; padding: 10px; }'
-        + '.label { border: 2px solid #000; width: 80mm; min-height: 45mm; text-align: center; padding: 4px; page-break-inside: avoid; page-break-after: always; display: block; margin: 0 auto 4px; }'
-        + '.name { font-size: 11px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }'
+        + '@page { size: letter; margin: 10mm 8mm; }'
+        + 'body { font-family: Arial, sans-serif; margin: 0; padding: 0; }'
+        + '.hoja { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-content: flex-start; }'
+        + '.label { border: 1.5px solid #000; width: 58mm; min-height: 32mm; text-align: center; padding: 4px 3px; page-break-inside: avoid; box-sizing: border-box; }'
+        + '.name { font-size: 10px; font-weight: bold; margin-bottom: 2px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }'
         + '.content-row { display: table; width: 100%; margin: 2px 0; }'
         + '.content-cell-bar { display: table-cell; width: 72%; vertical-align: middle; }'
         + '.content-cell-qr { display: table-cell; width: 28%; vertical-align: middle; text-align: center; }'
-        + '.code { font-family: monospace; font-size: 12px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }'
-        + '.sku { font-size: 9px; margin-top: 1px; }'
-        + '@media print { body { margin: 0; padding: 0; } .label { border: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }'
+        + '.code { font-family: monospace; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }'
+        + '.sku { font-size: 8px; margin-top: 1px; color: #333; }'
+        + '@media print { body { margin: 0; padding: 0; } .label { border: 1.5px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }'
         + '</style></head><body onload="setTimeout(function(){ window.focus(); window.print(); }, 300);" onafterprint="window.close()">'
-        + etiquetasHtml
+        + '<div class="hoja">' + etiquetasHtml + '</div>'
         + '</body></html>';
     const win = window.open('', '_blank');
     if (!win) { alert('El navegador bloqueó la ventana de impresión. Permite ventanas emergentes para este sitio.'); return; }
