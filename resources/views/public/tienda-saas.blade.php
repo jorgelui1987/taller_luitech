@@ -115,25 +115,14 @@
 @endif
 </div></div></section>
 @if(true)
-<section class="sec" id="catalogo" style="padding-top:0"><div class="wrap"><div class="card">
-<div class="sec-head">
-<h3><i class="fa-solid fa-bag-shopping" style="color:var(--cyan)"></i> Accesorios en tienda</h3>
-<p>Fundas, micas, cargadores, cables, audífonos y más · venta directa en el local</p>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
-<span class="chip"><i class="fa-solid fa-mobile-screen"></i> Fundas y micas</span>
-<span class="chip"><i class="fa-solid fa-plug"></i> Cargadores y cables</span>
-<span class="chip"><i class="fa-solid fa-headphones"></i> Audífonos</span>
-<span class="chip"><i class="fa-solid fa-battery-full"></i> Baterías</span>
-<span class="chip"><i class="fa-solid fa-plus"></i> Y mucho más</span>
-</div>
-<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:rgba(6,182,212,.07);border:1px dashed var(--border);border-radius:12px;padding:14px;">
-<div style="flex:1;min-width:220px;font-size:13.5px;color:var(--muted);">¿Buscas algo en especial? Escríbenos por WhatsApp y te confirmamos stock y precio al momento. Te lo apartamos para que lo recojas en tienda.</div>
+<section class="sec" id="catalogo" style="padding-top:0"><div class="wrap">
+<div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;background:rgba(6,182,212,.07);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:13.5px;color:var(--muted);text-align:center;">
+<span>🛍️ <b style="color:var(--text)">También vendemos accesorios</b> — fundas, micas, cargadores y más, solo en tienda.</span>
 @if(!empty($whatsappUrl))
-<a class="btn btn-wa btn-sm" style="font-size:13px" target="_blank" href="{{ $whatsappUrl }}"><i class="fa-brands fa-whatsapp"></i> Preguntar por WhatsApp</a>
+<a class="btn btn-wa btn-sm" style="font-size:13px" target="_blank" href="{{ $whatsappUrl }}"><i class="fa-brands fa-whatsapp"></i> Preguntar</a>
 @endif
 </div>
-</div></div></section>
+</div></section>
 @endif
 <section class="sec" id="seguimiento" style="padding-top:0"><div class="wrap"><div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(59,130,246,.10)),var(--card)">
 <h3 style="margin:0"><i class="fa-solid fa-magnifying-glass" style="color:var(--cyan)"></i> ¿Dejaste tu equipo en reparación?</h3>
