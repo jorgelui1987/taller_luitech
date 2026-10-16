@@ -40,7 +40,6 @@
 <div><div class="bname" style="text-transform:uppercase">{{ $config->nombre_tienda ?? $tenant->empresa }}</div><div class="bsub">luitech.fun/t/{{ $tenant->slug_publico }}</div></div></div>
 <nav class="nav" style="margin-left:auto">
 <a href="#servicios">Servicios</a>
-<a href="#catalogo">Catálogo</a>
 <a href="#seguimiento">Seguimiento</a>
 <a href="#ubicacion">Ubicación</a>
 </nav>
@@ -115,23 +114,26 @@
 <a class="btn btn-p" style="width:100%;justify-content:center;margin-top:16px" href="{{ $whatsappServicio ?? $whatsappUrl }}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Cotizar mi reparación por WhatsApp</a>
 @endif
 </div></div></section>
-@if(!empty($productos) && $productos->count() > 0)
+@if(true)
 <section class="sec" id="catalogo" style="padding-top:0"><div class="wrap"><div class="card">
 <div class="sec-head">
-<h3><i class="fa-solid fa-bag-shopping" style="color:var(--cyan)"></i> Catálogo</h3>
-<p>Stock real de la tienda · pide por WhatsApp</p>
+<h3><i class="fa-solid fa-bag-shopping" style="color:var(--cyan)"></i> Accesorios en tienda</h3>
+<p>Fundas, micas, cargadores, cables, audífonos y más · venta directa en el local</p>
 </div>
-<div class="grid4">
-@foreach($productos as $prod)
-<div class="prod"><b style="font-size:14px">{{ $prod->nombre }}</b>
-<span class="price">{{ $config->simbolo_moneda ?? 'S/' }} {{ number_format($prod->precio_venta, 2) }}</span>
-<span class="stock">● En stock ({{ $prod->stock }})</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+<span class="chip"><i class="fa-solid fa-mobile-screen"></i> Fundas y micas</span>
+<span class="chip"><i class="fa-solid fa-plug"></i> Cargadores y cables</span>
+<span class="chip"><i class="fa-solid fa-headphones"></i> Audífonos</span>
+<span class="chip"><i class="fa-solid fa-battery-full"></i> Baterías</span>
+<span class="chip"><i class="fa-solid fa-plus"></i> Y mucho más</span>
+</div>
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:rgba(6,182,212,.07);border:1px dashed var(--border);border-radius:12px;padding:14px;">
+<div style="flex:1;min-width:220px;font-size:13.5px;color:var(--muted);">¿Buscas algo en especial? Escríbenos por WhatsApp y te confirmamos stock y precio al momento. Te lo apartamos para que lo recojas en tienda.</div>
 @if(!empty($whatsappUrl))
-<a class="btn btn-wa btn-sm" style="justify-content:center;margin-top:6px;font-size:13px" target="_blank" href="https://wa.me/{{ preg_replace('/\D/', '', (string)($config->whatsapp ?? $config->telefono ?? '')) }}?text={{ urlencode('Hola, me interesa: ' . $prod->nombre . ' ¿Sigue disponible?') }}"><i class="fa-brands fa-whatsapp"></i> Pedir</a>
+<a class="btn btn-wa btn-sm" style="font-size:13px" target="_blank" href="{{ $whatsappUrl }}"><i class="fa-brands fa-whatsapp"></i> Preguntar por WhatsApp</a>
 @endif
 </div>
-@endforeach
-</div></div></div></section>
+</div></div></section>
 @endif
 <section class="sec" id="seguimiento" style="padding-top:0"><div class="wrap"><div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(59,130,246,.10)),var(--card)">
 <h3 style="margin:0"><i class="fa-solid fa-magnifying-glass" style="color:var(--cyan)"></i> ¿Dejaste tu equipo en reparación?</h3>
