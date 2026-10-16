@@ -49,6 +49,10 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.25;colo
 .price-box .lbl{font-size:8px;font-weight:700}
 .ftr{text-align:center;margin-top:2px;font-size:9px}
 .ftr .gr{font-size:11px;font-weight:700}
+.ftr .miniweb{font-size:10px;font-weight:800;word-break:break-all;margin-top:2px}
+.qr-box{text-align:center;margin-top:3px}
+.qr-box img{width:120px;height:120px;image-rendering:pixelated}
+.qr-box .qr-num{font-size:12px;font-weight:800;margin-top:1px;letter-spacing:1px}
 .firma-img{max-width:100%;max-height:60px;background:#fff;border:1px solid #000}
 .firma-label{font-size:9px;font-weight:700;margin-top:1px;text-align:center}
 .cupon-box{border:2px dashed #000;padding:4px;margin:2px 0;text-align:center}
@@ -152,10 +156,16 @@ hr{border:none;border-top:1px solid #000;margin:2px 0}
 
 <div class="ftr">
 @php $qrUrl = $qrUrl ?? ($reparacion->tenant ? $reparacion->tenant->urlSeguimientoOrden($reparacion->numero_orden) : route('reparaciones.public-status', $reparacion->numero_orden)); @endphp
-<div style="margin:2px auto;text-align:center;">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data={{ urlencode($qrUrl) }}" alt="QR" style="width:60px;height:60px">
-    <div style="font-size:9px;font-weight:700;">Escanea para ver estado {{ $reparacion->numero_orden }}</div>
+<div class="qr-box">
+    {{-- QR grande (min 25mm) + número legible: si el QR falla, el cliente digita el código --}}
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=4&data={{ urlencode($qrUrl) }}" alt="QR {{ $reparacion->numero_orden }}">
+    <div class="qr-num">{{ $reparacion->numero_orden }}</div>
+    <div style="font-size:9px;font-weight:700;">Escanea para ver el estado</div>
 </div>
+@if($urlMiniWeb ?? false)
+<div class="miniweb">🌐 {{ $urlMiniWeb }}</div>
+<div style="font-size:8px;">Visita nuestra tienda en línea</div>
+@endif
 <div class="gr">¡Gracias por su preferencia!</div>
 <div style="font-size:9px;">{{ $reparacion->created_at->format('d/m/Y H:i') }} | {{ $reparacion->numero_orden }}</div>
 </div>

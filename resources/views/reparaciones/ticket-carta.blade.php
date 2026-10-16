@@ -85,7 +85,8 @@ td.val{font-weight:600}
 
 /* ═══ PIE ═══ */
 .pie{display:flex;justify-content:space-between;align-items:center;margin-top:2.5mm;padding-top:2mm;border-top:1px solid #dde1e6;font-size:7.5px;color:#666}
-.qr{width:11mm;height:11mm}
+.qr{width:28mm;height:28mm;image-rendering:pixelated}
+.qr-num{font-size:9px;font-weight:800;letter-spacing:.5px;color:#111;margin-top:.5mm}
 .miniweb{font-weight:700;color:#0000EE;word-break:break-all;font-size:8px}
 .firma-zona{display:flex;gap:10mm;margin-right:2mm}
 .firma{text-align:center;width:30mm}
@@ -205,12 +206,18 @@ td.val{font-weight:600}
     <!-- ═══ PIE: solo QR directo a la orden + contacto ═══ -->
     <div class="pie">
         <div style="text-align:center">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data={{ urlencode($qrUrl) }}" alt="QR" class="qr">
-            <div style="font-size:6.5px;font-weight:700;">Escanea para ver estado {{ $reparacion->numero_orden }}</div>
+            {{-- QR grande (min 25mm) + número legible --}}
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=4&data={{ urlencode($qrUrl) }}" alt="QR {{ $reparacion->numero_orden }}" class="qr">
+            <div class="qr-num">{{ $reparacion->numero_orden }}</div>
+            <div style="font-size:6.5px;font-weight:700;">Escanea para ver el estado</div>
         </div>
         <div style="text-align:center">
-            @if($empresa?->telefono)📞 {{ $empresa->telefono }}@endif
-            @if($empresa?->instagram) · 📷 {{ $empresa->instagram }}@endif
+            @if($urlMiniWeb)
+                <div class="miniweb">🌐 {{ $urlMiniWeb }}</div>
+                <div style="font-size:7px;">Visita nuestra tienda en línea</div>
+            @endif
+            @if($empresa?->telefono)<div>📞 {{ $empresa->telefono }}</div>@endif
+            @if($empresa?->instagram)<div>📷 {{ $empresa->instagram }}</div>@endif
         </div>
         <div class="firma-zona">
             <div class="firma">
