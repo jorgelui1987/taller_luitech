@@ -25,7 +25,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-search fa-sm"></i></span>
                     <input type="text" class="form-control" name="buscar" id="buscar"
-                           placeholder="Buscar por nombre, email, DNI, teléfono..."
+                           placeholder="Buscar por nombre, WhatsApp, RUT..."
                            value="{{ request('buscar') }}">
                 </div>
             </div>
@@ -85,9 +85,17 @@
                             </div>
                         </td>
                         <td style="font-size:13px;">
-                            <div>{{ $cliente->telefono }}</div>
-                            @if($cliente->dni)
-                                <div style="font-size:11px; color:#9ca3af;">DNI: {{ $cliente->dni }}</div>
+                            <div>
+                                <i class="fab fa-whatsapp me-1" style="color:#25D366;"></i>{{ $cliente->telefono }}
+                                @if($cliente->whatsapp_url)
+                                    <a href="{{ $cliente->whatsapp_url }}" target="_blank" title="Abrir WhatsApp"
+                                       style="color:#25D366; margin-left:4px;"><i class="fas fa-external-link-alt fa-xs"></i></a>
+                                @endif
+                            </div>
+                            @if($cliente->documento)
+                                <div style="font-size:11px; color:#9ca3af;">RUT/DNI: {{ $cliente->documento }}</div>
+                            @else
+                                <div style="font-size:11px; color:#9ca3af;">Sin RUT (ID: WhatsApp)</div>
                             @endif
                         </td>
                         <td>

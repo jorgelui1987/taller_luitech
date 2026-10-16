@@ -79,19 +79,30 @@
                     </div>
                     @endif
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="fas fa-phone" style="color:#0891b2; width:16px;"></i>
-                        <span>{{ $cliente->telefono }}</span>
+                        <i class="fab fa-whatsapp" style="color:#25D366; width:16px;"></i>
+                        <span><strong>{{ $cliente->telefono }}</strong> <small class="text-muted">(ID WhatsApp)</small></span>
+                        @if($cliente->whatsapp_url)
+                            <a href="{{ $cliente->whatsapp_url }}" target="_blank" class="btn btn-sm"
+                               style="background:#dcfce7; color:#15803d; border-radius:8px; padding:2px 10px; font-size:11px;">
+                                <i class="fab fa-whatsapp me-1"></i>Chatear
+                            </a>
+                        @endif
                     </div>
                     @if($cliente->celular)
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <i class="fas fa-mobile-alt" style="color:#0891b2; width:16px;"></i>
-                        <span>{{ $cliente->celular }}</span>
+                        <span>{{ $cliente->celular }} <small class="text-muted">(otro teléfono)</small></span>
                     </div>
                     @endif
-                    @if($cliente->dni)
+                    @if($cliente->documento)
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <i class="fas fa-id-card" style="color:#0891b2; width:16px;"></i>
-                        <span>DNI: {{ $cliente->dni }}</span>
+                        <span>RUT/DNI: {{ $cliente->documento }}</span>
+                    </div>
+                    @else
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fas fa-id-card" style="color:#9ca3af; width:16px;"></i>
+                        <span class="text-muted" style="font-size:12px;">Sin RUT — identificado por WhatsApp</span>
                     </div>
                     @endif
                     @if($cliente->direccion)

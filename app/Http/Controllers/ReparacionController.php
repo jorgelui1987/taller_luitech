@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
 class ReparacionController extends Controller
@@ -80,16 +81,6 @@ class ReparacionController extends Controller
      */
     public function storeClienteRapido(Request $request)
     {
-        $validated = $request->validate([
-            'nombre'   => 'required|string|max:100',
-            'apellido' => 'required|string|max:100',
-            'telefono' => 'required|string|max:20',
-            'celular'  => 'nullable|string|max:20',
-            'email'    => 'nullable|email|max:150',
-            'dni'      => 'nullable|string|max:15',
-        ]);
-
-        // Forzar tenant_id
         $tenantId = Auth::user()?->tenant_id;
         if (!$tenantId) {
             return response()->json([
@@ -97,6 +88,28 @@ class ReparacionController extends Controller
                 'message' => 'Error de configuración: no hay tenant asignado.',
             ], 422);
         }
+
+        // Normalizar WhatsApp: solo dígitos (es la identificación del cliente)
+        $request->merge([
+            'telefono' => preg_replace('/\D/', '', (string) $request->input('telefono', '')),
+            'celular'  => $request->filled('celular') ? preg_replace('/\D/', '', (string) $request->input('celular')) : $request->input('celular'),
+            'dni'      => $request->filled('dni') ? trim((string) $request->input('dni')) : null,
+        ]);
+
+        $validated = $request->validate([
+            'nombre'   => 'required|string|max:100',
+            'apellido' => 'required|string|max:100',
+            // WhatsApp es la identificación: obligatorio y único por taller
+            'telefono' => ['required', 'string', 'max:20', Rule::unique('clientes', 'telefono')->where(fn ($q) => $q->where('tenant_id', $tenantId))],
+            'celular'  => 'nullable|string|max:20',
+            'email'    => ['nullable', 'email', 'max:150', Rule::unique('clientes', 'email')->where(fn ($q) => $q->where('tenant_id', $tenantId))],
+            // RUT/DNI opcional
+            'dni'      => ['nullable', 'string', 'max:15', Rule::unique('clientes', 'dni')->where(fn ($q) => $q->where('tenant_id', $tenantId))],
+        ], [
+            'telefono.required' => 'El WhatsApp es obligatorio: es la identificación del cliente.',
+            'telefono.unique'   => 'Ese WhatsApp ya está registrado para otro cliente.',
+        ]);
+
         $validated['tenant_id'] = $tenantId;
         $validated['tipo'] = 'particular';
         $validated['activo'] = true;

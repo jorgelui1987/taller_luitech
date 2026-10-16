@@ -61,19 +61,21 @@
                             @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
-                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="telefono" id="telefono"
-                                   value="{{ old('telefono', $cliente->telefono) }}">
+                            <label for="telefono" class="form-label"><i class="fab fa-whatsapp me-1" style="color:#25D366;"></i>WhatsApp <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('telefono') is-invalid @enderror" name="telefono" id="telefono"
+                                   value="{{ old('telefono', $cliente->telefono) }}" placeholder="9 1234 5678">
+                            <div class="form-text" style="font-size:11px;">Identificación del cliente. No se repite.</div>
+                            @error('telefono')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-3">
-                            <label for="celular" class="form-label">Celular</label>
+                            <label for="celular" class="form-label">Otro teléfono <small class="text-muted">(opcional)</small></label>
                             <input type="text" class="form-control" name="celular" id="celular"
-                                   value="{{ old('celular', $cliente->celular) }}">
+                                   value="{{ old('celular', $cliente->celular) }}" placeholder="Opcional">
                         </div>
                         <div class="col-md-4">
-                            <label for="dni" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT' : 'DNI' }}</label>
+                            <label for="dni" class="form-label">{{ $empresa->pais == 'CL' ? 'RUT' : 'DNI' }} <small class="text-muted">(opcional)</small></label>
                             <input type="text" class="form-control @error('dni') is-invalid @enderror"
-                                   name="dni" id="dni" value="{{ old('dni', $cliente->dni) }}">
+                                   name="dni" id="dni" value="{{ old('dni', $cliente->dni) }}" placeholder="Solo si pide factura o lo entrega">
                             @error('dni')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         @if($empresa->pais == 'CL')

@@ -456,11 +456,12 @@
                         <input type="text" class="form-control form-control-sm" id="clienteRapidoApellido" name="apellido" required maxlength="100" placeholder="Ej: Pérez">
                     </div>
                     <div class="col-md-6">
-                        <label for="clienteRapidoTelefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+                        <label for="clienteRapidoTelefono" class="form-label"><i class="fab fa-whatsapp me-1" style="color:#25D366;"></i>WhatsApp <span class="text-danger">*</span></label>
                         <input type="text" class="form-control form-control-sm" id="clienteRapidoTelefono" name="telefono" required maxlength="20" placeholder="Ej: 987654321">
+                        <div class="form-text" style="font-size:10px;">Es la identificación. No se repite.</div>
                     </div>
                     <div class="col-md-6">
-                        <label for="clienteRapidoCelular" class="form-label">Celular</label>
+                        <label for="clienteRapidoCelular" class="form-label">Otro teléfono</label>
                         <input type="text" class="form-control form-control-sm" id="clienteRapidoCelular" name="celular" maxlength="20" placeholder="Opcional">
                     </div>
                     <div class="col-md-6">
@@ -468,8 +469,8 @@
                         <input type="email" class="form-control form-control-sm" id="clienteRapidoEmail" name="email" maxlength="150" placeholder="Opcional">
                     </div>
                     <div class="col-md-6">
-                        <label for="clienteRapidoDni" class="form-label">DNI / Cédula</label>
-                        <input type="text" class="form-control form-control-sm" id="clienteRapidoDni" name="dni" maxlength="15" placeholder="Opcional">
+                        <label for="clienteRapidoDni" class="form-label">RUT / DNI <small class="text-muted">(opcional)</small></label>
+                        <input type="text" class="form-control form-control-sm" id="clienteRapidoDni" name="dni" maxlength="15" placeholder="Solo si lo entrega">
                     </div>
                 </form>
             </div>

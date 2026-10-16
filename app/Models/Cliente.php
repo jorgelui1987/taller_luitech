@@ -43,6 +43,39 @@ class Cliente extends Model
         return $this->nombre . ' ' . $this->apellido;
     }
 
+    /**
+     * WhatsApp como identificación del cliente.
+     * El RUT/DNI es opcional; el teléfono (WhatsApp) es el ID real.
+     */
+    public function getWhatsappAttribute(): ?string
+    {
+        return $this->telefono ?: $this->celular;
+    }
+
+    public function getWhatsappUrlAttribute(): ?string
+    {
+        $numero = preg_replace('/\D/', '', (string) ($this->telefono ?: $this->celular));
+        if ($numero === '') {
+            return null;
+        }
+        // Si es número local chileno (9 dígitos partiendo en 9), anteponer 56
+        if (strlen($numero) === 9 && str_starts_with($numero, '9')) {
+            $numero = '56' . $numero;
+        }
+        return 'https://wa.me/' . $numero;
+    }
+
+    public function getDocumentoAttribute(): ?string
+    {
+        if (!empty($this->dni)) {
+            return $this->dni . (!empty($this->rut_dv) ? '-' . $this->rut_dv : '');
+        }
+        if (!empty($this->rut)) {
+            return $this->rut . (!empty($this->rut_dv) ? '-' . $this->rut_dv : '');
+        }
+        return null;
+    }
+
     public function ventas()
     {
         return $this->hasMany(Venta::class);
