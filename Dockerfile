@@ -57,6 +57,14 @@ FROM base AS final
 # Instalar Composer
 COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 
+# ── Rompe-caché: DEBE ir ANTES de los COPY de código ──
+# Si el ARG va después de los COPY, Docker reutiliza las capas de código
+# cacheadas y los cambios "no salen" hasta resetear el VPS.
+# Dokploy inyecta el SHA del commit vía compose (BUILD_ID).
+ARG BUILD_ID=local
+ENV BUILD_ID=${BUILD_ID}
+RUN echo "BUILD ${BUILD_ID} $(date -u +%Y%m%d%H%M%S)" > /tmp/BUILD_STAMP
+
 # Copiar archivos del proyecto (excluye archivos sensibles via .dockerignore)
 COPY app /var/www/html/app
 COPY bootstrap /var/www/html/bootstrap
@@ -73,6 +81,10 @@ COPY composer.lock /var/www/html/composer.lock
 COPY .htaccess /var/www/html/.htaccess
 COPY docker /var/www/html/docker
 
+# Sello de build visible en /BUILD_ID.txt (lo sirve Apache directo,
+# también lo usa el HEALTHCHECK para no depender de Laravel/DB).
+RUN echo "BUILD ${BUILD_ID}" > /var/www/html/public/BUILD_ID.txt
+
 # Crear usuario no-root, configurar permisos, instalar dependencias y limpiar caché
 RUN useradd -m -u 1001 -s /bin/bash appuser \
     && usermod -aG www-data appuser \
@@ -88,11 +100,6 @@ RUN useradd -m -u 1001 -s /bin/bash appuser \
 # Copiar entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Fuerza invalidar caché de Docker en cada push (ver /__build BUILD_ID).
-ARG BUILD_ID=local
-ENV BUILD_ID=${BUILD_ID}
-RUN echo "BUILD ${BUILD_ID}" > /var/www/html/public/BUILD_ID.txt
 
 WORKDIR /var/www/html
 
