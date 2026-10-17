@@ -8,6 +8,24 @@
 # 2. La base de datos es EXTERNA (PostgreSQL administrado de Dokploy)
 #    — NO uses el MySQL del stack, porque se destruye en cada deploy
 # 3. Todas las variables de entorno se configuran en Dokploy, NO en este archivo
+#
+# ═══ SI LOS CAMBIOS NO SALEN SIN REINICIAR EL VPS ═══
+# Causa típica: Dokploy reutiliza la imagen anterior (caché) o recicla el
+# contenedor viejo en vez de construir/crear uno nuevo. Checklist:
+#  1. En Dokploy → tu app → General: "Build Source" = GitHub, Branch = main,
+#     "Auto Deploy" ACTIVADO (así cada push a main dispara un deploy solo).
+#  2. En cada deploy usa el botón "Rebuild" / "Redeploy" con la casilla
+#     "Force Rebuild" o "No Cache" marcada (equivale a docker build --no-cache).
+#     El "Redeploy" simple puede reutilizar la imagen vieja.
+#  3. En Dokploy → pestaña "docker-compose": pega el contenido de ESTE archivo
+#     (docker-compose.dokploy.yml), NO el docker-compose.yml local, y pulsa
+#     Save. Si Dokploy usa su compose interno sin pull_policy: build ni el
+#     ARG BUILD_ID, Docker reutiliza capas y hay que reiniciar el VPS.
+#  4. Diagnóstico: abre https://TU-DOMINIO/__build en el navegador.
+#     - "commit" debe decir backup-prefijo-auto-d548123 (o posterior).
+#     - Si dice un commit viejo o backup_auto_prefijo=false, el contenedor
+#       sigue corriendo la imagen anterior: haz "Force Rebuild", no reinicies
+#       el VPS (eso solo esconde el problema hasta el próximo deploy).
 
 version: '3.8'
 

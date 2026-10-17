@@ -59,8 +59,12 @@ Route::get('/__build', function () {
     $tienda = @file_get_contents(resource_path('views/public/tienda-saas.blade.php')) ?: '';
     return response()->json([
         'build'    => trim(@file_get_contents(public_path('BUILD_ID.txt')) ?: 'sin-build-id'),
-        'commit'   => 'tienda-sin-catalogo-88d76e7',
+        'commit'   => 'backup-prefijo-auto-d548123',
         'fecha'    => now()->toDateTimeString(),
+        'backup_auto_prefijo' => str_contains(
+            @file_get_contents(app_path('Http/Controllers/BackupController.php')) ?: '',
+            "backup_auto_'"
+        ),
         'tienda_sin_productos' => !str_contains($tienda, '@foreach($productos as $prod)'),
         'tienda_accesorios'    => str_contains($tienda, 'Accesorios en tienda'),
         'v5'       => str_contains($blade, 'BTN-POINT-V5'),
