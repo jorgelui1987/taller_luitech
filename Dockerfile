@@ -69,10 +69,13 @@ COPY --from=composer-stage /usr/bin/composer /usr/bin/composer
 # ── Rompe-caché: DEBE ir ANTES de los COPY de código ──
 # Si el ARG va después de los COPY, Docker reutiliza las capas de código
 # cacheadas y los cambios "no salen" hasta resetear el VPS.
-# Dokploy inyecta el SHA del commit vía compose (BUILD_ID).
+# Dokploy inyecta el SHA del commit vía compose (BUILD_ID + CACHE_BUST).
+# CACHE_BUST se declara aunque no se use en un RUN: su valor distinto en
+# cada deploy invalida la caché de TODAS las capas siguientes.
 ARG BUILD_ID=local
+ARG CACHE_BUST=local
 ENV BUILD_ID=${BUILD_ID}
-RUN echo "BUILD ${BUILD_ID} $(date -u +%Y%m%d%H%M%S)" > /tmp/BUILD_STAMP
+RUN echo "BUILD ${BUILD_ID} ${CACHE_BUST} $(date -u +%Y%m%d%H%M%S)" > /tmp/BUILD_STAMP
 
 # Copiar archivos del proyecto (excluye archivos sensibles via .dockerignore)
 # NOTA: NO copiar storage/ completo: el compose monta el volumen persistente
@@ -97,6 +100,9 @@ COPY docker /var/www/html/docker
 
 # Sello de build visible en /BUILD_ID.txt (lo sirve Apache directo,
 # también lo usa el HEALTHCHECK para no depender de Laravel/DB).
+# Se escribe en el entrypoint (runtime) ADEMÁS del build: así incluso si
+# Dokploy reutiliza una imagen cacheada, el sello refleja el código que
+# realmente arrancó y /__build delata la imagen vieja sin reiniciar el VPS.
 RUN echo "BUILD ${BUILD_ID}" > /var/www/html/public/BUILD_ID.txt
 
 # Esqueleto de storage/app en la imagen (el volumen lo oculta al montar,

@@ -298,6 +298,14 @@ else
     echo "  Las migraciones se ejecutarán manualmente después."
 fi
 
+# ── Sello de build en runtime ───────────────────────────────────────
+# BUILD_ID.txt se horneó en la imagen, pero si Dokploy reutiliza una imagen
+# cacheada el sello mentiría. Reescribirlo aquí hace que /BUILD_ID.txt y
+# /__build reflejen el código que REALMENTE arrancó, sin reiniciar el VPS.
+echo "BUILD ${BUILD_ID:-local} $(date -u +%Y%m%d%H%M%S)" > /var/www/html/public/BUILD_ID.txt 2>/dev/null || true
+chown www-data:www-data /var/www/html/public/BUILD_ID.txt 2>/dev/null || true
+
+
 # ── Configurar cron para el scheduler de Laravel ────────────────────
 echo "Configurando cron para el programador de Laravel..."
 
@@ -313,8 +321,9 @@ if [ -z "$CRON_EXISTS" ]; then
     echo "* * * * * runuser -u appuser -- php /var/www/html/artisan schedule:run >> /var/www/html/storage/app/schedule-cron.log 2>&1" | crontab -
     echo "✓ Cron configurado para el scheduler de Laravel"
 else
-    # Migrar crons viejos que mandaban todo a /dev/null (fallos invisibles)
-    crontab -l 2>/dev/null | sed 's|>> /dev/null 2>&1|>> /var/www/html/storage/app/schedule-cron.log 2>\&1|' | crontab -
+    # Migrar crons viejos que mandaban todo a /dev/null (fallos invisibles).
+    # Se reescribe la linea completa (idempotente, sin sed con escapes).
+    (crontab -l 2>/dev/null | grep -v "php artisan schedule:run"; echo "* * * * * runuser -u appuser -- php /var/www/html/artisan schedule:run >> /var/www/html/storage/app/schedule-cron.log 2>&1") | sort -u | crontab - 2>/dev/null || true
     echo "✓ Cron ya estaba configurado (log migrado al volumen persistente)"
 fi
 # El archivo de log debe ser escribible por appuser (dueño del cron)

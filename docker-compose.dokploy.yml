@@ -34,15 +34,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # ── Caché de build ──
-      # Docker ya invalida las capas COPY cuando el código cambia (checksum),
-      # así que NO necesitas cambiar BUILD_ID a mano en cada deploy.
-      # BUILD_ID es solo una etiqueta informativa (ver /BUILD_ID.txt).
-      # Si Dokploy llega a reutilizar imagen vieja, activa en Dokploy:
-      # Auto Deploy (push a main) + "Force Rebuild" / "Rebuild" en Redeploy.
+      # ── Rompe-caché garantizado en cada deploy ──
+      # Docker invalida las capas COPY cuando el código cambia, pero Dokploy
+      # puede reutilizar la imagen anterior si el contexto se cachea.
+      # CACHE_BUST cambia en cada deploy (hash del compose + BUILD_ID):
+      # aunque el código fuera idéntico, el ARG distinto invalida TODAS las
+      # capas siguientes (COPY de código incluido) y los cambios salen sin
+      # reiniciar el VPS. BUILD_ID sigue siendo la etiqueta visible (/BUILD_ID.txt).
       args:
         BUILD_ID: ${DOKPLOY_COMMIT_SHA:-${GITHUB_SHA:-${BUILD_ID:-local}}}
-      # "Force Rebuild"/"Rebuild" en Dokploy equivale al no-cache.
+        CACHE_BUST: ${DOKPLOY_COMMIT_SHA:-${GITHUB_SHA:-${BUILD_ID:-local}}}
     # Fuerza a Dokploy a CONSTRUIR la imagen en cada deploy en vez de
     # reutilizar una anterior (evita que los cambios "no salgan").
     pull_policy: build
