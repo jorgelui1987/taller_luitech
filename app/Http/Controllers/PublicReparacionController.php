@@ -123,7 +123,9 @@ class PublicReparacionController extends Controller
         // una empresa concreta (slug del formulario, subdominio de la tienda o
         // sesión de su personal), solo se pueden ver órdenes de ESA empresa.
         // Si la orden pertenece a otra empresa, se informa "no encontrada"
-        // (sin revelar su existencia).
+        // (sin revelar su existencia). El mensaje conserva el sufijo
+        // "en esta tienda" para que el cliente entienda que buscó en el
+        // portal correcto pero con un código de otra tienda.
         $slugBusqueda = request('slugTienda');
         $tenantPortal = null;
         if (is_string($slugBusqueda) && $slugBusqueda !== '') {
@@ -131,14 +133,16 @@ class PublicReparacionController extends Controller
                 $tenantPortal = $this->resolverTenantPorSlug($slugBusqueda);
             } catch (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
                 $tenantPortal = $this->resolverTenantPortal();
+                $slugBusqueda = null;
             }
         } else {
             $tenantPortal = $this->resolverTenantPortal();
         }
         if ($tenantPortal !== null && (int) $reparacion->tenant_id !== $tenantPortal) {
             return view('public.estado-search', [
-                'error'   => 'La orden ' . $candidatos[0] . ' no fue encontrada. Verifica el código de tu boleta e intenta nuevamente.',
+                'error'   => 'La orden ' . $candidatos[0] . ' no fue encontrada en esta tienda. Verifica el código de tu boleta e intenta nuevamente.',
                 'buscado' => request('numero_orden', $candidatos[0]),
+                'slugTienda' => is_string($slugBusqueda) && $slugBusqueda !== '' ? $slugBusqueda : null,
             ]);
         }
 

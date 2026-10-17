@@ -260,15 +260,17 @@ class PublicReparacionIsolationTest extends TestCase
 
     public function test_busqueda_aislada_por_tienda_no_muestra_orden_ajena(): void
     {
-        // Cliente en el portal de tienda-dos busca una orden de tienda-uno
-        $response = $this->get(route('reparaciones.public-status.search', [
-            'slug' => 'tienda-dos',
+        // Cliente en el portal de tienda-dos busca una orden de tienda-uno.
+        // La búsqueda vive en /buscar-orden (ruta buscar): el slugTienda del
+        // formulario aísla la búsqueda a esa tienda.
+        $response = $this->get('/buscar-orden?' . http_build_query([
             'numero_orden' => $this->ordenTenant1->numero_orden,
             'slugTienda' => 'tienda-dos',
         ]));
 
         $response->assertOk();
-        $response->assertSee('no fue encontrada', false);
+        $response->assertSee('no fue encontrada en esta tienda');
+        $response->assertDontSee($this->ordenTenant1->dispositivo);
     }
 
     public function test_consulta_desde_subdominio_no_muestra_ordenes_de_otra_empresa(): void
