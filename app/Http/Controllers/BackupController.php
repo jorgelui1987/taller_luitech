@@ -66,7 +66,10 @@ class BackupController extends Controller
 
         try {
             $sql    = $this->backupService->generarSQL();
-            $nombre = 'backup_' . now()->format('Y-m-d_H-i-s') . '.sql';
+            // Prefijo backup_auto_: el dashboard SuperAdmin cuenta el "último
+            // backup global" con ese patrón; con 'backup_' el aviso "Sin
+            // respaldo reciente" nunca se apagaba tras un backup manual.
+            $nombre = 'backup_auto_' . now()->format('Y-m-d_H-i-s') . '.sql';
             $ruta   = $this->backupDir . '/' . $nombre;
             file_put_contents($ruta, $sql);
 
