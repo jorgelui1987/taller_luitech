@@ -12,8 +12,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Backup automático diario a las 2:00 AM
-        $schedule->command('backup:automatico --retencion=7')->dailyAt('02:00');
+        // Backup automático diario a las 2:00 AM (hora del servidor).
+        // Sin ->withoutOverlapping: si el VPS se reinicia a las 2AM, el
+        // mutex viejo podía bloquear el backup del día siguiente.
+        // El log va a storage/app/schedule-backup.log (DENTRO del volumen
+        // persistente) para poder diagnosticar fallos del cron en Dokploy.
+        $schedule->command('backup:automatico --retencion=7')
+            ->dailyAt('02:00')
+            ->appendOutputTo(storage_path('app/schedule-backup.log'));
 
         // Generar facturas mensuales el primer día de cada mes a las 5:00 AM
         $schedule->command('facturas:generar')->monthlyOn(1, '05:00');

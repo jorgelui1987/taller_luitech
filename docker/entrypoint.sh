@@ -303,14 +303,24 @@ echo "Configurando cron para el programador de Laravel..."
 
 # Añadir la entrada cron para el scheduler si no existe
 # Esto ejecuta "php artisan schedule:run" cada minuto como el usuario appuser,
-# que dispara el backup automático diario a las 2:00 AM
+# que dispara el backup automático diario a las 2:00 AM.
+# El log va a storage/app/schedule-cron.log (DENTRO del volumen persistente):
+# antes iba a /dev/null y los fallos del cron eran invisibles ("sin respaldo
+# reciente" sin rastro). La salida de cada tarea además se anexa desde
+# Kernel.php a storage/app/schedule-backup.log.
 CRON_EXISTS=$(crontab -l 2>/dev/null | grep "php artisan schedule:run" || true)
 if [ -z "$CRON_EXISTS" ]; then
-    echo "* * * * * runuser -u appuser -- php /var/www/html/artisan schedule:run >> /dev/null 2>&1" | crontab -
+    echo "* * * * * runuser -u appuser -- php /var/www/html/artisan schedule:run >> /var/www/html/storage/app/schedule-cron.log 2>&1" | crontab -
     echo "✓ Cron configurado para el scheduler de Laravel"
 else
-    echo "✓ Cron ya estaba configurado"
+    # Migrar crons viejos que mandaban todo a /dev/null (fallos invisibles)
+    crontab -l 2>/dev/null | sed 's|>> /dev/null 2>&1|>> /var/www/html/storage/app/schedule-cron.log 2>\&1|' | crontab -
+    echo "✓ Cron ya estaba configurado (log migrado al volumen persistente)"
 fi
+# El archivo de log debe ser escribible por appuser (dueño del cron)
+touch /var/www/html/storage/app/schedule-cron.log /var/www/html/storage/app/schedule-backup.log 2>/dev/null || true
+chown appuser:www-data /var/www/html/storage/app/schedule-cron.log /var/www/html/storage/app/schedule-backup.log 2>/dev/null || true
+chmod 664 /var/www/html/storage/app/schedule-cron.log /var/www/html/storage/app/schedule-backup.log 2>/dev/null || true
 
 # ── Limpiar cachés anteriores ───────────────────────────────────────
 # El volumen de storage persistía vistas compiladas entre deploys.

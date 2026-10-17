@@ -160,7 +160,11 @@ class SuperAdminController extends Controller
         foreach (Tenant::where('estado', 'activo')->get() as $t) {
             $slug = \Illuminate\Support\Str::slug($t->empresa) ?: ('tenant-' . $t->id);
             $ult = null;
-            foreach (glob($backupDir . '/backup_empresa-' . $slug . '_*.sql') ?: [] as $f) {
+            // El cron genera backup_empresa-{slug}_*.sql; el botón manual
+            // "Respaldo por tienda" generaba backup_tienda-{slug}_*.sql
+            // (solo descarga, no se guarda). Se aceptan ambos prefijos para
+            // no marcar como "sin respaldo" una tienda que sí lo tiene.
+            foreach (glob($backupDir . '/backup_{empresa,tienda}-' . $slug . '_*.sql', GLOB_BRACE) ?: [] as $f) {
                 $ts = filemtime($f);
                 if ($ult === null || $ts > $ult) {
                     $ult = $ts;
@@ -532,7 +536,9 @@ class SuperAdminController extends Controller
         $sql = $servicio->generarSQLPorTenant($tenant->id);
 
         $slug = \Illuminate\Support\Str::slug($tenant->empresa ?? ('tienda-' . $tenant->id));
-        $nombre = 'backup_tienda-' . $slug . '_' . now()->format('Y-m-d_H-i-s') . '.sql';
+        // Mismo prefijo que el cron (backup_empresa-): el dashboard
+        // SuperAdmin detecta el respaldo por empresa con ese patrón.
+        $nombre = 'backup_empresa-' . $slug . '_' . now()->format('Y-m-d_H-i-s') . '.sql';
 
         return response($sql, 200, [
             'Content-Type' => 'application/sql',
